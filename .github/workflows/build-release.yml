@@ -48,7 +48,7 @@ jobs:
             mingw-w64-ucrt-x86_64-sord
             mingw-w64-ucrt-x86_64-sratom
             mingw-w64-ucrt-x86_64-lilv
-            mingw-w64-ucrt-x86_64-suil
+
             mingw-w64-ucrt-x86_64-rubberband
             mingw-w64-ucrt-x86_64-vamp-plugin-sdk
             mingw-w64-ucrt-x86_64-libarchive
