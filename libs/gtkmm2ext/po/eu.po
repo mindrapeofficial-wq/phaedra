@@ -1,0 +1,176 @@
+# BASQUE TRANSLATION FOR ARDOUR 6
+# Copyright (C) YEAR "Paul Davis"
+# This file is distributed under the same license as the PACKAGE package.
+# PORRUMENTZIO <PORRUMENTZIO@RISEUP.NET>, 2020.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Ardour 6.3\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
+"PO-Revision-Date: 2020-04-02 17:51+0200\n"
+"Last-Translator: Enara Larraitz & Porrumentzio <porrumentzio@riseup.net>>\n"
+"Language-Team: Euskara <porrumentzio@riseup.net>\n"
+"Language: eu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.1\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Bookmarks: 0,-1,-1,-1,-1,-1,-1,-1,-1,-1\n"
+
+#: actions.cc:219
+msgid "Unknown action name: %1/%2"
+msgstr "Ekintza-izen ezezaguna: %1/%2"
+
+#: action_model.cc:56 action_model.cc:157
+msgid "Disabled"
+msgstr "Desgaituta"
+
+#: bindings.cc:951 bindings.cc:953
+msgid "Window"
+msgstr "Leihoa"
+
+#: bindings.cc:951
+msgid " (Categorized)"
+msgstr " (Kategoriaka)"
+
+#: bindings.cc:953
+msgid " (Alphabetical)"
+msgstr " (Alfabetikoki)"
+
+#: bindings.cc:969
+msgid "Uncategorized"
+msgstr "Kategoriarik  gabe"
+
+#: cursors.cc:81
+msgid "cursor hotspots info file %1 has an error on line %2"
+msgstr "%1 fitxategiak errore bat du %2. linean"
+
+#: emscale.cc:52
+msgid "ABCDEFGHIJLKMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+msgstr "ABCDEFGHIJLKMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
+#: gtk_ui.cc:135
+msgid "Log"
+msgstr "Erregistroa"
+
+#: gtk_ui.cc:432
+msgid ""
+"\n"
+"\n"
+"Shortcut: "
+msgstr ""
+"\n"
+"\n"
+"Laster-tekla: "
+
+#: gtk_ui.cc:724
+msgid "Press To Exit"
+msgstr "Sakatu irteteko"
+
+#: gtk_ui.cc:761
+msgid "I'm sorry %1, I can't do that"
+msgstr "%1, ezin da hori burutu"
+
+#: keyboard.cc:80
+msgid "Command"
+msgstr "Komandua"
+
+#: keyboard.cc:85 keyboard.cc:146
+msgid "Control"
+msgstr "Kontrola"
+
+#: keyboard.cc:90 keyboard.cc:120 keyboard.cc:156 keyboard.cc:186
+msgid "Key|Shift"
+msgstr "Maius"
+
+#: keyboard.cc:95
+msgid "Option"
+msgstr "Aukera"
+
+#: keyboard.cc:100
+msgid "Middle Click (or Ctrl+Alt+Click)"
+msgstr ""
+
+#: keyboard.cc:105
+msgid "Cmd+Click (or Middle-Click)"
+msgstr ""
+
+#: keyboard.cc:110
+msgid "Cmd"
+msgstr "Cmd"
+
+#: keyboard.cc:115 keyboard.cc:176
+msgid "Ctrl"
+msgstr "Ktrl"
+
+#: keyboard.cc:125
+msgid "Opt"
+msgstr "Opt"
+
+#: keyboard.cc:151 keyboard.cc:181
+msgid "Alt"
+msgstr "Alt"
+
+#: keyboard.cc:161
+msgid "Windows"
+msgstr "Windows"
+
+#: keyboard.cc:166 keyboard.cc:171
+msgid "Middle-Click"
+msgstr ""
+
+#: keyboard.cc:191
+msgid "Win"
+msgstr "Win"
+
+#: keyboard.cc:204
+msgid "CapsLock"
+msgstr ""
+
+#: keyboard.cc:210
+msgid "Lock"
+msgstr ""
+
+#: keyboard.cc:301 keyboard.cc:785
+msgid "Unknown"
+msgstr "Ezezaguna"
+
+#: keyboard.cc:795
+msgid "key bindings file not found at \"%2\" or contains errors."
+msgstr "laster-teklen fitxategia ez dago %2-(e)n edo akatsak ditu."
+
+#: keyboard.cc:821
+msgid "Keyboard binding found without a name"
+msgstr "Laster-teklak ez du izenik"
+
+#: keyboard.cc:853
+msgid "Cannot save key bindings to %1"
+msgstr "Ezin dira gorde laster-teklak %1-(e)n"
+
+#: keyboard.cc:868
+msgid "Cannot rename your own keybinding file (%1)"
+msgstr "Ezin da berrizendatu zure laster-teklen fitxategia (%1)"
+
+#: textviewer.cc:32
+msgid "Close"
+msgstr "Itxi"
+
+#~ msgid "Main_menu"
+#~ msgstr "Menu_nagusia"
+
+#~ msgid "JACK"
+#~ msgstr "JACK"
+
+#~ msgid "redirectmenu"
+#~ msgstr "birbideratzemenua"
+
+#~ msgid "Editor_menus"
+#~ msgstr "Editore_menuak"
+
+#~ msgid "RegionList"
+#~ msgstr "EremuZerrenda"
+
+#~ msgid "ProcessorMenu"
+#~ msgstr "ProzesadoreMenua"

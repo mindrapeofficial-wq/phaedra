@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Ardour>
+	<Config>
+		<Option name="discover-plugins-on-start" value="1"/>
+	</Config>
+	<Metadata/>
+	<ControlProtocols/>
+</Ardour>
