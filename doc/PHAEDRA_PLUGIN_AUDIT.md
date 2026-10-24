@@ -23,6 +23,51 @@ license/release decision and review; the two routes have different obligations.
 Likewise, "integrated" here means integrated host workflow, not statically linked
 Vital DSP. A successful Windows runtime test has not yet been completed.
 
+
+## Implemented free plugin replacement workflow
+
+The mapping is no longer only a recommendation. The following files implement it:
+
+- `tools/phaedra-plugin-replacements.json` pins official release archives with SHA-256 checksums, license notices and legacy-to-modern mappings.
+- `tools/install_free_plugins.ps1` and `.bat` download third-party binaries directly from upstream on the user's PC, verify their hashes, extract `.vst3` bundles and install them under `Plugins/VST3`.
+- `gtk2_ardour/phaedra_plugin_upgrades.h` hides legacy ACE plugins from ordinary new-project browsing only if a modern replacement is discovered.
+- `gtk2_ardour/instrument_selector.cc` prioritizes installed Vital, Surge XT, then Shortcircuit XT for new MIDI tracks, retaining GM/ACE fallback.
+- `.github/workflows/verify-plugin-suite.yml` verifies real download and extraction using Windows runners.
+
+**Windows package checks passed** in GitHub Actions run 40144752092 (October 25, 2026):
+
+| Release | Version | Verified VST3 bundles |
+| --- | --- | ---: |
+| ZamAudio | 4.5 | 19 |
+| Dragonfly Reverb | 3.2.10 | 4 |
+| Shortcircuit XT | 2026-10-21-72ad423 nightly | 1 |
+
+These are **24 freeware/open-source VST3 bundles successfully downloaded,
+SHA-256 verified and extracted**. Plugin scanning, DSP playback and session
+persistence inside Phaedra still require end-to-end testing.
+
+In a new Windows portable installation:
+
+1. Double-click `Install-Free-Plugins.bat` to install ZamAudio, Dragonfly and
+   Shortcircuit XT, with a warning about the sampler's beta status.
+2. Install Vital Basic officially and use `Install-Vital.bat` to import it locally.
+3. Restart Phaedra and rescan VST3 plugins.
+
+For just the effects, without the beta sampler:
+`powershell -NoProfile -ExecutionPolicy Bypass -File .\Install-Free-Plugins.ps1 -Group Effects`.
+
+To find legacy ACE modules deliberately, search for `ACE` in the plugin
+selector or launch with `PHAEDRA_SHOW_LEGACY_PLUGINS=1`. Existing project
+plugin IDs and automation states are never silently rewritten. Favorite ACE
+plugins also remain visible.
+
+The **public ZIP contains install helpers and the manifest, not downloaded
+third-party binaries**. Vital's proprietary official assets are especially
+excluded. A future offline bundle must satisfy the separate GPLv2, GPLv3,
+AGPLv3 and source-notice obligations associated with the chosen binaries.
+Shortcircuit XT is a beta with a developer warning about possible unexpected
+DSP peaks; keep a limiter engaged during evaluation.
+
 ### Installation steps for a Windows tester
 
 1. Obtain the free official Vital Basic installer from <https://vital.audio/>.
@@ -69,12 +114,12 @@ that any particular Windows release ZIP compiled successfully.
 | Current source module | Role | Strong free alternative to evaluate | Priority |
 | --- | --- | --- | --- |
 | ACE Reasonable Synth | Minimal default MIDI synthesizer | **Vital** (wavetable; user-installed), **Surge XT** (open source) | P0 |
-| ACE Fluid Synth | SoundFont / GM instrument | **Decent Sampler** for sampled instruments; keep Fluid Synth for SF2/GM compatibility | P2 |
+| ACE Fluid Synth | SoundFont / GM instrument | **Shortcircuit XT** (beta and verified installer); retain FluidSynth for old SF2/GM sessions | P1 |
 | ACE EQ | Channel equalizer | **TDR Nova** (dynamic EQ) / **Venn Free EQ**; LSP Parametric EQ source option | P1 |
 | ACE Compressor | Mono / stereo dynamics | **TDR Kotelnikov** / **Venn Free Comp**; LSP Compressor source option | P1 |
 | ACE Expander | Expander / gate-like dynamics | **Venn Free Gate**; LSP Expander / Gate source option | P1 |
-| ACE Reverb | Basic algorithmic reverb | **Dragonfly Reverb**, **Venn Free Reverb** or **Valhalla Supermassive** | P1 |
-| ACE Delay | Delay with BPM sync | **Venn Free Delay** or a new Phaedra beat-synced native delay | P2 |
+| ACE Reverb | Basic algorithmic reverb | **Dragonfly Hall, Room, Plate, Early Reflections** (verified installer) | P1 |
+| ACE Delay | Delay with BPM sync | **ZamDelay** (verified installer, host-tempo sync) | P1 |
 | ACE Vapor (**disabled in wscript**) | Binaural / multichannel rendering | **IEM Plug-in Suite** where its channel layouts and renderers match the route | P2 |
 
 Additional tools in `share/scripts/` are Lua scripts, some of which act as DSP
