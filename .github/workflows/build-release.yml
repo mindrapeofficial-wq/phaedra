@@ -67,6 +67,7 @@ jobs:
             base-devel
             zip
             python
+            git
 
       - name: Select product version
         run: |
