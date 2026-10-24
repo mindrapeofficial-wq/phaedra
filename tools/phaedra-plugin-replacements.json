@@ -15,7 +15,8 @@
         "ZamCompX2",
         "ZamGateX2",
         "ZamDelay"
-      ]
+      ],
+      "beta": false
     },
     {
       "id": "dragonfly-reverb",
@@ -27,7 +28,8 @@
       "source": "https://github.com/michaelwillis/dragonfly-reverb/tree/3.2.10",
       "expectedPlugins": [
         "DragonflyHallReverb"
-      ]
+      ],
+      "beta": false
     },
     {
       "id": "shortcircuit-xt",
