@@ -1,486 +1,471 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#090a11">
-  <meta name="description" content="Phaedra es un DAW gratuito en desarrollo para grabar, editar y mezclar música. Descubre el proyecto, sigue las novedades y descarga su versión experimental para Windows.">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Phaedra | Tu sonido. Tu espacio.">
-  <meta property="og:description" content="Graba, edita y crea sin barreras. Conoce Phaedra, una estación de trabajo de audio digital gratuita en desarrollo.">
-  <title>Phaedra | Digital Audio Workstation</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='17' fill='%2310121d'/%3E%3Cpath d='M20 47V17h16c18 0 18 24 0 24H20' fill='none' stroke='%23b59aff' stroke-width='6' stroke-linejoin='round'/%3E%3C/svg%3E">
-  <style>
-    :root { color-scheme: dark; --bg:#090a10; --panel:#11131e; --panel2:#161927; --text:#f5f4fb; --muted:#a1a2b7; --soft:#73778e; --edge:rgba(190,191,225,.14); --accent:#b69aff; --a2:#7c6cf8; --a3:#dd9af3; --green:#8adebe; --max:1180px; }
-    *,*::before,*::after{box-sizing:border-box}
-    html{scroll-behavior:smooth;scroll-padding-top:90px}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",system-ui,-apple-system,BlinkMacSystemFont,sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden}
-    body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.33;background:radial-gradient(ellipse 65% 50% at 90% 5%,rgba(90,59,168,.26),transparent 65%),radial-gradient(ellipse 45% 45% at -10% 46%,rgba(42,57,119,.18),transparent 70%);z-index:-1}
-    a{color:inherit;text-decoration:none}
-    a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid #c4aeff;outline-offset:4px}
-    button{font:inherit}
-    ::selection{background:#735bc7;color:#fff}
-    .container{width:min(var(--max),calc(100% - 48px));margin-inline:auto}
-    .skip{position:fixed;z-index:500;top:-80px;left:20px;background:#fff;color:#12121c;padding:10px 16px;border-radius:10px}
-    .skip:focus{top:15px}
-    .site-header{position:sticky;top:0;z-index:50;background:rgba(9,10,16,.83);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(202,194,255,.09)}
-    .header-inner{height:78px;display:flex;align-items:center;justify-content:space-between;gap:24px}
-    .brand{display:inline-flex;align-items:center;gap:12px;flex-shrink:0}
-    .brand-mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid rgba(183,155,255,.26);border-radius:10px;background:linear-gradient(145deg,#242039,#11121e);box-shadow:0 0 25px rgba(118,84,211,.15)}
-    .brand-mark svg{width:22px;height:22px}
-    .brand-word{font-weight:800;letter-spacing:.21em;font-size:16px;line-height:1}
-    .main-nav{display:flex;align-items:center;gap:24px;margin-left:auto}
-    .main-nav a{font-size:13px;font-weight:600;color:#b1b0c4;transition:color .2s}
-    .main-nav a:hover,.main-nav a[aria-current="page"]{color:white}
-    .header-cta{background:#e1d4ff!important;color:#17121f!important;padding:10px 17px;border-radius:9px;white-space:nowrap}
-    .header-cta:hover{background:#fff!important}
-    .menu-toggle{display:none;background:#1a1b28;color:#fff;border:1px solid var(--edge);padding:8px 12px;border-radius:9px;cursor:pointer}
-    .eyebrow{display:inline-flex;align-items:center;gap:9px;color:#c3b5ec;letter-spacing:.16em;text-transform:uppercase;font-size:11px;font-weight:800}
-    .dot{height:7px;width:7px;background:#a4e5ca;border-radius:50%;box-shadow:0 0 0 4px rgba(98,209,165,.11),0 0 18px rgba(98,209,165,.45)}
-    .hero{padding:103px 0 82px;position:relative}
-    .hero-grid{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:44px;align-items:center}
-    h1,h2,h3,p{margin-top:0}
-    h1{font-size:clamp(52px,6.2vw,87px);font-weight:800;letter-spacing:-.078em;line-height:1.02;margin:25px 0 23px}
-    h1 span{display:block;background:linear-gradient(115deg,#e5d4ff 13%,#a78cff 48%,#a4acfc);-webkit-background-clip:text;background-clip:text;color:transparent}
-    .lead{font-size:17px;color:#aeb0c3;line-height:1.9;max-width:520px}
-    .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:31px}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:11px;padding:13px 21px;border-radius:11px;font-size:14px;font-weight:750;border:1px solid transparent;min-height:50px;transition:transform .2s,box-shadow .2s,background .2s}
-    .btn:hover{transform:translateY(-2px)}
-    .btn-primary{background:linear-gradient(125deg,#d8c4ff,#a68bf1);color:#191426;box-shadow:0 10px 32px rgba(127,88,225,.20)}
-    .btn-primary:hover{box-shadow:0 13px 38px rgba(161,121,255,.32)}
-    .btn-secondary{border-color:rgba(197,180,255,.22);background:rgba(255,255,255,.035);color:#efeafc}
-    .btn-secondary:hover{background:rgba(255,255,255,.09)}
-    .icon-arrow{font-size:18px;line-height:1}
-    .trust{display:flex;flex-wrap:wrap;gap:13px;margin-top:31px}
-    .trust span{color:#999ab0;font-size:12px;display:flex;align-items:center;gap:7px}
-    .trust b{color:#b79aff;font-weight:900}
-    .hero-art{min-width:0;position:relative;padding:27px 0 35px}
-    .hero-art::before{content:"";position:absolute;z-index:-1;inset:-45px -50px -20px;filter:blur(40px);background:radial-gradient(ellipse at center,rgba(120,74,225,.32),transparent 70%)}
-    .floating{position:absolute;right:-8px;top:0;z-index:3;background:rgba(22,24,37,.93);border:1px solid rgba(173,146,250,.27);border-radius:13px;padding:11px 14px;box-shadow:0 14px 35px rgba(0,0,0,.35)}
-    .floating small{display:block;color:#a6a5bc;font-size:10px;letter-spacing:.10em}
-    .floating strong{font-size:13px;letter-spacing:.07em}
-    .studio-frame{background:#0e101a;border:1px solid #383047;border-radius:15px;overflow:hidden;box-shadow:0 42px 80px rgba(0,0,0,.5),0 0 0 6px rgba(135,105,210,.045);transform:perspective(1200px) rotateY(-5deg) rotateX(2deg);transform-origin:center}
-    .studio-title{height:38px;background:#191a29;border-bottom:1px solid #292d3d;display:flex;align-items:center;gap:8px;padding:0 15px;color:#b6b5c9;font-size:10px}
-    .win-dot{width:7px;height:7px;border-radius:50%;background:#6a5568}
-    .win-dot:nth-child(2){background:#726a58}.win-dot:nth-child(3){background:#4c766d}
-    .studio-title strong{color:#dfd6f8;font-size:11px;letter-spacing:.18em;margin:auto}
-    .studio-toolbar{height:43px;display:flex;align-items:center;gap:12px;padding:0 12px;background:#121523;border-bottom:1px solid #2a2b3e;font-size:9px;color:#9499b0}
-    .play-btn{width:25px;height:25px;display:grid;place-items:center;background:#9a7ced;color:#10101b;border-radius:6px;font-weight:900;font-size:14px}
-    .time-readout{border:1px solid #32314a;padding:3px 8px;border-radius:5px;color:#e7dffd;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.08em}
-    .tempo{margin-left:auto;white-space:nowrap}
-    .studio-main{display:grid;grid-template-columns:105px minmax(0,1fr);height:291px}
-    .track-names{border-right:1px solid #313247;background:#151724;padding-top:28px}
-    .track-name{height:55px;border-top:1px solid #262b3e;padding:9px 9px;display:flex;align-items:center;gap:8px}
-    .track-name .tile{height:21px;width:5px;border-radius:4px;background:var(--tc,#9b7eef)}
-    .track-name strong{display:block;font-size:8px;letter-spacing:.08em;color:#f0eeff;line-height:1.2}
-    .track-name small{color:#797e96;font-size:7px}
-    .arrange{min-width:0;background:#10121d;overflow:hidden;position:relative}
-    .ruler{height:28px;display:grid;grid-template-columns:repeat(8,1fr);background:#171a28;border-bottom:1px solid #333448;color:#9394b0;font-size:10px}
-    .ruler span{border-left:1px solid #303344;padding:5px 6px}
-    .lanes{height:100%;position:relative;background:repeating-linear-gradient(to right,transparent 0,transparent calc(12.5% - 1px),rgba(117,118,152,.17) calc(12.5% - 1px),rgba(117,118,152,.17) 12.5%)}
-    .lane{height:55px;border-bottom:1px solid #282b3b;position:relative}
-    .clip{position:absolute;top:7px;bottom:7px;left:var(--l);width:var(--w);min-width:10px;overflow:hidden;border-radius:4px;background:color-mix(in srgb,var(--c) 21%,#141b29);border:1px solid color-mix(in srgb,var(--c) 55%,transparent)}
-    .clip::before{content:attr(data-name);position:absolute;left:6px;top:2px;color:var(--c);font-weight:800;font-size:7px;letter-spacing:.03em;z-index:2}
-    .wave{display:flex;align-items:center;gap:2px;height:100%;padding:10px 4px 2px;opacity:.78}
-    .wave i{display:block;flex:1;min-width:1px;height:var(--h);border-radius:2px;background:var(--c);opacity:.85}
-    .notes{display:flex;align-items:center;gap:7px;height:100%;padding:15px 7px 3px}
-    .notes i{width:19px;height:4px;background:var(--c);border-radius:2px;transform:translateY(var(--dy,0))}
-    .playhead{position:absolute;top:0;bottom:0;left:44%;width:1px;background:#efe4ff;box-shadow:0 0 13px #bca5ff;pointer-events:none;z-index:4}
-    .playhead::before{content:"";position:absolute;top:0;left:-4px;border-left:4px solid transparent;border-right:4px solid transparent;border-top:7px solid #e0ccff}
-    .studio-mixer{height:63px;padding:10px 13px;display:flex;align-items:center;gap:12px;border-top:1px solid #303247;background:#151725}
-    .mini-channel{display:flex;align-items:center;gap:7px;min-width:0;flex:1}
-    .mini-channel small{font-size:7px;color:#7f829a}
-    .meter{display:flex;align-items:flex-end;gap:2px;height:31px}
-    .meter i{display:block;width:4px;height:var(--mh);border-radius:1px;background:linear-gradient(0deg,#5dbba9 0%,#a3e6b6 65%,#e9bc79 100%)}
-    .studio-status{margin-left:auto;border:1px solid #4a3d63;border-radius:5px;padding:5px 7px;color:#b59cfc;font-size:8px;white-space:nowrap}
-    .mock-caption{text-align:center;color:#72778d;font-size:11px;margin:20px 0 0}
-    .signal-strip{border-top:1px solid var(--edge);border-bottom:1px solid var(--edge);background:linear-gradient(90deg,rgba(100,76,145,.035),rgba(135,105,211,.075),rgba(100,76,145,.035))}
-    .signal-inner{padding:22px 0;display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px}
-    .signal-inner span{color:#9494a9;font-size:11px;text-transform:uppercase;letter-spacing:.22em;font-weight:700}
-    .section{padding:110px 0}
-    .section-head{max-width:730px;margin-bottom:44px}
-    .section-head h2{font-size:clamp(37px,4.3vw,60px);letter-spacing:-.065em;line-height:1.11;margin:14px 0 17px}
-    .section-head p{color:#a0a1b6;font-size:16px;line-height:1.85}
-    .feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-    .feature{background:linear-gradient(155deg,rgba(35,35,55,.8),rgba(15,17,26,.93));border:1px solid var(--edge);border-radius:18px;padding:30px;min-height:236px;transition:border-color .2s,transform .2s}
-    .feature:hover{border-color:rgba(175,142,255,.47);transform:translateY(-3px)}
-    .feature-symbol{height:45px;width:45px;display:grid;place-items:center;border-radius:13px;background:#26213c;color:#c9b2ff;font-size:24px;margin-bottom:23px;line-height:1}
-    .feature h3{font-size:19px;margin-bottom:10px;letter-spacing:-.025em}
-    .feature p{font-size:13px;color:#9699ac;line-height:1.85;margin-bottom:0}
-    .feature .tag{margin-top:16px;font-size:10px;letter-spacing:.1em;color:#bfa9f7;text-transform:uppercase}
-    .wide-feature{border:1px solid var(--edge);border-radius:22px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;min-height:340px;background:linear-gradient(130deg,#161727,#0d0f19)}
-    .wide-feature-copy{padding:50px;align-self:center}
-    .wide-feature-copy h2{font-size:clamp(32px,3.5vw,47px);letter-spacing:-.06em;line-height:1.14;margin:13px 0 16px}
-    .wide-feature-copy p{color:#a1a4b8;max-width:460px}
-    .wide-feature-visual{position:relative;overflow:hidden;min-height:285px;background:radial-gradient(ellipse at 85% 35%,rgba(113,67,230,.26),transparent 65%),repeating-linear-gradient(90deg,#191b2c 0,#191b2c 1px,transparent 1px,transparent 47px),#10111e}
-    .piano{position:absolute;top:54px;left:30px;right:-20px;bottom:22px;display:flex;flex-direction:column;gap:19px}
-    .piano::before{content:"";position:absolute;left:0;top:-20px;bottom:0;width:43px;background:repeating-linear-gradient(180deg,#d6d5eb 0,#d6d5eb 17px,#77798b 17px,#77798b 18px);opacity:.38}
-    .piano i{position:relative;height:11px;border-radius:4px;background:linear-gradient(90deg,#9980f7,#c083d4);box-shadow:0 0 22px rgba(180,112,234,.17);margin-left:var(--ml);width:var(--pw)}
-    .piano i:nth-child(even){background:linear-gradient(90deg,#6ebfd2,#9d8ee9)}
-    .roadmap-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-    .phase{background:#11131d;border:1px solid var(--edge);border-radius:16px;padding:26px;min-height:214px;position:relative}
-    .phase-n{font-size:11px;color:#987edc;font-weight:800;letter-spacing:.18em}
-    .phase h3{font-size:18px;margin:24px 0 10px}
-    .phase p{font-size:12px;color:#9597a9;margin:0;line-height:1.8}
-    .phase-status{display:inline-flex;gap:6px;align-items:center;border:1px solid #3d334f;color:#c9b5ff;background:#1d182a;border-radius:20px;padding:5px 10px;font-size:10px;margin-top:17px}
-    .phase-status.pending{border-color:#2e3040;background:#191b25;color:#9b9db0}
-    .download-area{background:linear-gradient(135deg,rgba(77,52,121,.26),rgba(18,20,32,.9) 59%);border:1px solid rgba(181,153,252,.3);border-radius:24px;padding:46px;display:grid;grid-template-columns:1.15fr .85fr;gap:33px;align-items:center;box-shadow:0 24px 90px rgba(0,0,0,.18)}
-    .download-area h2{font-size:clamp(35px,4vw,54px);line-height:1.08;letter-spacing:-.065em;margin:12px 0 16px}
-    .download-area p{color:#a6a6bd;max-width:530px}
-    .download-info{background:#0d0f19;border:1px solid rgba(204,183,255,.18);border-radius:18px;padding:26px}
-    .file-top{display:flex;gap:13px;align-items:center}
-    .file-icon{width:45px;height:48px;border-radius:9px;background:#261f3c;color:#bd9eff;display:grid;place-items:center;font-size:23px}
-    .file-top strong{display:block;font-size:15px}
-    .file-top small{font-size:12px;color:#81849d}
-    .file-details{display:flex;flex-wrap:wrap;gap:6px;margin:18px 0}
-    .chip{font-size:10px;padding:6px 9px;border-radius:6px;border:1px solid #38374e;color:#b9b6c8}
-    .dl-link{width:100%;text-align:center}
-    .dl-secondary{margin:14px 0 0;text-align:center;font-size:12px;color:#ab9cdb}
-    .dl-secondary a{text-decoration:underline;text-underline-offset:3px}
-    .warning{display:flex;gap:10px;align-items:flex-start;margin:18px 0 0!important;font-size:12px!important;line-height:1.7;color:#bab2c6!important}
-    .updates-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .update-card{border:1px solid var(--edge);background:#11131e;border-radius:19px;padding:30px}
-    .update-card h3{font-size:21px;margin:8px 0 12px}
-    .update-card p{color:#a0a0b4;font-size:13px;line-height:1.85}
-    .date{font-size:11px;letter-spacing:.1em;color:#ac97e8;text-transform:uppercase;font-weight:800}
-    .inline-link{color:#bea7ff;font-weight:750;font-size:13px}
-    .inline-link:hover{text-decoration:underline;text-underline-offset:4px}
-    .doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-    details{border:1px solid var(--edge);border-radius:13px;background:#12131d;padding:0 22px}
-    summary{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:21px 0;font-weight:700;font-size:14px;list-style:none}
-    summary::-webkit-details-marker{display:none}
-    summary::after{content:"+";font-size:24px;font-weight:350;color:#b69aff;line-height:1}
-    details[open] summary::after{content:"−"}
-    details p{font-size:13px;color:#9fa0b5;line-height:1.85;margin:0 0 22px}
-    details a{color:#c5adff;text-decoration:underline}
-    .closing{padding:95px 0 105px;text-align:center;position:relative}
-    .closing::before{content:"";position:absolute;z-index:-1;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(106,68,193,.19),transparent 65%)}
-    .closing h2{font-size:clamp(44px,6vw,75px);line-height:1.08;letter-spacing:-.075em;margin:16px 0 17px}
-    .closing p{color:#a3a4b6;max-width:560px;margin:0 auto 27px}
-    .footer{border-top:1px solid var(--edge);padding:42px 0 24px;color:#81849b;font-size:12px}
-    .footer-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:35px}
-    .footer-brand p{max-width:360px;line-height:1.9;margin:16px 0 0}
-    .footer-links{display:flex;gap:30px;flex-wrap:wrap}
-    .footer-links a{color:#a7a9bb}
-    .footer-links a:hover{color:#fff}
-    .legal{margin-top:30px;border-top:1px solid rgba(180,176,224,.1);padding-top:18px;font-size:11px;line-height:1.8}
-    .legal a{color:#bea9ff;text-decoration:underline;text-underline-offset:2px}
-    @media(max-width:1000px){
-      .hero-grid{grid-template-columns:1fr;gap:15px}
-      .hero-copy{max-width:680px}
-      .hero-art{max-width:760px;width:100%;margin:auto}
-      .hero{padding-top:70px}
-      .feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .roadmap-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .main-nav{gap:13px}
-    }
-    @media(max-width:680px){
-      html{scroll-padding-top:78px}
-      .container{width:min(var(--max),calc(100% - 34px))}
-      .header-inner{height:66px}
-      .brand-word{font-size:14px}
-      .menu-toggle{display:block}
-      .main-nav{display:none;position:absolute;top:65px;left:0;right:0;background:#10111b;border-bottom:1px solid #333041;padding:17px;flex-direction:column;align-items:stretch;gap:0;box-shadow:0 25px 50px rgba(0,0,0,.45)}
-      .main-nav.is-open{display:flex}
-      .main-nav a{padding:12px 16px;font-size:15px}
-      .main-nav .header-cta{text-align:center;margin-top:8px}
-      .hero{padding:65px 0 51px}
-      h1{font-size:clamp(49px,11.5vw,68px)}
-      .lead{font-size:15px}
-      .hero-art{padding-top:43px;overflow:hidden}
-      .studio-frame{width:600px;max-width:none;transform:scale(.78);transform-origin:top left;margin-bottom:-92px}
-      .hero-art::before{inset:5%}
-      .floating{right:0;top:10px}
-      .mock-caption{margin-top:14px}
-      .signal-inner{justify-content:center;gap:13px 20px}
-      .signal-inner span{font-size:9px;letter-spacing:.1em}
-      .section{padding:76px 0}
-      .section-head{margin-bottom:30px}
-      .section-head h2{font-size:clamp(34px,9vw,45px)}
-      .section-head p{font-size:14px}
-      .feature-grid,.roadmap-grid,.doc-grid,.updates-grid{grid-template-columns:1fr}
-      .feature{padding:24px;min-height:auto}
-      .wide-feature{grid-template-columns:1fr}
-      .wide-feature-copy{padding:31px}
-      .wide-feature-visual{min-height:230px}
-      .download-area{grid-template-columns:1fr;padding:24px;gap:20px}
-      .download-area h2{font-size:39px}
-      .download-info{padding:21px}
-      .footer-inner{flex-direction:column}
-      .footer-links{gap:15px}
-      .closing{padding:76px 0}
-    }
-    @media(max-width:440px){
-      .studio-frame{transform:scale(.55);margin-bottom:-160px}
-      .hero-art{height:335px}
-      .mock-caption{margin-top:2px;font-size:10px}
-      .hero-actions .btn{width:100%}
-      .trust{gap:8px 15px}
-      .studio-mixer{gap:5px}
-    }
-    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#191917">
+<meta name="description" content="Phaedra. Software de producción musical en desarrollo. Graba, crea, edita y mezcla. Gratis por ahora. Descarga la versión experimental para Windows.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PHAEDRA | La música primero.">
+<meta property="og:description" content="Tu estudio. Tus ideas. Phaedra es un DAW gratuito en desarrollo para Windows.">
+<title>PHAEDRA® | La música primero.</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/mindrapeofficial-wq/phaedra/main/gtk2_ardour/resources/Phaedra-icon_512px.png">
+<style>
+:root{
+  --ink:#191917;--paper:#f2f0ea;--paper-2:#e7e4dc;--white:#fffdf7;
+  --purple:#a68cdd;--deep-purple:#6249a3;--line:#c8c5bb;--line-dark:#464540;
+  --soft:#6a6964;--hot:#e9654f;--green:#b3cc69;
+  --gutter:clamp(22px,4.15vw,78px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{margin:0;color:var(--ink);background:var(--paper);font-family:Arial,Helvetica,system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--hot);outline-offset:3px}
+::selection{background:var(--purple);color:var(--ink)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip-link{position:fixed;top:-120px;left:20px;z-index:200;background:#fff;padding:14px}
+.skip-link:focus{top:12px}
+.smallcaps{font-size:11px;font-weight:800;letter-spacing:.105em;text-transform:uppercase}
+.rule{border-top:1px solid currentColor}
+.masthead{height:76px;background:var(--ink);color:var(--white);display:flex;align-items:stretch;padding-left:var(--gutter);position:sticky;top:0;z-index:100;border-bottom:1px solid #42413f}
+.identity{display:flex;align-items:center;gap:13px;min-width:0;padding-right:28px}
+.identity-icon{width:33px;height:33px;border-radius:50%;object-fit:contain;background:#251b3f}
+.identity-name{font-size:18px;font-weight:900;letter-spacing:-.055em}
+.identity-id{border-left:1px solid #5b5955;padding-left:14px;color:#a7a39d;font-size:10px;letter-spacing:.055em;line-height:1.2;max-width:120px}
+.top-nav{display:flex;align-items:stretch;gap:0;margin-left:auto}
+.top-nav a{display:grid;place-items:center;padding:0 clamp(12px,1.5vw,26px);font-size:11px;font-weight:800;letter-spacing:.04em;border-left:1px solid #44423e;transition:background-color .15s}
+.top-nav a:hover{background:#33312e}
+.top-nav .download-top{background:var(--purple);color:var(--ink);font-weight:900;font-size:12px;padding:0 30px}
+.top-nav .download-top:hover{background:#c7b3ef}
+.mobile-menu{display:none;border:0;color:#fff;background:transparent;padding:0 20px}
+.mobile-menu span{display:block;width:24px;height:2px;background:#fff;margin:5px 0}
+.hero{padding:29px var(--gutter) 0;background:var(--paper);position:relative}
+.hero-strip{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;padding-bottom:16px;border-bottom:1px solid #a9a59c}
+.hero-strip span:last-child{text-align:right}
+.hero-strip span:nth-child(2){text-align:center}
+.hero-heading{margin:6px -.026em 0 -.064em;font-size:clamp(70px,17.7vw,283px);font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;line-height:.92;font-weight:900;letter-spacing:-.091em;white-space:nowrap;max-width:100%;font-stretch:condensed}
+.hero-heading .period{color:var(--deep-purple)}
+.hero-lower{display:grid;grid-template-columns:1.06fr .94fr;gap:clamp(28px,6vw,100px);padding:30px 0 64px;border-top:1px solid #b6b2a9}
+.hero-lead{font-size:clamp(35px,4.65vw,74px);line-height:1.05;font-weight:800;letter-spacing:-.068em;margin:0;max-width:750px}
+.hero-lead strong{font-weight:800;color:var(--deep-purple)}
+.hero-aside{max-width:455px;margin-left:auto;display:flex;flex-direction:column;align-items:flex-start;gap:23px}
+.hero-aside p{font-size:clamp(15px,1.5vw,18px);line-height:1.65;max-width:440px;margin:0}
+.action{min-height:58px;display:inline-flex;align-items:center;justify-content:space-between;gap:30px;padding:16px 20px;background:var(--ink);color:#fff;font-size:12px;font-weight:850;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--ink);transition:background .15s,color .15s}
+.action:hover{background:var(--deep-purple);border-color:var(--deep-purple)}
+.action .arrow{font-size:24px;font-weight:400;line-height:1}
+.action.pale{background:var(--paper);border-color:var(--paper);color:var(--ink)}
+.action.pale:hover{background:#fff;border-color:#fff}
+.action.line{background:transparent;color:var(--ink)}
+.action.line:hover{background:var(--ink);color:var(--paper)}
+.hero-footnote{font-size:11px!important;color:#75716a;line-height:1.5!important}
+.brand-film{background:var(--ink);color:var(--paper);display:grid;grid-template-columns:30% 45% 25%;height:clamp(420px,45vw,650px);overflow:hidden}
+.film-left{position:relative;background:#aa91df;border-right:1px solid rgba(0,0,0,.35);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3vw}
+.film-left::before,.film-left::after{content:"";position:absolute;border:1px solid rgba(22,19,30,.26);border-radius:50%;aspect-ratio:1}
+.film-left::before{width:105%}.film-left::after{width:135%}
+.film-left img{position:relative;z-index:2;width:min(59%,245px);height:auto;filter:drop-shadow(0 12px 20px rgba(30,10,60,.17));}
+.film-label{position:absolute;top:26px;left:var(--gutter);color:#282337;z-index:3}
+.film-code{position:absolute;bottom:26px;left:var(--gutter);font-size:10px;letter-spacing:.13em;font-weight:800;color:#362e4c;z-index:3}
+.film-center{display:flex;flex-direction:column;justify-content:space-between;padding:35px clamp(25px,4vw,70px);position:relative;overflow:hidden}
+.film-center::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 35px,rgba(255,255,255,.028) 36px,transparent 37px);pointer-events:none}
+.film-center .smallcaps{color:#b6b0a5;position:relative;z-index:1}
+.film-statement{font-size:clamp(36px,5.2vw,84px);letter-spacing:-.075em;line-height:1.01;font-weight:900;margin:0;position:relative;z-index:1}
+.film-statement em{font-style:normal;color:var(--purple)}
+.film-bottom{display:flex;justify-content:space-between;gap:20px;position:relative;z-index:1;font-size:11px;letter-spacing:.12em}
+.film-right{border-left:1px solid #44403e;position:relative;display:flex;flex-direction:column;overflow:hidden}
+.film-right-head{padding:30px 25px;border-bottom:1px solid #4a4741;display:flex;justify-content:space-between}
+.sound-bars{display:flex;align-items:end;justify-content:space-between;gap:4px;padding:30px 18px;flex:1;min-height:0}
+.sound-bars i{height:var(--height);min-height:4px;flex:1;background:var(--green);opacity:var(--opacity);display:block}
+.film-right-foot{padding:15px 25px;display:flex;justify-content:space-between;border-top:1px solid #4a4741;color:#a8a7a0}
+.ticker{display:flex;justify-content:space-between;gap:14px;padding:17px var(--gutter);background:var(--hot);font-size:11px;letter-spacing:.13em;font-weight:850;text-transform:uppercase;flex-wrap:wrap}
+.chapter{padding:clamp(85px,10vw,150px) var(--gutter);background:var(--paper)}
+.chapter-kicker{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid #b9b5aa;gap:20px}
+.chapter-title{font-size:clamp(54px,8.9vw,146px);line-height:.95;letter-spacing:-.083em;font-weight:900;margin:44px 0 53px;max-width:1400px}
+.chapter-title .thin{font-weight:400}
+.chapter-text{display:grid;grid-template-columns:1fr 1fr;gap:6vw;border-top:1px solid #b9b5aa;padding-top:20px;align-items:start}
+.chapter-text .big{max-width:640px;font-size:clamp(24px,2.9vw,40px);font-weight:800;line-height:1.2;letter-spacing:-.04em;margin:0}
+.chapter-text p:last-child{margin:0;max-width:450px;line-height:1.7;font-size:15px}
+.features{background:var(--paper);padding:0 var(--gutter) clamp(75px,9vw,140px)}
+.feature-row{display:grid;grid-template-columns:15% 41% 1fr;gap:20px;align-items:start;border-top:1px solid #b9b5aa;padding:31px 0 42px}
+.feature-row:last-child{border-bottom:1px solid #b9b5aa}
+.feature-row .n{font-size:11px;font-weight:800;letter-spacing:.08em;padding-top:9px}
+.feature-row h3{font-weight:850;letter-spacing:-.052em;line-height:1.03;font-size:clamp(35px,4.7vw,76px);margin:0}
+.feature-row p{max-width:470px;margin:5px 0 0;color:#5c5a55;font-size:15px;line-height:1.7}
+.stage{background:#1e1e1c;color:#f6f4ed;padding:clamp(70px,8vw,120px) var(--gutter)}
+.stage-heading{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:36px}
+.stage-heading h2{font-size:clamp(44px,7vw,102px);margin:11px 0 0;letter-spacing:-.08em;line-height:.95}
+.stage-heading p{margin:0;max-width:300px;font-size:12px;line-height:1.7;color:#b6b2a9}
+.workstation{border:1px solid #595650;background:#101112;box-shadow:0 32px 65px rgba(0,0,0,.24);width:100%;overflow:hidden}
+.workstation-top{height:55px;display:flex;align-items:center;justify-content:space-between;padding:0 23px;gap:20px;border-bottom:1px solid #3d3c3a;background:#2b2c2c}
+.ws-brand{display:flex;gap:14px;align-items:center;font-size:12px;font-weight:850;letter-spacing:.07em}
+.ws-brand em{font-weight:400;font-size:10px;color:#8f918f;font-style:normal}
+.ws-state{font-family:monospace;font-size:11px;letter-spacing:.055em;color:#c4c5c0}
+.ws-controls{display:flex;gap:10px;align-items:center;font-size:11px}
+.ws-controls b{color:#a890e9}
+.ws-controls .play{background:#d1c4eb;color:#1d1725;padding:8px 11px}
+.timeline{display:grid;grid-template-columns:clamp(110px,16%,185px) 1fr;min-height:370px}
+.track-list{background:#232425;border-right:1px solid #464747}
+.track-hd,.beats{height:42px;border-bottom:1px solid #434443;display:flex;align-items:center;padding:0 16px;font-size:10px;color:#a4a5a2;letter-spacing:.07em}
+.beats{padding:0;display:grid;grid-template-columns:repeat(8,1fr);background:#272829}
+.beats span{padding:0 0 0 8px;border-left:1px solid #49494a;line-height:42px}
+.track{height:65px;border-bottom:1px solid #3c3c3d;display:flex;align-items:center;gap:10px;padding:0 14px}
+.track i{width:4px;height:33px;background:var(--tc);display:block;flex:none}
+.track b{display:block;font-size:11px;letter-spacing:.035em}
+.track small{display:block;font-size:9px;color:#858a8b;margin-top:4px}
+.arranger{position:relative;background-color:#171819;background-image:linear-gradient(to right,rgba(242,238,220,.055) 1px,transparent 1px);background-size:12.5% 100%;min-width:0}
+.arrange-track{height:65px;border-bottom:1px solid #303132;position:relative}
+.region{position:absolute;top:6px;bottom:6px;left:var(--l);width:var(--w);background:color-mix(in srgb,var(--c) 26%,#202425);border-top:3px solid var(--c);overflow:hidden}
+.region-label{font-size:9px;font-weight:800;color:var(--c);padding:3px 6px;position:absolute;z-index:2;top:0;left:0}
+.wave{height:100%;display:flex;align-items:center;gap:1px;padding:14px 4px 4px}
+.wave i{flex:1;min-width:1px;height:var(--h);background:var(--c);opacity:.68}
+.midi-notes{position:absolute;inset:24px 7px 7px;display:flex;align-items:center;gap:12px}
+.midi-notes i{display:block;flex:1;max-width:40px;height:5px;background:var(--c);transform:translateY(var(--y,0))}
+.play-line{position:absolute;left:42%;top:0;bottom:0;width:2px;background:#ddd0fd;box-shadow:0 0 13px rgba(199,165,250,.55);z-index:4;pointer-events:none}
+.play-line::before{content:"";position:absolute;top:0;left:-5px;width:12px;height:12px;background:#ddd0fd;clip-path:polygon(0 0,100% 0,50% 100%)}
+.workstation-lower{height:93px;display:grid;grid-template-columns:2fr repeat(5,1fr);border-top:1px solid #494948;background:#222323}
+.ws-lower-label{display:flex;align-items:end;padding:17px 18px;font-size:10px;letter-spacing:.07em;color:#bdbbb3}
+.ws-channel{border-left:1px solid #414241;display:flex;align-items:end;gap:10px;padding:14px 12px}
+.ws-meter{display:flex;gap:2px;align-items:end;height:53px}
+.ws-meter i{background:var(--green);height:var(--h);width:4px;opacity:.8}
+.ws-channel small{font-size:9px;color:#a7a5a1;white-space:nowrap}
+.stage-caption{display:flex;justify-content:space-between;gap:20px;padding-top:15px;color:#aaa69e;font-size:11px}
+.stage-details{display:grid;grid-template-columns:1fr 1fr;gap:9vw;margin-top:95px;padding-top:22px;border-top:1px solid #585550}
+.stage-details h3{font-size:clamp(35px,4.1vw,66px);letter-spacing:-.063em;line-height:1.08;margin:0}
+.stage-details p{max-width:540px;margin:0;color:#b0aca5;font-size:15px;line-height:1.7}
+.manifesto{background:var(--purple);color:#20192c;padding:clamp(85px,9vw,140px) var(--gutter);position:relative;overflow:hidden}
+.manifesto::after{content:"";position:absolute;width:clamp(220px,32vw,520px);height:clamp(220px,32vw,520px);right:-12%;bottom:-42%;border:35px solid #443363;border-radius:50%;opacity:.18;pointer-events:none}
+.manifesto-label{display:flex;justify-content:space-between;border-bottom:1px solid #614a86;padding-bottom:15px}
+.manifesto h2{font-weight:900;font-size:clamp(57px,10vw,155px);line-height:.99;letter-spacing:-.093em;margin:45px 0 38px;max-width:1250px;position:relative;z-index:1}
+.manifesto .manifesto-bottom{display:flex;align-items:end;justify-content:space-between;gap:30px;border-top:1px solid #614a86;padding-top:22px}
+.manifesto p{max-width:610px;font-size:clamp(17px,2vw,25px);line-height:1.45;font-weight:700;letter-spacing:-.018em;margin:0}
+.progress{background:var(--paper);padding:clamp(85px,9vw,140px) var(--gutter)}
+.progress-heading{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:end;margin-bottom:45px}
+.progress-heading h2{font-size:clamp(52px,7.6vw,112px);line-height:.99;letter-spacing:-.085em;margin:23px 0 0}
+.progress-heading p{max-width:480px;margin:0;font-size:15px;line-height:1.7}
+.milestone{border-top:1px solid #bbb7ae;display:grid;grid-template-columns:12% 47% 1fr;gap:20px;align-items:start;padding:25px 0}
+.milestone:last-child{border-bottom:1px solid #bbb7ae}
+.milestone .number{font-size:11px;font-weight:800}
+.milestone h3{font-size:clamp(27px,3.6vw,51px);letter-spacing:-.055em;line-height:1.08;margin:0}
+.milestone-right{display:flex;justify-content:space-between;gap:20px;align-items:start}
+.milestone-right p{max-width:310px;margin:0;font-size:13px;line-height:1.65;color:#615f58}
+.status{display:inline-block;border:1px solid #969188;padding:7px 8px;white-space:nowrap;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.07em}
+.status.on{background:#d8d1f0;border-color:#d8d1f0}
+.release{background:#171716;color:var(--paper);padding:clamp(80px,9vw,130px) var(--gutter)}
+.release-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:18px;border-bottom:1px solid #51504b}
+.release-head .live-point{display:inline-flex;align-items:center;gap:8px}
+.live-point::before{content:"";width:8px;height:8px;background:var(--green);display:inline-block;border-radius:50%}
+.release h2{font-size:clamp(80px,17.2vw,252px);line-height:.87;letter-spacing:-.095em;margin:36px 0 45px;font-weight:900}
+.release h2 span{color:var(--purple)}
+.release-grid{border-top:1px solid #51504b;padding-top:23px;display:grid;grid-template-columns:1fr 1fr;gap:6vw}
+.release-grid .pitch{font-size:clamp(28px,3.1vw,49px);font-weight:750;letter-spacing:-.055em;line-height:1.16;margin:0;max-width:660px}
+.release-card{border:1px solid #777169;padding:26px;display:flex;flex-direction:column;gap:25px}
+.release-file{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+.release-file h3{font-size:clamp(22px,3vw,35px);letter-spacing:-.05em;line-height:1.04;margin:0}
+.release-file p{margin:7px 0 0;font-size:12px;color:#b7b0ab}
+.release-file .file-mark{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;border:1px solid #6f6b69;padding:11px;letter-spacing:.03em}
+.release-card .action{width:100%}
+.release-notes{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;border-top:1px solid #514e4a;padding-top:19px;font-size:11px;color:#bcb8b1}
+.release-notes a{text-decoration:underline;text-underline-offset:4px}
+.release-warning{margin:25px 0 0;font-size:12px;line-height:1.7;color:#ada9a2;max-width:760px}
+.help{background:var(--paper);padding:clamp(80px,9vw,130px) var(--gutter)}
+.help-layout{display:grid;grid-template-columns:1fr 1.2fr;gap:9vw}
+.help h2{font-size:clamp(57px,7.5vw,111px);letter-spacing:-.085em;line-height:1.0;margin:25px 0}
+.help .sub{font-size:15px;line-height:1.7;max-width:330px}
+.help-list{border-top:1px solid #b9b5aa}
+.help-list details{border-bottom:1px solid #b9b5aa}
+.help-list summary{list-style:none;cursor:pointer;padding:24px 0;display:flex;justify-content:space-between;gap:22px;font-size:17px;font-weight:750;letter-spacing:-.025em}
+.help-list summary::-webkit-details-marker{display:none}
+.help-list summary::after{content:"+";font-size:28px;font-weight:400;line-height:1}
+.help-list details[open] summary::after{content:"−"}
+.help-list p{font-size:14px;line-height:1.75;max-width:650px;margin:0 0 25px;color:#5b5953}
+.help-list p a{text-decoration:underline;text-underline-offset:3px}
+.foot{background:var(--ink);color:var(--paper);padding:70px var(--gutter) 25px}
+.foot-top{display:flex;justify-content:space-between;gap:30px}
+.foot-top p{max-width:370px;line-height:1.5;font-size:24px;font-weight:700;letter-spacing:-.045em;margin:0}
+.foot-top nav{display:flex;gap:clamp(18px,3vw,55px);font-size:12px;font-weight:750}
+.foot-top nav a:hover{text-decoration:underline;text-underline-offset:4px}
+.foot-word{font-size:clamp(69px,17.7vw,280px);letter-spacing:-.093em;font-weight:900;line-height:1;margin:85px -.022em 26px -.064em;white-space:nowrap}
+.footer-legal{display:flex;justify-content:space-between;gap:25px;border-top:1px solid #55514e;padding-top:22px;color:#b7b3ac;font-size:11px;line-height:1.7}
+.footer-legal p{margin:0;max-width:710px}
+.footer-legal a{text-decoration:underline;text-underline-offset:3px}
+@media(max-width:1050px){
+  .identity-id{display:none}
+  .top-nav a{padding:0 14px}
+  .brand-film{grid-template-columns:33% 45% 22%}
+  .feature-row{grid-template-columns:12% 42% 1fr}
+  .milestone-right{flex-direction:column}
+}
+@media(max-width:760px){
+  html{scroll-padding-top:65px}
+  .masthead{height:65px}
+  .identity-icon{width:28px;height:28px}
+  .identity-name{font-size:16px}
+  .mobile-menu{display:block;margin-left:auto}
+  .top-nav{display:none;position:absolute;left:0;right:0;top:65px;z-index:101;background:var(--ink);border-bottom:1px solid #67625c;box-shadow:0 25px 45px rgba(0,0,0,.24);padding:0 var(--gutter) 20px}
+  .top-nav.open{display:flex;flex-direction:column}
+  .top-nav a{display:flex;min-height:51px;border-left:0;border-bottom:1px solid #4e4b48;padding:0 5px}
+  .top-nav .download-top{justify-content:center;margin-top:18px;padding:14px 20px;min-height:53px}
+  .hero{padding-top:22px}
+  .hero-strip{grid-template-columns:1fr 1fr;font-size:9px}
+  .hero-strip span:nth-child(2){display:none}
+  .hero-heading{font-size:17.4vw;margin:20px -.08em 0 -.07em;letter-spacing:-.092em}
+  .hero-lower{grid-template-columns:1fr;gap:30px;padding:32px 0 45px}
+  .hero-lead{font-size:clamp(35px,9vw,62px)}
+  .hero-aside{margin:0;max-width:600px;gap:18px}
+  .hero-aside p{font-size:15px}
+  .hero-actions{display:flex;gap:12px}
+  .brand-film{grid-template-columns:41% 59%;height:490px}
+  .film-center{padding:25px}
+  .film-statement{font-size:clamp(40px,7.5vw,72px)}
+  .film-right{display:none}
+  .film-left img{width:78%}
+  .film-label,.film-code{left:22px}
+  .ticker{gap:14px}
+  .chapter-title{font-size:clamp(53px,10vw,85px)}
+  .chapter-text{grid-template-columns:1fr;gap:25px}
+  .feature-row{grid-template-columns:12% 1fr;gap:10px}
+  .feature-row h3{font-size:clamp(36px,7vw,52px)}
+  .feature-row p{grid-column:2;max-width:550px}
+  .stage-heading{display:block}
+  .stage-heading p{margin-top:25px}
+  .workstation{overflow-x:auto}
+  .workstation-top,.timeline,.workstation-lower{min-width:730px}
+  .stage-details{grid-template-columns:1fr;gap:25px;margin-top:60px}
+  .manifesto .manifesto-bottom{align-items:flex-start;flex-direction:column}
+  .progress-heading{grid-template-columns:1fr;gap:27px}
+  .milestone{grid-template-columns:12% 1fr}
+  .milestone-right{grid-column:2}
+  .release-grid{grid-template-columns:1fr;gap:30px}
+  .help-layout{grid-template-columns:1fr;gap:30px}
+  .foot-top{flex-direction:column}
+  .foot-top nav{flex-wrap:wrap}
+  .footer-legal{flex-direction:column;gap:12px}
+}
+@media(max-width:480px){
+  .smallcaps{font-size:9px}
+  .hero-heading{font-size:17.4vw}
+  .brand-film{height:400px;grid-template-columns:43% 57%}
+  .film-center{padding:20px 15px}
+  .film-statement{font-size:clamp(29px,8vw,43px)}
+  .film-bottom{font-size:9px;flex-wrap:wrap}
+  .ticker span:nth-child(n+4){display:none}
+  .feature-row h3{font-size:35px}
+  .release-card{padding:17px}
+  .release-file h3{font-size:22px}
+  .release-warning{font-size:11px}
+  .foot-word{font-size:17.4vw;margin-top:60px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
 </head>
 <body>
-  <a class="skip" href="#contenido">Saltar al contenido</a>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="#inicio" aria-label="Phaedra, volver al inicio">
-        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 34 34" fill="none"><path d="M9 27V6h11c13 0 13 16 0 16H9" stroke="#C4ABFF" stroke-width="4.3" stroke-linejoin="round"/></svg></span>
-        <span class="brand-word">PHAEDRA</span>
-      </a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-navigation">Menú ☰</button>
-      <nav class="main-nav" id="main-navigation" aria-label="Navegación principal">
-        <a href="#caracteristicas">Funciones</a>
-        <a href="#roadmap">Desarrollo</a>
-        <a href="#actualizaciones">Novedades</a>
-        <a href="#documentacion">Guía</a>
-        <a href="https://github.com/mindrapeofficial-wq/phaedra" target="_blank" rel="noopener noreferrer">Código fuente ↗</a>
-        <a class="header-cta" href="#descargas">Descargar gratis ↓</a>
-      </nav>
+<a href="#main" class="skip-link">Saltar al contenido</a>
+<header class="masthead">
+  <a class="identity" href="#inicio" aria-label="Phaedra, inicio">
+    <img class="identity-icon" src="https://raw.githubusercontent.com/mindrapeofficial-wq/phaedra/main/gtk2_ardour/resources/Phaedra-icon_512px.png" alt="" width="33" height="33">
+    <span class="identity-name">PHAEDRA®</span>
+    <span class="identity-id">DIGITAL AUDIO WORKSTATION</span>
+  </a>
+  <button class="mobile-menu" type="button" aria-label="Abrir menú" aria-controls="primary-nav" aria-expanded="false"><span></span><span></span><span></span></button>
+  <nav class="top-nav" id="primary-nav" aria-label="Navegación principal">
+    <a href="#filosofia">El proyecto</a>
+    <a href="#estudio">El estudio</a>
+    <a href="#desarrollo">Desarrollo</a>
+    <a href="#ayuda">Ayuda</a>
+    <a href="#descargar" class="download-top">DESCARGAR GRATIS ↗</a>
+  </nav>
+</header>
+<main id="main">
+  <section class="hero" id="inicio">
+    <div class="hero-strip smallcaps">
+      <span>PRODUCCIÓN MUSICAL / SIN BARRERAS</span>
+      <span>SOFTWARE / EDICIÓN 001</span>
+      <span>WINDOWS · EN DESARROLLO</span>
     </div>
-  </header>
-
-  <main id="contenido">
-    <section class="hero" id="inicio">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <div class="eyebrow"><span class="dot" aria-hidden="true"></span> Digital Audio Workstation · Windows</div>
-          <h1>Tu sonido.<span>Tu espacio.</span></h1>
-          <p class="lead">Hay ideas que no caben en una nota de voz. Dales forma con <strong style="color:#e5dafa">Phaedra</strong>, una estación de trabajo de audio digital gratuita en desarrollo, creada para grabar, editar y mezclar música.</p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#descargas">Descargar gratis <span class="icon-arrow" aria-hidden="true">↘</span></a>
-            <a class="btn btn-secondary" href="#caracteristicas">Descubrir Phaedra <span class="icon-arrow" aria-hidden="true">→</span></a>
-          </div>
-          <div class="trust" aria-label="Información del proyecto">
-            <span><b>✓</b> Gratis por ahora</span><span><b>◈</b> Para Windows</span><span><b>◉</b> Desarrollo activo</span>
-          </div>
-        </div>
-        <div class="hero-art" aria-label="Ilustración conceptual de una estación de trabajo musical">
-          <div class="floating"><small>ESTUDIO CREATIVO</small><strong>MAKE IT SOUND REAL.</strong></div>
-          <div class="studio-frame" aria-hidden="true">
-            <div class="studio-title"><i class="win-dot"></i><i class="win-dot"></i><i class="win-dot"></i><strong>PHAEDRA</strong><span style="width:45px"></span></div>
-            <div class="studio-toolbar"><span class="play-btn">▶</span><span>Ⅱ</span><span>◼</span><span class="time-readout">01 | 03 | 01</span><span class="tempo">120 BPM &nbsp; · &nbsp; 4/4</span></div>
-            <div class="studio-main">
-              <div class="track-names">
-                <div class="track-name" style="--tc:#b190ff"><i class="tile"></i><span><strong>DRUMS</strong><small>Audio</small></span></div>
-                <div class="track-name" style="--tc:#7dcbd6"><i class="tile"></i><span><strong>BASS</strong><small>Audio</small></span></div>
-                <div class="track-name" style="--tc:#e1a1cb"><i class="tile"></i><span><strong>SYNTH</strong><small>MIDI</small></span></div>
-                <div class="track-name" style="--tc:#9bccaa"><i class="tile"></i><span><strong>VOCALS</strong><small>Audio</small></span></div>
-              </div>
-              <div class="arrange">
-                <div class="ruler"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
-                <div class="lanes">
-                  <div class="lane">
-                    <div class="clip" data-name="Rhythm 01" style="--l:0%;--w:49.7%;--c:#ad8af9"><div class="wave" data-seed="2"></div></div>
-                    <div class="clip" data-name="Rhythm 02" style="--l:50%;--w:49.9%;--c:#ad8af9"><div class="wave" data-seed="4"></div></div>
-                  </div>
-                  <div class="lane">
-                    <div class="clip" data-name="Low End" style="--l:12.5%;--w:75%;--c:#6fcbd3"><div class="wave" data-seed="8"></div></div>
-                  </div>
-                  <div class="lane">
-                    <div class="clip" data-name="Chords" style="--l:0%;--w:62.5%;--c:#e19aca"><div class="notes"><i style="--dy:7px"></i><i style="--dy:-5px"></i><i style="--dy:3px"></i><i style="--dy:-8px"></i><i></i><i style="--dy:6px"></i><i style="--dy:-4px"></i></div></div>
-                    <div class="clip" data-name="Lead" style="--l:63%;--w:37%;--c:#e19aca"><div class="notes"><i style="--dy:4px"></i><i style="--dy:-6px"></i><i style="--dy:2px"></i></div></div>
-                  </div>
-                  <div class="lane">
-                    <div class="clip" data-name="Main Vox" style="--l:25%;--w:60%;--c:#96d0a2"><div class="wave" data-seed="13"></div></div>
-                  </div>
-                  <div class="playhead"></div>
-                </div>
-              </div>
-            </div>
-            <div class="studio-mixer">
-              <div class="mini-channel"><div class="meter"><i style="--mh:16px"></i><i style="--mh:26px"></i><i style="--mh:17px"></i></div><small>MASTER</small></div>
-              <div class="mini-channel"><div class="meter"><i style="--mh:14px"></i><i style="--mh:22px"></i><i style="--mh:10px"></i></div><small>DRUMS</small></div>
-              <div class="mini-channel"><div class="meter"><i style="--mh:12px"></i><i style="--mh:29px"></i><i style="--mh:18px"></i></div><small>BASS</small></div>
-              <div class="mini-channel"><div class="meter"><i style="--mh:20px"></i><i style="--mh:10px"></i><i style="--mh:15px"></i></div><small>SYNTH</small></div>
-              <div class="studio-status">● AUDIO READY</div>
-            </div>
-          </div>
-          <p class="mock-caption">Visualización conceptual del flujo de trabajo. No es una captura real del programa.</p>
-        </div>
+    <h1 class="hero-heading" aria-label="PHAEDRA">PHAEDRA<span class="period">.</span></h1>
+    <div class="hero-lower">
+      <h2 class="hero-lead">La música<br>primero. <strong>Siempre.</strong></h2>
+      <div class="hero-aside">
+        <p>Un estudio digital para convertir ideas en sonido. Graba, edita, compón y mezcla en Phaedra, un DAW gratuito que estamos construyendo para los que viven haciendo música.</p>
+        <a href="#descargar" class="action">CONSEGUIR PHAEDRA GRATIS <span class="arrow" aria-hidden="true">↗</span></a>
+        <p class="hero-footnote">Lanzamiento experimental para Windows. El instalador estable y el actualizador siguen en desarrollo.</p>
       </div>
-    </section>
-
-    <div class="signal-strip"><div class="container signal-inner" aria-label="Áreas principales"><span>Grabación multipista</span><span>Edición de audio</span><span>Composición MIDI</span><span>Mezcla</span><span>Producción musical</span></div></div>
-
-    <section class="section" id="caracteristicas">
-      <div class="container">
-        <div class="section-head">
-          <div class="eyebrow">01 / HERRAMIENTAS</div>
-          <h2>De la primera idea<br>al último detalle.</h2>
-          <p>Un entorno de producción para dar espacio a lo que imaginas. Phaedra está evolucionando: las funciones y su estabilidad pueden variar entre versiones.</p>
-        </div>
-        <div class="feature-grid">
-          <article class="feature"><div class="feature-symbol" aria-hidden="true">≋</div><h3>Audio multipista</h3><p>Organiza tomas, pistas y regiones en una línea de tiempo orientada a trabajar con sonido real.</p></article>
-          <article class="feature"><div class="feature-symbol" aria-hidden="true">▥</div><h3>Composición MIDI</h3><p>Construye melodías, ritmos y arreglos en un flujo de creación que seguimos perfeccionando.</p><div class="tag">Edición y UX en evolución</div></article>
-          <article class="feature"><div class="feature-symbol" aria-hidden="true">◫</div><h3>Mezcla y niveles</h3><p>Trabaja el balance de tus sesiones y estructura la mezcla de manera visual y ordenada.</p></article>
-          <article class="feature"><div class="feature-symbol" aria-hidden="true">⌁</div><h3>Procesamiento de audio</h3><p>Integra herramientas de procesamiento y desarrolla tu propio carácter sonoro.</p></article>
-          <article class="feature"><div class="feature-symbol" aria-hidden="true">◷</div><h3>Tiempo y precisión</h3><p>Una referencia clara de compases y pulsos para que las ideas musicales se mantengan alineadas.</p><div class="tag">Interfaz en revisión</div></article>
-          <article class="feature"><div class="feature-symbol" aria-hidden="true">↗</div><h3>Proyecto en crecimiento</h3><p>Diseño, rendimiento, distribución y experiencia de uso avanzan con cada nueva revisión.</p><div class="tag">Desarrollo activo</div></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="container" aria-label="Composición musical">
-      <div class="wide-feature">
-        <div class="wide-feature-copy">
-          <div class="eyebrow">HECHO PARA CREAR</div>
-          <h2>Una idea puede<br>cambiarlo todo.</h2>
-          <p>Experimenta con pistas, ritmos y armonías. Queremos que las herramientas te acompañen, sin convertirse en el centro de la música.</p>
-          <a class="inline-link" href="#roadmap">Conoce hacia dónde va Phaedra →</a>
-        </div>
-        <div class="wide-feature-visual" aria-hidden="true"><div class="piano">
-          <i style="--ml:17%;--pw:48%"></i><i style="--ml:29%;--pw:33%"></i><i style="--ml:40%;--pw:46%"></i><i style="--ml:22%;--pw:24%"></i><i style="--ml:36%;--pw:42%"></i><i style="--ml:50%;--pw:30%"></i><i style="--ml:28%;--pw:51%"></i>
-        </div></div>
-      </div>
-    </section>
-
-    <section class="section" id="roadmap">
-      <div class="container">
-        <div class="section-head">
-          <div class="eyebrow">02 / DESARROLLO</div>
-          <h2>Construido paso a paso.<br>Sin promesas vacías.</h2>
-          <p>La prioridad es que Phaedra sea estable, se pueda instalar y ofrezca una experiencia coherente. Estos son los frentes de trabajo, no fechas de lanzamiento comprometidas.</p>
-        </div>
-        <div class="roadmap-grid">
-          <article class="phase"><span class="phase-n">FASE 01</span><h3>Identidad Phaedra</h3><p>Unificar nombre, interfaz, menús y recursos propios, manteniendo las atribuciones legales obligatorias.</p><span class="phase-status">En desarrollo</span></article>
-          <article class="phase"><span class="phase-n">FASE 02</span><h3>Windows fiable</h3><p>Resolver dependencias, estabilizar la compilación y verificar el arranque y el uso del programa.</p><span class="phase-status">En desarrollo</span></article>
-          <article class="phase"><span class="phase-n">FASE 03</span><h3>Instalador</h3><p>Preparar una distribución Windows reproducible y probarla en equipos limpios.</p><span class="phase-status pending">Pendiente de validación</span></article>
-          <article class="phase"><span class="phase-n">FASE 04</span><h3>Actualizador</h3><p>Comprobar versiones y distribuir actualizaciones con verificación de integridad y seguridad.</p><span class="phase-status pending">Previsto</span></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="descargas">
-      <div class="container">
-        <div class="download-area">
-          <div>
-            <div class="eyebrow"><span class="dot" aria-hidden="true"></span> ACCESO GRATUITO · VERSIÓN EXPERIMENTAL</div>
-            <h2>Haz espacio<br>para tu música.</h2>
-            <p>Phaedra se ofrece gratis por ahora. Sin pago, suscripción ni registro obligatorio para acceder a la descarga del proyecto.</p>
-            <p style="font-size:13px">Por el momento, la publicación disponible es un <strong style="color:#e0d5fc">ZIP portátil para Windows</strong>. Todavía no anunciamos un instalador estable ni un sistema de actualizaciones integrado verificado.</p>
-          </div>
-          <div class="download-info">
-            <div class="file-top"><span class="file-icon" aria-hidden="true">↓</span><span><strong>Phaedra <span id="download-version">v1.0.0</span></strong><small id="download-filename">Phaedra-v1.0.0.zip</small></span></div>
-            <div class="file-details"><span class="chip">Windows</span><span class="chip">ZIP portátil</span><span class="chip">Experimental</span><span class="chip" id="download-size">51 MB aprox.</span></div>
-            <a class="btn btn-primary dl-link" id="download-link" href="https://github.com/mindrapeofficial-wq/phaedra/releases/download/v1.0.0/Phaedra-v1.0.0.zip" target="_blank" rel="noopener noreferrer">Obtener ZIP gratuito <span class="icon-arrow" aria-hidden="true">↗</span></a>
-            <div class="dl-secondary"><a id="release-link" href="https://github.com/mindrapeofficial-wq/phaedra/releases/tag/v1.0.0" target="_blank" rel="noopener noreferrer">Ver publicación oficial en GitHub</a></div>
-            <p class="warning"><span aria-hidden="true">⚠</span><span>Versión en desarrollo. El paquete aún no tiene una validación completa de funcionamiento e instalación. Evita utilizarlo como único entorno para proyectos importantes.</span></p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="actualizaciones">
-      <div class="container">
-        <div class="section-head">
-          <div class="eyebrow">03 / ACTUALIZACIONES</div>
-          <h2>Siempre avanzando.</h2>
-          <p>Seguimos el desarrollo mediante las publicaciones del repositorio oficial. Cuando salga una versión, aparecerá aquí si GitHub la ofrece públicamente.</p>
-        </div>
-        <div class="updates-grid">
-          <article class="update-card"><span class="date" id="latest-date">24 OCT 2026 · PUBLICACIÓN</span><h3>Última versión: <span id="latest-version">v1.0.0</span></h3><p id="latest-summary">Primera publicación de Phaedra DAW. Paquete ZIP experimental para Windows.</p><a class="inline-link" id="latest-link" href="https://github.com/mindrapeofficial-wq/phaedra/releases/tag/v1.0.0" target="_blank" rel="noopener noreferrer">Consultar versión →</a></article>
-          <article class="update-card"><span class="date">COLABORACIÓN Y SEGUIMIENTO</span><h3>El desarrollo, a la vista.</h3><p>Consulta el código fuente, las tareas, cambios y posibles incidencias en el repositorio público de Phaedra.</p><a class="inline-link" href="https://github.com/mindrapeofficial-wq/phaedra/issues" target="_blank" rel="noopener noreferrer">Ver incidencias y sugerencias ↗</a><span style="padding:0 8px;color:#666">·</span><a class="inline-link" href="https://github.com/mindrapeofficial-wq/phaedra/commits/main/" target="_blank" rel="noopener noreferrer">Ver cambios ↗</a></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="documentacion">
-      <div class="container">
-        <div class="section-head">
-          <div class="eyebrow">04 / AYUDA</div>
-          <h2>Empieza por aquí.</h2>
-          <p>Una guía inicial para descargar Phaedra y seguir su evolución. El manual de usuario completo aún está en preparación.</p>
-        </div>
-        <div class="doc-grid">
-          <details><summary>¿Cómo descargo Phaedra?</summary><p>Accede a <a href="#descargas">Descargas</a> y pulsa «Obtener ZIP gratuito». Se abrirá el archivo alojado en la publicación oficial de GitHub. Comprueba los archivos antes de ejecutarlos y recuerda que es una versión experimental.</p></details>
-          <details><summary>¿Hay que pagar o crear una cuenta?</summary><p>No. El acceso al paquete publicado es gratuito y no exige una cuenta propia en Phaedra. No se ha anunciado ningún plan de pago.</p></details>
-          <details><summary>¿Puedo usarlo para trabajos profesionales?</summary><p>La meta es ofrecer una estación de trabajo seria, pero la estabilidad todavía requiere comprobaciones. Para proyectos importantes, conserva copias de seguridad y prueba las funciones en sesiones que puedas recuperar.</p></details>
-          <details><summary>¿Cómo informo de un error?</summary><p>Utiliza el <a href="https://github.com/mindrapeofficial-wq/phaedra/issues" target="_blank" rel="noopener noreferrer">apartado Issues en GitHub</a>. Incluye tu versión de Windows, la versión de Phaedra, los pasos para reproducir el error y, cuando sea posible, una captura.</p></details>
-          <details><summary>¿Phaedra funciona en otros sistemas?</summary><p>Esta web se centra en la distribución para Windows. Aquí no anunciamos compilaciones oficiales verificadas para macOS o Linux.</p></details>
-          <details><summary>¿Qué licencia tiene Phaedra?</summary><p>El repositorio incorpora código derivado de Ardour y avisos de licencia GNU GPL. La gratuidad del programa no elimina esas obligaciones. Puedes revisar el <a href="https://github.com/mindrapeofficial-wq/phaedra/blob/main/COPYING" target="_blank" rel="noopener noreferrer">archivo COPYING</a> y el <a href="https://github.com/mindrapeofficial-wq/phaedra" target="_blank" rel="noopener noreferrer">código fuente</a>.</p></details>
-        </div>
-      </div>
-    </section>
-
-    <section class="closing" aria-label="Descarga Phaedra">
-      <div class="container">
-        <div class="eyebrow">LA PRÓXIMA PISTA EMPIEZA CONTIGO</div>
-        <h2>Haz que suene.</h2>
-        <p>Un DAW gratuito en construcción. Sigue el proyecto, conoce cada nueva versión y forma parte de su evolución.</p>
-        <a class="btn btn-primary" href="#descargas">Explorar la descarga gratuita ↘</a>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-inner">
-        <div class="footer-brand">
-          <a class="brand" href="#inicio"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 34 34" fill="none"><path d="M9 27V6h11c13 0 13 16 0 16H9" stroke="#C4ABFF" stroke-width="4.3" stroke-linejoin="round"/></svg></span><span class="brand-word">PHAEDRA</span></a>
-          <p>Digital Audio Workstation. Un proyecto de producción musical en desarrollo y gratuito por ahora.</p>
-        </div>
-        <div class="footer-links">
-          <a href="#caracteristicas">Funciones</a><a href="#descargas">Descargar</a><a href="#documentacion">Ayuda</a><a href="https://github.com/mindrapeofficial-wq/phaedra" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-        </div>
-      </div>
-      <div class="legal">© <span id="year">2026</span> Phaedra. Web informativa del proyecto. Parte del código del programa deriva de Ardour y conserva sus obligaciones de licencia y atribución. <a href="https://github.com/mindrapeofficial-wq/phaedra/blob/main/COPYING" target="_blank" rel="noopener noreferrer">Licencias y avisos</a> · <a href="https://github.com/mindrapeofficial-wq/phaedra" target="_blank" rel="noopener noreferrer">Código fuente</a>. Esta web no utiliza cookies de seguimiento ni solicita datos personales.</div>
     </div>
-  </footer>
+  </section>
 
-  <script>
-    (function(){
-      "use strict";
-      var menuBtn=document.querySelector(".menu-toggle");
-      var nav=document.getElementById("main-navigation");
-      function closeMenu(){nav.classList.remove("is-open");menuBtn.setAttribute("aria-expanded","false");}
-      menuBtn.addEventListener("click",function(){var open=nav.classList.toggle("is-open");menuBtn.setAttribute("aria-expanded",String(open));});
-      nav.querySelectorAll("a").forEach(function(a){a.addEventListener("click",closeMenu)});
-      document.addEventListener("keydown",function(e){if(e.key==="Escape")closeMenu()});
-      document.addEventListener("click",function(e){if(!nav.contains(e.target)&&!menuBtn.contains(e.target))closeMenu()});
-      document.getElementById("year").textContent=String(new Date().getFullYear());
-      document.querySelectorAll(".wave").forEach(function(el){
-        var seed=Number(el.dataset.seed)||1;
-        var count=31; var chunk=document.createDocumentFragment();
-        for(var i=0;i<count;i++){
-          var bar=document.createElement("i");
-          var level=18+64*Math.abs(Math.sin(i*.79+seed*.5)*Math.cos(i*.29+seed));
-          bar.style.setProperty("--h",Math.round(level)+"%");
-          chunk.appendChild(bar);
-        }
-        el.appendChild(chunk);
-      });
-      // Release data can change independently of website deployments. Only
-      // link to validated paths inside the official GitHub repository.
-      var api="https://api.github.com/repos/mindrapeofficial-wq/phaedra/releases/latest";
-      fetch(api,{headers:{"Accept":"application/vnd.github+json"}}).then(function(r){if(!r.ok)throw new Error("GitHub API unavailable");return r.json()}).then(function(release){
-        if(!release||typeof release.tag_name!=="string"||!/^v[0-9][a-zA-Z0-9.+_-]*$/.test(release.tag_name))return;
-        var releaseUrl="https://github.com/mindrapeofficial-wq/phaedra/releases/tag/"+encodeURIComponent(release.tag_name);
-        document.getElementById("latest-version").textContent=release.tag_name;
-        document.getElementById("download-version").textContent=release.tag_name;
-        document.getElementById("latest-link").href=releaseUrl;
-        document.getElementById("release-link").href=releaseUrl;
-        if(release.published_at){
-          var d=new Date(release.published_at);
-          if(!Number.isNaN(d.getTime()))document.getElementById("latest-date").textContent=d.toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric"}).toUpperCase()+" · PUBLICACIÓN";
-        }
-        var assets=Array.isArray(release.assets)?release.assets:[];
-        var zip=assets.find(function(a){return a&&typeof a.name==="string"&&/^Phaedra-v[\w.+-]+\.zip$/i.test(a.name)&&typeof a.browser_download_url==="string"&&a.browser_download_url.startsWith("https://github.com/mindrapeofficial-wq/phaedra/releases/download/")});
-        if(zip){
-          document.getElementById("download-link").href=zip.browser_download_url;
-          document.getElementById("download-filename").textContent=zip.name;
-          if(Number.isFinite(zip.size)&&zip.size>0)document.getElementById("download-size").textContent=(zip.size/1048576).toFixed(0)+" MB aprox.";
-        }else{
-          document.getElementById("download-link").href=releaseUrl;
-          document.getElementById("download-link").textContent="Ver archivos disponibles ↗";
-          document.getElementById("download-filename").textContent="Consultar archivos de la versión";
-          document.getElementById("download-size").hidden=true;
-        }
-        if(release.tag_name!=="v1.0.0")document.getElementById("latest-summary").textContent="Nueva publicación disponible. Consulta en GitHub las notas de esta versión y sus archivos.";
-      }).catch(function(){/* Keep verified static fallback when offline or rate-limited. */});
-    })();
-  </script>
-</body>
-</html>
+  <section class="brand-film" aria-label="Identidad visual de Phaedra">
+    <div class="film-left">
+      <span class="film-label smallcaps">01 / EL SONIDO</span>
+      <img src="https://raw.githubusercontent.com/mindrapeofficial-wq/phaedra/main/gtk2_ardour/resources/Phaedra-icon_512px.png" alt="Emblema morado con la letra P de Phaedra" width="300" height="300">
+      <span class="film-code">PHAEDRA SIGNAL SYSTEM · 001</span>
+    </div>
+    <div class="film-center">
+      <span class="smallcaps">NO NECESITAS PERMISO PARA CREAR.</span>
+      <p class="film-statement">MENOS<br>RUIDO.<br><em>MÁS<br>MÚSICA.</em></p>
+      <div class="film-bottom"><span>ESTUDIO DIGITAL</span><span>PROYECTO EN CURSO / 2026</span></div>
+    </div>
+    <div class="film-right">
+      <div class="film-right-head smallcaps"><span>SIGNAL / 1</span><span>+0 dB</span></div>
+      <div class="sound-bars" id="sound-bars" aria-hidden="true"></div>
+      <div class="film-right-foot smallcaps"><span>LEVEL</span><span>∞</span></div>
+    </div>
+  </section>
+  <div class="ticker" aria-label="Herramientas creativas"><span>01 / GRABAR</span><span>02 / EDITAR</span><span>03 / COMPONER</span><span>04 / MEZCLAR</span><span>05 / CREAR</span></div>
+
+  <section class="chapter" id="filosofia">
+    <div class="chapter-kicker smallcaps"><span>[ 01 ] / LA IDEA</span><span>UN ESPACIO PARA TU SONIDO</span></div>
+    <h2 class="chapter-title">HAZLO<br>A TU <span class="thin">MANERA.</span></h2>
+    <div class="chapter-text">
+      <p class="big">Tu música merece algo más que una interfaz llena de obstáculos.</p>
+      <p>Queremos construir una herramienta directa, flexible y centrada en la creación. Phaedra está creciendo y todavía no todo está terminado. Lo que sí tenemos claro es la dirección: que la tecnología acompañe a la música, no al revés.</p>
+    </div>
+  </section>
+  <section class="features" aria-label="Áreas de producción">
+    <div class="feature-row"><span class="n">01 / AUDIO</span><h3>CAPTURA<br>LA IDEA.</h3><p>Organiza grabaciones, regiones y pistas en una línea de tiempo de audio multipista. Espacio para cada toma, cada textura y cada arreglo.</p></div>
+    <div class="feature-row"><span class="n">02 / MIDI</span><h3>DALE<br>FORMA.</h3><p>Compón y modifica ideas musicales con herramientas MIDI. Seguimos trabajando para que su edición sea cada vez más intuitiva.</p></div>
+    <div class="feature-row"><span class="n">03 / MEZCLA</span><h3>DEFINE<br>TU SONIDO.</h3><p>Controla niveles y procesamiento desde un entorno pensado para el flujo de producción. El objetivo es hacer el trabajo profundo sin complicaciones innecesarias.</p></div>
+  </section>
+
+  <section class="stage" id="estudio">
+    <div class="stage-heading">
+      <div><span class="smallcaps">[ 02 ] / EL ESPACIO DE TRABAJO</span><h2>TODO EN<br>SU SITIO.</h2></div>
+      <p>Diseñamos pensando en el proceso real: compases visibles, pistas bien organizadas y controles donde esperas encontrarlos.</p>
+    </div>
+    <div class="workstation" role="img" aria-label="Ilustración conceptual de un editor DAW multipista con pistas de audio, clips MIDI, regla de compases y mezclador">
+      <div class="workstation-top"><div class="ws-brand">PHAEDRA <em>ARRANGEMENT</em></div><div class="ws-controls"><span>■</span><span class="play">▶</span><span>120.00 BPM</span><b>4/4</b></div><div class="ws-state">01.01.01 / BEATS</div></div>
+      <div class="timeline">
+        <div class="track-list">
+          <div class="track-hd">TRACKS / 04</div>
+          <div class="track" style="--tc:#ae8fde"><i></i><span><b>DRUM BUS</b><small>STEREO / AUDIO</small></span></div>
+          <div class="track" style="--tc:#93be91"><i></i><span><b>SUB BASS</b><small>MONO / AUDIO</small></span></div>
+          <div class="track" style="--tc:#e9a87f"><i></i><span><b>SYNTH</b><small>INSTRUMENT / MIDI</small></span></div>
+          <div class="track" style="--tc:#82b9c1"><i></i><span><b>VOICE</b><small>STEREO / AUDIO</small></span></div>
+        </div>
+        <div class="arranger">
+          <div class="beats"><span>1.1</span><span>2.1</span><span>3.1</span><span>4.1</span><span>5.1</span><span>6.1</span><span>7.1</span><span>8.1</span></div>
+          <div class="arrange-track">
+            <div class="region" style="--l:0%;--w:50%;--c:#ae8fde"><span class="region-label">DRUM LOOP</span><div class="wave" data-seed="1"></div></div>
+            <div class="region" style="--l:50%;--w:50%;--c:#ae8fde"><span class="region-label">DRUM LOOP 02</span><div class="wave" data-seed="2"></div></div>
+          </div>
+          <div class="arrange-track">
+            <div class="region" style="--l:12.5%;--w:75%;--c:#93be91"><span class="region-label">SUB / TAKE 01</span><div class="wave" data-seed="7"></div></div>
+          </div>
+          <div class="arrange-track">
+            <div class="region" style="--l:0%;--w:75%;--c:#e9a87f"><span class="region-label">CHORDS</span><div class="midi-notes"><i style="--y:9px"></i><i style="--y:-12px"></i><i style="--y:3px"></i><i style="--y:15px"></i><i style="--y:-7px"></i><i style="--y:8px"></i><i style="--y:-14px"></i><i style="--y:2px"></i></div></div>
+            <div class="region" style="--l:75%;--w:25%;--c:#e9a87f"><span class="region-label">LEAD</span><div class="midi-notes"><i style="--y:8px"></i><i style="--y:-9px"></i></div></div>
+          </div>
+          <div class="arrange-track">
+            <div class="region" style="--l:25%;--w:70%;--c:#82b9c1"><span class="region-label">VOCAL TAKE 03</span><div class="wave" data-seed="11"></div></div>
+          </div>
+          <div class="play-line"></div>
+        </div>
+      </div>
+      <div class="workstation-lower">
+        <div class="ws-lower-label">MIXER / SIGNAL CHAIN<br>PROCESSORS</div>
+        <div class="ws-channel"><div class="ws-meter"><i style="--h:65%"></i><i style="--h:82%"></i></div><small>MASTER</small></div>
+        <div class="ws-channel"><div class="ws-meter"><i style="--h:45%"></i><i style="--h:63%"></i></div><small>DRUMS</small></div>
+        <div class="ws-channel"><div class="ws-meter"><i style="--h:38%"></i><i style="--h:76%"></i></div><small>BASS</small></div>
+        <div class="ws-channel"><div class="ws-meter"><i style="--h:72%"></i><i style="--h:50%"></i></div><small>SYNTH</small></div>
+        <div class="ws-channel"><div class="ws-meter"><i style="--h:40%"></i><i style="--h:52%"></i></div><small>VOICE</small></div>
+      </div>
+    </div>
+    <div class="stage-caption"><span>FIG. 01 / CONCEPTO DEL FLUJO DE PRODUCCIÓN</span><span>Ilustración de producto, no captura real de Phaedra.</span></div>
+    <div class="stage-details">
+      <h3>EL RITMO DE TU<br>PROCESO IMPORTA.</h3>
+      <p>La línea de tiempo y el editor MIDI son dos prioridades del desarrollo. Esta ilustración comunica la dirección del producto; el aspecto y funcionamiento reales pueden cambiar entre compilaciones.</p>
+    </div>
+  </section>
+
+  <section class="manifesto">
+    <div class="manifesto-label smallcaps"><span>EL PRINCIPIO</span><span>PHAEDRA / FREE FOR NOW</span></div>
+    <h2>LIBERTAD<br>PARA HACER<br>SONIDO.</h2>
+    <div class="manifesto-bottom">
+      <p>Sin pagos para descargar Phaedra por ahora. Sin una cuenta obligatoria. El programa evoluciona públicamente, versión a versión.</p>
+      <a href="#descargar" class="action">IR A LA DESCARGA <span class="arrow" aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+
+  <section class="progress" id="desarrollo">
+    <div class="progress-heading">
+      <div><span class="smallcaps">[ 03 ] / HOJA DE RUTA</span><h2>TRABAJO<br>REAL.</h2></div>
+      <p>Una web profesional necesita un producto detrás. No vamos a anunciar funciones que aún no hemos validado: aquí puedes seguir las prioridades reales del desarrollo de Phaedra.</p>
+    </div>
+    <div class="milestone"><span class="number">01 / IDENTIDAD</span><h3>UNA VOZ PROPIA.</h3><div class="milestone-right"><p>Unificar el nombre y la experiencia de Phaedra, preservando licencias y avisos del software de origen.</p><span class="status on">En desarrollo</span></div></div>
+    <div class="milestone"><span class="number">02 / WINDOWS</span><h3>COMPILAR. PROBAR.</h3><div class="milestone-right"><p>Resolver dependencias, estabilizar la compilación y comprobar sesiones en equipos Windows.</p><span class="status on">En desarrollo</span></div></div>
+    <div class="milestone"><span class="number">03 / DISTRIBUCIÓN</span><h3>INSTALACIÓN FIABLE.</h3><div class="milestone-right"><p>Pasar del archivo portable a una experiencia de instalación clara, reproducible y probada.</p><span class="status">Por validar</span></div></div>
+    <div class="milestone"><span class="number">04 / UPDATES</span><h3>MEJORAR SIN PARAR.</h3><div class="milestone-right"><p>Actualizar versiones desde el programa con seguridad, integridad de archivos y notas de cambios.</p><span class="status">Previsto</span></div></div>
+  </section>
+
+  <section class="release" id="descargar">
+    <div class="release-head smallcaps"><span>[ 04 ] / DOWNLOAD</span><span class="live-point">ACCESO GRATUITO</span></div>
+    <h2>GRATIS<span>.</span></h2>
+    <div class="release-grid">
+      <div><p class="pitch">Una descarga. Muchas posibilidades. Sin suscripción y sin registro obligatorio para empezar.</p><p style="font-size:13px;line-height:1.7;max-width:500px;color:#b9b6b0;margin-top:23px">La versión publicada actualmente es un archivo ZIP portátil para Windows. Todavía no se anuncia como instalador estable ni como edición lista para trabajos críticos.</p></div>
+      <div class="release-card">
+        <div class="release-file"><div><span class="smallcaps" style="color:#bca3ec">ÚLTIMA VERSIÓN PUBLICADA</span><h3>PHAEDRA <span id="version">v1.0.0</span></h3><p id="filename">Phaedra-v1.0.0.zip · Windows</p></div><span class="file-mark">ZIP</span></div>
+        <a class="action pale" id="asset-download" href="https://github.com/mindrapeofficial-wq/phaedra/releases/download/v1.0.0/Phaedra-v1.0.0.zip" target="_blank" rel="noopener noreferrer">DESCARGAR ZIP GRATUITO <span class="arrow" aria-hidden="true">↗</span></a>
+        <div class="release-notes"><span id="release-date">24 OCT 2026</span><span id="release-size">51 MB APROX.</span><a id="release-page" href="https://github.com/mindrapeofficial-wq/phaedra/releases/tag/v1.0.0" target="_blank" rel="noopener noreferrer">NOTAS DE VERSIÓN ↗</a></div>
+      </div>
+    </div>
+    <p class="release-warning">IMPORTANTE / Software experimental. Aún no se ha confirmado una instalación y funcionamiento fiables en todos los equipos. Haz copias de seguridad de tus proyectos. La distribución y los componentes incluidos deben conservar los avisos de licencia correspondientes.</p>
+  </section>
+
+  <section class="help" id="ayuda">
+    <div class="help-layout">
+      <div><span class="smallcaps">[ 05 ] / PREGUNTAS FRECUENTES</span><h2>LO<br>ESENCIAL.</h2><p class="sub">Información clara sobre la versión actual y el desarrollo. Sin letra pequeña comercial.</p></div>
+      <div class="help-list">
+        <details><summary>¿Phaedra es realmente gratis?</summary><p>Sí. La descarga publicada está disponible gratis por ahora, sin suscripción ni registro en una plataforma propia. Esto no cambia las obligaciones de las licencias de software libre de sus componentes.</p></details>
+        <details><summary>¿Qué versión puedo descargar?</summary><p>En este momento hay un ZIP portátil para Windows publicado en <a href="https://github.com/mindrapeofficial-wq/phaedra/releases" target="_blank" rel="noopener noreferrer">GitHub Releases</a>. Se considera experimental mientras no se complete su validación.</p></details>
+        <details><summary>¿Dónde reporto un error?</summary><p>En el <a href="https://github.com/mindrapeofficial-wq/phaedra/issues" target="_blank" rel="noopener noreferrer">apartado de incidencias del repositorio</a>. Indica tu versión de Windows, los pasos para reproducirlo y, si es posible, una captura o registro técnico.</p></details>
+        <details><summary>¿Dónde puedo ver el código y las licencias?</summary><p>El <a href="https://github.com/mindrapeofficial-wq/phaedra" target="_blank" rel="noopener noreferrer">repositorio de Phaedra</a> incluye el código fuente y el archivo <a href="https://github.com/mindrapeofficial-wq/phaedra/blob/main/COPYING" target="_blank" rel="noopener noreferrer">COPYING</a>. Parte del programa deriva de Ardour y debe respetar sus condiciones de licencia, atribución y distribución.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="foot">
+  <div class="foot-top">
+    <p>El estudio es tuyo.<br>El sonido también.</p>
+    <nav aria-label="Enlaces de pie de página"><a href="#inicio">INICIO</a><a href="#descargar">DESCARGAR</a><a href="#desarrollo">ROADMAP</a><a href="https://github.com/mindrapeofficial-wq/phaedra" target="_blank" rel="noopener noreferrer">GITHUB ↗</a></nav>
+  </div>
+  <div class="foot-word" aria-label="PHAEDRA">PHAEDRA.</div>
+  <div class="footer-legal">
+    <p>© <span id="year">2026</span> Phaedra. Proyecto de software musical en desarrollo. Phaedra contiene código derivado de Ardour y de otros proyectos con sus respectivas licencias. <a href="https://github.com/mindrapeofficial-wq/phaedra/blob/main/COPYING" target="_blank" rel="noopener noreferrer">Licencias</a> · <a href="https://github.com/mindrapeofficial-wq/phaedra" target="_blank" rel="noopener noreferrer">Código fuente</a>.</p>
+    <span>HECHO PARA QUIENES HACEN MÚSICA.</span>
+  </div>
+</footer>
+<script>
+(function(){
+  "use strict";
+  var menu=document.querySelector(".mobile-menu"),nav=document.getElementById("primary-nav");
+  function close(){nav.classList.remove("open");menu.setAttribute("aria-expanded","false");menu.setAttribute("aria-label","Abrir menú")}
+  menu.addEventListener("click",function(){var opened=nav.classList.toggle("open");menu.setAttribute("aria-expanded",String(opened));menu.setAttribute("aria-label",opened?"Cerrar menú":"Abrir menú")});
+  nav.querySelectorAll("a").forEach(function(a){a.addEventListener("click",close)});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")close()});
+  document.addEventListener("click",function(e){if(!menu.contains(e.target)&&!nav.contains(e.target))close()});
+  document.getElementById("year").textContent=String(new Date().getFullYear());
+  var bars=document.getElementById("sound-bars");if(bars){var chunk=document.createDocumentFragment();for(var i=0;i<36;i++){var item=document.createElement("i");var v=Math.abs(Math.sin(i*.49)*Math.cos(i*.147+1.3));item.style.setProperty("--height",Math.round(10+88*v)+"%");item.style.setProperty("--opacity",String(.45+.55*v));chunk.appendChild(item)}bars.appendChild(chunk)}
+  document.querySelectorAll(".wave").forEach(function(w){var seed=Number(w.dataset.seed)||1;var fr=document.createDocumentFragment();for(var i=0;i<100;i++){var b=document.createElement("i");var v=Math.abs(Math.sin(i*.56+seed*.41)*Math.cos(i*.127+seed));b.style.setProperty("--h",Math.round(13+80*v)+"%");fr.appendChild(b)}w.appendChild(fr)});
+  var api="https://api.github.com/repos/mindrapeofficial-wq/phaedra/releases/latest";
+  fetch(api,{headers:{"Accept":"application/vnd.github+json"}}).then(function(r){if(!r.ok)throw new Error("No release");return r.json()}).then(function(release){
+    if(!release || typeof release.tag_name!=="string" || !/^v[0-9][A-Za-z0-9._+-]*$/.test(release.tag_name))return;
+    var url="https://github.com/mindrapeofficial-wq/phaedra/releases/tag/"+encodeURIComponent(release.tag_name);
+    document.getElementById("version").textContent=release.tag_name;
+    document.getElementById("release-page").href=url;
+    if(release.published_at){var date=new Date(release.published_at);if(!Number.isNaN(date.getTime()))document.getElementById("release-date").textContent=date.toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric"}).toUpperCase()}
+    var files=Array.isArray(release.assets)?release.assets:[];
+    var asset=files.find(function(a){return a && typeof a.name==="string" && /^Phaedra-v[\w.+-]+\.zip$/i.test(a.name) && typeof a.browser_download_url==="string" && a.browser_download_url.startsWith("https://github.com/mindrapeofficial-wq/phaedra/releases/download/")});
+    if(asset){
+      document.getElementById("filename").textContent=asset.name+" · Windows";
+      document.getElementById("asset-download").href=asset.browser_download_url;
+      if(Number.isFinite(asset.size)&&asset.size>0)document.getElementById("release-size").textContent=Math.round(asset.size/1048576)+" MB APROX.";
+    }else{
+      document.getElementById("filename").textContent="Consultar archivos de la versión";
+      document.getElementById("asset-download").href=url;
+      document.getElementById("asset-download").firstChild.textContent="VER ARCHIVOS PUBLICADOS ";
+      document.getElementById("release-size").textContent="CONSULTAR REPOSITORIO";
+    }
+  }).catch(function(){/* Keep the verified v1.0.0 fallback when offline. */});
+})();
+</script>
+</body></html>
