@@ -17,6 +17,7 @@ PREFIX = (Path(sys.executable).resolve().parent.parent if os.name == "nt"
           else Path(os.environ.get("MINGW_PREFIX", "/ucrt64")))
 ENGINE = os.environ.get("PHAEDRA_ENGINE_VERSION", "8.12.0")
 VERSION = os.environ.get("PHAEDRA_PACKAGE_VERSION", "0.0.0")
+CHANNEL = os.environ.get("PHAEDRA_CHANNEL", "stable")
 
 
 def need(path):
@@ -97,6 +98,23 @@ def copy_runtime_dependencies():
             print("Runtime DLL closure complete after", iteration + 1, "passes")
             return
     raise RuntimeError("Runtime DLL dependency resolution did not converge")
+
+
+def configure_channel(dest, channel):
+    """Keep experimental builds separate from the stable auto-updater."""
+    if channel not in ("stable", "preview"):
+        raise RuntimeError("Unknown PHAEDRA_CHANNEL: " + channel)
+    if channel == "stable":
+        return
+    settings = Path(dest) / "update_config.ini"
+    contents = settings.read_text(encoding="utf-8")
+    if contents.splitlines().count("check_updates=true") != 1:
+        raise RuntimeError("Expected one enabled stable update setting")
+    settings.write_text(
+        contents.replace("check_updates=true", "check_updates=false"),
+        encoding="utf-8",
+    )
+    (Path(dest) / "preview-channel.flag").write_text("preview\\n", encoding="ascii")
 
 
 def write_manifest():
@@ -193,6 +211,7 @@ def main():
         encoding="ascii", newline="",
     )
     copy_runtime_dependencies()
+    configure_channel(DEST, CHANNEL)
     write_manifest()
     print("Created:", DEST)
 
