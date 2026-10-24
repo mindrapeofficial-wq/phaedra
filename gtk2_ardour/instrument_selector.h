@@ -71,6 +71,7 @@ private:
 	InstrumentListColumns        _instrument_list_columns;
 	uint32_t                     _reasonable_synth_id;
 	uint32_t                     _gmsynth_id;
+	uint32_t                     _vital_synth_id;
 	InstrumentListDisposition    _disposition;
 	PBD::ScopedConnection        _update_connection;
 };
