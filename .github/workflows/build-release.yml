@@ -78,11 +78,13 @@ jobs:
       - name: Update version in portable
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${VERSION//\//-}"
           echo "$VERSION" > Phaedra-Portable/version.txt
 
       - name: Create ZIP
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${VERSION//\//-}"
           cd Phaedra-Portable && zip -r "../Phaedra-v${VERSION}.zip" . && cd ..
 
       - name: Upload Release
