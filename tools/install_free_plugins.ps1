@@ -100,7 +100,7 @@ try {
         if ($bundles.Count -eq 0) {
             throw "No se han encontrado plugins .vst3 en $id."
         }
-        $available = @($bundles | ForEach-Object { Normalize-PluginName $_.BaseName })
+        $available = @($bundles | ForEach-Object { Normalize-PluginName ([IO.Path]::GetFileNameWithoutExtension($_.Name)) })
         foreach ($required in @($pkg.expectedPlugins)) {
             if ($available -notcontains (Normalize-PluginName ([string] $required))) {
                 throw "Paquete $id incompleto: falta $required. Detectados: $($bundles.Name -join ', ')"
