@@ -148,9 +148,14 @@ def main():
             cp(scanner, DEST / "bin" / scanner.name)
 
     copy_optional(ROOT / "build/libs/LV2", DEST / "lib/ardour8/LV2")
+    # Waf generates GTK config and menus under build/gtk2_ardour.
     for name in ("clearlooks.rc", "clearlooks.ardoursans.rc",
-                 "default_ui_config", "ardour.menus", "ArdourMono.ttf", "ArdourSans.ttf"):
+                 "default_ui_config", "ardour.menus"):
         cp(ROOT / "build/gtk2_ardour" / name, DEST / "share/ardour8" / name)
+    # Fonts are source assets (wscript installs them directly from the tree);
+    # there is no corresponding build/gtk2_ardour/*.ttf output.
+    for name in ("ArdourMono.ttf", "ArdourSans.ttf"):
+        cp(ROOT / "gtk2_ardour" / name, DEST / "share/ardour8" / name)
     for keys in sorted((ROOT / "build/gtk2_ardour").glob("*.keys")):
         cp(keys, DEST / "share/ardour8" / keys.name)
     cp(ROOT / "system_config", DEST / "share/ardour8/system_config")
