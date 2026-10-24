@@ -1,5 +1,40 @@
-Please see the Ardour website at https://ardour.org/ for all documentation.
+PHAEDRA
+=======
 
-For information on building Ardour:
+Digital Audio Workstation · Producción musical en desarrollo.
 
-https://ardour.org/development.html
+WEB OFICIAL
+-----------
+https://phaedra-daw.vercel.app
+
+DESCARGAS
+---------
+Phaedra es gratuito por ahora.
+
+La versión publicada actualmente es experimental y está distribuida
+como archivo ZIP portátil para Windows. No se anuncia todavía un
+instalador ni un actualizador estable y validado.
+
+Versiones oficiales:
+https://github.com/mindrapeofficial-wq/phaedra/releases
+
+DESARROLLO
+----------
+Prioridades:
+1. Identidad y coherencia de la interfaz de Phaedra.
+2. Compilación reproducible y verificación en Windows.
+3. Instalación y distribución fiables.
+4. Actualizaciones seguras y documentación.
+
+Sitio web: website/index.html
+Instrucciones de publicación: website/README.md
+
+LICENCIAS Y ATRIBUCIONES
+------------------------
+Phaedra contiene código derivado de Ardour, sujeto a las
+obligaciones de sus licencias de software libre. Las atribuciones
+de derechos de autor y condiciones de distribución pertinentes
+deben conservarse.
+
+Consulta COPYING, los archivos de licencia de los componentes
+incluidos y el historial del repositorio.
