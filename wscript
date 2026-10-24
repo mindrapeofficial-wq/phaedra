@@ -295,14 +295,19 @@ def set_version (from_file = False):
     # or, if right at the same rev as a release, MAJOR.MINOR[-rcX]
     #
 
-    parts = sanitize(rev).split ('.', 1)
-    MAJOR = parts[0]
-    other = parts[1].split('-', 1)
-    MINOR = other[0]
-    if len(other) > 1:
-        MICRO = other[1].rsplit('-',1)[0].replace('-','.')
+    if base_engine:
+        # PHAEDRA_ENGINE_VERSION is an exact semantic version (MAJOR.MINOR.PATCH).
+        # Do not fold PATCH into MINOR: gtk2_ardour/wscript uses int(MINOR).
+        MAJOR, MINOR, MICRO = base_engine.split('.')
     else:
-        MICRO = '0'
+        parts = sanitize(rev).split ('.', 1)
+        MAJOR = parts[0]
+        other = parts[1].split('-', 1)
+        MINOR = other[0]
+        if len(other) > 1:
+            MICRO = other[1].rsplit('-',1)[0].replace('-','.')
+        else:
+            MICRO = '0'
 
     VERSION = MAJOR + '.' + MINOR + '.' + MICRO
     PROGRAM_VERSION = MAJOR
