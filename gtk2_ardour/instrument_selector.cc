@@ -36,6 +36,7 @@ sigc::signal<void> InstrumentSelector::DropPluginInfoPtr;
 InstrumentSelector::InstrumentSelector (InstrumentListDisposition disp)
 	: _reasonable_synth_id (0)
 	, _gmsynth_id (UINT32_MAX)
+	, _vital_synth_id (UINT32_MAX)
 	, _disposition (disp)
 {
 	refill ();
@@ -76,7 +77,10 @@ InstrumentSelector::refill()
 	set_model(_instrument_list);
 	pack_start(_instrument_list_columns.name);
 	if (selected.empty ()) {
-		if (_gmsynth_id != UINT32_MAX) {
+		// Prefer the user's installed Vital VST3 for new MIDI tracks.
+		if (_vital_synth_id != UINT32_MAX) {
+			set_active (_vital_synth_id);
+		} else if (_gmsynth_id != UINT32_MAX) {
 			set_active(_gmsynth_id);
 		} else {
 			set_active(_reasonable_synth_id);
@@ -153,6 +157,9 @@ InstrumentSelector::build_instrument_list()
 	}
 
 	_longest_instrument_name = "";
+	_vital_synth_id = UINT32_MAX;
+	_gmsynth_id = UINT32_MAX;
+	_reasonable_synth_id = 0;
 
 	uint32_t n = (_disposition==ForTrackSelector) ? 1 : 0;
 	std::string prev;
@@ -212,6 +219,13 @@ InstrumentSelector::build_instrument_list()
 		if (p->unique_id == "http://gareus.org/oss/lv2/gmsynth") {
 			_gmsynth_id = n;
 		}
+#ifdef VST3_SUPPORT
+		// The official Vital binary is not redistributed by Phaedra.
+		// Prefer it only when discovered through the user's VST3 folders.
+		if (p->type == ARDOUR::VST3 && PBD::downcase (p->name) == "vital") {
+			_vital_synth_id = n;
+		}
+#endif
 		prev = p->name;
 	}
 }
