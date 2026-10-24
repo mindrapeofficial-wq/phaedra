@@ -7,6 +7,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: phaedra-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref == 'refs/heads/preview/live' }}
+
 permissions:
   contents: read
 
