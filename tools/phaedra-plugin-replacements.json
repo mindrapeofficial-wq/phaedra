@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "notes": "Official, checksum-pinned release archives are downloaded by the local user. No third-party binaries are checked into or distributed with Phaedra.",
+  "packages": [
+    {
+      "id": "zam-plugins",
+      "group": "effects",
+      "version": "4.5",
+      "url": "https://github.com/zamaudio/zam-plugins/releases/download/4.5/zam-plugins-4.5-win64.zip",
+      "sha256": "745990b0acdda1cc319cd55aafdf61b6f258015810f310abd31d8bbe849e4da8",
+      "license": "GPL-2.0",
+      "source": "https://github.com/zamaudio/zam-plugins/tree/4.5",
+      "expectedPlugins": [
+        "ZamDynamicEQ",
+        "ZamCompX2",
+        "ZamGateX2",
+        "ZamDelay"
+      ]
+    },
+    {
+      "id": "dragonfly-reverb",
+      "group": "effects",
+      "version": "3.2.10",
+      "url": "https://github.com/michaelwillis/dragonfly-reverb/releases/download/3.2.10/dragonfly-reverb-3.2.10-win64.zip",
+      "sha256": "ca5f35f9dcd9a33f06490d3c92f04061a1a798cb81257d5ca5851bdda0824c66",
+      "license": "GPL-3.0",
+      "source": "https://github.com/michaelwillis/dragonfly-reverb/tree/3.2.10",
+      "expectedPlugins": [
+        "DragonflyHallReverb"
+      ]
+    },
+    {
+      "id": "shortcircuit-xt",
+      "group": "sampler",
+      "version": "2026-10-21-72ad423",
+      "url": "https://github.com/surge-synthesizer/shortcircuit-xt/releases/download/Nightly/shortcircuit-xt-win64-2026-10-21-72ad423.zip",
+      "sha256": "a16fba31f2c4e3302977832547f53c0371be559bb9afe37120837103a8451135",
+      "license": "AGPL-3.0-or-later binaries; source includes MIT and GPL/AGPL libraries",
+      "source": "https://github.com/surge-synthesizer/shortcircuit-xt/tree/72ad423",
+      "beta": true,
+      "expectedPlugins": [
+        "ShortcircuitXT"
+      ]
+    }
+  ],
+  "replacements": [
+    {
+      "original": "ACE Reasonable Synth",
+      "recommended": "Vital",
+      "freeFallback": "Surge XT",
+      "delivery": "official Vital install + local importer; optional standalone Surge XT"
+    },
+    {
+      "original": "ACE Fluid Synth",
+      "recommended": "Shortcircuit XT",
+      "delivery": "shortcircuit-xt; beta; retains SF2/GM legacy fallback"
+    },
+    {
+      "original": "ACE EQ",
+      "recommended": "ZamDynamicEQ",
+      "delivery": "zam-plugins"
+    },
+    {
+      "original": "ACE Compressor",
+      "recommended": "ZamCompX2",
+      "delivery": "zam-plugins"
+    },
+    {
+      "original": "ACE Expander",
+      "recommended": "ZamGateX2",
+      "delivery": "zam-plugins"
+    },
+    {
+      "original": "ACE Reverb",
+      "recommended": "Dragonfly Hall Reverb",
+      "delivery": "dragonfly-reverb"
+    },
+    {
+      "original": "ACE Delay",
+      "recommended": "ZamDelay",
+      "delivery": "zam-plugins"
+    },
+    {
+      "original": "ACE Vapor",
+      "recommended": "IEM Plug-in Suite",
+      "delivery": "not built by wscript; optional spatial audio plugin suite"
+    }
+  ]
+}
