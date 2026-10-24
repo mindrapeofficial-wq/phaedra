@@ -107,26 +107,12 @@ NagScreen::nag ()
 	}
 }
 
+// Disable the inherited donation/subscription prompt. Phaedra has no
+// configured subscription service and must not send users to another product.
 NagScreen*
-NagScreen::maybe_nag (std::string why)
+NagScreen::maybe_nag (std::string /*why*/)
 {
-	std::string path;
-	bool really_subscribed;
-	bool maybe_subscribed;
-
-	path = Glib::build_filename (user_config_directory(), ".nevernag");
-
-	if (Glib::file_test (path, Glib::FILE_TEST_EXISTS)) {
-		return 0;
-	}
-
-	maybe_subscribed = is_subscribed (really_subscribed);
-
-	if (really_subscribed) {
-		return 0;
-	}
-
-	return new NagScreen (why, maybe_subscribed);
+	return 0;
 }
 
 void

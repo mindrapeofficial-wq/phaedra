@@ -613,7 +613,7 @@ msgstr ""
 
 #: about.cc:652
 msgid "http://ardour.org/"
-msgstr "http://ardour.org/"
+msgstr "https://github.com/mindrapeofficial-wq/phaedra/"
 
 #: about.cc:653
 msgid ""
@@ -13104,11 +13104,11 @@ msgstr ""
 "\n"
 "Si no ets un subscriptor, potser et podries plantejar donar suport al meu "
 "treball\n"
-"a l'Ardour amb un donatiu d'un sol cop o una subscripció. Res \n"
+"a l'Phaedra amb un donatiu d'un sol cop o una subscripció. Res \n"
 "passi si decideix no fer-ho. No obstant això, el desenvolupament continu "
-"d'Ardour\n"
+"d'Phaedra\n"
 "Es basa en un flux d'ingressos estable i sostenible. Gràcies per utilitzar "
-"l'Ardour!"
+"l'Phaedra!"
 
 #: nag.cc:58
 msgid ""
@@ -13123,13 +13123,13 @@ msgid ""
 msgstr ""
 "Enhorabona per l'exportació de la sessió.\n"
 "\n"
-"Espero que trobis l'Ardour una eina útil. Vull demanar-vos que considereu "
+"Espero que trobis l'Phaedra una eina útil. Vull demanar-vos que considereu "
 "donar suport\n"
 "el seu desenvolupament amb una donació o subscripció d'un sol cop. Res\n"
 "Passarà si decideix no fer-ho. No obstant això, el desenvolupament continu "
-"d'Ardour\n"
+"d'Phaedra\n"
 "Es basa en un flux d'ingressos estable i sostenible. Gràcies per utilitzar "
-"l'Ardour!"
+"l'Phaedra!"
 
 #: new_plugin_preset_dialog.cc:29
 msgid "Replace existing preset with this name"
@@ -13386,11 +13386,11 @@ msgstr "-v, --version Imprimeix la versió i surt\n"
 
 #: opts.cc:96
 msgid "Report bugs to http://tracker.ardour.org\n"
-msgstr "Informeu d'errors a http://tracker.ardour.org\n"
+msgstr "Informeu d'errors a https://github.com/mindrapeofficial-wq/phaedra\n"
 
 #: opts.cc:97
 msgid "Website http://ardour.org\n"
-msgstr "Lloc web http://ardour.org\n"
+msgstr "Lloc web https://github.com/mindrapeofficial-wq/phaedra\n"
 
 #: panner2d.cc:923
 msgid "Panner (2D)"
@@ -22711,7 +22711,7 @@ msgstr ""
 "variable d'entorn XJREMOTE. Hauria d'apuntar a una aplicació compatible amb "
 "la interfície de control remot de xjadeo 'xjremote').\n"
 "\n"
-"vegeu també http://manual.ardour.org/video-timeline/setup/"
+"vegeu també https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: video_timeline.cc:737
 msgid "Video-monitor 'xjadeo' cannot be launched."
@@ -22759,7 +22759,7 @@ msgstr ""
 "La importació i exportació de vídeo no és possible fins que no instal·leu "
 "eines.\n"
 "\n"
-"Les eines s'inclouen amb els llançaments de l'ardour.org del %1 i també "
+"Les eines s'inclouen amb els llançaments de l'github.com/mindrapeofficial-wq/phaedra del %1 i també "
 "estan disponibles amb el servidor de vídeo a http://x42.github.com/harvid/\n"
 "\n"
 "Important: els arxius s'han d'instal·lar a $PATH i s'anomenen ffmpegharvid i "
@@ -22768,7 +22768,7 @@ msgstr ""
 "recomanem crear enllaços simbòlics des de ffmpeg a ffmpegharvid i des de "
 "ffprobe a ffprobeharvid.\n"
 "\n"
-"vegeu també http://manual.ardour.org/video-timeline/setup/"
+"vegeu també https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: transcode_video_dialog.cc:59
 msgid "Transcode/Import Video File "
@@ -22925,11 +22925,11 @@ msgid ""
 "see also http://manual.ardour.org/video-timeline/setup/"
 msgstr ""
 "No s'ha trobat el servidor de vídeo extern «harvid».\n"
-"L'eina s'inclou amb els llançaments %1 d'ardour.org, alternativament podeu "
+"L'eina s'inclou amb els llançaments %1 d'github.com/mindrapeofficial-wq/phaedra, alternativament podeu "
 "descarregar-la de http://x42.github.com/harvid/ o adquirir-la des la vostra "
 "distribució.\n"
 "\n"
-"vegeu també http://manual.ardour.org/video-timeline/setup/"
+"vegeu també https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: video_server_dialog.cc:148
 msgid "Listen Address:"

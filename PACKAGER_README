@@ -1,12 +1,13 @@
-(1) VST SUPPORT
+Phaedra packaging notes
+=======================
 
-Please do not distribute Ardour with VST support under the package
-name "ardour" (or any case-variant on that). Use some other name such
-as "ardourvst", "ArdourVST", "ardour-vst" etc. In the near future,
-work will be done to make it possible to share as much as possible of
-the packaging. 
+Do not distribute a Phaedra installer until the executable, audio engine,
+plugins, bundled libraries and updater have passed tests on a clean machine.
+Preserve GPL source-distribution requirements and third-party copyright
+notices, including those for the inherited engine components.
 
-(2) STANDARD TEMPLATES
+The build currently uses some legacy library/data directories and session
+extensions for compatibility. Do not rename those paths without updating the
+resolution code and testing existing projects.
 
-The templates in ./templates are intended for installation in
-$prefix/share/ardour3/templates.
+See COPYING, README and .github/workflows/build-release.yml.

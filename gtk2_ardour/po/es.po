@@ -610,7 +610,7 @@ msgstr ""
 
 #: about.cc:652
 msgid "http://ardour.org/"
-msgstr "http://ardour.org/"
+msgstr "https://github.com/mindrapeofficial-wq/phaedra/"
 
 #: about.cc:653
 msgid ""
@@ -1886,7 +1886,7 @@ msgid ""
 "quickly enough to keep up with playback.\n"
 msgstr ""
 "El disco duro de tu ordenador\n"
-"no ha sido capaz de seguir el ritmo de Ardour.\n"
+"no ha sido capaz de seguir el ritmo de Phaedra.\n"
 "\n"
 "En concreto, la velocidad de lectura de datos desde el disco\n"
 "no fue lo bastante alta como para permitir la reproducción.\n"
@@ -13113,10 +13113,10 @@ msgstr ""
 "con este mensaje.\n"
 "\n"
 "Si no eres subscriptor, quizás podrías considerar colaborar con mi\n"
-"trabajo en Ardour con una donación eventual o suscribiéndote.\n"
+"trabajo en Phaedra con una donación eventual o suscribiéndote.\n"
 "No pasa nada si decides no hacerlo. Sin embargo, el desarrollo\n"
-"continuo de Ardour depende de un flujo de ingresos estable y sostenible.\n"
-"¡Gracias por usar Ardour!"
+"continuo de Phaedra depende de un flujo de ingresos estable y sostenible.\n"
+"¡Gracias por usar Phaedra!"
 
 #: nag.cc:58
 msgid ""
@@ -13131,11 +13131,11 @@ msgid ""
 msgstr ""
 "Enhorabuena por tu sesión exportada.\n"
 "\n"
-"Espero que encuentres en Ardour una herramienta útil. Me gustaría pedirte\n"
+"Espero que encuentres en Phaedra una herramienta útil. Me gustaría pedirte\n"
 "que consideres colaborar en su desarrollo con una donación eventual.\n"
 "No pasa nada si eliges no hacerlo. Sin embargo, el desarrollo continuo\n"
-"de Ardour depende de un flujo de ingresos estable y sostenible.\n"
-"¡Gracias por usar Ardour!"
+"de Phaedra depende de un flujo de ingresos estable y sostenible.\n"
+"¡Gracias por usar Phaedra!"
 
 #: new_plugin_preset_dialog.cc:29
 msgid "Replace existing preset with this name"
@@ -13400,11 +13400,11 @@ msgstr " -v, --version               Imprimir versión y salir\n"
 
 #: opts.cc:96
 msgid "Report bugs to http://tracker.ardour.org\n"
-msgstr "Reportar errores a http://tracker.ardour.org\n"
+msgstr "Reportar errores a https://github.com/mindrapeofficial-wq/phaedra\n"
 
 #: opts.cc:97
 msgid "Website http://ardour.org\n"
-msgstr "Sitio web http://ardour.org\n"
+msgstr "Sitio web https://github.com/mindrapeofficial-wq/phaedra\n"
 
 #: panner2d.cc:923
 msgid "Panner (2D)"
@@ -14784,7 +14784,7 @@ msgstr "Hardware"
 
 #: port_group.cc:365
 msgid "%1 Misc"
-msgstr "Ardour misc"
+msgstr "Phaedra misc"
 
 #: port_group.cc:366
 msgid "External"
@@ -22742,7 +22742,7 @@ msgstr ""
 "aplicación compatible con la interfaz de control remoto de xjadeo "
 "'xjremote'.\n"
 "\n"
-"ver también http://manual.ardour.org/video-timeline/setup/"
+"ver también https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: video_timeline.cc:737
 msgid "Video-monitor 'xjadeo' cannot be launched."
@@ -22790,7 +22790,7 @@ msgstr ""
 "La importación y exportación de video no es posible hasta que instales las "
 "herramientas.\n"
 "\n"
-"Las herramientas están incluidas en las versiones %1 de ardour.org y también "
+"Las herramientas están incluidas en las versiones %1 de github.com/mindrapeofficial-wq/phaedra y también "
 "están disponibles con el servidor de video en http://x42.github.com/harvid/\n"
 "\n"
 "Importante: los archivos deben instalarse en $PATH y nombrarse ffmpeg_harvid "
@@ -22799,7 +22799,7 @@ msgstr ""
 "recomendamos crear enlaces simbólicos desde ffmpeg a ffmpeg_harvid y desde "
 "ffprobe a ffprobe_harvid.\n"
 "\n"
-"ver también http://manual.ardour.org/video-timeline/setup/"
+"ver también https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: transcode_video_dialog.cc:59
 msgid "Transcode/Import Video File "
@@ -22957,11 +22957,11 @@ msgid ""
 "see also http://manual.ardour.org/video-timeline/setup/"
 msgstr ""
 "No se puede encontrar el servidor de video externo 'harvid'.\n"
-"La herramienta está incluida en las versiones %1 de ardour.org, "
+"La herramienta está incluida en las versiones %1 de github.com/mindrapeofficial-wq/phaedra, "
 "alternativamente puedes descargarla desde http://x42.github.com/harvid/ o "
 "adquirirla desde tu distribución.\n"
 "\n"
-"ver también http://manual.ardour.org/video-timeline/setup/"
+"ver también https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: video_server_dialog.cc:148
 msgid "Listen Address:"

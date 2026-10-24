@@ -57,14 +57,14 @@ TranscodeFfmpeg::TranscodeFfmpeg (std::string f)
 		                             "%1 requires ffmpeg and ffprobe from ffmpeg.org - version 1.1 or newer.\n"
 		                             "Video import and export is not possible until you install tools.\n"
 		                             "\n"
-		                             "The tools are included with the %1 releases from ardour.org "
+		                             "The tools may need to be installed separately for %1 "
 		                             "and also available with the video-server at http://x42.github.com/harvid/\n"
 		                             "\n"
 		                             "Important: the files need to be installed in $PATH and named ffmpeg_harvid and ffprobe_harvid.\n"
 		                             "If you already have a suitable ffmpeg installation on your system, we recommend creating "
 		                             "symbolic links from ffmpeg to ffmpeg_harvid and from ffprobe to ffprobe_harvid.\n"
 		                             "\n"
-		                             "see also http://manual.ardour.org/video-timeline/setup/"),
+		                             "see the external tools' setup documentation"),
 		                           PROGRAM_NAME)
 		        << endmsg;
 		return;

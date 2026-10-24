@@ -601,7 +601,7 @@ msgstr ""
 
 #: about.cc:652
 msgid "http://ardour.org/"
-msgstr "http://ardour.org/"
+msgstr "https://github.com/mindrapeofficial-wq/phaedra/"
 
 #: about.cc:653
 msgid ""
@@ -12730,16 +12730,16 @@ msgid ""
 msgstr ""
 "Til lukke med vellukka eksport av økta.\n"
 "\n"
-"Det ser ut som du alt er abonnent på Ardour. Viss du er det, seier me takk,\n"
+"Det ser ut som du alt er abonnent på Phaedra. Viss du er det, seier me takk,\n"
 "og orsakar at me plagar deg med dette ein gong til - eg jobbar med å "
 "utbetra\n"
 "abonnentsystemet, så eg slepp forstyrra deg med denne meldinga.\n"
 "\n"
 "Viss du ikkje abonnerer, kan du kanskje vurdera å støtta arbeidet mitt med\n"
-"Ardour ved å gje ei eingongsgåve eller teikna eit abonnement. Ingenting "
+"Phaedra ved å gje ei eingongsgåve eller teikna eit abonnement. Ingenting "
 "skjer\n"
-"viss du vel å ikkje abonnera, men me kan vanskeleg halda fram å laga Ardour\n"
-"utan ei stabil inntekt. Takk for at du bruker Ardour!"
+"viss du vel å ikkje abonnera, men me kan vanskeleg halda fram å laga Phaedra\n"
+"utan ei stabil inntekt. Takk for at du bruker Phaedra!"
 
 #: nag.cc:58
 msgid ""
@@ -12754,13 +12754,13 @@ msgid ""
 msgstr ""
 "Til lukke med vellukka eksport av økta.\n"
 "\n"
-"Eg vonar du synest Ardour er eit nyttig program. Eg vil gjerne be deg "
+"Eg vonar du synest Phaedra er eit nyttig program. Eg vil gjerne be deg "
 "vurdera\n"
 "å støtta programutviklinga, anten ved ei eingongsgåve eller ved å teikna eit "
 "abonnement.\n"
 "Det vil ikkje skje noko om du vel å ikkje bidra, men me kan vanskeleg halda "
 "fram med\n"
-"å laga Ardour utan stabile inntekter. Takk for at du bruker Ardour!"
+"å laga Phaedra utan stabile inntekter. Takk for at du bruker Phaedra!"
 
 #: new_plugin_preset_dialog.cc:29
 msgid "Replace existing preset with this name"
@@ -12969,7 +12969,7 @@ msgstr ""
 
 #: opts.cc:86
 msgid "  -m, --menus file            Use \"file\" to define menus\n"
-msgstr "  -m, --menus file                 Bruk \"fil\" for Ardour-menyar\n"
+msgstr "  -m, --menus file                 Bruk \"fil\" for Phaedra-menyar\n"
 
 #: opts.cc:87
 msgid "  -n, --no-splash             Do not show splash screen\n"

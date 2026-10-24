@@ -1,5 +1,5 @@
-PHAEDRA
-=======
+PHAEDRA DAW
+===========
 
 Digital Audio Workstation · Producción musical en desarrollo.
 
@@ -38,3 +38,12 @@ deben conservarse.
 
 Consulta COPYING, los archivos de licencia de los componentes
 incluidos y el historial del repositorio.
+
+COMPILACIÓN DESDE CÓDIGO FUENTE
+-------------------------------
+Se requiere un checkout Git completo y las dependencias del proyecto.
+La compilación utiliza Waf; los pasos de Windows figuran en
+.github/workflows/build-release.yml. Tras configurar deben verificarse
+la compilación, el arranque y la apertura de sesiones de prueba.
+
+Incidencias: https://github.com/mindrapeofficial-wq/phaedra/issues

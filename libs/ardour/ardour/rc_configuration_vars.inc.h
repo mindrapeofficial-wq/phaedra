@@ -276,12 +276,12 @@ CONFIG_VARIABLE (DenormalModel, denormal_model, "denormal-model", DenormalFTZDAZ
 
 /* web addresses used in the program */
 
-CONFIG_VARIABLE (std::string, pingback_url, "pingback-url", "http://community.ardour.org/pingback/ignored/")
-CONFIG_VARIABLE (std::string, tutorial_manual_url, "tutorial-manual-url", "http://ardour.org/tutorial")
-CONFIG_VARIABLE (std::string, reference_manual_url, "reference-manual-url", "http://manual.ardour.org/")
-CONFIG_VARIABLE (std::string, updates_url, "updates-url", "http://ardour.org/whatsnew.html")
-CONFIG_VARIABLE (std::string, donate_url, "donate-url", "http://community.ardour.org/donate")
-CONFIG_VARIABLE (std::string, resource_index_url, "resource-index-url", "http://ardour.org/libraries.xml")
+CONFIG_VARIABLE (std::string, pingback_url, "pingback-url", "")
+CONFIG_VARIABLE (std::string, tutorial_manual_url, "tutorial-manual-url", "https://github.com/mindrapeofficial-wq/phaedra#readme")
+CONFIG_VARIABLE (std::string, reference_manual_url, "reference-manual-url", "https://github.com/mindrapeofficial-wq/phaedra#readme")
+CONFIG_VARIABLE (std::string, updates_url, "updates-url", "https://github.com/mindrapeofficial-wq/phaedra/releases")
+CONFIG_VARIABLE (std::string, donate_url, "donate-url", "")
+CONFIG_VARIABLE (std::string, resource_index_url, "resource-index-url", "")
 CONFIG_VARIABLE (std::string, demo_session_index_url, "demo-session-index-url", "")
 
 /* video timeline configuration */

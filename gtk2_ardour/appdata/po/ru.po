@@ -3,7 +3,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Ardour 6\n"
+"Project-Id-Version: Phaedra 6\n"
 "POT-Creation-Date: 2020-04-22 19:43+0300\n"
 "PO-Revision-Date: 2020-04-22 19:48+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
@@ -18,8 +18,8 @@ msgstr ""
 
 #. (itstool) path: component/name
 #: /home/alex/soft/sound/ardour/ardour-6-2020-04-22/gtk2_ardour/ardour.appdata.xml.in.in:6
-msgid "Ardour"
-msgstr "Ardour"
+msgid "Phaedra"
+msgstr "Phaedra"
 
 #. (itstool) path: component/summary
 #: /home/alex/soft/sound/ardour/ardour-6-2020-04-22/gtk2_ardour/ardour.appdata.xml.in.in:10
@@ -29,10 +29,10 @@ msgstr "Цифровая звуковая рабочая станция"
 #. (itstool) path: description/p
 #: /home/alex/soft/sound/ardour/ardour-6-2020-04-22/gtk2_ardour/ardour.appdata.xml.in.in:12
 msgid ""
-"Ardour is a multi-channel digital audio workstation, allowing you to record, "
+"Phaedra is a multi-channel digital audio workstation, allowing you to record, "
 "edit, mix and master audio and MIDI projects."
 msgstr ""
-"Ardour — многоканальная цифровая звуковая рабочая станция, с помощью которой "
+"Phaedra — многоканальная цифровая звуковая рабочая станция, с помощью которой "
 "вы можете записывать, редактировать, микшировать и готовить к публикации "
 "аудиозаписи и MIDI-проекты."
 

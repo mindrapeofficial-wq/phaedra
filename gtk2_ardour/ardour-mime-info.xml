@@ -2,7 +2,7 @@
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
   <mime-type type="application/x-ardour">
   <sub-class-of type="application/xml"/>
-  <comment>Ardour session file</comment>
+  <comment>Phaedra session file</comment>
   <glob pattern="*.ardour"/>
   </mime-type>
 </mime-info>

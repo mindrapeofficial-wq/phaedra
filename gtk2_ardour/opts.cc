@@ -76,7 +76,7 @@ print_help (const char *execname)
 		<< _("  -A, --actions               Print all possible menu action names\n")
 		<< _("  -b, --bindings              Display all current key bindings\n")
 		<< _("  -B, --bypass-plugins        Bypass all plugins in an existing session\n")
-		<< _("  -c, --name <name>           Use a specific backend client name, default is ardour\n")
+		<< _("  -c, --name <name>           Use a specific backend client name, default is phaedra\n")
 		<< _("  -d, --disable-plugins       Disable all plugins (safe mode)\n")
 #ifndef NDEBUG
 		<< _("  -D, --debug <options>       Set debug flags. Use \"-D list\" to see available options\n")
@@ -93,8 +93,8 @@ print_help (const char *execname)
 		<< _("  -T, --template <name>       Use given template for new session\n")
 		<< _("  -v, --version               Print version and exit\n")
 		<< "\n\n"
-		<< _("Report bugs to http://tracker.ardour.org\n")
-		<< _("Website http://ardour.org\n")
+		<< _("Report bugs to https://github.com/mindrapeofficial-wq/phaedra/issues\n")
+		<< _("Website https://github.com/mindrapeofficial-wq/phaedra\n")
 		;
 	return 1;
 }

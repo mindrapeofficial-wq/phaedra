@@ -2608,7 +2608,7 @@ RCOptionEditor::RCOptionEditor ()
 		     sigc::mem_fun (UIConfiguration::instance(), &UIConfiguration::get_check_announcements),
 		     sigc::mem_fun (UIConfiguration::instance(), &UIConfiguration::set_check_announcements)
 		     );
-	bo ->set_note (string_compose (_("An anonymous request is performed to query announcements by contacting\n%1"), Config->get_pingback_url ()));
+	bo ->set_note (_("Phaedra does not contact an announcement service by default."));
 	add_option (_("General"), bo);
 
 #endif

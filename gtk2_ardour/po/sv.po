@@ -615,7 +615,7 @@ msgstr ""
 
 #: about.cc:652
 msgid "http://ardour.org/"
-msgstr "http://ardour.org/"
+msgstr "https://github.com/mindrapeofficial-wq/phaedra/"
 
 #: about.cc:653
 msgid ""
@@ -13063,9 +13063,9 @@ msgstr ""
 "fortsätta att besvära dig med detta meddelande.\n"
 "\n"
 "Om du inte är prenumerant kanske du kan överväga att stödja mitt arbete med "
-"Ardour genom en engångsdonation eller en prenumeration. Ingenting händer om "
-"du väljer att inte göra det. Ardours fortsatta utveckling är dock beroende "
-"av en stabil och hållbar inkomstkälla. Tack för att du använder Ardour!"
+"Phaedra genom en engångsdonation eller en prenumeration. Ingenting händer om "
+"du väljer att inte göra det. Phaedras fortsatta utveckling är dock beroende "
+"av en stabil och hållbar inkomstkälla. Tack för att du använder Phaedra!"
 
 #: nag.cc:58
 msgid ""
@@ -13078,12 +13078,12 @@ msgid ""
 "development\n"
 "relies on a stable, sustainable income stream. Thanks for using Ardour!"
 msgstr ""
-"Grattis till din sessionsexport. Jag hoppas att du tycker att Ardour är ett "
+"Grattis till din sessionsexport. Jag hoppas att du tycker att Phaedra är ett "
 "användbart verktyg. Jag vill be dig att överväga att stödja utvecklingen av "
 "programmet med en engångsdonation eller ett abonnemang. Ingenting kommer att "
-"hända om du väljer att inte göra det. Ardours fortsatta utveckling är dock "
+"hända om du väljer att inte göra det. Phaedras fortsatta utveckling är dock "
 "beroende av en stabil och hållbar inkomstkälla. Tack för att du använder "
-"Ardour!"
+"Phaedra!"
 
 #: new_plugin_preset_dialog.cc:29
 msgid "Replace existing preset with this name"
@@ -13349,11 +13349,11 @@ msgstr "  -v, --version               Skriv ut version och avsluta\n"
 
 #: opts.cc:96
 msgid "Report bugs to http://tracker.ardour.org\n"
-msgstr "Rapportera fel till http://tracker.ardour.org\n"
+msgstr "Rapportera fel till https://github.com/mindrapeofficial-wq/phaedra\n"
 
 #: opts.cc:97
 msgid "Website http://ardour.org\n"
-msgstr "Webbplats http://ardour.org\n"
+msgstr "Webbplats https://github.com/mindrapeofficial-wq/phaedra\n"
 
 #: panner2d.cc:923
 msgid "Panner (2D)"
@@ -22834,7 +22834,7 @@ msgstr ""
 "Videomonitorn \"xjadeo\" hittades inte. Installera http://xjadeo.sf.net/ (en "
 "anpassad sökväg till xjadeo kan anges genom att ställa in miljövariabeln "
 "XJREMOTE. Den ska peka på ett program som är kompatibelt med xjadeos "
-"fjärrkontrollgränssnitt \"xjremote\"). Se även http://manual.ardour.org/"
+"fjärrkontrollgränssnitt \"xjremote\"). Se även https://github.com/mindrapeofficial-wq/phaedra/"
 "video-timeline/setup/"
 
 #: video_timeline.cc:737
@@ -22881,14 +22881,14 @@ msgstr ""
 "ffmpeg-installationen hittades inte på detta system. %1 kräver ffmpeg och "
 "ffprobe från ffmpeg.org - version 1.1 eller nyare. Videoimport och -export "
 "är inte möjlig förrän du installerar verktygen. Verktygen ingår i %1-"
-"utgåvorna från ardour.org och finns även tillgängliga på videoservern på "
+"utgåvorna från github.com/mindrapeofficial-wq/phaedra och finns även tillgängliga på videoservern på "
 "http://x42.github.com/harvid/\n"
 "\n"
 "Viktigt: filerna måste installeras i $PATH och namnges ffmpeg_harvid och "
 "ffprobe_harvid. Om du redan har en lämplig ffmpeg-installation på ditt "
 "system rekommenderar vi att du skapar symboliska länkar från ffmpeg till "
 "ffmpeg_harvid och från ffprobe till ffprobe_harvid. Se även http://manual."
-"ardour.org/video-timeline/setup/"
+"github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: transcode_video_dialog.cc:59
 msgid "Transcode/Import Video File "
@@ -23044,9 +23044,9 @@ msgid ""
 "see also http://manual.ardour.org/video-timeline/setup/"
 msgstr ""
 "Den externa videoservern \"harvid\" kan inte hittas. Verktyget ingår i %1-"
-"utgåvorna från ardour.org, alternativt kan du ladda ner det från http://x42."
+"utgåvorna från github.com/mindrapeofficial-wq/phaedra, alternativt kan du ladda ner det från http://x42."
 "github.com/harvid/ eller skaffa det från din distribution. Se även http://"
-"manual.ardour.org/video-timeline/setup/"
+"manual.github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: video_server_dialog.cc:148
 msgid "Listen Address:"

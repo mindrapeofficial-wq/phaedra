@@ -638,7 +638,7 @@ msgstr "Авторские права (C) 1999-2026 Paul Davis\n"
 
 #: about.cc:652
 msgid "http://ardour.org/"
-msgstr "http://ardour.org/"
+msgstr "https://github.com/mindrapeofficial-wq/phaedra/"
 
 #: about.cc:653
 msgid ""
@@ -13064,12 +13064,12 @@ msgstr ""
 "подписки и не планирую в дальнейшем нервировать вас этим сообщением.\n"
 "\n"
 "Если же вы еще не оплатили подписку, подумайте, не хотите ли поддержать\n"
-"разработку Ardour при помощи одноразового пожертвования или подписки.\n"
+"разработку Phaedra при помощи одноразового пожертвования или подписки.\n"
 "Если вы откажетесь, программа продолжит работать так же как и сейчас.\n"
 "Тем не менее, развитие программы зависит от стабильного и достаточного\n"
 "дохода ее основного разработчика.\n"
 "\n"
-"Спасибо за использование Ardour!"
+"Спасибо за использование Phaedra!"
 
 #: nag.cc:58
 msgid ""
@@ -13084,13 +13084,13 @@ msgid ""
 msgstr ""
 "Поздравляю с успешным экспортом сессии!\n"
 "\n"
-"Надеюсь, что Ardour оказался полезным для вас приложением. Я бы хотел\n"
+"Надеюсь, что Phaedra оказался полезным для вас приложением. Я бы хотел\n"
 "попросить вас поддержать его разработку при помощи одноразового\n"
 "пожертвования или подписки. Если вы откажетесь, программа продолжит\n"
 "работать так же как и сейчас. Тем не менее, развитие программы зависит\n"
 "от стабильного и достаточного дохода ее основного разработчика.\n"
 "\n"
-"Спасибо за использование Ardour!"
+"Спасибо за использование Phaedra!"
 
 #: new_plugin_preset_dialog.cc:29
 msgid "Replace existing preset with this name"
@@ -13330,7 +13330,7 @@ msgstr ""
 #: opts.cc:86
 msgid "  -m, --menus file            Use \"file\" to define menus\n"
 msgstr ""
-"  -m, --menus файл                 Использовать свой файл для меню Ardour\n"
+"  -m, --menus файл                 Использовать свой файл для меню Phaedra\n"
 
 #: opts.cc:87
 msgid "  -n, --no-splash             Do not show splash screen\n"
@@ -13378,11 +13378,11 @@ msgstr ""
 
 #: opts.cc:96
 msgid "Report bugs to http://tracker.ardour.org\n"
-msgstr "Сообщить об ошибках на http://tracker.ardour.org\n"
+msgstr "Сообщить об ошибках на https://github.com/mindrapeofficial-wq/phaedra\n"
 
 #: opts.cc:97
 msgid "Website http://ardour.org\n"
-msgstr "Сайт http://ardour.org\n"
+msgstr "Сайт https://github.com/mindrapeofficial-wq/phaedra\n"
 
 #: panner2d.cc:923
 msgid "Panner (2D)"
@@ -22642,7 +22642,7 @@ msgid ""
 msgstr ""
 "Несоответствие корневой папки документов видеосервера. %1: '%2' - "
 "видеосервер: '%3'. Как правило, это означает, что видеосервер не был запущен "
-"от имени Ardour и используется другие различные корневые документы."
+"от имени Phaedra и используется другие различные корневые документы."
 
 #: video_timeline.cc:720
 msgid ""
@@ -22658,7 +22658,7 @@ msgstr ""
 "должно  указывать на приложения, совместимые с интерфейсом дистанционного "
 "управления xjadeo в 'xjremote').\n"
 "\n"
-"См. так же:  http://manual.ardour.org/video-timeline/setup/"
+"См. так же:  https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: video_timeline.cc:737
 msgid "Video-monitor 'xjadeo' cannot be launched."
@@ -22856,11 +22856,11 @@ msgid ""
 "see also http://manual.ardour.org/video-timeline/setup/"
 msgstr ""
 "Внешний видеосервер 'harvid' не может быть найден.\n"
-"Инструмент входит в %1 релизы от ardour.org. Альтернативно, вы можете "
+"Инструмент входит в %1 релизы от github.com/mindrapeofficial-wq/phaedra. Альтернативно, вы можете "
 "скачать его с http://x42.github.com/harvid/ или приобрести его с вашим "
 "дистрибутивом.\n"
 "\n"
-"См. так же http://manual.ardour.org/video-timeline/setup/"
+"См. так же https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: video_server_dialog.cc:148
 msgid "Listen Address:"

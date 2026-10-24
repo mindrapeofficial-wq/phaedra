@@ -610,7 +610,7 @@ msgstr ""
 
 #: about.cc:652
 msgid "http://ardour.org/"
-msgstr "http://ardour.org/"
+msgstr "https://github.com/mindrapeofficial-wq/phaedra/"
 
 #: about.cc:653
 msgid ""
@@ -13036,10 +13036,10 @@ msgstr ""
 "lanean ari naiz\n"
 "honela zu mezu honekin gogaitzen ez ibili behar izateko.\n"
 "\n"
-"Ez bazara harpidedun, nire Ardourreko lana babestea birpentsatu dezakezu,\n"
+"Ez bazara harpidedun, nire Phaedrareko lana babestea birpentsatu dezakezu,\n"
 "izan dohaintza bakarra edo harpidetzarekin. Ezer ez da gertaturen ezezkoa\n"
-"hautatzen baduzu. Halere Ardourren etengabeko garapena sarrera-fluxu\n"
-"egonkor eta jasankor batean oinarritzen da. Esker mila Ardour "
+"hautatzen baduzu. Halere Phaedraren etengabeko garapena sarrera-fluxu\n"
+"egonkor eta jasankor batean oinarritzen da. Esker mila Phaedra "
 "erabiltzeagatik!"
 
 #: nag.cc:58
@@ -13055,13 +13055,13 @@ msgid ""
 msgstr ""
 "Zorionak zure saioaren esportazioagatik.\n"
 "\n"
-"Espero dut Ardour tresna erabilgarria izatea. Gustaturen litzaidake zuk "
+"Espero dut Phaedra tresna erabilgarria izatea. Gustaturen litzaidake zuk "
 "bere\n"
 "garapena babestea birpentsatzea, izan dohaintza bakarra edo "
 "harpidetzarekin.\n"
-"Ezer ez da gertaturen ezezkoa hautatzen baduzu. Halere Ardourren etengabeko\n"
+"Ezer ez da gertaturen ezezkoa hautatzen baduzu. Halere Phaedraren etengabeko\n"
 "garapena sarrera-fluxu egonkor eta jasankor batean oinarritzen da. \n"
-"Esker mila Ardour erabiltzeagatik!"
+"Esker mila Phaedra erabiltzeagatik!"
 
 #: new_plugin_preset_dialog.cc:29
 msgid "Replace existing preset with this name"
@@ -13320,11 +13320,11 @@ msgstr "  -v, --version               Erakutsi bertsioa eta atera\n"
 
 #: opts.cc:96
 msgid "Report bugs to http://tracker.ardour.org\n"
-msgstr "Salatu akatsak hemen: http://tracker.ardour.org\n"
+msgstr "Salatu akatsak hemen: https://github.com/mindrapeofficial-wq/phaedra\n"
 
 #: opts.cc:97
 msgid "Website http://ardour.org\n"
-msgstr "Web-orria http://ardour.org\n"
+msgstr "Web-orria https://github.com/mindrapeofficial-wq/phaedra\n"
 
 #: panner2d.cc:923
 msgid "Panner (2D)"
@@ -22607,7 +22607,7 @@ msgstr ""
 "aldakorra ezarriz. Horrek xjadeoren ‘xjremote’ interfazearekin bateragarria "
 "den aplikazio batera zuzendu beharko lizuke).\n"
 "\n"
-"ikus halaber http://manual.ardour.org/video-timeline/setup/"
+"ikus halaber https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: video_timeline.cc:737
 msgid "Video-monitor 'xjadeo' cannot be launched."
@@ -22656,7 +22656,7 @@ msgstr ""
 "Ezin da bideorik inportatu edota esportatu tresnak instalatzen dituzun "
 "arte.\n"
 "\n"
-"Tresnak ardour.org-en %1 bertsioetan daude, baita bideo-morroiarekin hemen: "
+"Tresnak github.com/mindrapeofficial-wq/phaedra-en %1 bertsioetan daude, baita bideo-morroiarekin hemen: "
 "http://x42.github.com/harvid/\n"
 "\n"
 "Garrantzitsua: fitxategiak $PATHen instalatu behar dira eta ffmpeg_harvid "
@@ -22665,7 +22665,7 @@ msgstr ""
 "ffmpeg_harvid-era eta ffprobe-tik ffprobe_harvid-era esteka sinbolikoak "
 "sortzea gomendatzen dizugu.\n"
 "\n"
-"ikus halaber http://manual.ardour.org/video-timeline/setup/"
+"ikus halaber https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: transcode_video_dialog.cc:59
 msgid "Transcode/Import Video File "
@@ -22822,10 +22822,10 @@ msgid ""
 "see also http://manual.ardour.org/video-timeline/setup/"
 msgstr ""
 "Ezin da kanpoko bideo-morroiaren \"harvid\" aurkitu.\n"
-"Tresna ardour.org-en %1 bertsioetan dago. Bestela, http://x42.github.com/"
+"Tresna github.com/mindrapeofficial-wq/phaedra-en %1 bertsioetan dago. Bestela, http://x42.github.com/"
 "harvid/ webgunetik deskarga dezakezu edo zure banaketatik eskuratu.\n"
 "\n"
-"Ikus http://manual.ardour.org/video-timeline/setup/"
+"Ikus https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: video_server_dialog.cc:148
 msgid "Listen Address:"

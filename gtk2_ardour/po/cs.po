@@ -647,7 +647,7 @@ msgstr "Copyright (C) 1999-2026 Paul Davis\n"
 
 #: about.cc:652
 msgid "http://ardour.org/"
-msgstr "http://www.ardour.org"
+msgstr "http://www.github.com/mindrapeofficial-wq/phaedra"
 
 #: about.cc:653
 msgid ""
@@ -1752,7 +1752,7 @@ msgid ""
 msgstr ""
 "Je zde nedostatečný počet dostupných přípojek na to,\n"
 "aby se dala vytvořit nová stopa nebo sběrnice.\n"
-"Měl byste uložit %1, ukončit Ardour\n"
+"Měl byste uložit %1, ukončit Phaedra\n"
 "a spustit znovu s větším počtem přípojek."
 
 #: ardour_ui.cc:1785
@@ -13273,10 +13273,10 @@ msgstr ""
 "našeho sytému podpory,\n"
 "abych vám tímto vzkazem nemusel být nepříjemný.\n"
 "Pokud nejste podporovatelem, možná byste mohl zvážit podporu pro mou práci "
-"na Ardouru buď jednorázovým příspěvkem nebo předplatným. Nic\n"
+"na Phaedrau buď jednorázovým příspěvkem nebo předplatným. Nic\n"
 "se nestane, ani když si zvolíte, že to tímto způsobem neuděláte. Nicméně "
-"pokračující vývoj Ardouru spoléhá na stálý, udržitelný tok příjmů. Děkujeme "
-"vám za to, že používáte Ardour!"
+"pokračující vývoj Phaedrau spoléhá na stálý, udržitelný tok příjmů. Děkujeme "
+"vám za to, že používáte Phaedra!"
 
 #: nag.cc:58
 msgid ""
@@ -13291,12 +13291,12 @@ msgid ""
 msgstr ""
 "Blahopřeji vám k vyvedení vašeho sezení do souboru.\n"
 "\n"
-"Mým přáním je, abyste Ardour považoval za užitečný nástroj. Chci vás požádat "
+"Mým přáním je, abyste Phaedra považoval za užitečný nástroj. Chci vás požádat "
 "o zvážení podpory\n"
 "jeho vývoje buď jednorázovým příspěvkem nebo předplatným. Nic\n"
 "se nestane, ani když si zvolíte, že to tímto způsobem neuděláte. Nicméně "
-"pokračující vývoj Ardouru spoléhá na stálý, udržitelný tok příjmů. Děkujeme "
-"vám za to, že používáte Ardour!"
+"pokračující vývoj Phaedrau spoléhá na stálý, udržitelný tok příjmů. Děkujeme "
+"vám za to, že používáte Phaedra!"
 
 #: new_plugin_preset_dialog.cc:29
 msgid "Replace existing preset with this name"
@@ -13594,11 +13594,11 @@ msgstr "  -v, --version                    Ukázat údaj o verzi a ukončit\n"
 
 #: opts.cc:96
 msgid "Report bugs to http://tracker.ardour.org\n"
-msgstr "Chyby hlaště na http://tracker.ardour.org\n"
+msgstr "Chyby hlaště na https://github.com/mindrapeofficial-wq/phaedra\n"
 
 #: opts.cc:97
 msgid "Website http://ardour.org\n"
-msgstr "Stránky http://ardour.org\n"
+msgstr "Stránky https://github.com/mindrapeofficial-wq/phaedra\n"
 
 #: panner2d.cc:923
 msgid "Panner (2D)"
@@ -21489,7 +21489,7 @@ msgstr ""
 "nebo spolehlivý\n"
 " , i když tomu tak může být v závislosti na vašem pracovním postupu.\n"
 "2) Počkejte prosím na užitečný popis nových funkcí.\n"
-"3) <b>Nepoužívejte prosím fóra na ardour.org k hlášení problémů</b>.\n"
+"3) <b>Nepoužívejte prosím fóra na github.com/mindrapeofficial-wq/phaedra k hlášení problémů</b>.\n"
 "4) <b>V tuto chvíli prosím NEHLASTE chyby této alfa verze</b>.\n"
 "   Před dokončením počátečního vývoje se chyby netřídí a\n"
 "   hlášení problémů u neúplné, probíhající práce je většinou zbytečné.\n"
@@ -21503,7 +21503,7 @@ msgstr ""
 "Úplné informace o všech výše uvedených skutečnostech naleznete na stránce "
 "podpory na adrese\n"
 "\n"
-"                http://ardour.org/support</span>\n"
+"                https://github.com/mindrapeofficial-wq/phaedra/support</span>\n"
 
 #: step_entry.cc:70
 msgid ">beat"
@@ -23197,7 +23197,7 @@ msgstr ""
 "proměnné prostředí XJREMOTE. Má ukazovat na program, který je slučitelný s "
 "dálkovým ovládáním rozhraní xjadeo 'xjremote').\n"
 "\n"
-"Podívejte se také na http://manual.ardour.org/video-timeline/setup/"
+"Podívejte se také na https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: video_timeline.cc:737
 msgid "Video-monitor 'xjadeo' cannot be launched."
@@ -23244,7 +23244,7 @@ msgstr ""
 "%1 vyžaduje ffmpeg a ffprobe z ffmpeg.org - verze 1.1 nebo novější.\n"
 "Zavádění a vyvádění obrazu není možné, dokud nenainstalujete nástroje.\n"
 "\n"
-"Tyto nástroje jsou součástí vydání %1 ze stránek ardour.org a také dostupné "
+"Tyto nástroje jsou součástí vydání %1 ze stránek github.com/mindrapeofficial-wq/phaedra a také dostupné "
 "s videoserverem na adrese http://x42.github.com/harvid/\n"
 "\n"
 "Důležité: soubory je třeba nainstalovat v $PATH a pojmenovat ffmpeg_harvid a "
@@ -23253,7 +23253,7 @@ msgstr ""
 "vytvářet symbolické odkazy z ffmpeg na ffmpeg_harvid a z ffprobe na "
 "ffprobe_harvid.\n"
 "\n"
-"viz také http://manual.ardour.org/video-timeline/setup/"
+"viz také https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: transcode_video_dialog.cc:59
 msgid "Transcode/Import Video File "
@@ -23410,10 +23410,10 @@ msgid ""
 "see also http://manual.ardour.org/video-timeline/setup/"
 msgstr ""
 "Vnější obrazový server 'harvid' nelze najít.\n"
-"Nástroj je zahrnut v %1 vydání ardour.org, popřípadě jej můžete stáhnout z "
+"Nástroj je zahrnut v %1 vydání github.com/mindrapeofficial-wq/phaedra, popřípadě jej můžete stáhnout z "
 "http://x42.github.com/harvid/ or acquire it from your distribution.\n"
 "\n"
-"Podívejte se také na http://manual.ardour.org/video-timeline/setup/"
+"Podívejte se také na https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: video_server_dialog.cc:148
 msgid "Listen Address:"

@@ -12948,10 +12948,10 @@ msgstr ""
 "抱歉为这事而再次打扰了您——我们正致力于改善我们的捐助系统\n"
 "希望我们就不会再因为这条信息而打扰您。\n"
 "\n"
-"如果您不是捐助者，也许您可以考虑一下支持我们在Ardour上的工作\n"
+"如果您不是捐助者，也许您可以考虑一下支持我们在Phaedra上的工作\n"
 "您可以一次性捐赠或者定期捐助均可。 如果您不想这样做的话也没事。\n"
-"不管怎样， Ardour的后续开发需要一个稳定、持续的资金来源。\n"
-"感谢使用Ardour！"
+"不管怎样， Phaedra的后续开发需要一个稳定、持续的资金来源。\n"
+"感谢使用Phaedra！"
 
 #: nag.cc:58
 msgid ""
@@ -12966,10 +12966,10 @@ msgid ""
 msgstr ""
 "恭喜！你的会话已导出。\n"
 "\n"
-"我们希望您觉得 Ardour 是个有用的工具。我想建议您考虑一下支持它的开发。\n"
+"我们希望您觉得 Phaedra 是个有用的工具。我想建议您考虑一下支持它的开发。\n"
 "不论是一次性捐赠或者捐助均可。如果您不想这样做的话也没事。\n"
-"不管怎样， Ardour 后续的开发需要一个稳定、持续的资金来源。\n"
-"感谢使用 Ardour！"
+"不管怎样， Phaedra 后续的开发需要一个稳定、持续的资金来源。\n"
+"感谢使用 Phaedra！"
 
 #: new_plugin_preset_dialog.cc:29
 msgid "Replace existing preset with this name"
@@ -13215,11 +13215,11 @@ msgstr "  -v, --version               打印版本号并退出\n"
 
 #: opts.cc:96
 msgid "Report bugs to http://tracker.ardour.org\n"
-msgstr "报告故障到 http://tracker.ardour.org\n"
+msgstr "报告故障到 https://github.com/mindrapeofficial-wq/phaedra\n"
 
 #: opts.cc:97
 msgid "Website http://ardour.org\n"
-msgstr "官方网站 http://ardour.org\n"
+msgstr "官方网站 https://github.com/mindrapeofficial-wq/phaedra\n"
 
 #: panner2d.cc:923
 msgid "Panner (2D)"
@@ -22359,7 +22359,7 @@ msgstr ""
 "XJREMOTE 环境变量来指定一个到 xjadeo 的定制路径。它应该指向一个兼容 xjadeo 遥"
 "控界面  'xjremote' 的应用程序）。\n"
 "\n"
-"请参阅 http://manual.ardour.org/video-timeline/setup/"
+"请参阅 https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: video_timeline.cc:737
 msgid "Video-monitor 'xjadeo' cannot be launched."
@@ -22406,7 +22406,7 @@ msgstr ""
 "视频导入和导出无法进行，除非您安装这些工具。\n"
 "%1 需要 ffmpeg 和 ffprobe，来自 ffmpeg.org 1.1 或者更新的版本。\n"
 "\n"
-"这工具包括来自 ardour.org 的 %1，并且也可用于 http://x42.github.com/harvid/  "
+"这工具包括来自 github.com/mindrapeofficial-wq/phaedra 的 %1，并且也可用于 http://x42.github.com/harvid/  "
 "上的视频服务。\n"
 "\n"
 "注意：这些文件需要安装在 $PATH 并且命名为 ffmpeg_harvid 和 "
@@ -22414,7 +22414,7 @@ msgstr ""
 "如果您在您的系统上已经安装有一个合适的 ffmpeg，我们建议给 ffmpeg 创建符号链接"
 "为 ffmpeg_harvid，给 ffprobe 创建符号链接为  ffprobe_harvid 。\n"
 "\n"
-"请参阅 http://manual.ardour.org/video-timeline/setup/"
+"请参阅 https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: transcode_video_dialog.cc:59
 msgid "Transcode/Import Video File "
@@ -22569,10 +22569,10 @@ msgid ""
 "see also http://manual.ardour.org/video-timeline/setup/"
 msgstr ""
 "找不到外部视频服务器“harvid”。\n"
-"这工具包括来自 ardour.org 的 %1，另外您可以从 http://x42.github.com/harvid/ "
+"这工具包括来自 github.com/mindrapeofficial-wq/phaedra 的 %1，另外您可以从 http://x42.github.com/harvid/ "
 "下载它，或者从您的发行版获得它。\n"
 "\n"
-"请参阅 http://manual.ardour.org/video-timeline/setup/"
+"请参阅 https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/"
 
 #: video_server_dialog.cc:148
 msgid "Listen Address:"

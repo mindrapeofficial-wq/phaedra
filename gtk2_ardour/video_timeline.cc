@@ -721,7 +721,7 @@ VideoTimeLine::find_xjadeo () {
 				"(a custom path to xjadeo can be specified by setting the XJREMOTE environment variable. "
 				"It should point to an application compatible with xjadeo's remote-control interface 'xjremote').\n"
 				"\n"
-				"see also http://manual.ardour.org/video-timeline/setup/")
+				"see the external video's setup documentation")
 			<< endmsg;
 	}
 

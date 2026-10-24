@@ -674,7 +674,7 @@ int main() { return 0; }''',
             if re.search ('x86_64-w64', str(conf.env['CC'])) is not None:
                     compiler_flags.append ("-DBUILD_SSE_OPTIMIZATIONS")
         if not build_host_supports_sse:
-            print("\nWarning: you are building Ardour with SSE support even though your system does not support these instructions. (This may not be an error, especially if you are a package maintainer)")
+            print("\nWarning: you are building Phaedra with SSE support even though your system does not support these instructions. (This may not be an error, especially if you are a package maintainer)")
 
     # end optimization section
 
@@ -845,14 +845,14 @@ def options(opt):
     opt.load('compiler_c')
     opt.load('compiler_cxx')
     autowaf.set_options(opt, debug_by_default=True)
-    opt.add_option('--program-name', type='string', action='store', default='Ardour', dest='program_name',
+    opt.add_option('--program-name', type='string', action='store', default='Phaedra', dest='program_name',
                     help='The user-visible name of the program being built')
     opt.add_option('--arch', type='string', action='store', dest='arch',
                     help='Architecture-specific compiler FLAGS')
     opt.add_option('--with-backends', type='string', action='store', default='', dest='with_backends',
                     help='Specify which backend modules are to be included(jack,alsa,portaudio,coreaudio,pulseaudio)')
     opt.add_option('--backtrace', action='store_true', default=False, dest='backtrace',
-                    help='Compile with -rdynamic -- allow obtaining backtraces from within Ardour')
+                    help='Compile with -rdynamic -- allow obtaining backtraces from within Phaedra')
     opt.add_option('--no-carbon', action='store_true', default=False, dest='nocarbon',
                     help='Compile without support for AU Plugins with only CARBON UI (needed for 64bit)')
     opt.add_option('--compile-database', action='store_true', default=False, dest='clang_compile_db',
@@ -906,7 +906,7 @@ def options(opt):
     opt.add_option('--no-nls', action='store_true', default=False, dest='no_nls',
                     help='Disable i18n (native language support)')
     opt.add_option('--no-phone-home', action='store_true', default=False, dest='no_phone_home',
-                   help='Do not contact ardour.org at startup for new announcements')
+                   help='Do not contact the update service at startup for announcements')
     opt.add_option('--stl-debug', action='store_true', default=False, dest='stl_debug',
                     help='Build with debugging for the STL')
     opt.add_option('--rt-alloc-debug', action='store_true', default=False, dest='rt_alloc_debug',
@@ -1003,7 +1003,7 @@ def configure(conf):
         if itstool != "itstool" or version[0] < "2":
             conf.fatal("--freedesktop requires itstool > 2.0.0 to translate files.")
 
-    conf.env['PROGRAM_NAME'] = Options.options.program_name or 'Ardour'
+    conf.env['PROGRAM_NAME'] = Options.options.program_name or 'Phaedra'
 
     conf.env['VERSION'] = VERSION
     conf.env['MAJOR'] = MAJOR
@@ -1012,7 +1012,7 @@ def configure(conf):
     conf.line_just = 52
     autowaf.set_recursive()
     autowaf.configure(conf)
-    autowaf.display_header('Ardour Configuration')
+    autowaf.display_header('Phaedra Configuration')
 
     # systems with glibc have libintl builtin. systems without require explicit
     # linkage against libintl.
@@ -1051,9 +1051,9 @@ def configure(conf):
         conf.env.append_value('CFLAGS', [ prefinclude ])
         conf.env.append_value('CXXFLAGS',  [prefinclude ])
         conf.env.append_value('LINKFLAGS', [ preflib ])
-        autowaf.display_msg(conf, 'Will build against private Ardour dependency stack in ' + user_ardour_root, 'yes')
+        autowaf.display_msg(conf, 'Will build against private legacy audio dependency stack in ' + user_ardour_root, 'yes')
     else:
-        autowaf.display_msg(conf, 'Will build against private Ardour dependency stack', 'no')
+        autowaf.display_msg(conf, 'Will build against private legacy audio dependency stack', 'no')
 
     if Options.options.freebie:
         conf.env.append_value ('CFLAGS', '-DSILENCE_AFTER')
@@ -1727,5 +1727,5 @@ def test(bld):
 
 def help2man(bld):
     set_version ()
-    cmd = "help2man -s 1 -N -o ardour.1 -n Ardour --version-string='Ardour %s' gtk2_ardour/ardev" % PROGRAM_VERSION
+    cmd = "help2man -s 1 -N -o phaedra.1 -n Phaedra --version-string='Phaedra %s' gtk2_ardour/ardev" % PROGRAM_VERSION
     subprocess.call(cmd, shell=True)

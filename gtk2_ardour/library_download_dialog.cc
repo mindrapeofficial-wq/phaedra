@@ -94,6 +94,11 @@ LibraryDownloadDialog::~LibraryDownloadDialog ()
 void
 LibraryDownloadDialog::refill ()
 {
+	if (Config->get_resource_index_url().empty()) {
+		ArdourMessageDialog notice (*this, _("Phaedra library downloads are not configured yet."));
+		notice.run ();
+		return;
+	}
 	ARDOUR::LibraryFetcher lf (Config->get_resource_index_url(), clip_library_dir(true), "Libraries");
 	if (lf.get_descriptions () || 0 == lf.n_descriptions()) {
 		ArdourMessageDialog msg (*this, _("Failed to download library index.\nPlease check your internet connection."));

@@ -28,7 +28,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "..\\icons\\ardour.ico"
+IDR_MAINFRAME           ICON                    "..\\icons\\Phaedra.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -56,12 +56,12 @@ BEGIN
             VALUE "FileDescription", "Mixbus"
             VALUE "FileVersion", "@MSVC_MIXBUS_VERSION@.@MSVC_MIXBUS_INTERFACE_AGE@"
             VALUE "InternalName", "MixbusWin@DLL_SUFFIX@"
-            VALUE "LegalCopyright", "Copyright Paul Davis and others © 1999-2014"
+            VALUE "LegalCopyright", "Copyright Paul Davis and others Â© 1999-2014"
             VALUE "LegalTrademarks", "Harrison and Mixbus are trademarks of Harrison Audio LLC"
             VALUE "OriginalFilename", "Mixbus2-@DLL_SUFFIX@"
             VALUE "ProductName", "MSVCMixbus"
             VALUE "ProductVersion", "@MSVC_MIXBUS_MAJOR@, @MSVC_MIXBUS_MINOR@, @MSVC_MIXBUS_MICRO@, @MSVC_MIXBUS_INTERFACE_AGE@"
-            VALUE "SpecialBuild", "Built for Microsoft Windows by John Emmas - (© 2014)"
+            VALUE "SpecialBuild", "Built for Microsoft Windows by John Emmas - (Â© 2014)"
         END
     END
     BLOCK "VarFileInfo"

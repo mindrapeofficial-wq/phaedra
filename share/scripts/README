@@ -1,16 +1,16 @@
-Ardour Lua Scripts
+Phaedra Lua Scripts
 ==================
 
-https://manual.ardour.org/lua-scripting/
+https://github.com/mindrapeofficial-wq/phaedra/tree/main/share/scripts
 
 For upstream script addition, please file a pull-request at
-https://github.com/Ardour/ardour/tree/master/share/scripts
+https://github.com/mindrapeofficial-wq/phaedra/tree/main/share/scripts
 
 Script Naming conventions:
 
 _
  A script filename with a leading underscore indicates an example script.
- These scripts are only available from ardour's git repository and not
+ These scripts are only available from Phaedra's Git repository and not
  installed nor included with binary bundles.
 
 __

@@ -612,7 +612,7 @@ msgstr ""
 
 #: about.cc:652
 msgid "http://ardour.org/"
-msgstr "http://ardour.org/"
+msgstr "https://github.com/mindrapeofficial-wq/phaedra/"
 
 #: about.cc:653
 msgid ""
@@ -1285,7 +1285,7 @@ msgstr "トラック/バスを追加"
 
 #: ardour_ui.cc:312
 msgid "About"
-msgstr "Ardour について"
+msgstr "Phaedra について"
 
 #: ardour_ui.cc:313 location_ui.cc:1209
 msgid "Ranges|Locations"
@@ -12995,11 +12995,11 @@ msgstr ""
 "またこの煩わしいメッセージを再び表示してしまい申し訳ありません。\n"
 "このようなことにならないように定期寄付システムを改善してまいります。\n"
 "\n"
-"もしあなたが定期寄付者でなければ、一括寄付や定期寄付でArdourの開発を\n"
+"もしあなたが定期寄付者でなければ、一括寄付や定期寄付でPhaedraの開発を\n"
 "サポートしていただけますと幸いです。そのようにしなくても特に何も起こりません"
 "が、\n"
-"Ardourの継続開発は安定した持続的な収入の上に成り立っています。\n"
-"Ardourをお使いいただきありがとうございます！"
+"Phaedraの継続開発は安定した持続的な収入の上に成り立っています。\n"
+"Phaedraをお使いいただきありがとうございます！"
 
 #: nag.cc:58
 msgid ""
@@ -13014,12 +13014,12 @@ msgid ""
 msgstr ""
 "セッションのエクスポート、おめでとうございます。\n"
 "\n"
-"Ardourを便利なツールだと感じていただけたら幸いです。ぜひ一括寄付や定期寄付に"
+"Phaedraを便利なツールだと感じていただけたら幸いです。ぜひ一括寄付や定期寄付に"
 "よる\n"
 "開発サポートの検討をお願いいたします。そのようにしなくても特に何も起こりませ"
 "んが、\n"
-"Ardourの継続開発は安定した持続的な収入の上に成り立っています。\n"
-"Ardourをお使いいただきありがとうございます！"
+"Phaedraの継続開発は安定した持続的な収入の上に成り立っています。\n"
+"Phaedraをお使いいただきありがとうございます！"
 
 #: new_plugin_preset_dialog.cc:29
 msgid "Replace existing preset with this name"
@@ -13275,11 +13275,11 @@ msgstr "  -v, --version               バージョンをプリントし終了\n"
 
 #: opts.cc:96
 msgid "Report bugs to http://tracker.ardour.org\n"
-msgstr "バグを http://tracker.ardour.org　にレポート\n"
+msgstr "バグを https://github.com/mindrapeofficial-wq/phaedra　にレポート\n"
 
 #: opts.cc:97
 msgid "Website http://ardour.org\n"
-msgstr "ウェブサイト http://ardour.org\n"
+msgstr "ウェブサイト https://github.com/mindrapeofficial-wq/phaedra\n"
 
 #: panner2d.cc:923
 msgid "Panner (2D)"
@@ -22529,7 +22529,7 @@ msgstr ""
 "きます。xjadeo のリモートコントロールインタフェース 'xjremote' と互換性のある"
 "アプリケーションを指定する必要があります)。\n"
 "\n"
-"http://manual.ardour.org/video-timeline/setup/ も参照ください。"
+"https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/ も参照ください。"
 
 #: video_timeline.cc:737
 msgid "Video-monitor 'xjadeo' cannot be launched."
@@ -22578,7 +22578,7 @@ msgstr ""
 "ビデオインポートおよびエクスポートはツールをインストールするまで行うことはで"
 "きません。\n"
 "\n"
-"このツールは ardour.org からの %1 リリースに含まれています。また、http://x42."
+"このツールは github.com/mindrapeofficial-wq/phaedra からの %1 リリースに含まれています。また、http://x42."
 "github.com/harvid/ でビデオサーバとともに利用可能です。\n"
 "\n"
 "重要: ファイルは $PATH にインストールし、ffmpeg_harvid および ffprobe_harvid "
@@ -22587,7 +22587,7 @@ msgstr ""
 "ffmpeg_harvid、および ffprobe から ffprobe_harvid へのシンボリックリンクを作"
 "成することをお勧めします。\n"
 "\n"
-"http://manual.ardour.org/video-timeline/setup/ も参照ください。"
+"https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/ も参照ください。"
 
 #: transcode_video_dialog.cc:59
 msgid "Transcode/Import Video File "
@@ -22743,11 +22743,11 @@ msgid ""
 "see also http://manual.ardour.org/video-timeline/setup/"
 msgstr ""
 "外部ビデオサーバ 'harvid' が見つかりません。\n"
-"このツールは ardour.org からの %1 リリースに含まれています。また、http://x42."
+"このツールは github.com/mindrapeofficial-wq/phaedra からの %1 リリースに含まれています。また、http://x42."
 "github.com/harvid/ からダウンロードするか、お使いのディストリビューションから"
 "取得することも可能です。\n"
 "\n"
-"http://manual.ardour.org/video-timeline/setup/ も参照ください。"
+"https://github.com/mindrapeofficial-wq/phaedra/video-timeline/setup/ も参照ください。"
 
 #: video_server_dialog.cc:148
 msgid "Listen Address:"

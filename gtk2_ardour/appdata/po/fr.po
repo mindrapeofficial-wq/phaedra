@@ -20,7 +20,7 @@ msgstr ""
 # Intentionally left untranslated.
 #. (itstool) path: component/name
 #: gtk2_ardour/ardour.appdata.xml.in.in:6
-msgid "Ardour"
+msgid "Phaedra"
 msgstr ""
 
 #. (itstool) path: component/summary
@@ -31,10 +31,10 @@ msgstr "Station de Travail Audio-Numérique"
 #. (itstool) path: description/p
 #: gtk2_ardour/ardour.appdata.xml.in.in:12
 msgid ""
-"Ardour is a multi-channel digital audio workstation, allowing you to record, "
+"Phaedra is a multi-channel digital audio workstation, allowing you to record, "
 "edit, mix and master audio and MIDI projects."
 msgstr ""
-"Ardour, station de travail audionumérique multipiste : enregistrer, monter, "
+"Phaedra, station de travail audionumérique multipiste : enregistrer, monter, "
 "mixer et masteriser des projets audio et MIDI."
 
 #. (itstool) path: description/p

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #
-# This script runs an installed version of Ardour. It sets a few environment variables
+# This script runs an installed version of Phaedra. It sets a few environment variables
 # and does a few checks before exec'ing the real executable.
 # 
 
@@ -14,7 +14,7 @@ export LD_LIBRARY_PATH=@LIBDIR@${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 MLOCK_LIMIT=$(ulimit -l)
 if [ "$MLOCK_LIMIT" != "unlimited" ]; then
 	echo "WARNING: Your system has a limit for maximum amount of locked memory!"
-	echo "         This might cause Ardour to run out of memory before your system runs"
+	echo "         This might cause Phaedra to run out of memory before your system runs"
 	echo "         out of memory. You can view the memory limit with 'ulimit -l', and it"
 	echo "         is normally controlled by /etc/security/limits.conf"
 	echo ""
@@ -40,7 +40,7 @@ elif [ $(nm -D --radix=dec --defined-only -S $GLIB | grep -w g_atomic_int_add | 
 fi
 
 #
-# Running Ardour requires these 3 variables to be set
+# Running Phaedra with the inherited engine requires these 3 variables
 #
 
 export ARDOUR_DATA_PATH=@DATADIR@
