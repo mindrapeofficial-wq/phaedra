@@ -55,6 +55,7 @@
 
 #include "ardour_message.h"
 #include "plugin_scan_dialog.h"
+#include "phaedra_plugin_upgrades.h"
 #include "plugin_selector.h"
 #include "ardour_ui.h"
 #include "plugin_utils.h"
@@ -384,6 +385,13 @@ PluginSelector::show_this_plugin (const PluginInfoPtr& info, const std::string& 
 	PluginManager::PluginStatusType status = manager.get_status (info);
 
 	if (info->is_internal ()) {
+		return false;
+	}
+
+	// Modern free substitutes are promoted in new sessions. An explicit ACE
+	// search can still find all legacy modules for restoring older projects.
+	if (PhaedraPlugins::hide_legacy_in_browser (manager, info) &&
+	    PBD::downcase (searchstr).find ("ace") == std::string::npos) {
 		return false;
 	}
 
@@ -995,6 +1003,12 @@ PluginSelector::build_plugin_menu ()
 #endif
 
 	using namespace Menu_Helpers;
+
+	// Keep the legacy DSP binaries loaded for existing sessions, but leave
+	// new-project plugin menus to newer free alternatives when installed.
+	all_plugs.remove_if ([this] (const PluginInfoPtr& plugin) {
+		return PhaedraPlugins::hide_legacy_in_browser (manager, plugin);
+	});
 
 	delete _plugin_menu;
 
