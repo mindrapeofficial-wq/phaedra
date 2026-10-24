@@ -269,7 +269,7 @@ def set_version (from_file = False):
     # Keep libardour's ABI/versioned data paths tied to an explicit base version.
     base_engine = os.environ.get('PHAEDRA_ENGINE_VERSION', '').strip()
     if base_engine:
-        if not re.fullmatch(r'[0-9]+\\.[0-9]+\\.[0-9]+', base_engine):
+        if not re.fullmatch(r'[0-9]+[.][0-9]+[.][0-9]+', base_engine):
             raise ValueError('PHAEDRA_ENGINE_VERSION must be MAJOR.MINOR.PATCH')
         rev = base_engine
         rev_date = subprocess.check_output(

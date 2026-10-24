@@ -43,7 +43,7 @@ function Check-Stage([string]$folder, [string]$version) {
     }
     $manifest = Join-Path $folder 'MANIFEST.sha256'
     $seen = @{}
-    foreach ($line in Get-Content -LiteralPath $manifest -Encoding UTF8) {
+    foreach ($line in (Get-Content -LiteralPath $manifest -Encoding UTF8)) {
         if ($line -cnotmatch '^([0-9a-f]{64})  (.+)$') { throw 'Bad SHA256 manifest' }
         $digest = $Matches[1].ToUpperInvariant()
         $relative = Safe-Relative $Matches[2]

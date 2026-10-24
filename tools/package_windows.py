@@ -140,6 +140,7 @@ def main():
     copy_optional(ROOT / "build/share/ardour8/locale", DEST / "share/locale")
 
     cp(need(PREFIX / "etc/fonts/fonts.conf"), DEST / "etc/fonts/fonts.conf")
+    copy_optional(PREFIX / "etc/fonts/conf.d", DEST / "etc/fonts/conf.d")
     # Keep the license texts shipped by UCRT64 dependencies, not just app license.
     copy_optional(PREFIX / "share/licenses", DEST / "licenses/third-party")
     cp(ROOT / "COPYING", DEST / "COPYING")
