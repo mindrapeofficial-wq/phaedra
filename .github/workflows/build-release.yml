@@ -8,6 +8,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: windows-latest
@@ -17,6 +21,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: msys2/setup-msys2@v2
         with:
@@ -55,6 +61,7 @@ jobs:
             mingw-w64-ucrt-x86_64-cppunit
             mingw-w64-ucrt-x86_64-readline
             base-devel
+            git
             zip
             python
 
