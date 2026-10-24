@@ -19,6 +19,8 @@ mkdir -p "$DESTDIR/lib/ardour8/suil"
 mkdir -p "$DESTDIR/lib/gtk-2.0/engines"
 mkdir -p "$DESTDIR/share/ardour8"
 mkdir -p "$DESTDIR/etc/fonts"
+# External VST3 plugins installed by the user live here; do not bundle third-party binaries.
+mkdir -p "$DESTDIR/Plugins/VST3"
 
 echo "--- Copying main executable..."
 cp build/gtk2_ardour/ardour-8.12.0.exe "$DESTDIR/bin/Phaedra.exe"
@@ -128,6 +130,10 @@ cp -r build/share/ardour8/locale "$DESTDIR/share/locale" 2>/dev/null || true
 # Fontconfig
 cp "$MINGW_PREFIX/etc/fonts/fonts.conf" "$DESTDIR/etc/fonts/" 2>/dev/null || true
 
+echo "--- Adding user-side Vital integration..."
+cp tools/install_vital.ps1 "$DESTDIR/Install-Vital.ps1"
+cp tools/install_vital.bat "$DESTDIR/Install-Vital.bat"
+
 echo "--- Creating launcher..."
 windres -I gtk2_ardour/icons -i tools/phaedra_launcher.rc -O coff -o build/phaedra_launcher.res
 gcc -municode -mwindows tools/phaedra_launcher.c build/phaedra_launcher.res -o "$DESTDIR/Phaedra.exe"
@@ -147,6 +153,7 @@ set ARDOUR_CONFIG_PATH=%APPDATA%\Phaedra8
 set ARDOUR_DLL_PATH=%PHAEDRA_DIR%lib\ardour8
 set GTK_PATH=%PHAEDRA_DIR%lib
 set FONTCONFIG_FILE=%PHAEDRA_DIR%etc\fonts\fonts.conf
+set VST3_PATH=%PHAEDRA_DIR%Plugins\VST3;%VST3_PATH%
 
 if exist "%PHAEDRA_DIR%updater\updater.ps1" (
     powershell -ExecutionPolicy Bypass -NoProfile -File "%PHAEDRA_DIR%updater\updater.ps1" -PhaedraDir "%PHAEDRA_DIR%"
