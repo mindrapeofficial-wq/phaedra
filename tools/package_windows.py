@@ -13,7 +13,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEST = ROOT / "Phaedra-Portable"
-PREFIX = Path(os.environ.get("MINGW_PREFIX", "/ucrt64"))
+PREFIX = (Path(sys.executable).resolve().parent.parent if os.name == "nt"
+          else Path(os.environ.get("MINGW_PREFIX", "/ucrt64")))
 ENGINE = os.environ.get("PHAEDRA_ENGINE_VERSION", "8.12.0")
 VERSION = os.environ.get("PHAEDRA_PACKAGE_VERSION", "0.0.0")
 
@@ -83,8 +84,12 @@ def copy_runtime_dependencies():
                 ["ldd", str(binary)], capture_output=True, text=True, errors="replace", check=False
             )
             output = proc.stdout + proc.stderr
-            for raw in re.findall(r"(/ucrt64/bin/[^\s()]+?\.dll)", output, flags=re.IGNORECASE):
-                candidate = Path(raw)
+            # ldd may print POSIX paths or native C:\... paths on MSYS2.
+            for dll_name in re.findall(
+                r"[/\\]ucrt64[/\\]bin[/\\]([^/\\\s()]+?\.dll)",
+                output, flags=re.IGNORECASE
+            ):
+                candidate = PREFIX / "bin" / dll_name
                 if candidate.is_file():
                     cp(candidate, bin_dir / candidate.name)
         after = len(list(bin_dir.glob("*.dll")))
