@@ -133,6 +133,10 @@ cp "$MINGW_PREFIX/etc/fonts/fonts.conf" "$DESTDIR/etc/fonts/" 2>/dev/null || tru
 echo "--- Adding user-side Vital integration..."
 cp tools/install_vital.ps1 "$DESTDIR/Install-Vital.ps1"
 cp tools/install_vital.bat "$DESTDIR/Install-Vital.bat"
+cp tools/install_free_plugins.ps1 "$DESTDIR/Install-Free-Plugins.ps1"
+cp tools/install_free_plugins.bat "$DESTDIR/Install-Free-Plugins.bat"
+cp tools/phaedra-plugin-replacements.json "$DESTDIR/phaedra-plugin-replacements.json"
+
 
 echo "--- Creating launcher..."
 windres -I gtk2_ardour/icons -i tools/phaedra_launcher.rc -O coff -o build/phaedra_launcher.res
