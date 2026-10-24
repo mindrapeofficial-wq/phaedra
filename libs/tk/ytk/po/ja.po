@@ -10,12 +10,12 @@
 # Nishibori Kiyotaka <ml.nishibori.kiyotaka@gmail.com>, 2009-2010, 2016.
 # Masato Hashimoto <cabezon.hashimoto@gmail.com>, 2010.
 # IWAI, Masaharu <iwaim.sub@gmail.com>, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: gtk+ gtk-2-24\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-05 15:38+0200\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2016-01-11 15:17+0900\n"
 "Last-Translator: Kiyotaka NISHIBORI <ml.nishibori.kiyotaka@gmail.com>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
@@ -639,20 +639,20 @@ msgstr "FLAGS"
 msgid "GTK+ debugging flags to unset"
 msgstr "無効にする GTK+ のデバッグ・フラグを指定する"
 
-#: gtkmain.c:698
+#: gtkmain.c:706
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: gtkmain.c:763
+#: gtkmain.c:771
 #, c-format
 msgid "Cannot open display: %s"
 msgstr "ディスプレイをオープンできません: %s"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "GTK+ Options"
 msgstr "GTK+ のオプション"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "Show GTK+ Options"
 msgstr "GTK+ のオプションを表示する"
 

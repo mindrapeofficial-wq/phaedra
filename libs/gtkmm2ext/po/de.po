@@ -1,12 +1,12 @@
 # Copyright (C) YEAR "Paul Davis"
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # SPDX-FileCopyrightText: 2013, 2015, 2016, 2017, 2020, 2022, 2026 Edgar Aichinger <edgar.aichinger@aon.at>
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 19:18+0100\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2026-03-28 10:42+0100\n"
 "Last-Translator: Edgar Aichinger <edgar.aichinger@aon.at>\n"
 "Language-Team: German <kde-i18n-de@kde.org>\n"
@@ -21,37 +21,9 @@ msgstr ""
 msgid "Unknown action name: %1/%2"
 msgstr "Unbekannter Aktionsname: %1/%2"
 
-#: action_model.cc:56 action_model.cc:171
+#: action_model.cc:56 action_model.cc:157
 msgid "Disabled"
 msgstr "Deaktiviert"
-
-#: action_model.cc:83
-msgid "Main_menu"
-msgstr "Main_menu"
-
-#: action_model.cc:85
-msgid "JACK"
-msgstr "JACK"
-
-#: action_model.cc:87
-msgid "redirectmenu"
-msgstr "redirectmenu"
-
-#: action_model.cc:89
-msgid "Editor_menus"
-msgstr "Editor_menus"
-
-#: action_model.cc:91
-msgid "RegionList"
-msgstr "RegionList"
-
-#: action_model.cc:93
-msgid "ProcessorMenu"
-msgstr "ProcessorMenu"
-
-#: bindings.cc:519
-msgid "Escape"
-msgstr "Escape"
 
 #: bindings.cc:951 bindings.cc:953
 msgid "Window"
@@ -184,3 +156,24 @@ msgstr "Kann Ihre eigene Tastaturkürzeldatei nicht umbenennen (%1)"
 #: textviewer.cc:32
 msgid "Close"
 msgstr "Schließen"
+
+#~ msgid "Main_menu"
+#~ msgstr "Main_menu"
+
+#~ msgid "JACK"
+#~ msgstr "JACK"
+
+#~ msgid "redirectmenu"
+#~ msgstr "redirectmenu"
+
+#~ msgid "Editor_menus"
+#~ msgstr "Editor_menus"
+
+#~ msgid "RegionList"
+#~ msgstr "RegionList"
+
+#~ msgid "ProcessorMenu"
+#~ msgstr "ProcessorMenu"
+
+#~ msgid "Escape"
+#~ msgstr "Escape"

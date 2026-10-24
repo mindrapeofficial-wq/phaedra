@@ -208,8 +208,8 @@ ApplicationBar::on_parent_changed (Gtk::Widget*)
 
 	_time_info_box = new TimeInfoBox ("ToolbarTimeInfo", false);
 
-	int vpadding = 1;
-	int hpadding = 2;
+	int vpadding = 2;
+	int hpadding = 4;
 	int col = 0;
 #define TCOL col, col + 1
 
@@ -217,7 +217,7 @@ ApplicationBar::on_parent_changed (Gtk::Widget*)
 	_table.attach (*ssbox,         TCOL, 1, 2 , FILL,   SHRINK, 0, 0);
 	++col;
 
-	_table.attach (_recpunch_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 3, 0);
+	_table.attach (_recpunch_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 8, 0);
 	++col;
 
 	_table.attach (_punch_label, TCOL, 0, 1 , FILL, SHRINK, 3, 0);
@@ -230,7 +230,7 @@ ApplicationBar::on_parent_changed (Gtk::Widget*)
 	_table.attach (_record_mode_selector, col,      col + 3, 1, 2 , FILL, SHRINK, hpadding, vpadding);
 	col += 3;
 
-	_table.attach (_latency_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 3, 0);
+	_table.attach (_latency_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 8, 0);
 	++col;
 
 	_table.attach (_latency_disable_button, TCOL, 0, 1 , FILL, SHRINK, hpadding, vpadding);
@@ -243,7 +243,7 @@ ApplicationBar::on_parent_changed (Gtk::Widget*)
 	_table.attach (_left_hbox, TCOL, 0, 2, EXPAND|FILL, EXPAND|FILL, hpadding, 0);
 	++col;
 
-	_table.attach (_primary_clock_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 3, 0);
+	_table.attach (_primary_clock_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 8, 0);
 	++col;
 
 	_table.attach (_primary_clock,                col,     col + 2, 0, 1 , FILL, SHRINK, hpadding, 0);
@@ -252,7 +252,7 @@ ApplicationBar::on_parent_changed (Gtk::Widget*)
 	col += 2;
 
 	if (!ARDOUR::Profile->get_small_screen()) {
-		_table.attach (_secondary_clock_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 3, 0);
+		_table.attach (_secondary_clock_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 8, 0);
 		++col;
 
 		_table.attach (_secondary_clock,                col,     col + 2, 0, 1 , FILL, SHRINK, hpadding, 0);
@@ -264,22 +264,9 @@ ApplicationBar::on_parent_changed (Gtk::Widget*)
 		col += 2;
 	}
 
-	_table.attach (_cuectrl_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 3, 0);
-	++col;
-
-	_table.attach (_cue_rec_enable, TCOL, 0, 1 , FILL, FILL, 3, 0);
-	_table.attach (_cue_play_enable, TCOL, 1, 2 , FILL, FILL, 3, 0);
-	++col;
-
 	/* editor-meter, mini-timeline and selection clock are options in the transport_hbox */
 	_transport_hbox.set_spacing (3);
 	_table.attach (_transport_hbox, TCOL, 0, 2, EXPAND|FILL, EXPAND|FILL, hpadding, 0);
-	++col;
-
-	_table.attach (*monitor_box, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 3, 0);
-	++col;
-
-	_table.attach (*alert_box, TCOL, 0, 2, SHRINK, EXPAND|FILL, hpadding, 0);
 	++col;
 
 	_table.attach (*(manage (new ArdourVSpacer ())), TCOL, 0, 2 , SHRINK, EXPAND|FILL, 3, 0);
@@ -294,7 +281,7 @@ ApplicationBar::on_parent_changed (Gtk::Widget*)
 	}
 	col += MAX_LUA_ACTION_BUTTONS / 2;
 
-	_table.attach (_scripts_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 3, 0);
+	_table.attach (_scripts_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 8, 0);
 	++col;
 
 	_table.set_spacings (0);

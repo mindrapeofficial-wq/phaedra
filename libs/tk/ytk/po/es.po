@@ -1,7 +1,7 @@
 # translation of gtk+.gtk-2-22.po to Español
 # Copyright © 1999-2002, 2006, 2007, 2008 Free Software Foundation, Inc.
 # This file is distributed under the same license as the gtk+ package.
-#
+# 
 # Pablo Saratxaga <srtxg@chanae.alphanet.ch>, 1998-2000.
 # José Antonio Salgueiro A. <joseantsa@eresmas.net>, 2001.
 # Carlos Perelló Marín <carlos@gnome-db.org>, 2002.
@@ -11,12 +11,12 @@
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2003 - 2006.
 # Jorge González <jorgegonz@svn.gnome.org>, 2007, 2008, 2009, 2010.
 # Daniel Mustieles <daniel.mustieles@gmail.com>, 2011.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: gtk+.gtk-2-22\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-05 15:38+0200\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2011-07-13 10:46+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
@@ -652,20 +652,20 @@ msgstr "OPCIONES"
 msgid "GTK+ debugging flags to unset"
 msgstr "Opciones de depuración GTK+ que desactivar"
 
-#: gtkmain.c:698
+#: gtkmain.c:706
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: gtkmain.c:763
+#: gtkmain.c:771
 #, c-format
 msgid "Cannot open display: %s"
 msgstr "No se puede abrir el visor: %s"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "GTK+ Options"
 msgstr "Opciones GTK+"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "Show GTK+ Options"
 msgstr "Mostrar opciones GTK+"
 

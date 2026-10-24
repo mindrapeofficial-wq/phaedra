@@ -99,6 +99,8 @@ public:
 
 	Gtk::Window* use_own_window (bool and_fill_it);
 	void show_window ();
+	void set_editor_dock (Gtk::Box*);
+	bool _editor_docked = false;
 
 	void set_session (ARDOUR::Session *);
 

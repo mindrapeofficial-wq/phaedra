@@ -1,7 +1,7 @@
 # Czech translations for gtk-ardour
 # Copyright (C) 2003 Paul Davis
 # This file is distributed under the same license as the gtk-ardour package.
-#
+# 
 # Pavel Fric <pavelfric@seznam.cz>, 2009, 2010, 2011.
 # Pavel Fric <pavelfric@seznam.cz>, 2010, 2012, 2013, 2015, 2016, 2017, 2020, 2021, 2023.
 # SPDX-FileCopyrightText: 2020, 2023, 2024, 2025, 2026 Martin Vlk <martin@vlkk.cz>
@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gtk-ardour 0.347.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-27 19:03+0200\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2026-10-10 11:06+0200\n"
 "Last-Translator: Martin Vlk <martin@vlkk.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -695,7 +695,7 @@ msgstr "Nastavení:"
 msgid "Add:"
 msgstr "Přidat:"
 
-#: add_route_dialog.cc:77 bundle_manager.cc:205 editor_ops.cc:9588
+#: add_route_dialog.cc:77 bundle_manager.cc:205 editor_ops.cc:9599
 #: loudness_dialog.cc:525 region_editor.cc:76 route_group_dialog.cc:75
 #: strip_export_dialog.cc:65
 msgid "Name:"
@@ -919,12 +919,12 @@ msgid "Add and Close"
 msgstr "Přidat a zavřít"
 
 #: add_route_dialog.cc:453 add_route_dialog.cc:837 add_route_dialog.cc:850
-#: editor_actions.cc:525 editor_rulers.cc:276 time_axis_view.cc:1419
+#: editor_actions.cc:539 editor_rulers.cc:276 time_axis_view.cc:1419
 msgid "Normal"
 msgstr "Obvyklá"
 
 #: add_route_dialog.cc:529 add_route_dialog.cc:816 editor_actions.cc:126
-#: engine_dialog.cc:270 missing_file_dialog.cc:65 mixer_ui.cc:2569
+#: engine_dialog.cc:270 missing_file_dialog.cc:65 mixer_ui.cc:2593
 #: plugin_pin_dialog.cc:76 rc_option_editor.cc:3696 rc_option_editor.cc:3698
 #: rc_option_editor.cc:3707 rc_option_editor.cc:3737 rc_option_editor.cc:3738
 #: rc_option_editor.cc:3746 rc_option_editor.cc:3754 rc_option_editor.cc:3755
@@ -942,7 +942,7 @@ msgstr "MIDI"
 msgid "Manual Configuration"
 msgstr "Ruční nastavení"
 
-#: add_route_dialog.cc:636 add_route_dialog.cc:815 ardour_ui.cc:1201
+#: add_route_dialog.cc:636 add_route_dialog.cc:815 ardour_ui.cc:1202
 #: ardour_ui_ed.cc:922 engine_dialog.cc:268 plugin_pin_dialog.cc:75
 msgid "Audio"
 msgstr "Zvuk"
@@ -994,7 +994,7 @@ msgstr "12 kanálů"
 
 #: add_route_dialog.cc:963 gain_meter.cc:868 loudness_dialog.cc:338
 #: loudness_dialog.cc:528 loudness_dialog.cc:541 loudness_dialog.cc:586
-#: loudness_dialog.cc:641 mixer_strip.cc:2048 processor_box.cc:4277
+#: loudness_dialog.cc:641 mixer_strip.cc:2084 processor_box.cc:4277
 msgid "Custom"
 msgstr "Vlastní"
 
@@ -1064,7 +1064,7 @@ msgstr "Poměrné spektrum, -18 dB"
 msgid "FFT analysis window"
 msgstr "Okno pro rozbor FFT"
 
-#: analysis_window.cc:57 editor.cc:1924 editor_actions.cc:429
+#: analysis_window.cc:57 editor.cc:1935 editor_actions.cc:443
 msgid "Spectral Analysis"
 msgstr "Spektrální analýza (FFT rozbor)"
 
@@ -1074,7 +1074,7 @@ msgid "Track"
 msgstr "Stopa"
 
 #: analysis_window.cc:65 ardour_ui_ed.cc:778 mixer_strip.cc:869 mixer_ui.cc:216
-#: mixer_ui.cc:2998
+#: mixer_ui.cc:3022
 msgid "Show"
 msgstr "Ukázat"
 
@@ -1094,7 +1094,7 @@ msgstr "Nevrstveno"
 msgid "Snd on Snd"
 msgstr "Zvuk na zvuk"
 
-#: application_bar.cc:120 editor_actions.cc:653 rc_option_editor.cc:3772
+#: application_bar.cc:120 editor_actions.cc:667 rc_option_editor.cc:3772
 #: region_editor.cc:77
 msgid "Audition"
 msgstr "Zkušební výstup"
@@ -1169,8 +1169,8 @@ msgid ""
 msgstr ""
 "<b>Vrstveno</b>: Nové nahrávky budou přidány jako oblasti do vrstvy nad "
 "stávajícími oblastmi.\n"
-"<b>Nevrstveno</b>: Stávající oblast bude rozdělena a nahrazena "
-"nově nahranou oblastí.\n"
+"<b>Nevrstveno</b>: Stávající oblast bude rozdělena a nahrazena nově nahranou "
+"oblastí.\n"
 "<b>ZvukPřesZvuk</b>: Chová se jako <i>Vrstveno</i>, ale stávající oblasti "
 "budou slyšet."
 
@@ -1258,11 +1258,11 @@ msgstr "Obnovit všechna měřidla nejvyšších hodnot"
 msgid "No Align"
 msgstr "Není zarovnáno"
 
-#: application_bar.cc:749 editor_actions.cc:546
+#: application_bar.cc:749 editor_actions.cc:560
 msgid "Unset #%1"
 msgstr "Zrušit přiřazení #%1"
 
-#: application_bar.cc:750 editor_actions.cc:548
+#: application_bar.cc:750 editor_actions.cc:562
 msgid ""
 "No action bound\n"
 "Right-click to assign"
@@ -1498,27 +1498,27 @@ msgstr "Nepodařilo se otevřít dočasný soubor k tisku klávesových zkratek:
 msgid "Could not save bindings to file (%1)"
 msgstr "Nepodařilo se uložit klávesové zkratky do souboru '(%1)"
 
-#: ardour_ui.cc:1015
+#: ardour_ui.cc:1016
 msgid "Don't quit"
 msgstr "Neukončit"
 
-#: ardour_ui.cc:1018
+#: ardour_ui.cc:1019
 msgid "Discard session"
 msgstr "Zahodit sezení"
 
-#: ardour_ui.cc:1019
+#: ardour_ui.cc:1020
 msgid "Name session and quit"
 msgstr "Pojmenovat sezení a ukončit"
 
-#: ardour_ui.cc:1021
+#: ardour_ui.cc:1022
 msgid "Just quit"
 msgstr "Pouze ukončit"
 
-#: ardour_ui.cc:1022 ardour_ui_engine.cc:92
+#: ardour_ui.cc:1023 ardour_ui_engine.cc:92
 msgid "Save and quit"
 msgstr "Uložit a ukončit"
 
-#: ardour_ui.cc:1037
+#: ardour_ui.cc:1038
 msgid ""
 "%1 was unable to save your session.\n"
 "\n"
@@ -1532,11 +1532,11 @@ msgstr ""
 "\n"
 "\"Pouze ukončit\"."
 
-#: ardour_ui.cc:1109
+#: ardour_ui.cc:1110
 msgid "DANGER!"
 msgstr "NEBEZPEČÍ!"
 
-#: ardour_ui.cc:1114
+#: ardour_ui.cc:1115
 msgid ""
 "You have not named this session yet.\n"
 "You can continue to use it as\n"
@@ -1556,194 +1556,194 @@ msgstr ""
 "\n"
 "Smazání je trvalé a nevratné."
 
-#: ardour_ui.cc:1120
+#: ardour_ui.cc:1121
 msgid "SCRATCH SESSION - DANGER!"
 msgstr "VYMAZAT SEZENÍ - NEBEZPEČÍ!"
 
-#: ardour_ui.cc:1121
+#: ardour_ui.cc:1122
 msgid "Delete this session (IRREVERSIBLE!)"
 msgstr "Smazat toto sezení (NEVRATNÉ!)"
 
-#: ardour_ui.cc:1122
+#: ardour_ui.cc:1123
 msgid "Do not delete"
 msgstr "Nemazat"
 
-#: ardour_ui.cc:1207 ardour_ui.cc:1216 session_option_editor.cc:83 utils.cc:830
+#: ardour_ui.cc:1208 ardour_ui.cc:1217 session_option_editor.cc:83 utils.cc:830
 msgid "none"
 msgstr "žádný"
 
-#: ardour_ui.cc:1223 editor_ops.cc:7608 editor_ops.cc:7619 rhythm_ferret.cc:131
+#: ardour_ui.cc:1224 editor_ops.cc:7619 editor_ops.cc:7630 rhythm_ferret.cc:131
 #: rhythm_ferret.cc:146
 msgid "ms"
 msgstr "ms"
 
-#: ardour_ui.cc:1238 plugin_manager_ui.cc:64 strip_import_dialog.cc:126
+#: ardour_ui.cc:1239 plugin_manager_ui.cc:64 strip_import_dialog.cc:126
 msgid "File"
 msgstr "Soubor"
 
-#: ardour_ui.cc:1242
+#: ardour_ui.cc:1243
 msgid "BWF"
 msgstr "BWF"
 
-#: ardour_ui.cc:1245
+#: ardour_ui.cc:1246
 msgid "WAV"
 msgstr "WAV"
 
-#: ardour_ui.cc:1248
+#: ardour_ui.cc:1249
 msgid "WAV64"
 msgstr "WAV64"
 
-#: ardour_ui.cc:1251 session_option_editor.cc:205
+#: ardour_ui.cc:1252 session_option_editor.cc:205
 msgid "CAF"
 msgstr "CAF"
 
-#: ardour_ui.cc:1254
+#: ardour_ui.cc:1255
 msgid "AIFF"
 msgstr "AIFF"
 
-#: ardour_ui.cc:1257
+#: ardour_ui.cc:1258
 msgid "iXML"
 msgstr "iXML"
 
-#: ardour_ui.cc:1260 session_option_editor.cc:206
+#: ardour_ui.cc:1261 session_option_editor.cc:206
 msgid "RF64"
 msgstr "RF64"
 
-#: ardour_ui.cc:1263
+#: ardour_ui.cc:1264
 msgid "RF64/WAV"
 msgstr "RF64/WAV"
 
-#: ardour_ui.cc:1266
+#: ardour_ui.cc:1267
 msgid "MBWF"
 msgstr "MBWF"
 
-#: ardour_ui.cc:1269 session_option_editor.cc:210
+#: ardour_ui.cc:1270 session_option_editor.cc:210
 msgid "FLAC"
 msgstr "FLAC"
 
-#: ardour_ui.cc:1277
+#: ardour_ui.cc:1278
 msgid "32-float"
 msgstr "32-float"
 
-#: ardour_ui.cc:1280
+#: ardour_ui.cc:1281
 msgid "24-int"
 msgstr "24-int"
 
-#: ardour_ui.cc:1283
+#: ardour_ui.cc:1284
 msgid "16-int"
 msgstr "16-int"
 
-#: ardour_ui.cc:1294 editor_sources.cc:97 keyeditor.cc:255
+#: ardour_ui.cc:1295 editor_sources.cc:97 keyeditor.cc:255
 #: plugin_manager_ui.cc:65
 msgid "Path"
 msgstr "Cesta"
 
-#: ardour_ui.cc:1310 ardour_ui_ed.cc:924
+#: ardour_ui.cc:1311 ardour_ui_ed.cc:924
 msgid "DSP"
 msgstr "Digitální zpracování signálu (DSP)"
 
-#: ardour_ui.cc:1325 ardour_ui.cc:1327
+#: ardour_ui.cc:1326 ardour_ui.cc:1328
 msgid "Shift+Click to clear xruns."
 msgstr "Shift+klepnutí pro vyprázdnění xruns."
 
-#: ardour_ui.cc:1341
+#: ardour_ui.cc:1342
 msgid "PkBld"
 msgstr "PkBld"
 
-#: ardour_ui.cc:1363
+#: ardour_ui.cc:1364
 msgid "N/A"
 msgstr "nedostupné"
 
-#: ardour_ui.cc:1364 rec_info_box.cc:333
+#: ardour_ui.cc:1365 rec_info_box.cc:333
 msgid "Unknown"
 msgstr "Neznámý"
 
-#: ardour_ui.cc:1374
+#: ardour_ui.cc:1375
 #, c-format
 msgid "%02dh:%02dm:%02ds"
 msgstr "%02dh:%02dm:%02ds"
 
-#: ardour_ui.cc:1375
+#: ardour_ui.cc:1376
 msgid "Available record time"
 msgstr "Dostupný čas záznamu"
 
-#: ardour_ui.cc:1377 editor_route_groups.cc:100
+#: ardour_ui.cc:1378 editor_route_groups.cc:100
 msgid "Rec"
 msgstr "Nahr"
 
-#: ardour_ui.cc:1384 rec_info_box.cc:292 rec_info_box.cc:335
+#: ardour_ui.cc:1385 rec_info_box.cc:292 rec_info_box.cc:335
 #: rec_info_box.cc:353
 msgid ">24h"
 msgstr ">24 h"
 
-#: ardour_ui.cc:1387 ardour_ui.cc:1390 rec_info_box.cc:356 rec_info_box.cc:359
+#: ardour_ui.cc:1388 ardour_ui.cc:1391 rec_info_box.cc:356 rec_info_box.cc:359
 msgid "hours|h"
 msgstr "hours|h"
 
-#: ardour_ui.cc:1393 plugin_scan_dialog.cc:224 rec_info_box.cc:362
+#: ardour_ui.cc:1394 plugin_scan_dialog.cc:224 rec_info_box.cc:362
 #: rec_info_box.cc:366
 msgid "minutes|m"
 msgstr "minutes|m"
 
-#: ardour_ui.cc:1438
+#: ardour_ui.cc:1439
 msgid "Timecode|TC"
 msgstr "Timecode|TC"
 
-#: ardour_ui.cc:1462
+#: ardour_ui.cc:1458
 msgid "n/a"
 msgstr "neznámý"
 
-#: ardour_ui.cc:1479 ardour_ui.cc:1486
+#: ardour_ui.cc:1475 ardour_ui.cc:1482
 msgid "PDC: %1"
 msgstr "PDC: %1"
 
-#: ardour_ui.cc:1480 ardour_ui.cc:1491
+#: ardour_ui.cc:1476 ardour_ui.cc:1487
 msgid "I/O Latency: %1"
 msgstr "I/O latence: %1"
 
-#: ardour_ui.cc:1489
+#: ardour_ui.cc:1485
 msgid "I/O Latency: %1%2%3"
 msgstr "I/O latence: %1%2%3"
 
-#: ardour_ui.cc:1489
+#: ardour_ui.cc:1485
 msgid "ambiguous"
 msgstr "nejednoznačný"
 
-#: ardour_ui.cc:1528
+#: ardour_ui.cc:1524
 msgid "You cannot add a track without a session already loaded."
 msgstr "Stopy můžete přidat až teprve tehdy, když bylo sezení nahráno."
 
-#: ardour_ui.cc:1546
+#: ardour_ui.cc:1542
 msgid "could not create %1 new mixed track"
 msgid_plural "could not create %1 new mixed tracks"
 msgstr[0] "Nepodařilo se vytvořit %1 nové smíchané stopy"
 msgstr[1] "Nepodařilo se vytvořit %1 nových smíchaných stop"
 
-#: ardour_ui.cc:1555
+#: ardour_ui.cc:1551
 msgid "could not create %1 new Midi Bus"
 msgid_plural "could not create %1 new Midi Busses"
 msgstr[0] "Nepodařilo se vytvořit %1 nové sběrnice MIDI"
 msgstr[1] "Nepodařilo se vytvořit %1 nových sběrnic MIDI"
 
-#: ardour_ui.cc:1589
+#: ardour_ui.cc:1585
 msgid "could not create %1 new audio track"
 msgid_plural "could not create %1 new audio tracks"
 msgstr[0] "Nelze vytvořit %1 novou zvukovou stopu"
 msgstr[1] "Nelze vytvořit %1 nové zvukové stopy"
 
-#: ardour_ui.cc:1598
+#: ardour_ui.cc:1594
 msgid "could not create %1 new audio bus"
 msgid_plural "could not create %1 new audio busses"
 msgstr[0] "Nepodařilo se vytvořit %1 novou zvukovou sběrnici"
 msgstr[1] "Nepodařilo se vytvořit %1 nové zvukové sběrnice"
 
-#: ardour_ui.cc:1630
+#: ardour_ui.cc:1626
 msgid "could not create %1 new foldback bus"
 msgid_plural "could not create %1 new foldback busses"
 msgstr[0] "Nepodařilo se vytvořit %1 novou sběrnici zpětného poslechu"
 msgstr[1] "Nepodařilo se vytvořit %1 nových skládacích sběrnic (Foldback)"
 
-#: ardour_ui.cc:1645
+#: ardour_ui.cc:1641
 msgid ""
 "There are insufficient ports available\n"
 "to create a new track or bus.\n"
@@ -1755,7 +1755,7 @@ msgstr ""
 "Měl byste uložit %1, ukončit Ardour\n"
 "a spustit znovu s větším počtem přípojek."
 
-#: ardour_ui.cc:1789
+#: ardour_ui.cc:1785
 msgid ""
 "You have one more tracks enabled for cue recording.\n"
 "\n"
@@ -1765,7 +1765,7 @@ msgstr ""
 "\n"
 "Nemůžete zároveň nahrávat do scén i do časové osy."
 
-#: ardour_ui.cc:1797
+#: ardour_ui.cc:1793
 msgid ""
 "Please create one or more tracks before trying to record.\n"
 "You can do this with the \"Add Track or Bus\" option in the Session menu."
@@ -1773,24 +1773,24 @@ msgstr ""
 "Vytvořte, prosím, jednu nebo i více stop, předtím než se pokusíte nahrávat.\n"
 "Můžete to udělat volbou \"Přidat stopu nebo sběrnici\" v nabídce pro sezení."
 
-#: ardour_ui.cc:2287 route_ui.cc:1984 strip_export_dialog.cc:127
+#: ardour_ui.cc:2283 route_ui.cc:1980 strip_export_dialog.cc:127
 msgid "Confirm Template Overwrite"
 msgstr "Potvrdit přepsání předlohy"
 
-#: ardour_ui.cc:2288 route_ui.cc:1985 strip_export_dialog.cc:128
+#: ardour_ui.cc:2284 route_ui.cc:1981 strip_export_dialog.cc:128
 msgid "A template already exists with that name. Do you want to overwrite it?"
 msgstr "Předloha s tímto názvem již existuje. Chcete ji přepsat?"
 
-#: ardour_ui.cc:2484
+#: ardour_ui.cc:2480
 msgid "No files were ready for clean-up"
 msgstr "Pro udělání pořádku nebyly připraveny žádné soubory"
 
-#: ardour_ui.cc:2488 ardour_ui.cc:2498 ardour_ui.cc:2631 ardour_ui.cc:2638
+#: ardour_ui.cc:2484 ardour_ui.cc:2494 ardour_ui.cc:2627 ardour_ui.cc:2634
 #: ardour_ui_ed.cc:172
 msgid "Clean-up"
 msgstr "Udělat pořádek"
 
-#: ardour_ui.cc:2489
+#: ardour_ui.cc:2485
 msgid ""
 "If this seems surprising, \n"
 "check for any existing snapshots.\n"
@@ -1802,19 +1802,19 @@ msgstr ""
 "Mohou stále zahrnovat oblasti\n"
 "vyžadující některé nepoužívané soubory, aby mohly nadále být."
 
-#: ardour_ui.cc:2548
+#: ardour_ui.cc:2544
 msgid "kilo"
 msgstr "kilo"
 
-#: ardour_ui.cc:2551
+#: ardour_ui.cc:2547
 msgid "mega"
 msgstr "mega"
 
-#: ardour_ui.cc:2554
+#: ardour_ui.cc:2550
 msgid "giga"
 msgstr "giga"
 
-#: ardour_ui.cc:2559
+#: ardour_ui.cc:2555
 msgid ""
 "The following file was deleted from %2,\n"
 "releasing %3 %4bytes of disk space"
@@ -1828,7 +1828,7 @@ msgstr[1] ""
 "Následující soubor byl smazán z %2,\n"
 "a tím se na disku uvolnilo %3 %4 bajtů ukládacího prostoru"
 
-#: ardour_ui.cc:2566
+#: ardour_ui.cc:2562
 msgid ""
 "The following file was not in use and \n"
 "has been moved to: %2\n"
@@ -1866,11 +1866,11 @@ msgstr[1] ""
 "\n"
 "uvolní se na disku dalších %3 %4 bajtů ukládacího prostoru.\n"
 
-#: ardour_ui.cc:2626
+#: ardour_ui.cc:2622
 msgid "Are you sure you want to clean-up?"
 msgstr "Jste si jistý, že chcete udělat pořádek?"
 
-#: ardour_ui.cc:2633
+#: ardour_ui.cc:2629
 msgid ""
 "Clean-up is a destructive operation.\n"
 "ALL undo/redo information will be lost if you clean-up.\n"
@@ -1882,35 +1882,35 @@ msgstr ""
 "Po udělání pořádku budou všechny nepoužívané a tudíž nepotřebné zvukové "
 "soubory přesunuty do \"mrtvého\" umístění."
 
-#: ardour_ui.cc:2641
+#: ardour_ui.cc:2637
 msgid "CleanupDialog"
 msgstr "Dialog věnovaný dělání pořádku"
 
-#: ardour_ui.cc:2667
+#: ardour_ui.cc:2663
 msgid "Cleaned Files"
 msgstr "Uklizené soubory"
 
-#: ardour_ui.cc:2684
+#: ardour_ui.cc:2680
 msgid "deleted file"
 msgstr "smazaný soubor"
 
-#: ardour_ui.cc:2802
+#: ardour_ui.cc:2798
 msgid "You cannot add tracks or busses without a session already loaded."
 msgstr "Nemůžete přidat stopy nebo sběrnice bez již nahraného sezení."
 
-#: ardour_ui.cc:2869
+#: ardour_ui.cc:2865
 msgid "Audio Channels for new track:"
 msgstr "Zvukové kanály pro novou stopu:"
 
-#: ardour_ui.cc:2869
+#: ardour_ui.cc:2865
 msgid "Audio Channels for new bus:"
 msgstr "Zvukové kanály pro novou sběrnici:"
 
-#: ardour_ui.cc:2877
+#: ardour_ui.cc:2873
 msgid "Custom Channel"
 msgstr "Vlastní kanál"
 
-#: ardour_ui.cc:2933
+#: ardour_ui.cc:2929
 msgid ""
 "The disk system on your computer\n"
 "was not able to keep up with %1.\n"
@@ -1924,7 +1924,7 @@ msgstr ""
 "Přesněji řečeno nebylo možné dostatečně rychle zapisovat data\n"
 "tak, aby se podařilo udržet krok s nahráváním.\n"
 
-#: ardour_ui.cc:2962
+#: ardour_ui.cc:2958
 msgid ""
 "The disk system on your computer\n"
 "was not able to keep up with %1.\n"
@@ -1938,7 +1938,7 @@ msgstr ""
 "Přesněji řečeno nebylo možné dostatečně rychle číst data\n"
 "tak, aby se podařilo udržet krok s přehráváním.\n"
 
-#: ardour_ui.cc:2986
+#: ardour_ui.cc:2982
 msgid ""
 "<b>MMCSS priority can not be set!</b>\n"
 "\n"
@@ -1967,11 +1967,11 @@ msgstr ""
 "helpcenter.steinberg.de/hc/en-us/articles/13338094735762-Error-message-on-"
 "Windows-MMCSS-priority-cannot-be-set\">zde</a>."
 
-#: ardour_ui.cc:3019
+#: ardour_ui.cc:3015
 msgid "Crash Recovery"
 msgstr "Obnovení po havárii"
 
-#: ardour_ui.cc:3020
+#: ardour_ui.cc:3016
 msgid ""
 "This session appears to have been modified\n"
 "without being saved or in the middle of recording\n"
@@ -1987,11 +1987,11 @@ msgstr ""
 "%1 vám může obnovit změny\n"
 "nebo je můžete ignorovat.\n"
 
-#: ardour_ui.cc:3031
+#: ardour_ui.cc:3027
 msgid "Ignore crash data"
 msgstr "Zahodit data"
 
-#: ardour_ui.cc:3032
+#: ardour_ui.cc:3028
 msgid "Recover from crash"
 msgstr "Obnovit data"
 
@@ -2135,39 +2135,43 @@ msgstr ""
 "Okno hovorny nejlépe pouze nechejte otevřeno a pravidelně se choďte dívat, "
 "jestli už někdo zodpověděl váš dotaz."
 
-#: ardour_ui_dependents.cc:130
+#: ardour_ui_dependents.cc:144
 msgid "Setup Editor"
 msgstr "Nachystat editor"
 
-#: ardour_ui_dependents.cc:132
+#: ardour_ui_dependents.cc:146
 msgid "Setup Mixer"
 msgstr "Nachystat směšovač"
 
-#: ardour_ui_dependents.cc:142
+#: ardour_ui_dependents.cc:156
 msgid "Reload Session History"
 msgstr "Znovu nahrát průběh sezení"
 
-#: ardour_ui_dependents.cc:211
+#: ardour_ui_dependents.cc:225
 msgid "Quit %1?"
 msgstr "Ukončit %1?"
 
-#: ardour_ui_dependents.cc:264
+#: ardour_ui_dependents.cc:269
+msgid "Setting up GUI"
+msgstr ""
+
+#: ardour_ui_dependents.cc:280
 msgid "UI: cannot setup editor"
 msgstr "Uživatelské rozhraní: Nelze nastavit editor"
 
-#: ardour_ui_dependents.cc:269
+#: ardour_ui_dependents.cc:285
 msgid "UI: cannot setup mixer"
 msgstr "Uživatelské rozhraní: Nelze nastavit směšovač"
 
-#: ardour_ui_dependents.cc:274
+#: ardour_ui_dependents.cc:290
 msgid "UI: cannot setup recorder"
 msgstr "Uživatelské rozhraní: nelze nastavit nahrávací jednotku"
 
-#: ardour_ui_dependents.cc:279
+#: ardour_ui_dependents.cc:295
 msgid "UI: cannot setup trigger"
 msgstr "Uživatelské rozhraní: nelze nastavit spouštěč"
 
-#: ardour_ui_dependents.cc:284
+#: ardour_ui_dependents.cc:300
 msgid "UI: cannot setup meterbridge"
 msgstr "Uživatelské rozhraní: Nelze nastavit měřicí můstek"
 
@@ -2188,8 +2192,8 @@ msgid "Save and close"
 msgstr "Uložit a zavřít"
 
 #: ardour_ui_dialogs.cc:1119 ardour_ui_ed.cc:465 ardour_ui_ed.cc:476
-#: audio_clock.cc:2239 editing_context.cc:100 editing_context.cc:125
-#: editor.cc:415 editor_actions.cc:577 editor_actions.cc:607
+#: audio_clock.cc:2240 editing_context.cc:101 editing_context.cc:126
+#: editor.cc:413 editor_actions.cc:591 editor_actions.cc:621
 #: export_timespan_selector.cc:102 session_option_editor.cc:50
 #: session_option_editor.cc:70 session_option_editor.cc:89
 #: session_option_editor.cc:90 session_option_editor.cc:103
@@ -2234,7 +2238,7 @@ msgstr "Okno"
 msgid "Mixer"
 msgstr "Směšovač"
 
-#: ardour_ui_ed.cc:178 editor.cc:5539 editor.cc:5689 public_editor.cc:36
+#: ardour_ui_ed.cc:178 editor.cc:5581 editor.cc:5731 public_editor.cc:36
 #: rc_option_editor.cc:3368 rc_option_editor.cc:3372 rc_option_editor.cc:3381
 #: rc_option_editor.cc:3389 rc_option_editor.cc:3397 rc_option_editor.cc:3405
 #: rc_option_editor.cc:3424 rc_option_editor.cc:3439 rc_option_editor.cc:3441
@@ -2371,9 +2375,9 @@ msgstr "Uložit kopii sezení jako..."
 msgid "Archive..."
 msgstr "Archiv..."
 
-#: ardour_ui_ed.cc:252 editor_actions.cc:1323 editor_markers.cc:1157
+#: ardour_ui_ed.cc:252 editor_actions.cc:1337 editor_markers.cc:1157
 #: editor_snapshots.cc:159 foldback_strip.cc:801 mixer_strip.cc:1117
-#: route_ui.cc:2689 surround_strip.cc:366 track_record_axis.cc:508
+#: route_ui.cc:2685 surround_strip.cc:366 track_record_axis.cc:508
 #: trigger_strip.cc:319
 msgid "Rename..."
 msgstr "Přejmenovat..."
@@ -2632,12 +2636,12 @@ msgstr "Takty a doby"
 msgid "Minutes & Seconds"
 msgstr "Minuty a sekundy"
 
-#: ardour_ui_ed.cc:471 ardour_ui_ed.cc:482 audio_clock.cc:2242
+#: ardour_ui_ed.cc:471 ardour_ui_ed.cc:482 audio_clock.cc:2243
 msgid "Seconds"
 msgstr "Sekundy"
 
-#: ardour_ui_ed.cc:473 ardour_ui_ed.cc:484 audio_clock.cc:2243 editor.cc:417
-#: editor_actions.cc:578
+#: ardour_ui_ed.cc:473 ardour_ui_ed.cc:484 audio_clock.cc:2244 editor.cc:415
+#: editor_actions.cc:592
 msgid "Samples"
 msgstr "Vzorky"
 
@@ -2685,7 +2689,7 @@ msgstr "Automatický vstup"
 msgid "Auto Play"
 msgstr "Automatické přehrávání"
 
-#: ardour_ui_ed.cc:521 editing_context.cc:166
+#: ardour_ui_ed.cc:521 editing_context.cc:167
 msgid "Follow Range"
 msgstr "Následovat rozsah"
 
@@ -2929,7 +2933,7 @@ msgstr "Vybrat všechny stopy"
 msgid "Deselect All"
 msgstr "Odznačit vše"
 
-#: ardour_ui_ed.cc:747 editor.cc:2024 editor.cc:2105
+#: ardour_ui_ed.cc:747 editor.cc:2035 editor.cc:2116
 msgid "Invert Selection"
 msgstr "Obrátit výběr"
 
@@ -2997,7 +3001,7 @@ msgstr "Zastavit nahrávání na konci přepisu"
 msgid "Return to last playback start when stopped"
 msgstr "Při zastavení se vrátit na začátek posledního přehrávání"
 
-#: ardour_ui_ed.cc:819 editing_context.cc:252
+#: ardour_ui_ed.cc:819 editing_context.cc:255
 msgid "Playhead follows Range tool clicks, and Range selections"
 msgstr ""
 "Ukazatel polohy následuje klepnutí nástroje pro rozsah a výběry rozsahu"
@@ -3145,7 +3149,7 @@ msgstr ""
 "Nelze použít JACK jako synchronizační zdroj,\n"
 "když je povolena vari-speed."
 
-#: ardour_ui_session.cc:95 startup_fsm.cc:918
+#: ardour_ui_session.cc:95 startup_fsm.cc:943
 msgid ""
 "This session\n"
 "%1\n"
@@ -3155,11 +3159,11 @@ msgstr ""
 "%1\n"
 "již existuje. Chcete je otevřít?"
 
-#: ardour_ui_session.cc:104 startup_fsm.cc:928
+#: ardour_ui_session.cc:104 startup_fsm.cc:953
 msgid "Open Existing Session"
 msgstr "Otevřít stávající sezení"
 
-#: ardour_ui_session.cc:196 startup_fsm.cc:750
+#: ardour_ui_session.cc:196 startup_fsm.cc:775
 msgid "Extracting session-archive failed: %1"
 msgstr "Nepodařilo se vytáhnout archiv se sezením: %1"
 
@@ -3168,7 +3172,7 @@ msgid "Extracting AAF failed"
 msgstr "Selhala extrakce AAF"
 
 #: ardour_ui_session.cc:262 ardour_ui_session.cc:295 ardour_ui_session.cc:911
-#: session_dialog.cc:1077 session_dialog.cc:1612 startup_fsm.cc:873
+#: session_dialog.cc:1077 session_dialog.cc:1612 startup_fsm.cc:898
 msgid ""
 "To ensure compatibility with various systems\n"
 "session names may not contain a '%1' character"
@@ -3176,7 +3180,7 @@ msgstr ""
 "Pro zajištění slučitelnosti s různými systémy\n"
 "nesmí názvy sezení obsahovat znak '%1'"
 
-#: ardour_ui_session.cc:287 startup_fsm.cc:858
+#: ardour_ui_session.cc:287 startup_fsm.cc:883
 msgid "There is no existing session at \"%1\""
 msgstr "V \"%1\" není žádné sezení"
 
@@ -3623,7 +3627,7 @@ msgstr ""
 "Můžete se podívat na omezení pro paměť pomocí příkazu 'ulimit -l', a obvykle "
 "můžete toto nastavení změnit %2."
 
-#: ardour_ui_startup.cc:765 mixer_ui.cc:3860 mixer_ui.cc:4306 mixer_ui.cc:4351
+#: ardour_ui_startup.cc:765 mixer_ui.cc:3884 mixer_ui.cc:4330 mixer_ui.cc:4375
 msgid "Do not show this window again"
 msgstr "Neukazovat toto okno s hlášením znovu"
 
@@ -3717,32 +3721,32 @@ msgstr "Změnit nynější tempo"
 msgid "Change current time signature"
 msgstr "Změnit nynější taktové označení"
 
-#: audio_clock.cc:1041 audio_clock.cc:1055
+#: audio_clock.cc:1042 audio_clock.cc:1056
 msgid "--pending--"
 msgstr "--čekající na vyřízení--"
 
-#: audio_clock.cc:1061
+#: audio_clock.cc:1062
 msgid "INT"
 msgstr "INT"
 
-#: audio_clock.cc:1122
+#: audio_clock.cc:1123
 msgid "SR"
 msgstr "SR"
 
-#: audio_clock.cc:1129
+#: audio_clock.cc:1130
 #, c-format
 msgid "%+.4f%%"
 msgstr "%+.4f%%"
 
-#: audio_clock.cc:1130
+#: audio_clock.cc:1131
 msgid "Pull"
 msgstr "Táhnout"
 
-#: audio_clock.cc:1371
+#: audio_clock.cc:1372
 msgid "TimeSignature|TS"
 msgstr "TS"
 
-#: audio_clock.cc:1987 audio_streamview.cc:126 luainstance.cc:1447
+#: audio_clock.cc:1988 audio_streamview.cc:126 luainstance.cc:1447
 #: luainstance.cc:1452 luainstance.cc:2313 luainstance.cc:2318
 #: plugin_pin_dialog.cc:895 session_metadata_dialog.cc:499
 #: session_metadata_dialog.cc:547 session_metadata_dialog.cc:603
@@ -3750,28 +3754,28 @@ msgstr "TS"
 msgid "programming error: %1"
 msgstr "chyba programu: %1"
 
-#: audio_clock.cc:2117 audio_clock.cc:2145
+#: audio_clock.cc:2118 audio_clock.cc:2146
 msgid "programming error: %1 %2"
 msgstr "chyba programu: %1 %2"
 
-#: audio_clock.cc:2240 editor.cc:419 editor_actions.cc:579
+#: audio_clock.cc:2241 editor.cc:417 editor_actions.cc:593
 #: export_timespan_selector.cc:112
 msgid "Bars:Beats"
 msgstr "Takty:Doby"
 
-#: audio_clock.cc:2241 export_timespan_selector.cc:107
+#: audio_clock.cc:2242 export_timespan_selector.cc:107
 msgid "Minutes:Seconds"
 msgstr "Minuty:Sekundy"
 
-#: audio_clock.cc:2247
+#: audio_clock.cc:2248
 msgid "Set from Playhead"
 msgstr "Převzít z ukazatele polohy přehrávání"
 
-#: audio_clock.cc:2248
+#: audio_clock.cc:2249
 msgid "Locate to This Time"
 msgstr "Ukazatele polohy postavit na tento čas"
 
-#: audio_clock.cc:2251
+#: audio_clock.cc:2252
 msgid "Copy to clipboard"
 msgstr "Kopírovat do schránky"
 
@@ -3941,19 +3945,19 @@ msgid_plural "Set to %1 beats"
 msgstr[0] "Nastavit na %1 dobu"
 msgstr[1] "Nastavit na %1 doby"
 
-#: automation_line.cc:410 editor_drag.cc:4922
+#: automation_line.cc:411 editor_drag.cc:4921
 msgid "automation event move"
 msgstr "Pohybovat bodem automatizace"
 
-#: automation_line.cc:1049 region_gain_line.cc:89
+#: automation_line.cc:1095 region_gain_line.cc:89
 msgid "remove control point"
 msgstr "Odstranit bod automatizace"
 
-#: automation_line.cc:1336 automation_line.cc:1406 automation_line.cc:1433
+#: automation_line.cc:1382 automation_line.cc:1452 automation_line.cc:1479
 msgid "Ignoring illegal points on EditorAutomationLine \"%1\""
 msgstr "Ignoruji neplatné body na EditorAutomationLine \"%1\""
 
-#: automation_line.cc:1834 automation_region_view.cc:215
+#: automation_line.cc:1879 automation_region_view.cc:217
 msgid "add automation event"
 msgstr "Vložit bod automatizace"
 
@@ -3962,7 +3966,7 @@ msgid "unable to display automation region for control without list"
 msgstr "Oblast automatizace nelze bez seznamu pro tento parametr zobrazit"
 
 #: automation_time_axis.cc:180 automation_time_axis.cc:417
-#: automation_time_axis.cc:688 editor.cc:2013 editor.cc:2094
+#: automation_time_axis.cc:688 editor.cc:2024 editor.cc:2105
 #: editor_actions.cc:140 gain_meter.cc:843 shuttle_control.cc:707
 msgid "Play"
 msgstr "Přehrát"
@@ -4018,8 +4022,8 @@ msgstr "Lízátka"
 msgid "Line"
 msgstr "Čára"
 
-#: automation_time_axis.cc:674 midi_tracer.cc:64 mixer_ui.cc:4424
-#: pianoroll.cc:2118 rc_option_editor.cc:4427 rc_option_editor.cc:4432
+#: automation_time_axis.cc:674 midi_tracer.cc:64 mixer_ui.cc:4448
+#: pianoroll.cc:2139 rc_option_editor.cc:4427 rc_option_editor.cc:4432
 #: rc_option_editor.cc:4478 rc_option_editor.cc:4483 rc_option_editor.cc:4533
 #: rc_option_editor.cc:4538 rta_window.cc:49 trigger_ui.cc:412
 msgid "Clear"
@@ -4058,8 +4062,8 @@ msgstr "Interpolace"
 msgid "New Music Time"
 msgstr "Nový hudební čas"
 
-#: bbt_marker_dialog.cc:37 bbt_marker_dialog.cc:51 cue_editor.cc:516
-#: cue_editor.cc:787 editing_context.cc:83 editing_context.cc:108
+#: bbt_marker_dialog.cc:37 bbt_marker_dialog.cc:51 cue_editor.cc:509
+#: cue_editor.cc:780 editing_context.cc:84 editing_context.cc:109
 msgid "Bar"
 msgid_plural "Bars"
 msgstr[0] "Takt"
@@ -4102,15 +4106,15 @@ msgstr "Cíl"
 msgid "Source"
 msgstr "Zdroj"
 
-#: bundle_manager.cc:276 editor.cc:2055 editor_actions.cc:108
+#: bundle_manager.cc:276 editor.cc:2066 editor_actions.cc:108
 #: editor_actions.cc:121 editor_markers.cc:1867 lua_script_manager.cc:44
 #: rc_option_editor.cc:4439 rc_option_editor.cc:4458 rc_option_editor.cc:4488
 msgid "Edit"
 msgstr "Úpravy"
 
-#: bundle_manager.cc:277 editing_context.cc:495 editing_context.cc:496
-#: editing_context.cc:2077 editor.cc:5639 io_plugin_window.cc:390
-#: luawindow.cc:100 pianoroll.cc:1382 plugin_ui.cc:531 processor_box.cc:4241
+#: bundle_manager.cc:277 editing_context.cc:498 editing_context.cc:499
+#: editing_context.cc:2080 editor.cc:5681 io_plugin_window.cc:390
+#: luawindow.cc:100 pianoroll.cc:1396 plugin_ui.cc:531 processor_box.cc:4241
 #: processor_box.cc:4243 region_editor.cc:607 region_editor.cc:608
 #: region_editor.cc:780
 msgid "Delete"
@@ -4202,8 +4206,8 @@ msgid ""
 "Move the 2nd &amp; 4th lowest pitches in the selected chord down by 1 octave "
 "(tetrads only)"
 msgstr ""
-"Posuň druhý a čtvrtý nejnižší tón ve vybraném akordu o 1 oktávu dolů "
-"(pouze pro čtyřhlas)"
+"Posuň druhý a čtvrtý nejnižší tón ve vybraném akordu o 1 oktávu dolů (pouze "
+"pro čtyřhlas)"
 
 #: chord_dialog.cc:36
 msgid "Chord Editor"
@@ -4371,51 +4375,51 @@ msgstr "Nahrávání:"
 msgid "Solo|S"
 msgstr "S"
 
-#: cue_editor.cc:457
+#: cue_editor.cc:450
 msgid "Zoom to full clip"
 msgstr "Pohled na celý klip"
 
-#: cue_editor.cc:458
+#: cue_editor.cc:451
 msgid "Toggle between drum and regular note drawing"
 msgstr "Přepnout mezi kreslením not pro bicí nebo běžných"
 
-#: cue_editor.cc:489
+#: cue_editor.cc:482
 msgid "Play this clip from the top"
 msgstr "Přehrát tento klip odshora"
 
-#: cue_editor.cc:490
+#: cue_editor.cc:483
 msgid "Loop the range of this clip"
 msgstr "Opakovat oblast tohoto klipu"
 
-#: cue_editor.cc:491
+#: cue_editor.cc:484
 msgid "Solo the track containing this clip"
 msgstr "Sólo na stopě obsahující tento klip"
 
-#: cue_editor.cc:497
+#: cue_editor.cc:490
 msgid "Launch selected clip"
 msgstr "Spustit vybraný klip"
 
-#: cue_editor.cc:507
+#: cue_editor.cc:500
 msgid "Record clip"
 msgstr "Nahrát klip"
 
-#: cue_editor.cc:508
+#: cue_editor.cc:501
 msgid "Record length"
 msgstr "Délka nahrávání"
 
-#: cue_editor.cc:513 cue_editor.cc:520 cue_editor.cc:521 cue_editor.cc:784
+#: cue_editor.cc:506 cue_editor.cc:513 cue_editor.cc:514 cue_editor.cc:777
 msgid "Until Stopped"
 msgstr "Do zastavení"
 
-#: cue_editor.cc:615
+#: cue_editor.cc:608
 msgid "loop region"
 msgstr "opakovat oblast"
 
-#: cue_editor.cc:2023
+#: cue_editor.cc:2027
 msgid "trim region front"
 msgstr "oříznout začátek oblasti"
 
-#: cue_editor.cc:2045
+#: cue_editor.cc:2049
 msgid "trim region end"
 msgstr "oříznout konec oblasti"
 
@@ -4565,182 +4569,182 @@ msgstr "Délka"
 msgid "edit note"
 msgstr "Upravit notu"
 
-#: editing_context.cc:82 editing_context.cc:107 editing_context.cc:533
+#: editing_context.cc:83 editing_context.cc:108 editing_context.cc:536
 msgid "No Grid"
 msgstr "Mřížka vypnuta"
 
-#: editing_context.cc:84 editing_context.cc:109 editor_actions.cc:706
+#: editing_context.cc:85 editing_context.cc:110 editor_actions.cc:720
 #: quantize_dialog.cc:41
 msgid "1/4 Note"
 msgstr "1/4 nota"
 
-#: editing_context.cc:85 editing_context.cc:110 editor_actions.cc:707
+#: editing_context.cc:86 editing_context.cc:111 editor_actions.cc:721
 #: quantize_dialog.cc:42
 msgid "1/8 Note"
 msgstr "1/8 nota"
 
-#: editing_context.cc:86 editing_context.cc:111 editor_actions.cc:708
+#: editing_context.cc:87 editing_context.cc:112 editor_actions.cc:722
 #: quantize_dialog.cc:43
 msgid "1/16 Note"
 msgstr "1/16 nota"
 
-#: editing_context.cc:87 editing_context.cc:112 editor_actions.cc:709
+#: editing_context.cc:88 editing_context.cc:113 editor_actions.cc:723
 #: quantize_dialog.cc:44
 msgid "1/32 Note"
 msgstr "1/32 nota"
 
-#: editing_context.cc:88 editing_context.cc:113 editor_actions.cc:710
+#: editing_context.cc:89 editing_context.cc:114 editor_actions.cc:724
 #: quantize_dialog.cc:45
 msgid "1/64 Note"
 msgstr "1/64 nota"
 
-#: editing_context.cc:89 editing_context.cc:114 editor_actions.cc:711
+#: editing_context.cc:90 editing_context.cc:115 editor_actions.cc:725
 #: quantize_dialog.cc:46
 msgid "1/128 Note"
 msgstr "1/128 nota"
 
-#: editing_context.cc:90 quantize_dialog.cc:48
+#: editing_context.cc:91 quantize_dialog.cc:48
 msgid "1/3 (8th triplet)"
 msgstr "1/3 (osminová triola)"
 
-#: editing_context.cc:91 quantize_dialog.cc:49
+#: editing_context.cc:92 quantize_dialog.cc:49
 msgid "1/6 (16th triplet)"
 msgstr "1/6 (šestnáctinová triola)"
 
-#: editing_context.cc:92 quantize_dialog.cc:50
+#: editing_context.cc:93 quantize_dialog.cc:50
 msgid "1/12 (32nd triplet)"
 msgstr "1/12 (dvaatřicetinová triola)"
 
-#: editing_context.cc:93
+#: editing_context.cc:94
 msgid "1/24 (64th triplet)"
 msgstr "1/24 (čtyřiašedesátinová triola)"
 
-#: editing_context.cc:94 quantize_dialog.cc:52
+#: editing_context.cc:95 quantize_dialog.cc:52
 msgid "1/5 (8th quintuplet)"
 msgstr "1/5 (osminová kvintola)"
 
-#: editing_context.cc:95 quantize_dialog.cc:53
+#: editing_context.cc:96 quantize_dialog.cc:53
 msgid "1/10 (16th quintuplet)"
 msgstr "1/10 (šestnáctinová kvintola)"
 
-#: editing_context.cc:96 quantize_dialog.cc:54
+#: editing_context.cc:97 quantize_dialog.cc:54
 msgid "1/20 (32nd quintuplet)"
 msgstr "1/20 (dvaatřicetinová kvintola)"
 
-#: editing_context.cc:97 quantize_dialog.cc:56
+#: editing_context.cc:98 quantize_dialog.cc:56
 msgid "1/7 (8th septuplet)"
 msgstr "1/7 (osminová septola)"
 
-#: editing_context.cc:98 quantize_dialog.cc:57
+#: editing_context.cc:99 quantize_dialog.cc:57
 msgid "1/14 (16th septuplet)"
 msgstr "1/14 (šestnáctinová septola)"
 
-#: editing_context.cc:99 quantize_dialog.cc:58
+#: editing_context.cc:100 quantize_dialog.cc:58
 msgid "1/28 (32nd septuplet)"
 msgstr "1/28 (dvaatřicetinová septola)"
 
-#: editing_context.cc:101 editing_context.cc:126
+#: editing_context.cc:102 editing_context.cc:127
 msgid "MinSec"
 msgstr "MinSek"
 
-#: editing_context.cc:102 editing_context.cc:127
+#: editing_context.cc:103 editing_context.cc:128
 msgid "CD Frames"
 msgstr "Snímky CD"
 
-#: editing_context.cc:115
+#: editing_context.cc:116
 msgid "1/3 Note"
 msgstr "1/3 nota"
 
-#: editing_context.cc:116
+#: editing_context.cc:117
 msgid "1/6 Note"
 msgstr "1/6 nota"
 
-#: editing_context.cc:117
+#: editing_context.cc:118
 msgid "1/12 Note"
 msgstr "1/12 nota"
 
-#: editing_context.cc:118
+#: editing_context.cc:119
 msgid "1/24 Note"
 msgstr "1/24 nota"
 
-#: editing_context.cc:119
+#: editing_context.cc:120
 msgid "1/5 Note"
 msgstr "1/5 nota"
 
-#: editing_context.cc:120
+#: editing_context.cc:121
 msgid "1/10 Note"
 msgstr "1/10 nota"
 
-#: editing_context.cc:121
+#: editing_context.cc:122
 msgid "1/20 Note"
 msgstr "1/20 nota"
 
-#: editing_context.cc:122
+#: editing_context.cc:123
 msgid "1/7 Note"
 msgstr "1/7 nota"
 
-#: editing_context.cc:123
+#: editing_context.cc:124
 msgid "1/14 Note"
 msgstr "1/14 nota"
 
-#: editing_context.cc:124
+#: editing_context.cc:125
 msgid "1/28 Note"
 msgstr "1/28 nota"
 
-#: editing_context.cc:133 mono_panner_editor.cc:45
+#: editing_context.cc:134 mono_panner_editor.cc:45
 msgid "Left"
 msgstr "Vlevo"
 
-#: editing_context.cc:134 mono_panner_editor.cc:50
+#: editing_context.cc:135 mono_panner_editor.cc:50
 msgid "Right"
 msgstr "Vpravo"
 
-#: editing_context.cc:135
+#: editing_context.cc:136
 msgid "Center"
 msgstr "Na střed"
 
-#: editing_context.cc:136 editor.cc:187 editor_actions.cc:139
-#: editor_actions.cc:555 rc_option_editor.cc:3660
+#: editing_context.cc:137 editor.cc:187 editor_actions.cc:139
+#: editor_actions.cc:569 rc_option_editor.cc:3660
 msgid "Playhead"
 msgstr "Ukazatel polohy"
 
-#: editing_context.cc:137 editor.cc:189 editor_actions.cc:556
+#: editing_context.cc:138 editor.cc:189 editor_actions.cc:570
 msgid "Mouse"
 msgstr "Myš"
 
-#: editing_context.cc:138
+#: editing_context.cc:139
 msgid "Edit point"
 msgstr "Pracovní bod"
 
-#: editing_context.cc:165 editing_context.cc:485
+#: editing_context.cc:166 editing_context.cc:488
 msgid "Follow Playhead"
 msgstr "Následovat ukazatele polohy"
 
-#: editing_context.cc:167 editing_context.cc:2525
+#: editing_context.cc:168 editing_context.cc:2586
 msgid "MIDI|Ch:"
 msgstr "MIDI|Kan:"
 
-#: editing_context.cc:233
+#: editing_context.cc:236
 msgid "Snap"
 msgstr "Přichytávat"
 
-#: editing_context.cc:243
+#: editing_context.cc:246
 msgid "Note Length to Draw (AUTO uses the current Grid setting)"
 msgstr "Délka noty ke kreslení (AUTO používá nynější nastavení mřížky)"
 
-#: editing_context.cc:244
+#: editing_context.cc:247
 msgid "Note Velocity to Draw (AUTO uses the nearest note's velocity)"
 msgstr "Velocity noty ke kreslení (AUTO používá velocity nejbližší noty)"
 
-#: editing_context.cc:245
+#: editing_context.cc:248
 msgid "Note Channel to Draw (AUTO uses the nearest note's channel)"
 msgstr "Kanál noty ke kreslení (AUTO použije kanál nejbližší noty)"
 
-#: editing_context.cc:246
+#: editing_context.cc:249
 msgid "Grid Mode"
 msgstr "Režim mřížky"
 
-#: editing_context.cc:247
+#: editing_context.cc:250
 msgid ""
 "Snap Mode\n"
 "\n"
@@ -4750,556 +4754,560 @@ msgstr ""
 "\n"
 "Klepnutí pravým tlačítkem myši pro navštívení nastavení pro přichytávání."
 
-#: editing_context.cc:248 editor_actions.cc:129 editor_actions.cc:175
+#: editing_context.cc:251 editor_actions.cc:129 editor_actions.cc:175
 msgid "Zoom Focus"
 msgstr "Pohled na střed"
 
-#: editing_context.cc:250
+#: editing_context.cc:253
 msgid "Play notes when selected"
 msgstr "Přehrávat noty při výběru"
 
-#: editing_context.cc:251
+#: editing_context.cc:254
 msgid "Switch between sustained and percussive mode"
 msgstr "Přepnout mezi drženým a perkusním režimem"
 
-#: editing_context.cc:254
+#: editing_context.cc:257
 msgid "Select visible MIDI channel"
 msgstr "Vybrat viditelný MIDI kanál"
 
-#: editing_context.cc:395
+#: editing_context.cc:398
 msgid "Create Automation Point"
 msgstr "Vytvořit bod automatizace"
 
-#: editing_context.cc:396
+#: editing_context.cc:399
 msgid "Create Automation Point (with Guard Points)"
 msgstr "Vytvořit bod automatizace (s ochrannými body)"
 
-#: editing_context.cc:397
+#: editing_context.cc:400
 msgid "Move Selected Automation Points Later"
 msgstr "Přesunout vybrané automatizační body na později"
 
-#: editing_context.cc:398
+#: editing_context.cc:401
 msgid "Move Selected Automation Points Earlier"
 msgstr "Přesunout vybrané automatizační body na dříve"
 
-#: editing_context.cc:399
+#: editing_context.cc:402
 msgid "Increase Value of Selected Automation Points"
 msgstr "Zvýšit hodnotu vybraných automatizačních bodů"
 
-#: editing_context.cc:400
+#: editing_context.cc:403
 msgid "Decrease Value of Selected Automation Points"
 msgstr "Snížit hodnotu vybraných automatizačních bodů"
 
-#: editing_context.cc:401
+#: editing_context.cc:404
 msgid "Open value entry window for automation editing"
 msgstr "Otevřít okno zadávání hodnoty pro úpravy automatizace"
 
-#: editing_context.cc:402
+#: editing_context.cc:405
 msgid "Close value entry window for automation editing"
 msgstr "Zavřít okno zadávání hodnoty pro úpravy automatizace"
 
-#: editing_context.cc:482 editing_context.cc:2567
+#: editing_context.cc:485 editing_context.cc:2628 editor_actions.cc:195
 msgid "Zoom Out"
 msgstr "Oddálit"
 
-#: editing_context.cc:483 editing_context.cc:2563
+#: editing_context.cc:486 editing_context.cc:2624 editor_actions.cc:194
 msgid "Zoom In"
 msgstr "Přiblížit"
 
-#: editing_context.cc:486
+#: editing_context.cc:489
 msgid "Stationary Playhead"
 msgstr "Pevný ukazatel polohy"
 
-#: editing_context.cc:488
+#: editing_context.cc:491
 msgid "Scroll automatically to keep playhead visible"
 msgstr "Automaticky stránkovat, aby ukazatel polohy zůstal viditelný"
 
-#: editing_context.cc:490 editing_context.cc:2928
+#: editing_context.cc:493 editing_context.cc:2981
 msgid "Command|Undo"
 msgstr "Zpět"
 
-#: editing_context.cc:491 editing_context.cc:492 editing_context.cc:493
-#: editing_context.cc:2939 recorder_ui.cc:389 recorder_ui.cc:390
+#: editing_context.cc:494 editing_context.cc:495 editing_context.cc:496
+#: editing_context.cc:2992 recorder_ui.cc:389 recorder_ui.cc:390
 msgid "Redo"
 msgstr "Znovu"
 
-#: editing_context.cc:498 editor.cc:2046 editor.cc:2120 processor_box.cc:4237
+#: editing_context.cc:501 editor.cc:2057 editor.cc:2131 processor_box.cc:4237
 msgid "Cut"
 msgstr "Vyjmout"
 
-#: editing_context.cc:499 editor.cc:2047 editor.cc:2121 processor_box.cc:4239
+#: editing_context.cc:502 editor.cc:2058 editor.cc:2132 processor_box.cc:4239
 msgid "Copy"
 msgstr "Kopírovat"
 
-#: editing_context.cc:500 editor.cc:2048 editor.cc:2122 processor_box.cc:4251
+#: editing_context.cc:503 editor.cc:2059 editor.cc:2133 processor_box.cc:4251
 msgid "Paste"
 msgstr "Vložit"
 
-#: editing_context.cc:503 midi_time_axis.cc:1115
+#: editing_context.cc:506 midi_time_axis.cc:1115
 msgid "Sustained"
 msgstr "Držený tón"
 
-#: editing_context.cc:504 midi_time_axis.cc:1122
+#: editing_context.cc:507 midi_time_axis.cc:1122
 msgid "Percussive"
 msgstr "Bicí"
 
-#: editing_context.cc:508
+#: editing_context.cc:511
 msgid "Grab (Object Tool)"
 msgstr "Uchopit (nástroj pro objekty)"
 
-#: editing_context.cc:509
+#: editing_context.cc:512
 msgid "Range Tool"
 msgstr "Nástroj pro rozsahy"
 
-#: editing_context.cc:510
+#: editing_context.cc:513
 msgid "Note Drawing Tool"
 msgstr "Nástroj pro kreslení not"
 
-#: editing_context.cc:511
+#: editing_context.cc:514
 msgid "Time FX Tool"
 msgstr "Nástroj pro časové účinky"
 
-#: editing_context.cc:512
+#: editing_context.cc:515
 msgid "Grid Tool"
 msgstr "Nástroj pro mřížku"
 
-#: editing_context.cc:513
+#: editing_context.cc:516
 msgid "Internal Edit (Content Tool)"
 msgstr "Vnitřní úpravy (nástroj pro obsah)"
 
-#: editing_context.cc:514
+#: editing_context.cc:517
 msgid "Cut Tool"
 msgstr "Nástroj pro vyjímání"
 
-#: editing_context.cc:526
+#: editing_context.cc:529
 msgid "Next Zoom Focus"
 msgstr "Další srovnání pohledu"
 
-#: editing_context.cc:530
+#: editing_context.cc:533
 msgid "Snap & Grid"
 msgstr "Přichytávání a mřížka"
 
-#: editing_context.cc:534 rc_option_editor.cc:3642
+#: editing_context.cc:537 rc_option_editor.cc:3642
 msgid "Grid"
 msgstr "Mřížka zapnuta"
 
-#: editing_context.cc:535
+#: editing_context.cc:538
 msgid "Magnetic"
 msgstr "Magnetická"
 
-#: editing_context.cc:537
+#: editing_context.cc:540
 msgid "Toggle Snap"
 msgstr "Přepnout přichytávání"
 
-#: editing_context.cc:538
+#: editing_context.cc:541
 msgid "Next Quantize Grid Choice"
 msgstr "Další volba kvantovací mřížky"
 
-#: editing_context.cc:539
+#: editing_context.cc:542
 msgid "Previous Quantize Grid Choice"
 msgstr "Předchozí volba kvantovací mřížky"
 
-#: editing_context.cc:617
+#: editing_context.cc:620
 msgid "Clear Note Selection"
 msgstr "Vyprázdnit výběr not"
 
-#: editing_context.cc:618
+#: editing_context.cc:621
 msgid "Invert Note Selection"
 msgstr "Obrátit výběr not"
 
-#: editing_context.cc:619
+#: editing_context.cc:622
 msgid "Extend Note Selection"
 msgstr "Rozšířit výběr not"
 
-#: editing_context.cc:620
+#: editing_context.cc:623
 msgid "Duplicate Note Selection"
 msgstr "Zdvojit výběr not"
 
-#: editing_context.cc:624
+#: editing_context.cc:627
 msgid "Add minor 2nd (1 semitone)"
 msgstr "Vlož zmenšenou sekundu (1 půltón)"
 
-#: editing_context.cc:625
+#: editing_context.cc:628
 msgid "Add major 2nd (2 semitones)"
 msgstr "Vlož velkou sekundu (2 půltóny)"
 
-#: editing_context.cc:626
+#: editing_context.cc:629
 msgid "Add minor 3rd (3 semitones)"
 msgstr "Vlož zmenšenou tercii (3 půltóny)"
 
-#: editing_context.cc:627
+#: editing_context.cc:630
 msgid "Add major 3rd (4 semitones)"
 msgstr "Vlož velkou tercii (4 půltóny)"
 
-#: editing_context.cc:628
+#: editing_context.cc:631
 msgid "Add perfect 4th (5 semitones)"
 msgstr "Vlož čistou kvartu (5 půltónů)"
 
-#: editing_context.cc:629
+#: editing_context.cc:632
 msgid "Add tritone (6 semitones)"
 msgstr "Vlož tritón/zvětšenou kvartu (6 půltónů)"
 
-#: editing_context.cc:630
+#: editing_context.cc:633
 msgid "Add perfect 5th (7 semitones)"
 msgstr "Vlož čistou kvintu (7 půltónů)"
 
-#: editing_context.cc:631
+#: editing_context.cc:634
 msgid "Add minor 6th (8 semitones)"
 msgstr "Vlož zmenšenou sixtu (8 půltónů)"
 
-#: editing_context.cc:632
+#: editing_context.cc:635
 msgid "Add major 6th (9 semitones)"
 msgstr "Vlož čistou sixtu (9 půltónů)"
 
-#: editing_context.cc:633
+#: editing_context.cc:636
 msgid "Add minor 7th (10 semitones)"
 msgstr "Vlož zmenšenou septimu (10 půltónů)"
 
-#: editing_context.cc:634
+#: editing_context.cc:637
 msgid "Add major 7th (11 semitones)"
 msgstr "Vlož čistou septimu (11 půltónů)"
 
-#: editing_context.cc:635
+#: editing_context.cc:638
 msgid "Add octave (12 semitones)"
 msgstr "Vlož oktávu (12 půltónů)"
 
-#: editing_context.cc:639
+#: editing_context.cc:642
 msgid "Move Note Start Earlier (fine)"
 msgstr "Posunout začátek noty dopředu (jemné)"
 
-#: editing_context.cc:640
+#: editing_context.cc:643
 msgid "Move Note Start Earlier"
 msgstr "Posunout začátek noty dopředu"
 
-#: editing_context.cc:641
+#: editing_context.cc:644
 msgid "Move Note Ends Later (fine)"
 msgstr "Posunout konec noty dozadu (jemné)"
 
-#: editing_context.cc:642
+#: editing_context.cc:645
 msgid "Move Note Ends Later"
 msgstr "Posunout konec noty dozadu"
 
-#: editing_context.cc:646
+#: editing_context.cc:649
 msgid "Move Note Start Later (fine)"
 msgstr "Posunout začátek noty dozadu (jemné)"
 
-#: editing_context.cc:647
+#: editing_context.cc:650
 msgid "Move Note Start Later"
 msgstr "Posunout začátek noty dozadu"
 
-#: editing_context.cc:648
+#: editing_context.cc:651
 msgid "Move Note Ends Earlier (fine)"
 msgstr "Posunout konec noty dopředu (jemné)"
 
-#: editing_context.cc:649
+#: editing_context.cc:652
 msgid "Move Note Ends Earlier"
 msgstr "Posunout konec noty dopředu"
 
-#: editing_context.cc:654 export_timespan_selector.cc:60 processor_box.cc:4255
+#: editing_context.cc:657 export_timespan_selector.cc:60 processor_box.cc:4255
 msgid "Select All"
 msgstr "Vybrat vše"
 
-#: editing_context.cc:655
+#: editing_context.cc:658
 msgid "Select All (alternate)"
 msgstr "Vybrat vše (varianta)"
 
-#: editing_context.cc:656
+#: editing_context.cc:659
 msgid "Select Next"
 msgstr "Vybrat další"
 
-#: editing_context.cc:657
+#: editing_context.cc:660
 msgid "Select Next (alternate)"
 msgstr "Vybrat další (náhradní)"
 
-#: editing_context.cc:658
+#: editing_context.cc:661
 msgid "Select Previous"
 msgstr "Vybrat předchozí"
 
-#: editing_context.cc:659
+#: editing_context.cc:662
 msgid "Select Previous (alternate)"
 msgstr "Vybrat předchozí (náhradní)"
 
-#: editing_context.cc:660
+#: editing_context.cc:663
 msgid "Add Next to Selection"
 msgstr "Přidat další k výběru"
 
-#: editing_context.cc:661
+#: editing_context.cc:664
 msgid "Add Next to Selection (alternate)"
 msgstr "Přidat další k výběru (náhradní)"
 
-#: editing_context.cc:662
+#: editing_context.cc:665
 msgid "Add Previous to Selection"
 msgstr "Přidat předchozí k výběru"
 
-#: editing_context.cc:663
+#: editing_context.cc:666
 msgid "Add Previous to Selection (alternate)"
 msgstr "Přidat předchozí k výběru (náhradní)"
 
-#: editing_context.cc:665
+#: editing_context.cc:668
 msgid "Increase Velocity"
 msgstr "Zvýšit velocity (dynamiku MIDI)"
 
-#: editing_context.cc:666
+#: editing_context.cc:669
 msgid "Increase Velocity (fine)"
 msgstr "Zvýšit velocity (dynamiku MIDI) (jemné)"
 
-#: editing_context.cc:667
+#: editing_context.cc:670
 msgid "Increase Velocity (allow mush)"
 msgstr "Zvýšit velocity (dynamiku MIDI) (nepřesné)"
 
-#: editing_context.cc:668
+#: editing_context.cc:671
 msgid "Increase Velocity (non-relative)"
 msgstr "Zvýšit velocity (dynamiku MIDI) (ne-relativní)"
 
-#: editing_context.cc:669
+#: editing_context.cc:672
 msgid "Increase Velocity (fine, allow mush)"
 msgstr "Zvýšit velocity (dynamiku MIDI) (jemné, nepřesné)"
 
-#: editing_context.cc:670
+#: editing_context.cc:673
 msgid "Increase Velocity (fine, non-relative)"
 msgstr "Zvýšit velocity (dynamiku MIDI) (jemné, ne-relativní)"
 
-#: editing_context.cc:671
+#: editing_context.cc:674
 msgid "Increase Velocity (maintain ratios, allow mush)"
 msgstr "Zvýšit velocity (dynamiku MIDI) (zachovat poměry, nepřesné)"
 
-#: editing_context.cc:672
+#: editing_context.cc:675
 msgid "Increase Velocity (fine, allow mush, non-relative)"
 msgstr "Zvýšit velocity (dynamiku MIDI) (jemné, nepřesné, ne-relativní)"
 
-#: editing_context.cc:674
+#: editing_context.cc:677
 msgid "Decrease Velocity"
 msgstr "Snížit velocity (dynamiku MIDI)"
 
-#: editing_context.cc:675
+#: editing_context.cc:678
 msgid "Decrease Velocity (fine)"
 msgstr "Snížit velocity (dynamiku MIDI) (jemné)"
 
-#: editing_context.cc:676
+#: editing_context.cc:679
 msgid "Decrease Velocity (allow mush)"
 msgstr "Snížit velocity (dynamiku MIDI) (nepřesné)"
 
-#: editing_context.cc:677
+#: editing_context.cc:680
 msgid "Decrease Velocity (non-relative)"
 msgstr "Snížit velocity (dynamiku MIDI) (ne-relativní)"
 
-#: editing_context.cc:678
+#: editing_context.cc:681
 msgid "Decrease Velocity (fine, allow mush)"
 msgstr "Snížit velocity (dynamiku MIDI) (jemné, nepřesné)"
 
-#: editing_context.cc:679
+#: editing_context.cc:682
 msgid "Decrease Velocity (fine, non-relative)"
 msgstr "Snížit velocity (dynamiku MIDI) (jemné, ne-relativní)"
 
-#: editing_context.cc:680
+#: editing_context.cc:683
 msgid "Decrease Velocity (maintain ratios, allow mush)"
 msgstr "Snížit velocity (dynamiku MIDI) (zachovat poměry, nepřesné)"
 
-#: editing_context.cc:681
+#: editing_context.cc:684
 msgid "Decrease Velocity (fine, allow mush, non-relative)"
 msgstr "Snížit velocity (dynamiku MIDI) (jemné, nepřesné, ne-relativní)"
 
-#: editing_context.cc:683
+#: editing_context.cc:686
 msgid "Duplicate Notes"
 msgstr "Duplikovat noty"
 
-#: editing_context.cc:684
+#: editing_context.cc:687
 msgid "Multi-Duplicate Notes"
 msgstr "Vícenásobně duplikovat noty"
 
-#: editing_context.cc:686
+#: editing_context.cc:689
 msgid "Transpose Up (octave)"
 msgstr "Transponovat nahoru (oktáva)"
 
-#: editing_context.cc:687
+#: editing_context.cc:690
 msgid "Transpose Up (octave, allow mush)"
 msgstr "Transponovat nahoru (oktáva, nepřesné)"
 
-#: editing_context.cc:688
+#: editing_context.cc:691
 msgid "Transpose Up (semitone)"
 msgstr "Transponovat nahoru (půltón)"
 
-#: editing_context.cc:689
+#: editing_context.cc:692
 msgid "Transpose Up (semitone, allow mush)"
 msgstr "Transponovat nahoru (půltón, nepřesné)"
 
-#: editing_context.cc:691
+#: editing_context.cc:694
 msgid "Transpose Down (octave)"
 msgstr "Transponovat dolů (oktáva)"
 
-#: editing_context.cc:692
+#: editing_context.cc:695
 msgid "Transpose Down (octave, allow mush)"
 msgstr "Transponovat dolů (oktáva, nepřesné)"
 
-#: editing_context.cc:693
+#: editing_context.cc:696
 msgid "Transpose Down (semitone)"
 msgstr "Transponovat dolů (půltón)"
 
-#: editing_context.cc:694
+#: editing_context.cc:697
 msgid "Transpose Down (semitone, allow mush)"
 msgstr "Transponovat dolů (půltón, nepřesné)"
 
-#: editing_context.cc:696
+#: editing_context.cc:699
 msgid "Nudge Notes Later (grid)"
 msgstr "Posunout noty dozadu (mřížka)"
 
-#: editing_context.cc:697
+#: editing_context.cc:700
 msgid "Nudge Notes Later (1/4 grid)"
 msgstr "Posunout noty dozadu (1/4 mřížky)"
 
-#: editing_context.cc:698
+#: editing_context.cc:701
 msgid "Nudge Notes Earlier (grid)"
 msgstr "Posunout noty dopředu (mřížka)"
 
-#: editing_context.cc:699
+#: editing_context.cc:702
 msgid "Nudge Notes Earlier (1/4 grid)"
 msgstr "Posunout noty dopředu (1/4 mřížky)"
 
-#: editing_context.cc:701
+#: editing_context.cc:704
 msgid "Split Selected Notes on grid boundaries"
 msgstr "Rozdělit vybrané noty na hranicích mřížky"
 
-#: editing_context.cc:702
+#: editing_context.cc:705
 msgid "Split Selected Notes into more pieces"
 msgstr "Rozdělit vybrané noty na více kousků"
 
-#: editing_context.cc:703
+#: editing_context.cc:706
 msgid "Split Selected Notes into less pieces"
 msgstr "Rozdělit vybrané noty na méně kousků"
 
-#: editing_context.cc:704
+#: editing_context.cc:707
 msgid "Join Selected Notes"
 msgstr "Spojit vybrané noty"
 
-#: editing_context.cc:706
+#: editing_context.cc:709
 msgid "Strum Notes Forward"
 msgstr "Brnknout noty dopředu"
 
-#: editing_context.cc:707
+#: editing_context.cc:710
 msgid "Strum Notes Backward"
 msgstr "Brnknout noty dozadu"
 
-#: editing_context.cc:709
+#: editing_context.cc:712
 msgid "Edit Note Channels"
 msgstr "Upravit kanály not"
 
-#: editing_context.cc:710
+#: editing_context.cc:713
 msgid "Edit Note Velocities"
 msgstr "Upravit velocity (dynamiku MIDI) not"
 
-#: editing_context.cc:712
+#: editing_context.cc:715
 msgid "Quantize Selected Notes"
 msgstr "Kvantovat vybrané noty"
 
-#: editing_context.cc:734 editing_context.cc:751 editing_context.cc:755
-#: editing_context.cc:768 editing_context.cc:1043 editing_context.cc:1074
-#: editing_context.cc:1107 editing_context.cc:2535 editing_context.cc:2536
+#: editing_context.cc:737 editing_context.cc:754 editing_context.cc:758
+#: editing_context.cc:771 editing_context.cc:1046 editing_context.cc:1077
+#: editing_context.cc:1110 editing_context.cc:2596 editing_context.cc:2597
 msgid "Auto"
 msgstr "Auto"
 
-#: editing_context.cc:760
+#: editing_context.cc:763
 #, c-format
 msgid "Velocity %d"
 msgstr "Dynamika %d"
 
-#: editing_context.cc:782
+#: editing_context.cc:785
 msgid "No Chord"
 msgstr "Žádný akord"
 
-#: editing_context.cc:1356 editor_actions.cc:164
+#: editing_context.cc:1359 editor_actions.cc:164
 msgid "Triplets"
 msgstr "Trioly"
 
-#: editing_context.cc:1366 editor_actions.cc:165
+#: editing_context.cc:1369 editor_actions.cc:165
 msgid "Quintuplets"
 msgstr "Kvintoly"
 
-#: editing_context.cc:1375 editor_actions.cc:166
+#: editing_context.cc:1378 editor_actions.cc:166
 msgid "Septuplets"
 msgstr "Septoly"
 
-#: editing_context.cc:2080 editor.cc:1566 editor.cc:5638 editor_markers.cc:1259
+#: editing_context.cc:2083 editor.cc:1578 editor.cc:5680 editor_markers.cc:1259
 #: editor_markers.cc:1275 editor_markers.cc:1292 io_plugin_window.cc:386
-#: panner_ui.cc:416 pianoroll.cc:1385 processor_box.cc:4284
+#: panner_ui.cc:416 pianoroll.cc:1395 processor_box.cc:4284
 #: region_editor.cc:735 trigger_clip_picker.cc:334
 msgid "Edit..."
 msgstr "Upravit..."
 
-#: editing_context.cc:2081 editor_actions.cc:1376 pianoroll.cc:1386
+#: editing_context.cc:2084 editor_actions.cc:1390
 msgid "Transpose..."
 msgstr "Převést..."
 
-#: editing_context.cc:2082 editor_actions.cc:1462 pianoroll.cc:1387
-#: pianoroll.cc:3033
+#: editing_context.cc:2085 editor_actions.cc:1471 pianoroll.cc:1413
 msgid "Legatize"
 msgstr "Převázat (legato)"
 
-#: editing_context.cc:2086 editor_actions.cc:1461 pianoroll.cc:1391
-#: pianoroll.cc:3032
+#: editing_context.cc:2089 editor_actions.cc:1470 pianoroll.cc:1412
 msgid "Quantize..."
 msgstr "Kvantovat..."
 
-#: editing_context.cc:2087 editor_actions.cc:1465 pianoroll.cc:1392
-#: pianoroll.cc:3035
+#: editing_context.cc:2090 editor_actions.cc:1474 pianoroll.cc:1415
 msgid "Remove Overlap"
 msgstr "Odstranit překrytí (legato)"
 
-#: editing_context.cc:2091 editor_actions.cc:1464 pianoroll.cc:1396
-#: pianoroll.cc:3034
+#: editing_context.cc:2094 editor_actions.cc:1473 pianoroll.cc:1414
 msgid "Transform..."
 msgstr "Proměnit..."
 
-#: editing_context.cc:2093
+#: editing_context.cc:2096
 msgid "Strum Forward"
 msgstr "Brnknout dopředu"
 
-#: editing_context.cc:2094
+#: editing_context.cc:2100
 msgid "Strum Backward"
 msgstr "Brnknout dozadu"
 
-#: editing_context.cc:2280
+#: editing_context.cc:2289
 msgid "Add note interval of %1 semitones"
 msgstr "Vložit tónový interval %1 půltónů"
 
-#: editing_context.cc:2522
+#: editing_context.cc:2369 editing_context.cc:2408 editor_mouse.cc:1929
+msgid ""
+"programming error: control point canvas item has no control point object "
+"pointer!"
+msgstr ""
+"chyba programu: položka plátna místo ovládání nemá žádný ukazatel objektu "
+"místa ovládání!"
+
+#: editing_context.cc:2583
 msgid "Len:"
 msgstr "Dél:"
 
-#: editing_context.cc:2528
+#: editing_context.cc:2589
 msgid "Vel:"
 msgstr "Vel:"
 
-#: editing_context.cc:2603
+#: editing_context.cc:2664
 msgid "Grab Mode (select/move objects)"
 msgstr "Režim uchopení (vybrat/přesunout objekty)"
 
-#: editing_context.cc:2604
+#: editing_context.cc:2665
 msgid "Cut Mode (split regions)"
 msgstr "Režim vyjmutí (rozdělit oblasti)"
 
-#: editing_context.cc:2605
+#: editing_context.cc:2666
 msgid "Range Mode (select time ranges)"
 msgstr "Režim rozsahu (vybrat časové rozsahy)"
 
-#: editing_context.cc:2606
+#: editing_context.cc:2667
 msgid "Grid Mode (edit tempo-map, drag/drop music-time grid)"
 msgstr "Režim mřížky (úprava přiřazení tempa, přetažení mřížky hudebního času)"
 
-#: editing_context.cc:2607
+#: editing_context.cc:2668
 msgid "Draw Mode (draw and edit gain/notes/automation)"
 msgstr "Režim kreslení (kreslit a upravovat zisk/noty/automatizaci)"
 
-#: editing_context.cc:2608
+#: editing_context.cc:2669
 msgid "Stretch Mode (time-stretch audio and midi regions, preserving pitch)"
 msgstr ""
 "Režim protažení (protáhnutí času zvuku a oblastí MIDI při zachování výšky "
 "tónu)"
 
-#: editing_context.cc:2609
+#: editing_context.cc:2670
 msgid "Internal Edit Mode (edit notes and automation points)"
 msgstr "Režim vnitřních úprav (upravovat noty a body automatizace)"
 
-#: editing_context.cc:2752 rc_option_editor.cc:3554 rc_option_editor.cc:3556
+#: editing_context.cc:2805 rc_option_editor.cc:3554 rc_option_editor.cc:3556
 #: rc_option_editor.cc:3566 rc_option_editor.cc:3593 rc_option_editor.cc:3601
 #: rc_option_editor.cc:3609 rc_option_editor.cc:3617 rc_option_editor.cc:3626
 #: rc_option_editor.cc:3634 rc_option_editor.cc:3645 rc_option_editor.cc:3647
@@ -5308,46 +5316,46 @@ msgstr "Režim vnitřních úprav (upravovat noty a body automatizace)"
 msgid "Editor/Snap"
 msgstr "Editor/Přichytávání"
 
-#: editing_context.cc:2931
+#: editing_context.cc:2984
 msgid "Command|Undo (%1)"
 msgstr "Zpět (%1)"
 
-#: editing_context.cc:2942
+#: editing_context.cc:2995
 msgid "Redo (%1)"
 msgstr "Znovu (%1)"
 
-#: editing_context.cc:4340
+#: editing_context.cc:4387
 msgid "Pianoroll Window"
 msgstr "Okno pianoroll"
 
-#: editor.cc:188 editor_actions.cc:557
+#: editor.cc:188 editor_actions.cc:571
 msgid "Marker"
 msgstr "Značka"
 
-#: editor.cc:194 editor_actions.cc:563
+#: editor.cc:194 editor_actions.cc:577
 msgid "Slide"
 msgstr "Klouzat"
 
-#: editor.cc:195 editor_actions.cc:562
+#: editor.cc:195 editor_actions.cc:576
 msgid "Ripple"
 msgstr "Vložit a posunout"
 
-#: editor.cc:196 editor_actions.cc:1341 editor_markers.cc:1159
+#: editor.cc:196 editor_actions.cc:1355 editor_markers.cc:1159
 #: editor_rulers.cc:285 location_ui.cc:70
 msgid "Lock"
 msgstr "Zamknout"
 
-#: editor.cc:201 editor_actions.cc:567
+#: editor.cc:201 editor_actions.cc:581
 msgid "Selected"
 msgstr "Vybráno"
 
-#: editor.cc:202 editor.cc:2817 editor.cc:3299 editor.cc:3381
-#: editor_actions.cc:568 midi_channel_selector.cc:160
+#: editor.cc:202 editor.cc:2850 editor.cc:3332 editor.cc:3414
+#: editor_actions.cc:582 midi_channel_selector.cc:160
 #: midi_channel_selector.cc:391 midi_channel_selector.cc:430 recorder_ui.cc:83
 msgid "All"
 msgstr "Vše"
 
-#: editor.cc:203 editor_actions.cc:569
+#: editor.cc:203 editor_actions.cc:583
 msgid "Interview"
 msgstr "Rozhovor"
 
@@ -5387,7 +5395,7 @@ msgstr "Jakákoli"
 msgid "Vocal"
 msgstr "Zpěv"
 
-#: editor.cc:287 editor_actions.cc:603
+#: editor.cc:287 editor_actions.cc:617
 msgid "Video Timeline"
 msgstr "Časová osa obrazového záznamu"
 
@@ -5395,410 +5403,406 @@ msgstr "Časová osa obrazového záznamu"
 msgid "mode"
 msgstr "Režim"
 
-#: editor.cc:413 editor_actions.cc:576
+#: editor.cc:411 editor_actions.cc:590
 msgid "Mins:Secs"
 msgstr "Min:Sec"
 
-#: editor.cc:421 editor_actions.cc:109 editor_actions.cc:159
-#: editor_actions.cc:581
+#: editor.cc:419 editor_actions.cc:109 editor_actions.cc:159
+#: editor_actions.cc:595
 msgid "Tempo"
 msgstr "Tempo"
 
-#: editor.cc:424 editor_actions.cc:580
+#: editor.cc:422 editor_actions.cc:594
 msgid "Time Signature"
 msgstr "Předznamenání"
 
-#: editor.cc:427 editor_actions.cc:582
+#: editor.cc:425 editor_actions.cc:596
 msgid "Range Markers"
 msgstr "Značky rozsahů"
 
-#: editor.cc:432 editor_actions.cc:584
+#: editor.cc:430 editor_actions.cc:598
 msgid "Location Markers"
 msgstr "Značky polohy"
 
-#: editor.cc:437
+#: editor.cc:435
 msgid "Arrangement Markers"
 msgstr "Značky aranže"
 
-#: editor.cc:470
-msgid ""
-"Right-click\n"
-"or Double-click here\n"
-"to add Track, Bus,\n"
-" or VCA."
+#: editor.cc:468
+msgid "Add Track"
 msgstr ""
-"Pravý-klik\n"
-"nebo dvojklik zde\n"
-"pro přidání stopy, sběrnice,\n"
-" nebo VCA."
 
-#: editor.cc:689 mixer_ui.cc:382 port_group.cc:360 trigger_page.cc:141
+#: editor.cc:677 export_dialog.cc:190
+msgid "Channels"
+msgstr "Kanály"
+
+#: editor.cc:703 mixer_ui.cc:382 port_group.cc:360 trigger_page.cc:141
 msgid "Tracks"
 msgstr "Stopy"
 
-#: editor.cc:689 trigger_page.cc:141
+#: editor.cc:703 trigger_page.cc:141
 msgid "Tracks & Busses"
 msgstr "Stopy a sběrnice"
 
-#: editor.cc:690 trigger_page.cc:142
+#: editor.cc:704 trigger_page.cc:142
 msgid "Sources"
 msgstr "Zdroje"
 
-#: editor.cc:691 trigger_page.cc:143
+#: editor.cc:705 trigger_page.cc:143
 msgid "Regions"
 msgstr "Oblasti"
 
-#: editor.cc:692 trigger_page.cc:140
+#: editor.cc:706 trigger_page.cc:140
 msgid "Clips"
 msgstr "Klipy"
 
-#: editor.cc:693
+#: editor.cc:707
 msgid "Arrange"
 msgstr "Srovnat"
 
-#: editor.cc:693 editor_actions.cc:583
+#: editor.cc:707 editor_actions.cc:597
 msgid "Arrangement"
 msgstr "Aranže"
 
-#: editor.cc:694
+#: editor.cc:708
 msgid "Snaps"
 msgstr "Příchyty"
 
-#: editor.cc:694
+#: editor.cc:708
 msgid "Snapshots"
 msgstr "Snímky obrazovky"
 
-#: editor.cc:695 mixer_ui.cc:383
+#: editor.cc:709 mixer_ui.cc:383
 msgid "Groups"
 msgstr "Skupiny"
 
-#: editor.cc:695 mixer_ui.cc:383
+#: editor.cc:709 mixer_ui.cc:383
 msgid "Track & Bus Groups"
 msgstr "Skupiny stop a sběrnic"
 
-#: editor.cc:696
+#: editor.cc:710
 msgid "Marks"
 msgstr "Značky"
 
-#: editor.cc:696
+#: editor.cc:710
 msgid "Ranges & Marks"
 msgstr "Rozsahy a značky"
 
-#: editor.cc:706
+#: editor.cc:720
 msgid "MIDI Tools"
 msgstr "MIDI nástroje"
 
-#: editor.cc:1267
+#: editor.cc:1279
 msgid "Window|Editor"
 msgstr "Editor"
 
-#: editor.cc:1327 editor.cc:4148 editor_actions.cc:154 editor_actions.cc:1403
+#: editor.cc:1339 editor.cc:4190 editor_actions.cc:154 editor_actions.cc:1417
 msgid "Loop"
 msgstr "Smyčka"
 
-#: editor.cc:1333 editor.cc:4178 editor_actions.cc:155 time_info_box.cc:119
+#: editor.cc:1345 editor.cc:4220 editor_actions.cc:155 time_info_box.cc:119
 msgid "Punch"
 msgstr "Přepis"
 
-#: editor.cc:1443 rc_option_editor.cc:3484
+#: editor.cc:1455 rc_option_editor.cc:3484
 msgid "Linear (for highly correlated material)"
 msgstr "Lineární (pro vysoce souvztažný materiál)"
 
-#: editor.cc:1453 rc_option_editor.cc:3485
+#: editor.cc:1465 rc_option_editor.cc:3485
 msgid "Constant power"
 msgstr "Stálý výkon"
 
-#: editor.cc:1462 rc_option_editor.cc:3486
+#: editor.cc:1474 rc_option_editor.cc:3486
 msgid "Symmetric"
 msgstr "Souměrný"
 
-#: editor.cc:1472 rc_option_editor.cc:3487 rta_window.cc:80
+#: editor.cc:1484 rc_option_editor.cc:3487 rta_window.cc:80
 msgid "Slow"
 msgstr "Pomalu"
 
-#: editor.cc:1481 rc_option_editor.cc:3488 rta_window.cc:78
+#: editor.cc:1493 rc_option_editor.cc:3488 rta_window.cc:78
 #: session_archive_dialog.cc:50 session_archive_dialog.cc:205
-#: session_archive_dialog.cc:218 sfdb_ui.cc:1999 sfdb_ui.cc:2122
+#: session_archive_dialog.cc:218 sfdb_ui.cc:2002 sfdb_ui.cc:2125
 msgid "Fast"
 msgstr "Rychle"
 
-#: editor.cc:1503 editor.cc:1528
+#: editor.cc:1515 editor.cc:1540
 msgid "Deactivate"
 msgstr "Zastavit"
 
-#: editor.cc:1505 editor.cc:1530
+#: editor.cc:1517 editor.cc:1542
 msgid "Activate"
 msgstr "Spustit"
 
-#: editor.cc:1545 editor_actions.cc:363
+#: editor.cc:1557 editor_actions.cc:377
 msgid "Copy/Paste Range Section to Playhead"
 msgstr "Kopírovat/Vložit výběr rozsahu na ukazateli polohy"
 
-#: editor.cc:1546 editor_actions.cc:364
+#: editor.cc:1558 editor_actions.cc:378
 msgid "Cut/Paste Range Section to Playhead"
 msgstr "Vyjmout/Kopírovat/Vložit výběr rozsahu na ukazateli polohy"
 
-#: editor.cc:1548 editor_actions.cc:367
+#: editor.cc:1560 editor_actions.cc:381
 msgid "Copy/Paste Range Section to Edit Point"
 msgstr "Kopírovat/Vložit úsek z rozsahu na bodu úprav"
 
-#: editor.cc:1549 editor_actions.cc:368
+#: editor.cc:1561 editor_actions.cc:382
 msgid "Cut/Paste Range Section to Edit Point"
 msgstr "Vyjmout/Vložit úsek z rozsahu na bodu úprav"
 
-#: editor.cc:1551 editor_actions.cc:372 editor_actions.cc:373
+#: editor.cc:1563 editor_actions.cc:386 editor_actions.cc:387
 msgid "Delete Range Section"
 msgstr "Smazat úsek rozsahu"
 
-#: editor.cc:1555
+#: editor.cc:1567
 msgid "Delete all markers in Section"
 msgstr "Smazat všechny značky v úseku"
 
-#: editor.cc:1565 editor_markers.cc:1142 editor_markers.cc:1196
+#: editor.cc:1577 editor_markers.cc:1142 editor_markers.cc:1196
 msgid "Move Playhead to Marker"
 msgstr "Přesunout ukazatel polohy na značku"
 
-#: editor.cc:1649 editor.cc:1657 editor_ops.cc:4032 rta_window.cc:48
+#: editor.cc:1661 editor.cc:1669 editor_ops.cc:4046 rta_window.cc:48
 msgid "Freeze"
 msgstr "Zmrazit"
 
-#: editor.cc:1653
+#: editor.cc:1665
 msgid "Unfreeze"
 msgstr "Rozmrazit"
 
-#: editor.cc:1746
+#: editor.cc:1757
 msgid "Region Loudness Analysis"
 msgstr "Rozbor hlasitosti oblasti"
 
-#: editor.cc:1765 editor.cc:1814
+#: editor.cc:1776 editor.cc:1825
 msgid "Audio Report/Analysis"
 msgstr "Zpráva o zvuku/Rozbor"
 
-#: editor.cc:1795
+#: editor.cc:1806
 msgid "Range Loudness Analysis"
 msgstr "Rozbor hlasitosti rozsahu"
 
-#: editor.cc:1880
+#: editor.cc:1891
 msgid "Selected Regions"
 msgstr "Vybrané oblasti"
 
-#: editor.cc:1915 editor_markers.cc:1195
+#: editor.cc:1926 editor_markers.cc:1195
 msgid "Play Range"
 msgstr "Přehrávat rozsah"
 
-#: editor.cc:1916 editor_markers.cc:1198 editor_rulers.cc:332
+#: editor.cc:1927 editor_markers.cc:1198 editor_rulers.cc:332
 msgid "Loop Range"
 msgstr "Přehrávat rozsah ve smyčce"
 
-#: editor.cc:1919 editor_markers.cc:1203
+#: editor.cc:1930 editor_markers.cc:1203
 msgid "Zoom to Range"
 msgstr "Najet na rozsah"
 
-#: editor.cc:1923 editor_actions.cc:427
+#: editor.cc:1934 editor_actions.cc:441
 msgid "Loudness Analysis"
 msgstr "Rozbor hlasitosti"
 
-#: editor.cc:1926 editor_actions.cc:661 editor_markers.cc:1206
+#: editor.cc:1937 editor_actions.cc:675 editor_markers.cc:1206
 msgid "Loudness Assistant..."
 msgstr "Pomocník pro hlasitost..."
 
-#: editor.cc:1931 editor_actions.cc:457
+#: editor.cc:1942 editor_actions.cc:471
 msgid "Move Range Start to Previous Region Boundary"
 msgstr "Přesunout začátek rozsahu na předchozí hranici oblasti"
 
-#: editor.cc:1938 editor_actions.cc:464
+#: editor.cc:1949 editor_actions.cc:478
 msgid "Move Range Start to Next Region Boundary"
 msgstr "Přesunout začátek rozsahu na další hranici oblasti"
 
-#: editor.cc:1945 editor_actions.cc:471
+#: editor.cc:1956 editor_actions.cc:485
 msgid "Move Range End to Previous Region Boundary"
 msgstr "Přesunout konec rozsahu na předchozí hranici oblasti"
 
-#: editor.cc:1952 editor_actions.cc:478
+#: editor.cc:1963 editor_actions.cc:492
 msgid "Move Range End to Next Region Boundary"
 msgstr "Přesunout konec rozsahu na další hranici oblasti"
 
-#: editor.cc:1959 editor_actions.cc:151 editor_actions.cc:404
+#: editor.cc:1970 editor_actions.cc:151 editor_actions.cc:418
 msgid "Separate"
 msgstr "Rozdělit"
 
-#: editor.cc:1964 editor_markers.cc:1225
+#: editor.cc:1975 editor_markers.cc:1225
 msgid "Select All in Range"
 msgstr "Vybrat vše v rozsahu"
 
-#: editor.cc:1968 editor_actions.cc:356
+#: editor.cc:1979 editor_actions.cc:370
 msgid "Set Loop from Selection"
 msgstr "Nastavit smyčku z výběru"
 
-#: editor.cc:1969 editor_actions.cc:357
+#: editor.cc:1980 editor_actions.cc:371
 msgid "Set Punch from Selection"
 msgstr "Nastavit přepis z výběru"
 
-#: editor.cc:1970 editor_actions.cc:358
+#: editor.cc:1981 editor_actions.cc:372
 msgid "Set Session Start/End from Selection"
 msgstr "Nastavit začátek/konec sezení z výběru"
 
-#: editor.cc:1975
+#: editor.cc:1986
 msgid "Add Range Markers"
 msgstr "Vložit značky rozsahu"
 
-#: editor.cc:1979
+#: editor.cc:1990
 msgid "Crop Region to Range"
 msgstr "Zkrátit oblast na rozsah"
 
-#: editor.cc:1980
+#: editor.cc:1991
 msgid "Duplicate Range"
 msgstr "Zdvojit rozsah"
 
-#: editor.cc:1983 editor_actions.cc:152
+#: editor.cc:1994 editor_actions.cc:152
 msgid "Consolidate"
 msgstr "Spojit"
 
-#: editor.cc:1984
+#: editor.cc:1995
 msgid "Consolidate (with processing)"
 msgstr "Spojit (se zpracováním signálu)"
 
-#: editor.cc:1985 editor_export_audio.cc:349 editor_ops.cc:4109
+#: editor.cc:1996 editor_export_audio.cc:349 editor_ops.cc:4123
 msgid "Bounce"
 msgstr "Odeslat"
 
-#: editor.cc:1986 editor_actions.cc:1447
+#: editor.cc:1997 editor_actions.cc:1456
 msgid "Bounce (with processing)"
 msgstr "Odeslat (se zpracováním)"
 
-#: editor.cc:1989 editor_markers.cc:1207
+#: editor.cc:2000 editor_markers.cc:1207
 msgid "Export Range..."
 msgstr "Vyvést rozsah..."
 
-#: editor.cc:1991
+#: editor.cc:2002
 msgid "Export Video Range..."
 msgstr "Vyvést rozsah obrazového záznamu..."
 
-#: editor.cc:2007 editor.cc:2092 editor_actions.cc:382
+#: editor.cc:2018 editor.cc:2103 editor_actions.cc:396
 msgid "Play from Edit Point"
 msgstr "Přehrávat od pracovního bodu"
 
-#: editor.cc:2008 editor.cc:2093
+#: editor.cc:2019 editor.cc:2104
 msgid "Play from Start"
 msgstr "Přehrávat od začátku"
 
-#: editor.cc:2009
+#: editor.cc:2020
 msgid "Play Region"
 msgstr "Přehrávat oblast"
 
-#: editor.cc:2011
+#: editor.cc:2022
 msgid "Loop Region"
 msgstr "Přehrávat oblast ve smyčce"
 
-#: editor.cc:2021 editor.cc:2102
+#: editor.cc:2032 editor.cc:2113
 msgid "Select All in Track"
 msgstr "Vybrat vše ve stopě"
 
-#: editor.cc:2022 editor.cc:2103 editor_actions.cc:238
+#: editor.cc:2033 editor.cc:2114 editor_actions.cc:252
 msgid "Select All Objects"
 msgstr "Vybrat všechny objekty"
 
-#: editor.cc:2023 editor.cc:2104
+#: editor.cc:2034 editor.cc:2115
 msgid "Invert Selection in Track"
 msgstr "Obrátit výběr ve stopě"
 
-#: editor.cc:2026 editor_actions.cc:240
+#: editor.cc:2037 editor_actions.cc:254
 msgid "Set Range to Loop Range"
 msgstr "Nastavit vybraný rozsah jako rozsah smyčky"
 
-#: editor.cc:2027 editor_actions.cc:241
+#: editor.cc:2038 editor_actions.cc:255
 msgid "Set Range to Punch Range"
 msgstr "Nastavit rozsah jako rozsah přepisu"
 
-#: editor.cc:2028 editor_actions.cc:242
+#: editor.cc:2039 editor_actions.cc:256
 msgid "Set Range to Selected Regions"
 msgstr "Nastavit rozsah na vybrané oblasti"
 
-#: editor.cc:2030 editor.cc:2107 editor_actions.cc:247 editor_actions.cc:248
+#: editor.cc:2041 editor.cc:2118 editor_actions.cc:261 editor_actions.cc:262
 msgid "Select All After Edit Point"
 msgstr "Vybrat všechny oblasti po pracovním bodě"
 
-#: editor.cc:2031 editor.cc:2108 editor_actions.cc:249 editor_actions.cc:250
+#: editor.cc:2042 editor.cc:2119 editor_actions.cc:263 editor_actions.cc:264
 msgid "Select All Before Edit Point"
 msgstr "Vybrat všechny oblasti před pracovním bodem"
 
-#: editor.cc:2032 editor.cc:2109
+#: editor.cc:2043 editor.cc:2120
 msgid "Select All After Playhead"
 msgstr "Vybrat všechny oblasti po ukazateli polohy"
 
-#: editor.cc:2033 editor.cc:2110
+#: editor.cc:2044 editor.cc:2121
 msgid "Select All Before Playhead"
 msgstr "Vybrat všechny oblasti před ukazatelem polohy"
 
-#: editor.cc:2034
+#: editor.cc:2045
 msgid "Select All Between Playhead and Edit Point"
 msgstr "Vybrat všechny oblasti mezi ukazatelem polohy a pracovním bodem"
 
-#: editor.cc:2035
+#: editor.cc:2046
 msgid "Select All Within Playhead and Edit Point"
 msgstr "Vybrat všechny oblasti v rámci ukazatele polohy a pracovním bodem"
 
-#: editor.cc:2036
+#: editor.cc:2047
 msgid "Select Range Between Playhead and Edit Point"
 msgstr "Vybrat rozsah mezi ukazatelem polohy a pracovním bodem"
 
-#: editor.cc:2038 editor.cc:2112 editor_actions.cc:149 editor_actions.cc:150
+#: editor.cc:2049 editor.cc:2123 editor_actions.cc:149 editor_actions.cc:150
 #: transport_masters_dialog.cc:79
 msgid "Select"
 msgstr "Vybrat"
 
-#: editor.cc:2052 editor_actions.cc:104
+#: editor.cc:2063 editor_actions.cc:104
 msgid "Align"
 msgstr "Zarovnat"
 
-#: editor.cc:2053
+#: editor.cc:2064
 msgid "Align Relative"
 msgstr "Zarovnat poměrně"
 
-#: editor.cc:2060
+#: editor.cc:2071
 msgid "Insert Selected Region"
 msgstr "Vložit vybranou oblast"
 
-#: editor.cc:2064
+#: editor.cc:2075
 msgid "Insert Existing Media"
 msgstr "Vložit stávající materiál"
 
-#: editor.cc:2073 editor.cc:2130
+#: editor.cc:2084 editor.cc:2141
 msgid "Nudge Entire Track Later"
 msgstr "Posunout celou stopu krokově dozadu"
 
-#: editor.cc:2074 editor.cc:2131
+#: editor.cc:2085 editor.cc:2142
 msgid "Nudge Track After Edit Point Later"
 msgstr "Posunout stopu po pracovním bodu krokově dozadu"
 
-#: editor.cc:2075 editor.cc:2132
+#: editor.cc:2086 editor.cc:2143
 msgid "Nudge Entire Track Earlier"
 msgstr "Posunout celou stopu krokově dopředu"
 
-#: editor.cc:2076 editor.cc:2133
+#: editor.cc:2087 editor.cc:2144
 msgid "Nudge Track After Edit Point Earlier"
 msgstr "Posunout stopu po pracovním bodu krokově dopředu"
 
-#: editor.cc:2078 editor.cc:2135
+#: editor.cc:2089 editor.cc:2146
 msgid "Nudge"
 msgstr "Posunout"
 
-#: editor.cc:2261
+#: editor.cc:2298
 msgid ""
 "Playhead position stored with a negative value - ignored (use zero instead)"
 msgstr ""
 "Ukazatel polohy přehrávání se zápornou hodnotou polohy - přehlíží se (místo "
 "toho se používá nula)"
 
-#: editor.cc:2859
+#: editor.cc:2892
 msgid "Adjust Markers"
 msgstr "Upravit značky"
 
-#: editor.cc:2954
+#: editor.cc:2987
 msgid "Smart Mode (add range functions to Grab Mode)"
 msgstr "Chytrý režim (přidat dodatečné funkce rozsahu do režimu uchopení)"
 
-#: editor.cc:2955
+#: editor.cc:2988
 msgid ""
 "Groups: click to (de)activate\n"
 "Context-click for other operations"
@@ -5806,35 +5810,35 @@ msgstr ""
 "Skupiny: klepnout pro zapnutí/vypnutí\n"
 "Klepnutí na související nabídku pro jiné operace"
 
-#: editor.cc:2956
+#: editor.cc:2989
 msgid "Nudge Region/Selection Later"
 msgstr "Postrčit oblast/výběr o krok později"
 
-#: editor.cc:2957
+#: editor.cc:2990
 msgid "Nudge Region/Selection Earlier"
 msgstr "Postrčit oblast/výběr o krok dříve"
 
-#: editor.cc:2958
+#: editor.cc:2991
 msgid "Zoom to Time Scale"
 msgstr "Pohled na časový úsek"
 
-#: editor.cc:2959 editor.cc:3321 editor_actions.cc:306
+#: editor.cc:2992 editor.cc:3354 editor_actions.cc:320
 msgid "Zoom to Session"
 msgstr "Pohled na celé sezení"
 
-#: editor.cc:2960
+#: editor.cc:2993
 msgid "Expand Tracks"
 msgstr "Rozbalit stopy"
 
-#: editor.cc:2961
+#: editor.cc:2994
 msgid "Shrink Tracks"
 msgstr "Zmenšit stopy"
 
-#: editor.cc:2962
+#: editor.cc:2995
 msgid "Number of visible tracks"
 msgstr "Počet viditelných stop"
 
-#: editor.cc:2963
+#: editor.cc:2996
 msgid ""
 "Move markers and ranges when stretching the Grid\n"
 "(this option is only available when session Time Domain is Beat Time)"
@@ -5843,15 +5847,15 @@ msgstr ""
 "(tato volba je dostupná pouze v případě, že časová doména sezení je hudební "
 "čas (udávání rytmu))."
 
-#: editor.cc:2964 editor_actions.cc:113
+#: editor.cc:2997 editor_actions.cc:113
 msgid "Edit Point"
 msgstr "Pracovní bod"
 
-#: editor.cc:2965
+#: editor.cc:2998
 msgid "Edit Mode"
 msgstr "Režim úprav"
 
-#: editor.cc:2966
+#: editor.cc:2999
 msgid ""
 "Nudge Clock\n"
 "(controls distance used to nudge regions and selections)"
@@ -5859,113 +5863,113 @@ msgstr ""
 "Čas pro velikost přírůstku\n"
 "(určuje vzdálenost použitou pro krokové posunutí oblastí a výběrů)"
 
-#: editor.cc:3136 editor.cc:3160 editor_actions.cc:127 editor_actions.cc:391
-#: editor_actions.cc:1391
+#: editor.cc:3169 editor.cc:3193 editor_actions.cc:127 editor_actions.cc:405
+#: editor_actions.cc:1405
 msgid "Duplicate"
 msgstr "Zdvojit"
 
-#: editor.cc:3137
+#: editor.cc:3170
 msgid "Number of duplications:"
 msgstr "Počet zdvojení:"
 
-#: editor.cc:3298 group_tabs.cc:684 rc_option_editor.cc:2553
+#: editor.cc:3331 group_tabs.cc:684 rc_option_editor.cc:2553
 #: route_group_dialog.cc:56 time_info_box.cc:72
 msgid "Selection"
 msgstr "Výběr"
 
-#: editor.cc:3301
+#: editor.cc:3334
 msgid "Fit 1 track"
 msgstr "Přizpůsobit 1 stopu"
 
-#: editor.cc:3302
+#: editor.cc:3335
 msgid "Fit 2 tracks"
 msgstr "Přizpůsobit 2 stopy"
 
-#: editor.cc:3303
+#: editor.cc:3336
 msgid "Fit 4 tracks"
 msgstr "Přizpůsobit 4 stopy"
 
-#: editor.cc:3304
+#: editor.cc:3337
 msgid "Fit 8 tracks"
 msgstr "Přizpůsobit 8 stop"
 
-#: editor.cc:3305
+#: editor.cc:3338
 msgid "Fit 16 tracks"
 msgstr "Přizpůsobit 16 stop"
 
-#: editor.cc:3306
+#: editor.cc:3339
 msgid "Fit 24 tracks"
 msgstr "Přizpůsobit 24 stop"
 
-#: editor.cc:3307
+#: editor.cc:3340
 msgid "Fit 32 tracks"
 msgstr "Přizpůsobit 32 stop"
 
-#: editor.cc:3308
+#: editor.cc:3341
 msgid "Fit 48 tracks"
 msgstr "Přizpůsobit 48 stop"
 
-#: editor.cc:3309
+#: editor.cc:3342
 msgid "Fit All tracks"
 msgstr "Přizpůsobit všechny stopy"
 
-#: editor.cc:3310
+#: editor.cc:3343
 msgid "Fit Selection"
 msgstr "Přizpůsobit výběr"
 
-#: editor.cc:3312 editor_actions.cc:324
+#: editor.cc:3345 editor_actions.cc:338
 msgid "Zoom to 10 ms"
 msgstr "Pohled na 10 ms"
 
-#: editor.cc:3313 editor_actions.cc:325
+#: editor.cc:3346 editor_actions.cc:339
 msgid "Zoom to 100 ms"
 msgstr "Pohled na 100 ms"
 
-#: editor.cc:3314 editor_actions.cc:326
+#: editor.cc:3347 editor_actions.cc:340
 msgid "Zoom to 1 sec"
 msgstr "Pohled na 1 s"
 
-#: editor.cc:3315 editor_actions.cc:327
+#: editor.cc:3348 editor_actions.cc:341
 msgid "Zoom to 10 sec"
 msgstr "Pohled na 10 s"
 
-#: editor.cc:3316 editor_actions.cc:328
+#: editor.cc:3349 editor_actions.cc:342
 msgid "Zoom to 1 min"
 msgstr "Pohled na 1 minutu"
 
-#: editor.cc:3317 editor_actions.cc:330
+#: editor.cc:3350 editor_actions.cc:344
 msgid "Zoom to 10 min"
 msgstr "Pohled na 10 minut"
 
-#: editor.cc:3318
+#: editor.cc:3351
 msgid "Zoom to 1 hour"
 msgstr "Pohled na 1 hodinu"
 
-#: editor.cc:3319
+#: editor.cc:3352
 msgid "Zoom to 8 hours"
 msgstr "Pohled na 8 hodin"
 
-#: editor.cc:3320
+#: editor.cc:3353
 msgid "Zoom to 24 hours"
 msgstr "Pohled na 24 hodin"
 
-#: editor.cc:3322 editor_actions.cc:307
+#: editor.cc:3355 editor_actions.cc:321
 msgid "Zoom to Extents"
 msgstr "Pohled na rozsahy"
 
-#: editor.cc:3323
+#: editor.cc:3356
 msgid "Zoom to Range/Region Selection"
 msgstr "Pohled na výběr rozsahu/oblasti"
 
-#: editor.cc:3403
+#: editor.cc:3436
 msgid "*"
 msgstr "*"
 
-#: editor.cc:3528
+#: editor.cc:3561
 msgid "Playlist Deletion"
 msgstr "Smazání seznamu oblastí"
 
-#: editor.cc:3529
+#: editor.cc:3562
 msgid ""
 "Playlist %1 is currently unused.\n"
 "If it is kept, its audio files will not be cleaned.\n"
@@ -5976,23 +5980,23 @@ msgstr ""
 "používány.\n"
 "Jestliže se smaže, budou jím používané zvukové soubory smazány."
 
-#: editor.cc:3539
+#: editor.cc:3572
 msgid "Delete All Unused"
 msgstr "Smazat vše nepoužívané"
 
-#: editor.cc:3540
+#: editor.cc:3573
 msgid "Delete Playlist"
 msgstr "Smazat seznam oblastí"
 
-#: editor.cc:3541
+#: editor.cc:3574
 msgid "Keep Playlist"
 msgstr "Ponechat seznam oblastí"
 
-#: editor.cc:3542
+#: editor.cc:3575
 msgid "Keep Remaining"
 msgstr "Zachovat zbývající"
 
-#: editor.cc:3543 editor_audio_import.cc:694 editor_ops.cc:7249
+#: editor.cc:3576 editor_audio_import.cc:694 editor_ops.cc:7260
 #: engine_dialog.cc:3132 sfdb_freesound_mootcher.cc:86 keyeditor.cc:86
 #: library_download_dialog.cc:331 processor_box.cc:3965 processor_box.cc:3990
 #: pt_import_selector.cc:45 template_dialog.cc:549
@@ -6000,55 +6004,55 @@ msgstr "Zachovat zbývající"
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: editor.cc:3687
+#: editor.cc:3720
 msgid "Take.1"
 msgstr "Take.1"
 
-#: editor.cc:3695
+#: editor.cc:3728
 msgid "Name for new playlist:"
 msgstr "Název pro nový seznam oblastí:"
 
-#: editor.cc:3708 route_ui.cc:2875
+#: editor.cc:3741 route_ui.cc:2871
 msgid "That name is already in use.  Use this instead?"
 msgstr "Tento název se již používá. Použít místo něj tento?"
 
-#: editor.cc:3733
+#: editor.cc:3766
 msgid "clear playlists"
 msgstr "Vyprázdnit seznamy oblastí"
 
-#: editor.cc:3756
+#: editor.cc:3789
 msgid "Copy Playlist for ALL Tracks"
 msgstr "Kopírovat seznam oblastí pro VŠECHNY stopy"
 
-#: editor.cc:3756
+#: editor.cc:3789
 msgid "New Playlist for ALL Tracks"
 msgstr "Nový seznam oblastí pro VŠECHNY stopy"
 
-#: editor.cc:3767
+#: editor.cc:3800
 msgid "Copy Playlist for this track/group"
 msgstr "Kopírovat seznam oblastí pro tuto stopu/skupinu"
 
-#: editor.cc:3767
+#: editor.cc:3800
 msgid "New Playlist for this track/group"
 msgstr "Nový seznam oblastí pro tuto stopu/skupinu"
 
-#: editor.cc:3778
+#: editor.cc:3811
 msgid "Copy Playlist for Selected Tracks"
 msgstr "Kopírovat seznam oblastí pro vybrané stopy"
 
-#: editor.cc:3778
+#: editor.cc:3811
 msgid "New Playlist for Selected Tracks"
 msgstr "Nový seznam oblastí pro vybrané stopy"
 
-#: editor.cc:3789
+#: editor.cc:3822
 msgid "Copy Playlist for Armed Tracks"
 msgstr "Kopírovat seznam oblastí pro stopy připravené k nahrávání"
 
-#: editor.cc:3789
+#: editor.cc:3822
 msgid "New Playlist for Armed Tracks"
 msgstr "Nový seznam oblastí pro stopy připravené k nahrávání"
 
-#: editor.cc:4483
+#: editor.cc:4525
 msgid "Please wait while %1 loads visual data."
 msgstr "Počkejte, prosím, zatímco %1 nahrává vizuální data."
 
@@ -6056,7 +6060,7 @@ msgstr "Počkejte, prosím, zatímco %1 nahrává vizuální data."
 msgid "Autoconnect"
 msgstr "Automaticky spojit"
 
-#: editor_actions.cc:106 pianoroll.cc:3041 rc_option_editor.cc:5281
+#: editor_actions.cc:106 pianoroll.cc:1421 rc_option_editor.cc:5281
 #: route_time_axis.cc:282 route_time_axis.cc:871 vca_time_axis.cc:77
 #: vca_time_axis.cc:461
 msgid "Automation"
@@ -6114,7 +6118,7 @@ msgstr "Zisk"
 msgid "Ranges"
 msgstr "Rozsahy"
 
-#: editor_actions.cc:125 editor_actions.cc:1388 session_option_editor.cc:148
+#: editor_actions.cc:125 editor_actions.cc:1402 session_option_editor.cc:148
 #: session_option_editor.cc:150 session_option_editor.cc:157
 #: session_option_editor.cc:164 session_option_editor.cc:171
 msgid "Fades"
@@ -6243,718 +6247,750 @@ msgstr "Globální kvantizace"
 msgid "Session|Lock"
 msgstr "Zámek"
 
-#: editor_actions.cc:191
+#: editor_actions.cc:189
+msgid "Show Channels Below Tracks"
+msgstr ""
+
+#: editor_actions.cc:190
+msgid "Show or hide the channel mixer below the arrangement"
+msgstr ""
+
+#: editor_actions.cc:196
+msgid "Increase Track Heights"
+msgstr ""
+
+#: editor_actions.cc:197
+msgid "Decrease Track Heights"
+msgstr ""
+
+#: editor_actions.cc:198
+msgid "Scroll View Left"
+msgstr ""
+
+#: editor_actions.cc:199
+msgid "Scroll View Right"
+msgstr ""
+
+#: editor_actions.cc:200
+msgid "Scroll View Up"
+msgstr ""
+
+#: editor_actions.cc:201
+msgid "Scroll View Down"
+msgstr ""
+
+#: editor_actions.cc:205
 msgid "Show Editor List"
 msgstr "Ukázat seznam editoru"
 
-#: editor_actions.cc:193 mixer_ui.cc:3974
+#: editor_actions.cc:207 mixer_ui.cc:3998
 msgid "Show/Hide Right Panel"
 msgstr "Ukaž/skryj pravý panel"
 
-#: editor_actions.cc:196
+#: editor_actions.cc:210
 msgid "Show Editor Mixer"
 msgstr "Ukaž panel směšovače"
 
-#: editor_actions.cc:198 mixer_ui.cc:3970
+#: editor_actions.cc:212 mixer_ui.cc:3994
 msgid "Show/Hide Left Panel"
 msgstr "Ukaž/skryj levý panel"
 
-#: editor_actions.cc:201
+#: editor_actions.cc:215
 msgid "Show Editor Properties Box"
 msgstr "Ukaž panel vlastností editoru"
 
-#: editor_actions.cc:203 mixer_ui.cc:3980
+#: editor_actions.cc:217 mixer_ui.cc:4004
 msgid "Show/Hide Bottom Panel"
 msgstr "Ukaž/skryj spodní panel"
 
-#: editor_actions.cc:206
+#: editor_actions.cc:220
 msgid "Playhead to Next Region Boundary"
 msgstr "Ukazatele polohy na další hranici oblasti"
 
-#: editor_actions.cc:207
+#: editor_actions.cc:221
 msgid "Playhead to Next Region Boundary (No Track Selection)"
 msgstr "Ukazatele polohy na další hranici oblasti (žádný výběr stopy)"
 
-#: editor_actions.cc:208
+#: editor_actions.cc:222
 msgid "Playhead to Previous Region Boundary"
 msgstr "Ukazatele polohy na předchozí hranici oblasti"
 
-#: editor_actions.cc:209
+#: editor_actions.cc:223
 msgid "Playhead to Previous Region Boundary (No Track Selection)"
 msgstr "Ukazatele polohy na předchozí hranici oblasti (žádný výběr stopy)"
 
-#: editor_actions.cc:211
+#: editor_actions.cc:225
 msgid "Playhead to Next Region Start"
 msgstr "Ukazatele polohy na začátek další oblasti"
 
-#: editor_actions.cc:212
+#: editor_actions.cc:226
 msgid "Playhead to Next Region End"
 msgstr "Ukazatele polohy na konec další oblasti"
 
-#: editor_actions.cc:213
+#: editor_actions.cc:227
 msgid "Playhead to Next Region Sync"
 msgstr "Ukazatele polohy na bod zapadnutí další oblasti"
 
-#: editor_actions.cc:215
+#: editor_actions.cc:229
 msgid "Playhead to Previous Region Start"
 msgstr "Ukazatele polohy na začátek předchozí oblasti"
 
-#: editor_actions.cc:216
+#: editor_actions.cc:230
 msgid "Playhead to Previous Region End"
 msgstr "Ukazatele polohy na konec předchozí oblasti"
 
-#: editor_actions.cc:217
+#: editor_actions.cc:231
 msgid "Playhead to Previous Region Sync"
 msgstr "Ukazatele polohy na bod zapadnutí předchozí oblasti"
 
-#: editor_actions.cc:219
+#: editor_actions.cc:233
 msgid "To Next Region Boundary"
 msgstr "Na další hranici oblasti"
 
-#: editor_actions.cc:220
+#: editor_actions.cc:234
 msgid "To Next Region Boundary (No Track Selection)"
 msgstr "Na další hranici oblasti (žádný výběr stopy)"
 
-#: editor_actions.cc:221
+#: editor_actions.cc:235
 msgid "To Previous Region Boundary"
 msgstr "Na předchozí hranici oblasti"
 
-#: editor_actions.cc:222
+#: editor_actions.cc:236
 msgid "To Previous Region Boundary (No Track Selection)"
 msgstr "Na předchozí hranici oblasti (žádný výběr stopy)"
 
-#: editor_actions.cc:224
+#: editor_actions.cc:238
 msgid "To Next Region Start"
 msgstr "Na začátek další oblasti"
 
-#: editor_actions.cc:225
+#: editor_actions.cc:239
 msgid "To Next Region End"
 msgstr "Na konec další oblasti"
 
-#: editor_actions.cc:226
+#: editor_actions.cc:240
 msgid "To Next Region Sync"
 msgstr "Na bod zapadnutí další oblasti"
 
-#: editor_actions.cc:228
+#: editor_actions.cc:242
 msgid "To Previous Region Start"
 msgstr "Na začátek předchozí oblasti"
 
-#: editor_actions.cc:229
+#: editor_actions.cc:243
 msgid "To Previous Region End"
 msgstr "Na konec předchozí oblasti"
 
-#: editor_actions.cc:230
+#: editor_actions.cc:244
 msgid "To Previous Region Sync"
 msgstr "Na bod zapadnutí předchozí oblasti"
 
-#: editor_actions.cc:232
+#: editor_actions.cc:246
 msgid "To Range Start"
 msgstr "Na začátek rozsahu výběru"
 
-#: editor_actions.cc:233
+#: editor_actions.cc:247
 msgid "To Range End"
 msgstr "Na konec rozsahu výběru"
 
-#: editor_actions.cc:235
+#: editor_actions.cc:249
 msgid "Playhead to Range Start"
 msgstr "Ukazatele polohy na začátek rozsahu výběru"
 
-#: editor_actions.cc:236
+#: editor_actions.cc:250
 msgid "Playhead to Range End"
 msgstr "Ukazatele polohy na konec rozsahu výběru"
 
-#: editor_actions.cc:244
+#: editor_actions.cc:258
 msgid "Edit Current Tempo"
 msgstr "Upravit nynější tempo"
 
-#: editor_actions.cc:245
+#: editor_actions.cc:259
 msgid "Edit Current Time Signature"
 msgstr "Upravit nynější předznamenání"
 
-#: editor_actions.cc:252
+#: editor_actions.cc:266
 msgid "Select All Overlapping Edit Range"
 msgstr "Vybrat všechny překrývající se oblasti v rozsahu úprav"
 
-#: editor_actions.cc:253
+#: editor_actions.cc:267
 msgid "Select All Inside Edit Range"
 msgstr "Vybrat vše uvnitř rozsahu úprav"
 
-#: editor_actions.cc:255
+#: editor_actions.cc:269
 msgid "Select Edit Range"
 msgstr "Vybrat rozsah úprav"
 
-#: editor_actions.cc:257
+#: editor_actions.cc:271
 msgid "Select All in Punch Range"
 msgstr "Vybrat vše v rozsahu přepsání"
 
-#: editor_actions.cc:258
+#: editor_actions.cc:272
 msgid "Select All in Loop Range"
 msgstr "Vybrat všechny oblasti uvnitř rozsahu smyčky"
 
-#: editor_actions.cc:260
+#: editor_actions.cc:274
 msgid "Select Next Track or Bus"
 msgstr "Vybrat další stopu nebo sběrnici"
 
-#: editor_actions.cc:261
+#: editor_actions.cc:275
 msgid "Select Previous Track or Bus"
 msgstr "Vybrat předchozí stopu nebo sběrnici"
 
-#: editor_actions.cc:263
+#: editor_actions.cc:277
 msgid "Select Next Strip"
 msgstr "Vybrat další proužek"
 
-#: editor_actions.cc:264
+#: editor_actions.cc:278
 msgid "Select Previous Strip"
 msgstr "Vybrat předchozí proužek"
 
-#: editor_actions.cc:266
+#: editor_actions.cc:280
 msgid "Toggle All Existing Automation"
 msgstr "Přepnout všechnu stávající automatizaci"
 
-#: editor_actions.cc:267
+#: editor_actions.cc:281
 msgid "Toggle Layer Display"
 msgstr "Přepnout zobrazení vrstvy"
 
-#: editor_actions.cc:269
+#: editor_actions.cc:283
 msgid "Stacked layer display"
 msgstr "Zobrazení skládaných vrstev"
 
-#: editor_actions.cc:270
+#: editor_actions.cc:284
 msgid "Overlaid layer display"
 msgstr "Zobrazení překrytých vrstev"
 
-#: editor_actions.cc:272
+#: editor_actions.cc:286
 msgid "Show Playlist Selector"
 msgstr "Ukázat volič seznamu oblastí"
 
-#: editor_actions.cc:280 editor_actions.cc:281 editor_actions.cc:1473
-#: editor_actions.cc:1474
+#: editor_actions.cc:294 editor_actions.cc:295 editor_actions.cc:1482
+#: editor_actions.cc:1483
 msgid "Nudge Later"
 msgstr "Postrčit o krok později"
 
-#: editor_actions.cc:282 editor_actions.cc:283 editor_actions.cc:1475
-#: editor_actions.cc:1476
+#: editor_actions.cc:296 editor_actions.cc:297 editor_actions.cc:1484
+#: editor_actions.cc:1485
 msgid "Nudge Earlier"
 msgstr "Postrčit o krok dříve"
 
-#: editor_actions.cc:285
+#: editor_actions.cc:299
 msgid "Toggle Record Enable"
 msgstr "Spustit nahrávání"
 
-#: editor_actions.cc:287
+#: editor_actions.cc:301
 msgid "Toggle Solo"
 msgstr "Přepnout sólo"
 
-#: editor_actions.cc:289
+#: editor_actions.cc:303
 msgid "Toggle Mute"
 msgstr "Přepnout ztlumení"
 
-#: editor_actions.cc:291
+#: editor_actions.cc:305
 msgid "Toggle Solo Isolate"
 msgstr "Přepnout izolované sólo"
 
-#: editor_actions.cc:296
+#: editor_actions.cc:310
 msgid "Save View %1"
 msgstr "Uložit pohled %1"
 
-#: editor_actions.cc:302
+#: editor_actions.cc:316
 msgid "Go to View %1"
 msgstr "Vyvolat pohled %1"
 
-#: editor_actions.cc:308
+#: editor_actions.cc:322
 msgid "Zoom to Selection"
 msgstr "Pohled na výběr"
 
-#: editor_actions.cc:309
+#: editor_actions.cc:323
 msgid "Zoom to Selection (Horizontal)"
 msgstr "Pohled na výběr (vodorovně)"
 
-#: editor_actions.cc:310
+#: editor_actions.cc:324
 msgid "Toggle Zoom State"
 msgstr "Přepnout stav pohledu"
 
-#: editor_actions.cc:312
+#: editor_actions.cc:326
 msgid "Expand Track Height"
 msgstr "Zvětšit výšku stopy"
 
-#: editor_actions.cc:313
+#: editor_actions.cc:327
 msgid "Shrink Track Height"
 msgstr "Zmenšit výšku stopy"
 
-#: editor_actions.cc:315
+#: editor_actions.cc:329
 msgid "Fit 1 Track"
 msgstr "Přes 1 stopu"
 
-#: editor_actions.cc:316
+#: editor_actions.cc:330
 msgid "Fit 2 Tracks"
 msgstr "Přes 2 stopy"
 
-#: editor_actions.cc:317
+#: editor_actions.cc:331
 msgid "Fit 4 Tracks"
 msgstr "Přes 4 stopy"
 
-#: editor_actions.cc:318
+#: editor_actions.cc:332
 msgid "Fit 8 Tracks"
 msgstr "Přes 8 stop"
 
-#: editor_actions.cc:319
+#: editor_actions.cc:333
 msgid "Fit 16 Tracks"
 msgstr "Přes 16 stop"
 
-#: editor_actions.cc:320
+#: editor_actions.cc:334
 msgid "Fit 32 Tracks"
 msgstr "Přes 32 stop"
 
-#: editor_actions.cc:321
+#: editor_actions.cc:335
 msgid "Fit All Tracks"
 msgstr "Přes všechny stopy"
 
-#: editor_actions.cc:322
+#: editor_actions.cc:336
 msgid "Fit Selected Tracks"
 msgstr "Přes vybrané stopy"
 
-#: editor_actions.cc:329
+#: editor_actions.cc:343
 msgid "Zoom to 5 min"
 msgstr "Pohled na 5 minut"
 
-#: editor_actions.cc:332
+#: editor_actions.cc:346
 msgid "Move Selected Tracks Up"
 msgstr "Vybrané stopy posunout nahoru"
 
-#: editor_actions.cc:334
+#: editor_actions.cc:348
 msgid "Move Selected Tracks Down"
 msgstr "Vybrané stopy posunout dolů"
 
-#: editor_actions.cc:337
+#: editor_actions.cc:351
 msgid "Scroll Tracks Up"
 msgstr "Projíždět stopami nahoru"
 
-#: editor_actions.cc:338
+#: editor_actions.cc:352
 msgid "Scroll Tracks Down"
 msgstr "Projíždět stopami dolů"
 
-#: editor_actions.cc:339
+#: editor_actions.cc:353
 msgid "Step Tracks Up"
 msgstr "Projíždět stopami pomalu nahoru"
 
-#: editor_actions.cc:340
+#: editor_actions.cc:354
 msgid "Step Tracks Down"
 msgstr "Projíždět stopami pomalu dolů"
 
-#: editor_actions.cc:341
+#: editor_actions.cc:355
 msgid "Select Topmost Track"
 msgstr "Vybrat nejhořejší stopu"
 
-#: editor_actions.cc:343
+#: editor_actions.cc:357
 msgid "Scroll Backward"
 msgstr "Projíždět doprava (dozadu)"
 
-#: editor_actions.cc:344
+#: editor_actions.cc:358
 msgid "Scroll Forward"
 msgstr "Projíždět doleva (dopředu)"
 
-#: editor_actions.cc:345
+#: editor_actions.cc:359
 msgid "Center Playhead"
 msgstr "Vystředit ukazatele polohy"
 
-#: editor_actions.cc:346
+#: editor_actions.cc:360
 msgid "Center Edit Point"
 msgstr "Pracovní bod umístit do středu"
 
-#: editor_actions.cc:348
+#: editor_actions.cc:362
 msgid "Playhead Forward"
 msgstr "Ukazatele polohy dopředu"
 
-#: editor_actions.cc:349
+#: editor_actions.cc:363
 msgid "Playhead Backward"
 msgstr "Ukazatele polohy dozadu"
 
-#: editor_actions.cc:351
+#: editor_actions.cc:365
 msgid "Playhead to Active Mark"
 msgstr "Ukazatele polohy k činné značce"
 
-#: editor_actions.cc:352
+#: editor_actions.cc:366
 msgid "Active Mark to Playhead"
 msgstr "Posunout činnou značku k ukazateli polohy"
 
-#: editor_actions.cc:354
+#: editor_actions.cc:368
 msgid "Use Skip Ranges"
 msgstr "Použít oblasti skoků"
 
-#: editor_actions.cc:360
+#: editor_actions.cc:374
 msgid "Find & Display Track/Bus..."
 msgstr "Najít & zobrazit stopu/sběrnici..."
 
-#: editor_actions.cc:365
+#: editor_actions.cc:379
 msgid "Insert Time Section at Playhead"
 msgstr "Vložit časový úsek na ukazateli polohy"
 
-#: editor_actions.cc:369
+#: editor_actions.cc:383
 msgid "Insert Time Section at Edit Point"
 msgstr "Vložit časový úsek na bodu úprav"
 
-#: editor_actions.cc:376 editor_actions.cc:1444
+#: editor_actions.cc:390 editor_actions.cc:1453
 msgid "Play Selected Regions"
 msgstr "Přehrát vybrané oblasti"
 
-#: editor_actions.cc:377 editor_actions.cc:1445
+#: editor_actions.cc:391 editor_actions.cc:1454
 msgid "Tag Selected Regions"
 msgstr "Označit vybrané oblasti"
 
-#: editor_actions.cc:379
+#: editor_actions.cc:393
 msgid "Group Selected Regions"
 msgstr "Seskupit vybrané oblasti"
 
-#: editor_actions.cc:380
+#: editor_actions.cc:394
 msgid "Ungroup Selected Regions"
 msgstr "Odstranit vybrané oblasti ze skupiny"
 
-#: editor_actions.cc:383
+#: editor_actions.cc:397
 msgid "Play from Edit Point and Return"
 msgstr "Přehrávat od pracovního bodu a znovu"
 
-#: editor_actions.cc:385
+#: editor_actions.cc:399
 msgid "Play Edit Range"
 msgstr "Přehrávat rozsah úprav"
 
-#: editor_actions.cc:387
+#: editor_actions.cc:401
 msgid "Playhead to Mouse"
 msgstr "Ukazatele polohy na polohu myši"
 
-#: editor_actions.cc:388
+#: editor_actions.cc:402
 msgid "Active Marker to Mouse"
 msgstr "Činnou značku na polohu myši"
 
-#: editor_actions.cc:389
+#: editor_actions.cc:403
 msgid "Set Auto Punch In/Out from Playhead"
 msgstr "Nastavit automatický začátek/konec přepsání z ukazatele polohy"
 
-#: editor_actions.cc:394 editor_actions.cc:1394
+#: editor_actions.cc:408 editor_actions.cc:1408
 msgid "Multi-Duplicate..."
 msgstr "Vícekrát zdvojit..."
 
-#: editor_actions.cc:398
+#: editor_actions.cc:412
 msgid "Undo Selection Change"
 msgstr "Zpět změnu výběru"
 
-#: editor_actions.cc:399
+#: editor_actions.cc:413
 msgid "Redo Selection Change"
 msgstr "Znovu změnu výběru"
 
-#: editor_actions.cc:401
+#: editor_actions.cc:415
 msgid "Export Audio"
 msgstr "Vyvést zvuk"
 
-#: editor_actions.cc:402 export_dialog.cc:592
+#: editor_actions.cc:416 export_dialog.cc:592
 msgid "Export Range"
 msgstr "Vyvést rozsah"
 
-#: editor_actions.cc:407
+#: editor_actions.cc:421
 msgid "Separate Using Punch Range"
 msgstr "Rozdělit podle rozsahu přepisu"
 
-#: editor_actions.cc:408
+#: editor_actions.cc:422
 msgid "Separate Using Loop Range"
 msgstr "Rozdělit na koncích smyček"
 
-#: editor_actions.cc:410 editor_actions.cc:450
+#: editor_actions.cc:424 editor_actions.cc:464
 msgid "Crop"
 msgstr "Oříznout"
 
-#: editor_actions.cc:413
+#: editor_actions.cc:427
 msgid "Add Range Marker from Selection"
 msgstr "Přidat značku rozsahu z výběru"
 
-#: editor_actions.cc:416
+#: editor_actions.cc:430
 msgid "Add Tempo Marker at Playhead"
 msgstr "Přidat značku tempa na ukazateli polohy"
 
-#: editor_actions.cc:419
+#: editor_actions.cc:433
 msgid "Add Time Signature at Playhead"
 msgstr "Přidat časové předznamenání na ukazateli polohy"
 
-#: editor_actions.cc:422
+#: editor_actions.cc:436
 msgid "Consolidate Range (with processing)"
 msgstr "Konsolidovat rozsah (se zpracováním signálu)"
 
-#: editor_actions.cc:424
+#: editor_actions.cc:438
 msgid "Consolidate Range"
 msgstr "Sjednotit rozsah"
 
-#: editor_actions.cc:431 loudness_dialog.cc:63
+#: editor_actions.cc:445 loudness_dialog.cc:63
 msgid "Loudness Assistant"
 msgstr "Pomocník pro hlasitost"
 
-#: editor_actions.cc:435 rc_option_editor.cc:3519
+#: editor_actions.cc:449 rc_option_editor.cc:3519
 msgid "Split/Separate"
 msgstr "Rozdělit/Oddělit"
 
-#: editor_actions.cc:437
+#: editor_actions.cc:451
 msgid "Fade Range Selection"
 msgstr "Prolínat výběr oblasti"
 
-#: editor_actions.cc:439
+#: editor_actions.cc:453
 msgid "Set Tempo from Edit Range = Bar"
 msgstr "Stanovit tempo z rozsah úprav = takt"
 
-#: editor_actions.cc:442
+#: editor_actions.cc:456
 msgid "Log"
 msgstr "Zápis"
 
-#: editor_actions.cc:445 editor_actions.cc:447
+#: editor_actions.cc:459 editor_actions.cc:461
 msgid "Move to Next Transient"
 msgstr "Přesunout k dalšímu přechodu"
 
-#: editor_actions.cc:446 editor_actions.cc:448
+#: editor_actions.cc:460 editor_actions.cc:462
 msgid "Move to Previous Transient"
 msgstr "Přesunout k předchozímu přechodu"
 
-#: editor_actions.cc:482
+#: editor_actions.cc:496
 msgid "Remove Last Capture"
 msgstr "Odstranit poslední nahrávku"
 
-#: editor_actions.cc:483 editor_ops.cc:5442
+#: editor_actions.cc:497 editor_ops.cc:5456
 msgid "Tag Last Capture"
 msgstr "Označit poslední nahrávku"
 
-#: editor_actions.cc:485
+#: editor_actions.cc:499
 msgid "Show Automation Lane on Touch"
 msgstr "Zobrazit automatizační pruh při dotyku"
 
-#: editor_actions.cc:487 insert_remove_time_dialog.cc:36
+#: editor_actions.cc:501 insert_remove_time_dialog.cc:36
 msgid "Insert Time"
 msgstr "Vložit ticho"
 
-#: editor_actions.cc:489 insert_remove_time_dialog.cc:36
+#: editor_actions.cc:503 insert_remove_time_dialog.cc:36
 msgid "Remove Time"
 msgstr "Odstranit čas"
 
-#: editor_actions.cc:493 editor_ops.cc:9118
+#: editor_actions.cc:507 editor_ops.cc:9129
 msgid "Remove Gaps"
 msgstr "Odstranit mezery"
 
-#: editor_actions.cc:498
+#: editor_actions.cc:512
 msgid "New Playlist For Rec-Armed Tracks"
 msgstr "Nový seznam oblastí pro stopy připravené k nahrávání"
 
-#: editor_actions.cc:499
+#: editor_actions.cc:513
 msgid "New Playlist For All Tracks"
 msgstr "Nový seznam oblastí pro všechny stopy"
 
-#: editor_actions.cc:500
+#: editor_actions.cc:514
 msgid "New Playlist For Selected Tracks"
 msgstr "Nový seznam oblastí pro vybrané stopy"
 
-#: editor_actions.cc:503
+#: editor_actions.cc:517
 msgid "Copy Playlist For Rec-Armed Tracks"
 msgstr "Kopírovat seznam oblastí pro stopy připravené k nahrávání"
 
-#: editor_actions.cc:504
+#: editor_actions.cc:518
 msgid "Copy Playlist For All Tracks"
 msgstr "Kopírovat seznam oblastí pro všechny stopy"
 
-#: editor_actions.cc:505
+#: editor_actions.cc:519
 msgid "Copy Playlist For Selected Tracks"
 msgstr "Kopírovat seznam oblastí pro vybrané stopy"
 
-#: editor_actions.cc:508
+#: editor_actions.cc:522
 msgid "Toggle Active"
 msgstr "Zapnout/Vypnout stopu"
 
-#: editor_actions.cc:510
+#: editor_actions.cc:524
 msgid "Remove Selected Track(s)"
 msgstr "Odstranit vybrané stopy"
 
-#: editor_actions.cc:513
+#: editor_actions.cc:527
 msgid "Fit Selection (Vertical)"
 msgstr "Přizpůsobit výběr (svisle)"
 
-#: editor_actions.cc:516 time_axis_view.cc:1416
+#: editor_actions.cc:530 time_axis_view.cc:1416
 msgid "Largest"
 msgstr "Největší"
 
-#: editor_actions.cc:519 rc_option_editor.cc:3119 time_axis_view.cc:1417
+#: editor_actions.cc:533 rc_option_editor.cc:3119 time_axis_view.cc:1417
 msgid "Larger"
 msgstr "Větší"
 
-#: editor_actions.cc:522 editor_rulers.cc:274 rc_option_editor.cc:2865
+#: editor_actions.cc:536 editor_rulers.cc:274 rc_option_editor.cc:2865
 #: time_axis_view.cc:1418
 msgid "Large"
 msgstr "Velká"
 
-#: editor_actions.cc:528 editor_rulers.cc:278 rc_option_editor.cc:2864
+#: editor_actions.cc:542 editor_rulers.cc:278 rc_option_editor.cc:2864
 #: rc_option_editor.cc:3118 time_axis_view.cc:1420
 msgid "Small"
 msgstr "Malá"
 
-#: editor_actions.cc:532
+#: editor_actions.cc:546
 msgid "Sound Selected MIDI Notes"
 msgstr "Zahrát vybrané noty MIDI"
 
-#: editor_actions.cc:537
+#: editor_actions.cc:551
 msgid "Marker Click Only Selects"
 msgstr "Klepnutí na značku pouze vybere"
 
-#: editor_actions.cc:538
+#: editor_actions.cc:552
 msgid "Locate to Marker on Click"
 msgstr "Klepnutí nastaví ukazatel polohy na značku"
 
-#: editor_actions.cc:539
+#: editor_actions.cc:553
 msgid "Locate To Marker When Transport Is Not Rolling "
 msgstr "Nastavit ukazatel polohy na značku, když přehrávání neběží"
 
-#: editor_actions.cc:540
+#: editor_actions.cc:554
 msgid "Next Marker Click Mode"
 msgstr "Režim klepnutí další značka"
 
-#: editor_actions.cc:552
+#: editor_actions.cc:566
 msgid "Step Mouse Mode"
 msgstr "Udělat krok v režimu myši"
 
-#: editor_actions.cc:559
+#: editor_actions.cc:573
 msgid "Change Edit Point"
 msgstr "Změnit pracovní bod"
 
-#: editor_actions.cc:560
+#: editor_actions.cc:574
 msgid "Change Edit Point Including Marker"
 msgstr "Stanovit pracovní bod (včetně značky polohy)"
 
-#: editor_actions.cc:564
+#: editor_actions.cc:578
 msgid "EditMode|Lock"
 msgstr "Zamknout"
 
-#: editor_actions.cc:565
+#: editor_actions.cc:579
 msgid "Cycle Edit Mode"
 msgstr "Přepínat režim úprav"
 
-#: editor_actions.cc:571
+#: editor_actions.cc:585
 msgid "Show Marker Lines"
 msgstr "Ukázat čáry značek"
 
-#: editor_actions.cc:589
+#: editor_actions.cc:603
 msgid "All Markers"
 msgstr "Všechny značky"
 
-#: editor_actions.cc:590
+#: editor_actions.cc:604
 msgid "Only CD Markers"
 msgstr "Pouze CD značky"
 
-#: editor_actions.cc:591
+#: editor_actions.cc:605
 msgid "Only Cue Markers"
 msgstr "Pouze narážky"
 
-#: editor_actions.cc:592
+#: editor_actions.cc:606
 msgid "Only Scene Markers"
 msgstr "Pouze značky scén"
 
-#: editor_actions.cc:593
+#: editor_actions.cc:607
 msgid "Only Location Markers"
 msgstr "Pouze značky umístění"
 
-#: editor_actions.cc:595 editor_rulers.cc:341
+#: editor_actions.cc:609 editor_rulers.cc:341
 msgid "All Ranges"
 msgstr "Všechny rozsahy"
 
-#: editor_actions.cc:596
+#: editor_actions.cc:610
 msgid "Only Session Range"
 msgstr "Pouze rozsah sezení"
 
-#: editor_actions.cc:597
+#: editor_actions.cc:611
 msgid "Only Punch Range"
 msgstr "Pouze rozsah přepisu"
 
-#: editor_actions.cc:598
+#: editor_actions.cc:612
 msgid "Only Loop Range"
 msgstr "Pouze rozsah opakování"
 
-#: editor_actions.cc:599
+#: editor_actions.cc:613
 msgid "Only Named Ranges"
 msgstr "Pouze pojmenované rozsahy"
 
-#: editor_actions.cc:601 editor_actions.cc:604 editor_rulers.cc:296
+#: editor_actions.cc:615 editor_actions.cc:618 editor_rulers.cc:296
 #: rc_option_editor.cc:1932
 msgid "Video Monitor"
 msgstr "Sledování obrazu"
 
-#: editor_actions.cc:606
+#: editor_actions.cc:620
 msgid "Always on Top"
 msgstr "Vždy nahoře"
 
-#: editor_actions.cc:608
+#: editor_actions.cc:622
 msgid "Frame number"
 msgstr "Číslo snímku"
 
-#: editor_actions.cc:609
+#: editor_actions.cc:623
 msgid "Timecode Background"
 msgstr "Pozadí časového kódu"
 
-#: editor_actions.cc:610
+#: editor_actions.cc:624
 msgid "Fullscreen"
 msgstr "Celá obrazovka"
 
-#: editor_actions.cc:611
+#: editor_actions.cc:625
 msgid "Letterbox"
 msgstr "Širokoúhlý formát"
 
-#: editor_actions.cc:612
+#: editor_actions.cc:626
 msgid "Original Size"
 msgstr "Původní velikost"
 
-#: editor_actions.cc:656
+#: editor_actions.cc:670
 msgid "Remove Unused"
 msgstr "Odstranit nepoužívané"
 
-#: editor_actions.cc:658
+#: editor_actions.cc:672
 msgid "Import PT session..."
 msgstr "Import PT sezení..."
 
-#: editor_actions.cc:666
+#: editor_actions.cc:680
 msgid "Import to Source List..."
 msgstr "Zavést do seznamu zdrojů..."
 
-#: editor_actions.cc:669
+#: editor_actions.cc:683
 msgid "Bring all media into session folder"
 msgstr "Všechen materiál zkopírovat do složky se sezením"
 
-#: editor_actions.cc:672
+#: editor_actions.cc:686
 msgid "Show Summary"
 msgstr "Ukázat shrnutí"
 
-#: editor_actions.cc:674
+#: editor_actions.cc:688
 msgid "Show Vertical Summary"
 msgstr "Ukaž vertikální souhrn"
 
-#: editor_actions.cc:676
+#: editor_actions.cc:690
 msgid "Show Group Tabs"
 msgstr "Ukázat karty se skupinami"
 
-#: editor_actions.cc:678
+#: editor_actions.cc:692
 msgid "Toggle MIDI Input Active for Editor-Selected Tracks/Busses"
 msgstr "Přepnout vstup MIDI pro v editoru vybrané stopy/sběrnice"
 
-#: editor_actions.cc:683 midi_inspector.cc:35 quantize_dialog.cc:191
+#: editor_actions.cc:697 midi_inspector.cc:35 quantize_dialog.cc:191
 #: quantize_dialog.cc:198
 msgid "Quantize"
 msgstr "Kvantovat"
 
-#: editor_actions.cc:685
+#: editor_actions.cc:699
 msgid "Smart Mode"
 msgstr "Chytrý režim"
 
-#: editor_actions.cc:688
+#: editor_actions.cc:702
 msgid "Smart"
 msgstr "Chytrý"
 
-#: editor_actions.cc:705
+#: editor_actions.cc:719
 msgid "1 bar"
 msgstr "1 takt"
 
-#: editor_actions.cc:1126 editor_actions.cc:1137 luainstance.cc:373
+#: editor_actions.cc:1140 editor_actions.cc:1151 luainstance.cc:373
 #: luainstance.cc:2439
 msgid "programming error: %1: %2"
 msgstr "chyba programu: %1: %2"
 
-#: editor_actions.cc:1320 editor_markers.cc:1179 editor_markers.cc:1260
+#: editor_actions.cc:1334 editor_markers.cc:1179 editor_markers.cc:1260
 #: editor_markers.cc:1276 editor_markers.cc:1293 editor_snapshots.cc:158
 #: foldback_strip.cc:828 loudness_dialog.cc:71 lua_script_manager.cc:43
 #: lua_script_manager.cc:47 lua_script_manager.cc:49 mixer_strip.cc:1230
@@ -6963,43 +6999,43 @@ msgstr "chyba programu: %1: %2"
 msgid "Remove"
 msgstr "Odstranit"
 
-#: editor_actions.cc:1326
+#: editor_actions.cc:1340
 msgid "Raise"
 msgstr "Pozvednout"
 
-#: editor_actions.cc:1329
+#: editor_actions.cc:1343
 msgid "Raise to Top"
 msgstr "Pozvednout zcela nahoru"
 
-#: editor_actions.cc:1332
+#: editor_actions.cc:1346
 msgid "Lower"
 msgstr "Dát dolů"
 
-#: editor_actions.cc:1335
+#: editor_actions.cc:1349
 msgid "Lower to Bottom"
 msgstr "Dát zcela dolů"
 
-#: editor_actions.cc:1338
+#: editor_actions.cc:1352
 msgid "Move to Original Position"
 msgstr "Posunout na původní polohu"
 
-#: editor_actions.cc:1342
+#: editor_actions.cc:1356
 msgid "Unlock"
 msgstr "Odemknout"
 
-#: editor_actions.cc:1345
+#: editor_actions.cc:1359
 msgid "Lock (toggle)"
 msgstr "Zamknout (přepínač)"
 
-#: editor_actions.cc:1346
+#: editor_actions.cc:1360
 msgid "Lock to Video"
 msgstr "Přivázat k obrazu"
 
-#: editor_actions.cc:1349
+#: editor_actions.cc:1363
 msgid "Remove Sync"
 msgstr "Odstranit bod zapadnutí"
 
-#: editor_actions.cc:1352 mixer_strip.cc:1739 mixer_strip.cc:1770
+#: editor_actions.cc:1366 mixer_strip.cc:1739 mixer_strip.cc:1770
 #: monitor_section.cc:260 monitor_section.cc:320 monitor_section.cc:953
 #: route_time_axis.cc:269 route_time_axis.cc:602 surround_strip.cc:441
 #: track_record_axis.cc:172 track_record_axis.cc:174 trigger_strip.cc:414
@@ -7007,271 +7043,271 @@ msgstr "Odstranit bod zapadnutí"
 msgid "Mute"
 msgstr "Ztlumit"
 
-#: editor_actions.cc:1355
+#: editor_actions.cc:1369
 msgid "Normalize..."
 msgstr "Normalizovat..."
 
-#: editor_actions.cc:1358 trigger_ui.cc:761
+#: editor_actions.cc:1372 trigger_ui.cc:761
 msgid "Reverse"
 msgstr "Obrátit"
 
-#: editor_actions.cc:1361
+#: editor_actions.cc:1375
 msgid "Make Mono Regions"
 msgstr "Přeměnit na monofonní oblasti"
 
-#: editor_actions.cc:1364
+#: editor_actions.cc:1378
 msgid "Boost Gain"
 msgstr "Zvýšit sílu hlasitosti"
 
-#: editor_actions.cc:1367
+#: editor_actions.cc:1381
 msgid "Cut Gain"
 msgstr "Snížit sílu hlasitosti"
 
-#: editor_actions.cc:1370
+#: editor_actions.cc:1384
 msgid "Reset Gain"
 msgstr "Nastavit sílu hlasitosti znovu"
 
-#: editor_actions.cc:1373
+#: editor_actions.cc:1387
 msgid "Pitch Shift..."
 msgstr "Posun výšky tónu..."
 
-#: editor_actions.cc:1379
+#: editor_actions.cc:1393
 msgid "Opaque"
 msgstr "Neprůhledný"
 
-#: editor_actions.cc:1382 editor_regions.cc:101
+#: editor_actions.cc:1396 editor_regions.cc:101
 msgid "Fade In"
 msgstr "Postupné zesílení signálu"
 
-#: editor_actions.cc:1385
+#: editor_actions.cc:1399
 msgid "Fade Out"
 msgstr "Postupné zeslabení signálu"
 
-#: editor_actions.cc:1397
+#: editor_actions.cc:1411
 msgid "Fill Track"
 msgstr "Doplnit stopu"
 
-#: editor_actions.cc:1400 editor_markers.cc:1306
+#: editor_actions.cc:1414 editor_markers.cc:1306
 msgid "Set Loop Range"
 msgstr "Zřídit oblast smyčky"
 
-#: editor_actions.cc:1406
+#: editor_actions.cc:1420
 msgid "Set Punch"
 msgstr "Nastavit přepis"
 
-#: editor_actions.cc:1409
+#: editor_actions.cc:1423
 msgid "Add Single Range Marker"
 msgstr "Přidat značku jednoho rozsahu"
 
-#: editor_actions.cc:1412
+#: editor_actions.cc:1426
 msgid "Add Range Marker Per Region"
 msgstr "Vložit značku rozsahu na oblast"
 
-#: editor_actions.cc:1415
+#: editor_actions.cc:1429
 msgid "Snap Position to Grid"
 msgstr "Přichytávat ukazatel polohy do mřížky"
 
-#: editor_actions.cc:1418
+#: editor_actions.cc:1432
 msgid "Close Gaps"
 msgstr "Zavřít mezery"
 
-#: editor_actions.cc:1421
+#: editor_actions.cc:1435
 msgid "Rhythm Ferret..."
 msgstr "Rytmická páska..."
 
-#: editor_actions.cc:1424
+#: editor_actions.cc:1438
 msgid "Export..."
 msgstr "Vyvést..."
 
-#: editor_actions.cc:1427
+#: editor_actions.cc:1441
 msgid "Separate Under"
 msgstr "Rozdělit pod"
 
-#: editor_actions.cc:1429 editor_actions.cc:1430
-msgid "Set Fade In Length"
-msgstr "Změnit délku postupného zesílení signálu"
-
-#: editor_actions.cc:1431 editor_actions.cc:1432
-msgid "Set Fade Out Length"
-msgstr "Změnit délku postupného zeslabení signálu"
-
-#: editor_actions.cc:1434
+#: editor_actions.cc:1443
 msgid "Set Tempo from Region = Bar"
 msgstr "Stanovit tempo z \"oblast = takt\""
 
-#: editor_actions.cc:1436
+#: editor_actions.cc:1445
 msgid "Split at Percussion Onsets"
 msgstr "Rozdělit oblasti na začátcích úderů bicích"
 
-#: editor_actions.cc:1439
+#: editor_actions.cc:1448
 msgid "List Editor..."
 msgstr "Editor seznamu..."
 
-#: editor_actions.cc:1442
+#: editor_actions.cc:1451
 msgid "Edit in separate window..."
 msgstr "Upravit v samostatném okně..."
 
-#: editor_actions.cc:1448
+#: editor_actions.cc:1457
 msgid "Bounce (without processing)"
 msgstr "Odeslat (bez zpracování)"
 
-#: editor_actions.cc:1449
+#: editor_actions.cc:1458
 msgid "Combine"
 msgstr "Spojit"
 
-#: editor_actions.cc:1450
+#: editor_actions.cc:1459
 msgid "Uncombine"
 msgstr "Zrušit spojení"
 
-#: editor_actions.cc:1452
+#: editor_actions.cc:1461
 msgid "Loudness Analysis..."
 msgstr "Rozbor hlasitosti..."
 
-#: editor_actions.cc:1453
+#: editor_actions.cc:1462
 msgid "Spectral Analysis..."
 msgstr "Spektrální analýza..."
 
-#: editor_actions.cc:1455
+#: editor_actions.cc:1464
 msgid "Reset Envelope"
 msgstr "Nastavit křivku síly zvuku znovu"
 
-#: editor_actions.cc:1457
+#: editor_actions.cc:1466
 msgid "Envelope Active"
 msgstr "Činná křivka síly zvuku"
 
-#: editor_actions.cc:1459
+#: editor_actions.cc:1468
 msgid "Invert Polarity"
 msgstr "Obrátit polaritu"
 
-#: editor_actions.cc:1463
+#: editor_actions.cc:1472
 msgid "Deinterlace Into Layers"
 msgstr "Odstranit prokládání do vrstev"
 
-#: editor_actions.cc:1466 editor_actions.cc:1467
+#: editor_actions.cc:1475 editor_actions.cc:1476
 msgid "Insert Patch Change..."
 msgstr "Vložit změnu zvuku..."
 
-#: editor_actions.cc:1468
+#: editor_actions.cc:1477
 msgid "Unlink all selected regions"
 msgstr "Zrušit propojení všech vybraných oblastí"
 
-#: editor_actions.cc:1469 editor_ops.cc:5867
+#: editor_actions.cc:1478 editor_ops.cc:5881
 msgid "Unlink from unselected"
 msgstr "Zrušit propojení z nevybraných"
 
-#: editor_actions.cc:1470
+#: editor_actions.cc:1479
 msgid "Strip Silence..."
 msgstr "Odstranit ticho..."
 
-#: editor_actions.cc:1471
+#: editor_actions.cc:1480
 msgid "Set Range Selection"
 msgstr "Vybrat rozsah oblasti"
 
-#: editor_actions.cc:1478
+#: editor_actions.cc:1487
 msgid "Sequence Regions"
 msgstr "Řadit oblasti vedle sebe"
 
-#: editor_actions.cc:1480
+#: editor_actions.cc:1489
 msgid "Nudge Later by Capture Offset"
 msgstr "Postrčit o krok později podle posunu nahrávání"
 
-#: editor_actions.cc:1482
+#: editor_actions.cc:1491
 msgid "Nudge Earlier by Capture Offset"
 msgstr "Postrčit o krok dříve podle posunu nahrávání"
 
-#: editor_actions.cc:1484
+#: editor_actions.cc:1493
 msgid "Trim to Loop"
 msgstr "Zkrátit na oblast smyčky"
 
-#: editor_actions.cc:1485
+#: editor_actions.cc:1494
 msgid "Trim to Punch"
 msgstr "Oříznout podle přepisu"
 
-#: editor_actions.cc:1487
+#: editor_actions.cc:1496
 msgid "Trim to Previous"
 msgstr "Zkrátit na předchozí"
 
-#: editor_actions.cc:1488
+#: editor_actions.cc:1497
 msgid "Trim to Next"
 msgstr "Zkrátit na další"
 
-#: editor_actions.cc:1492
+#: editor_actions.cc:1501
 msgid "Insert Region from Source List"
 msgstr "Vložit oblast ze seznamu zdrojů"
 
-#: editor_actions.cc:1496
+#: editor_actions.cc:1505
 msgid "Convert Region Cue Markers to CD Markers"
 msgstr "Převést značky narážek oblasti na značky na CD"
 
-#: editor_actions.cc:1497
+#: editor_actions.cc:1506
 msgid "Convert Region Cue Markers to Location Markers"
 msgstr "Převést značky narážek oblasti na značky polohy"
 
-#: editor_actions.cc:1498
+#: editor_actions.cc:1507
 msgid "Add Region Cue Marker"
 msgstr "Přidat narážku oblasti"
 
-#: editor_actions.cc:1499
+#: editor_actions.cc:1508
 msgid "Clear Region Cue Markers"
 msgstr "Smazat narážky oblasti"
 
-#: editor_actions.cc:1500
+#: editor_actions.cc:1509
 msgid "Set Sync Position"
 msgstr "Nastavit bod synchronizace"
 
-#: editor_actions.cc:1501
+#: editor_actions.cc:1510
 msgid "Place Transient"
 msgstr "Umístit přechod"
 
-#: editor_actions.cc:1502
+#: editor_actions.cc:1511
 msgid "Trim Start at Edit Point"
 msgstr "Zastřihnout začátek oblasti na pracovním bodu"
 
-#: editor_actions.cc:1503
+#: editor_actions.cc:1512
 msgid "Trim End at Edit Point"
 msgstr "Zastřihnout konec oblasti na pracovním bodu"
 
-#: editor_actions.cc:1504
+#: editor_actions.cc:1513
 msgid "Align Start"
 msgstr "Zarovnat začátek"
 
-#: editor_actions.cc:1505
+#: editor_actions.cc:1514
 msgid "Align Start Relative"
 msgstr "Zarovnat začátek poměrně"
 
-#: editor_actions.cc:1506
+#: editor_actions.cc:1515
 msgid "Align End"
 msgstr "Zarovnat konec"
 
-#: editor_actions.cc:1507
+#: editor_actions.cc:1516
 msgid "Align End Relative"
 msgstr "Zarovnat konec poměrně"
 
-#: editor_actions.cc:1508
+#: editor_actions.cc:1517
 msgid "Align Sync"
 msgstr "Zarovnat bod zapadnutí"
 
-#: editor_actions.cc:1509
+#: editor_actions.cc:1518
 msgid "Align Sync Relative"
 msgstr "Zarovnat bod zapadnutí poměrně"
 
-#: editor_actions.cc:1510 editor_actions.cc:1511
+#: editor_actions.cc:1519 editor_actions.cc:1520
 msgid "Choose Top..."
 msgstr "Vybrat vrchní..."
 
-#: editor_actions.cc:1582
+#: editor_actions.cc:1521 editor_actions.cc:1522
+msgid "Set Fade In Length"
+msgstr "Změnit délku postupného zesílení signálu"
+
+#: editor_actions.cc:1523 editor_actions.cc:1524
+msgid "Set Fade Out Length"
+msgstr "Změnit délku postupného zeslabení signálu"
+
+#: editor_actions.cc:1596
 msgid "automation event lower"
 msgstr "událost automatizace snížit"
 
-#: editor_actions.cc:1609
+#: editor_actions.cc:1623
 msgid "automation event raise"
 msgstr "událost automatizace zvýšit"
 
-#: editor_actions.cc:1634
+#: editor_actions.cc:1648
 msgid "automation points move later"
 msgstr "body automatizace posun na později"
 
-#: editor_actions.cc:1667
+#: editor_actions.cc:1681
 msgid "automation points move earlier"
 msgstr "body automatizace posun na dříve"
 
@@ -7376,15 +7412,19 @@ msgstr ""
 "Zavedení PT dokončeno\n"
 "Podrobnosti naleznete v protokolu"
 
-#: editor_canvas_events.cc:1152
+#: editor_canvas.cc:210
+msgid "Setting up Editor Canvas"
+msgstr ""
+
+#: editor_canvas_events.cc:1055
 msgid "New Arrangement Marker"
 msgstr "Nová značka úpravy"
 
-#: editor_canvas_events.cc:1153
+#: editor_canvas_events.cc:1056
 msgid "Select Arrangement Section"
 msgstr "Vybrat úsek úpravy"
 
-#: editor_canvas_events.cc:1445 editor_drag.cc:1777
+#: editor_canvas_events.cc:1348 editor_drag.cc:1777
 msgid "Could not create new track after region placed in the drop zone"
 msgstr ""
 "Nepodařilo se vytvořit žádnou novou stopu, poté co byla oblast umístěna v "
@@ -7406,7 +7446,7 @@ msgstr "Posunout oblast ve stejném čase"
 msgid "create region"
 msgstr "Vytvořit oblast"
 
-#: editor_drag.cc:2441 midi_view.cc:3787
+#: editor_drag.cc:2441 midi_view.cc:3815
 msgid "resize notes"
 msgstr "Změnit velikost not"
 
@@ -7482,51 +7522,51 @@ msgstr "Změnit délku postupného slábnutí signálu"
 msgid "move marker"
 msgstr "Pohnout značkou"
 
-#: editor_drag.cc:5057 editor_drag.cc:6526
+#: editor_drag.cc:5080 editor_drag.cc:6549
 msgid "automation range move"
 msgstr "Pohybovat rozsahem automatizace"
 
-#: editor_drag.cc:5439 editor_drag.cc:5481
+#: editor_drag.cc:5462 editor_drag.cc:5504
 msgid "An error occurred while executing time stretch operation"
 msgstr "Při provádění operace protáhnutí času se vyskytla chyba"
 
-#: editor_drag.cc:6012
+#: editor_drag.cc:6035
 msgid "programming_error: %1"
 msgstr "chyba programu: %1"
 
-#: editor_drag.cc:6077
+#: editor_drag.cc:6100
 msgid "new skip marker"
 msgstr "Nová značka skoku"
 
-#: editor_drag.cc:6078
+#: editor_drag.cc:6101
 msgid "skip"
 msgstr "Přeskočit"
 
-#: editor_drag.cc:6082 location_ui.cc:67
+#: editor_drag.cc:6105 location_ui.cc:67
 msgid "CD"
 msgstr "CD"
 
-#: editor_drag.cc:6083
+#: editor_drag.cc:6106
 msgid "new CD marker"
 msgstr "Nová značka na CD"
 
-#: editor_drag.cc:6087 editor_markers.cc:885
+#: editor_drag.cc:6110 editor_markers.cc:885
 msgid "new range marker"
 msgstr "Nová značka rozsahu"
 
-#: editor_drag.cc:6088 editor_route_groups.cc:433 mixer_ui.cc:2517
+#: editor_drag.cc:6111 editor_route_groups.cc:433 mixer_ui.cc:2541
 msgid "unnamed"
 msgstr "Bez názvu"
 
-#: editor_drag.cc:6423
+#: editor_drag.cc:6446
 msgid "Automation range drag created for invalid region type"
 msgstr "Tažení rozsahem automatizace vytvořeno pro neplatný typ oblasti"
 
-#: editor_drag.cc:7078
+#: editor_drag.cc:7150
 msgid "brush notes"
 msgstr "malovat noty"
 
-#: editor_drag.cc:7319
+#: editor_drag.cc:7391
 msgid "Edit Cue Marker Name"
 msgstr "Upravit název narážky"
 
@@ -7625,7 +7665,7 @@ msgstr "Sdílení činného stavu?"
 #: editor_markers.cc:1496 editor_markers.cc:1526 editor_markers.cc:1560
 #: editor_markers.cc:1591 editor_markers.cc:1616 editor_markers.cc:1666
 #: editor_markers.cc:1784 editor_markers.cc:1810 editor_markers.cc:1832
-#: editor_mouse.cc:2125
+#: editor_mouse.cc:2073
 msgid "programming error: marker canvas item has no marker object pointer!"
 msgstr ""
 "chyba programu: položka plátna značka nemá žádný ukazatel objektu značky!"
@@ -7672,11 +7712,11 @@ msgstr "Předpona pro odeslané oblasti:"
 msgid "Name for Bounced Region:"
 msgstr "Název pro odeslanou oblast:"
 
-#: editor_export_audio.cc:360 editor_ops.cc:4122
+#: editor_export_audio.cc:360 editor_ops.cc:4136
 msgid "Bounce to Trigger Slot:"
 msgstr "Vložit do spouštěcího místa:"
 
-#: editor_export_audio.cc:379 editor_ops.cc:4144
+#: editor_export_audio.cc:379 editor_ops.cc:4158
 msgid "Bounce to Clip Library"
 msgstr "Vložit do knihovny klipů"
 
@@ -7684,15 +7724,15 @@ msgstr "Vložit do knihovny klipů"
 msgid "Bounced Region will appear in the Source list"
 msgstr "Odeslaná oblast se objeví v seznamu zdrojů"
 
-#: editor_export_audio.cc:425 editor_ops.cc:4190
+#: editor_export_audio.cc:425 editor_ops.cc:4204
 msgid "Are you sure you want to overwrite the contents in slot %1?"
 msgstr "Určitě chcete přepsat obsah pozice %1?"
 
-#: editor_export_audio.cc:426 editor_ops.cc:4191
+#: editor_export_audio.cc:426 editor_ops.cc:4205
 msgid "Overwriting slot"
 msgstr "Přepisuji pozici"
 
-#: editor_export_audio.cc:427 editor_ops.cc:4192
+#: editor_export_audio.cc:427 editor_ops.cc:4206
 msgid "One of your selected tracks has content in this slot."
 msgstr "Jedna z vybraných stop má v tomto prostoru nějaký obsah."
 
@@ -7716,11 +7756,11 @@ msgstr "Nastavit rozsah smyčky"
 msgid "set punch range"
 msgstr "nastavit rozsah přepsání"
 
-#: editor_markers.cc:882 editor_ops.cc:4423 editor_ops.cc:7204
+#: editor_markers.cc:882 editor_ops.cc:4437 editor_ops.cc:7215
 msgid "range"
 msgstr "Rozsah"
 
-#: editor_markers.cc:938 editor_ops.cc:2109 location_ui.cc:875
+#: editor_markers.cc:938 editor_ops.cc:2123 location_ui.cc:875
 msgid "remove marker"
 msgstr "Odstranit značky"
 
@@ -7820,14 +7860,14 @@ msgstr "Připnout tempo k předchozímu"
 msgid "set tempo to ramp to next"
 msgstr "Nastavit tempo na mizející k dalšímu"
 
-#: editor_markers.cc:1869 editor_mouse.cc:2142 io_plugin_window.cc:342
-#: io_plugin_window.cc:384 mixer_ui.cc:4390 mixer_ui.cc:4425
-#: processor_box.cc:3666 processor_box.cc:4253 route_ui.cc:1787
-#: route_ui.cc:2864 template_dialog.cc:255 vca_master_strip.cc:490
+#: editor_markers.cc:1869 editor_mouse.cc:2090 io_plugin_window.cc:342
+#: io_plugin_window.cc:384 mixer_ui.cc:4414 mixer_ui.cc:4449
+#: processor_box.cc:3666 processor_box.cc:4253 route_ui.cc:1783
+#: route_ui.cc:2860 template_dialog.cc:255 vca_master_strip.cc:490
 msgid "Rename"
 msgstr "Přejmenovat"
 
-#: editor_markers.cc:1872 editor_ops.cc:1908
+#: editor_markers.cc:1872 editor_ops.cc:1922
 msgid "New Name:"
 msgstr "Nový název:"
 
@@ -7872,55 +7912,39 @@ msgid "This screen is not tall enough to display the editor mixer"
 msgstr ""
 "Tato obrazovka není dostatečně velká na to, aby zobrazila směšovač editoru"
 
-#: editor_mouse.cc:1375 editor_mouse.cc:1410 editor_tempodisplay.cc:556
+#: editor_mouse.cc:1544 editor_mouse.cc:1579 editor_tempodisplay.cc:556
 msgid ""
 "programming error: tempo marker canvas item has no marker object pointer!"
 msgstr ""
 "chyba programu: položka plátna značka tempa nemá žádný ukazatel objektu "
 "značky!"
 
-#: editor_mouse.cc:1380 editor_tempodisplay.cc:561
+#: editor_mouse.cc:1549 editor_tempodisplay.cc:561
 msgid "programming error: marker for tempo is not a tempo marker!"
 msgstr "chyba programu: značka pro tempo není značkou tempa!"
 
-#: editor_mouse.cc:1392 editor_tempodisplay.cc:537
+#: editor_mouse.cc:1561 editor_tempodisplay.cc:537
 msgid "programming error: bbt marker canvas item has no marker object pointer!"
 msgstr ""
 "chyba programu: položka plátna značky BBT nemá ukazatel na objekt značky!"
 
-#: editor_mouse.cc:1397 editor_tempodisplay.cc:542
+#: editor_mouse.cc:1566 editor_tempodisplay.cc:542
 msgid "programming error: marker for bbt is not a bbt marker!"
 msgstr "chyba programu: značka pro bbt není značka bbt!"
 
-#: editor_mouse.cc:1415 editor_tempodisplay.cc:788
+#: editor_mouse.cc:1584 editor_tempodisplay.cc:788
 msgid "programming error: marker for meter is not a meter marker!"
 msgstr "chyba programu: značka pro druh taktu není značkou druhu taktu!"
 
-#: editor_mouse.cc:1866 editor_mouse.cc:1891 editor_mouse.cc:1904
-msgid ""
-"programming error: control point canvas item has no control point object "
-"pointer!"
-msgstr ""
-"chyba programu: položka plátna místo ovládání nemá žádný ukazatel objektu "
-"místa ovládání!"
-
-#: editor_mouse.cc:2063
-msgid "start point trim"
-msgstr "změnit počáteční bod"
-
 #: editor_mouse.cc:2088
-msgid "end point trim"
-msgstr "změnit koncový bod"
-
-#: editor_mouse.cc:2140
 msgid "Name for region:"
 msgstr "Název oblasti:"
 
-#: editor_mouse.cc:2576
+#: editor_mouse.cc:2524
 msgid "tempo mapping: end-stretch"
 msgstr "přiřazení tempa: protažení na konci"
 
-#: editor_mouse.cc:2582 editor_mouse.cc:2586
+#: editor_mouse.cc:2530 editor_mouse.cc:2534
 msgid "tempo mapping: mid-twist"
 msgstr "přiřazení tempa: protažení uprostřed"
 
@@ -7964,72 +7988,72 @@ msgstr "postrčit vzad"
 msgid "sequence regions"
 msgstr "řadit oblasti za sebou"
 
-#: editor_ops.cc:1911 location_ui.cc:738
+#: editor_ops.cc:1925 location_ui.cc:738
 msgid "New Range"
 msgstr "Nový rozsah"
 
-#: editor_ops.cc:1913
+#: editor_ops.cc:1927
 msgid "New Location Marker"
 msgstr "Nová značka polohy"
 
-#: editor_ops.cc:1961 editor_ops.cc:2009 editor_ops.cc:2148 editor_ops.cc:2203
+#: editor_ops.cc:1975 editor_ops.cc:2023 editor_ops.cc:2162 editor_ops.cc:2217
 #: location_ui.cc:1072
 msgid "add marker"
 msgstr "přidat značku"
 
-#: editor_ops.cc:1989
+#: editor_ops.cc:2003
 msgid "cue %1"
 msgstr "narážka %1"
 
-#: editor_ops.cc:1991
+#: editor_ops.cc:2005
 msgid "section"
 msgstr "oblast"
 
-#: editor_ops.cc:1993
+#: editor_ops.cc:2007
 msgid "cd trk"
 msgstr "cd trk"
 
-#: editor_ops.cc:1995
+#: editor_ops.cc:2009
 msgid "mark"
 msgstr "značka"
 
-#: editor_ops.cc:2035
+#: editor_ops.cc:2049
 msgid "Set session start"
 msgstr "Nastavit začátek sezení"
 
-#: editor_ops.cc:2061
+#: editor_ops.cc:2075
 msgid "Set session end"
 msgstr "Nastavit konec sezení"
 
-#: editor_ops.cc:2148
+#: editor_ops.cc:2162
 msgid "add markers"
 msgstr "přidat značky"
 
-#: editor_ops.cc:2273
+#: editor_ops.cc:2287
 msgid "clear markers"
 msgstr "smazat značky"
 
-#: editor_ops.cc:2292
+#: editor_ops.cc:2306
 msgid "clear xrun markers"
 msgstr "smazat značky xrun"
 
-#: editor_ops.cc:2312
+#: editor_ops.cc:2326
 msgid "clear ranges"
 msgstr "smazat rozsahy"
 
-#: editor_ops.cc:2334
+#: editor_ops.cc:2348
 msgid "clear cues"
 msgstr "smazat narážky"
 
-#: editor_ops.cc:2352 editor_ops.cc:2368
+#: editor_ops.cc:2366 editor_ops.cc:2382
 msgid "clear locations"
 msgstr "smazat polohy"
 
-#: editor_ops.cc:2441
+#: editor_ops.cc:2455
 msgid "insert region"
 msgstr "vložit oblast"
 
-#: editor_ops.cc:2466
+#: editor_ops.cc:2480
 msgid ""
 "Cut/Copy Section does not yet correctly include tempo/meter changes\n"
 "Do you still want to proceed?"
@@ -8037,124 +8061,124 @@ msgstr ""
 "Vyjmutí/kopie sekce zatím správně nezahrnuje změny tempa/rytmu\n"
 "Chcete i tak pokračovat?"
 
-#: editor_ops.cc:2467
+#: editor_ops.cc:2481
 msgid "Cut/Copy Tempo Map"
 msgstr "Vyjmout/kopírovat mapu tempa"
 
-#: editor_ops.cc:2468
+#: editor_ops.cc:2482
 msgid "Do not show this dialog again."
 msgstr "Znovu nezobrazovat."
 
-#: editor_ops.cc:2715
+#: editor_ops.cc:2729
 msgid "raise regions"
 msgstr "pozvednout oblasti"
 
-#: editor_ops.cc:2717
+#: editor_ops.cc:2731
 msgid "raise region"
 msgstr "pozvednout oblast"
 
-#: editor_ops.cc:2723
+#: editor_ops.cc:2737
 msgid "raise regions to top"
 msgstr "pozvednout oblasti úplně nahoru"
 
-#: editor_ops.cc:2725
+#: editor_ops.cc:2739
 msgid "raise region to top"
 msgstr "pozvednout oblast úplně nahoru"
 
-#: editor_ops.cc:2731
+#: editor_ops.cc:2745
 msgid "lower regions"
 msgstr "dát oblasti dolů"
 
-#: editor_ops.cc:2733 editor_ops.cc:2741
+#: editor_ops.cc:2747 editor_ops.cc:2755
 msgid "lower region"
 msgstr "dát oblast dolů"
 
-#: editor_ops.cc:2739
+#: editor_ops.cc:2753
 msgid "lower regions to bottom"
 msgstr "dát oblasti zcela dolů"
 
-#: editor_ops.cc:2817
+#: editor_ops.cc:2831
 msgid "Rename Region"
 msgstr "Přejmenovat oblast"
 
-#: editor_ops.cc:2819 io_plugin_window.cc:340 processor_box.cc:3664
-#: route_ui.cc:1785
+#: editor_ops.cc:2833 io_plugin_window.cc:340 processor_box.cc:3664
+#: route_ui.cc:1781
 msgid "New name:"
 msgstr "Nový název:"
 
-#: editor_ops.cc:2855
+#: editor_ops.cc:2869
 msgid "Rename failed. Check for characters such as '/' or ':'"
 msgstr "Přejmenování se nezdařilo. Zkontrolujte znaky jako '/' nebo ':'"
 
-#: editor_ops.cc:2884
+#: editor_ops.cc:2898
 msgid "group regions"
 msgstr "seskupit oblasti"
 
-#: editor_ops.cc:2902
+#: editor_ops.cc:2916
 msgid "ungroup regions"
 msgstr "zrušit seskupení oblastí"
 
-#: editor_ops.cc:3140
+#: editor_ops.cc:3154
 msgid "separate"
 msgstr "Rozdělit"
 
-#: editor_ops.cc:3277
+#: editor_ops.cc:3291
 msgid "separate region under"
 msgstr "Rozdělit oblast pod"
 
-#: editor_ops.cc:3346
+#: editor_ops.cc:3360
 msgid "Crop Regions to Edit Range"
 msgstr "Oříznout oblasti na rozsah úprav"
 
-#: editor_ops.cc:3511
+#: editor_ops.cc:3525
 msgid "set sync point"
 msgstr "Určit bod zapadnutí"
 
-#: editor_ops.cc:3535
+#: editor_ops.cc:3549
 msgid "remove region sync"
 msgstr "Smazat bod synchronizace"
 
-#: editor_ops.cc:3557
+#: editor_ops.cc:3571
 msgid "move regions to original position"
 msgstr "Posunout oblasti na původní polohu"
 
-#: editor_ops.cc:3559
+#: editor_ops.cc:3573
 msgid "move region to original position"
 msgstr "Posunout oblast na původní polohu"
 
-#: editor_ops.cc:3580
+#: editor_ops.cc:3594
 msgid "align selection"
 msgstr "Zarovnat výběr"
 
-#: editor_ops.cc:3654
+#: editor_ops.cc:3668
 msgid "align selection (relative)"
 msgstr "Zarovnat výběr poměrně"
 
-#: editor_ops.cc:3688
+#: editor_ops.cc:3702
 msgid "align region"
 msgstr "Zarovnat oblast"
 
-#: editor_ops.cc:3739
+#: editor_ops.cc:3753
 msgid "trim front"
 msgstr "Ustřihnout vpředu"
 
-#: editor_ops.cc:3739
+#: editor_ops.cc:3753
 msgid "trim back"
 msgstr "Ustřihnout vzadu"
 
-#: editor_ops.cc:3814
+#: editor_ops.cc:3828
 msgid "trim to loop"
 msgstr "Zkrátit na oblast smyčky"
 
-#: editor_ops.cc:3824
+#: editor_ops.cc:3838
 msgid "trim to punch"
 msgstr "oříznout podle přepisu"
 
-#: editor_ops.cc:3931
+#: editor_ops.cc:3945
 msgid "trim to region"
 msgstr "oříznout na oblast"
 
-#: editor_ops.cc:3988
+#: editor_ops.cc:4002
 msgid ""
 "Transport cannot be stopped, likely due to external timecode sync.\n"
 "Freezing a track requires the transport to be stopped."
@@ -8163,11 +8187,11 @@ msgstr ""
 "kódu.\n"
 "Zmrazení stopy vyžaduje zastavení přehrávání."
 
-#: editor_ops.cc:3991 editor_ops.cc:4005
+#: editor_ops.cc:4005 editor_ops.cc:4019
 msgid "Cannot freeze"
 msgstr "Nelze zmrazit"
 
-#: editor_ops.cc:4002
+#: editor_ops.cc:4016
 msgid ""
 "This track/bus cannot be frozen because the signal adds or loses channels "
 "before reaching the outputs.\n"
@@ -8179,7 +8203,7 @@ msgstr ""
 "Obvykle je to způsobeno přídavnými moduly, jež vytvářejí stereo výstup z "
 "monofonního vstupu nebo naopak."
 
-#: editor_ops.cc:4011
+#: editor_ops.cc:4025
 msgid ""
 "<b>%1</b>\n"
 "\n"
@@ -8196,23 +8220,23 @@ msgstr ""
 "\n"
 "Zmrazení jen zpracuje signál až k prvnímu send/insert/return/sidechain."
 
-#: editor_ops.cc:4015
+#: editor_ops.cc:4029
 msgid "Freeze anyway"
 msgstr "Přesto zmrazit"
 
-#: editor_ops.cc:4016
+#: editor_ops.cc:4030
 msgid "Don't freeze"
 msgstr "Nemrazit"
 
-#: editor_ops.cc:4017
+#: editor_ops.cc:4031
 msgid "Freeze Limits"
 msgstr "Omezení zmražení"
 
-#: editor_ops.cc:4032
+#: editor_ops.cc:4046
 msgid "Cancel Freeze"
 msgstr "Zrušit zmrazení"
 
-#: editor_ops.cc:4067
+#: editor_ops.cc:4081
 msgid ""
 "You can't perform this operation because the processing of the signal will "
 "cause one or more of the tracks to end up with a region with more channels "
@@ -8225,67 +8249,67 @@ msgstr ""
 "\n"
 "Můžete to udělat bez zpracování, což je odlišná operace."
 
-#: editor_ops.cc:4071
+#: editor_ops.cc:4085
 msgid "Cannot bounce"
 msgstr "Nelze odeslat"
 
-#: editor_ops.cc:4103
+#: editor_ops.cc:4117
 msgid "Name for Bounced Range:"
 msgstr "Název pro odeslaný rozsah:"
 
-#: editor_ops.cc:4151
+#: editor_ops.cc:4165
 msgid "Bounced Range will appear in the Source list"
 msgstr "Odeslaný rozsah se zobrazí v seznamu zdrojů"
 
-#: editor_ops.cc:4242
+#: editor_ops.cc:4256
 msgid "bounce range"
 msgstr "odeslat rozsah"
 
-#: editor_ops.cc:4302
+#: editor_ops.cc:4316
 msgid "delete control points"
 msgstr "smazat ovládací body"
 
-#: editor_ops.cc:4343 pianoroll.cc:2455
+#: editor_ops.cc:4357 pianoroll.cc:2483
 msgid "delete"
 msgstr "smazat"
 
-#: editor_ops.cc:4346 pianoroll.cc:2458
+#: editor_ops.cc:4360 pianoroll.cc:2486
 msgid "cut"
 msgstr "vyjmout"
 
-#: editor_ops.cc:4349 pianoroll.cc:2461
+#: editor_ops.cc:4363 pianoroll.cc:2489
 msgid "copy"
 msgstr "kopírovat"
 
-#: editor_ops.cc:4352 pianoroll.cc:2464
+#: editor_ops.cc:4366 pianoroll.cc:2492
 msgid "clear"
 msgstr "vyprázdnit"
 
-#: editor_ops.cc:4396
+#: editor_ops.cc:4410
 msgid "objects"
 msgstr "objekty"
 
-#: editor_ops.cc:4615
+#: editor_ops.cc:4629
 msgid "remove region"
 msgstr "odstranit oblast"
 
-#: editor_ops.cc:4637
+#: editor_ops.cc:4651
 msgid "recover regions"
 msgstr "obnovit oblasti"
 
-#: editor_ops.cc:4700
+#: editor_ops.cc:4714
 msgid "remove regions"
 msgstr "odstranit oblasti"
 
-#: editor_ops.cc:5311
+#: editor_ops.cc:5325
 msgid "duplicate range selection"
 msgstr "zdvojit výběr rozsahu"
 
-#: editor_ops.cc:5393
+#: editor_ops.cc:5407
 msgid "nudge track"
 msgstr "posunout stopu"
 
-#: editor_ops.cc:5420
+#: editor_ops.cc:5434
 msgid ""
 "Do you really want to remove the last capture?\n"
 "(This is destructive, deletes recorded files,\n"
@@ -8295,189 +8319,189 @@ msgstr ""
 "(Jde o destruktivní operaci, smažou se nahrané soubory,\n"
 "a nelze to vrátit)"
 
-#: editor_ops.cc:5423 editor_ops.cc:8020 editor_regions.cc:279
+#: editor_ops.cc:5437 editor_ops.cc:8031 editor_regions.cc:279
 #: editor_snapshots.cc:194 editor_sources.cc:189 vca_master_strip.cc:540
 msgid "No, do nothing."
 msgstr "Ne, nedělat nic."
 
-#: editor_ops.cc:5424
+#: editor_ops.cc:5438
 msgid "Yes, destroy it."
 msgstr "Ano, odstranit."
 
-#: editor_ops.cc:5426
+#: editor_ops.cc:5440
 msgid "Destroy last capture"
 msgstr "Zničit poslední nahrávku"
 
-#: editor_ops.cc:5444
+#: editor_ops.cc:5458
 msgid "Tag:"
 msgstr "Značka:"
 
-#: editor_ops.cc:5459 session_archive_dialog.cc:51 session_archive_dialog.cc:52
-#: session_archive_dialog.cc:224 sfdb_ui.cc:1997 sfdb_ui.cc:2118
+#: editor_ops.cc:5473 session_archive_dialog.cc:51 session_archive_dialog.cc:52
+#: session_archive_dialog.cc:224 sfdb_ui.cc:2000 sfdb_ui.cc:2121
 msgid "Good"
 msgstr "Dobrá"
 
-#: editor_ops.cc:5656
+#: editor_ops.cc:5670
 msgid "normalize"
 msgstr "normalizovat"
 
-#: editor_ops.cc:5768
+#: editor_ops.cc:5782
 msgid "reverse regions"
 msgstr "obrátit oblasti"
 
-#: editor_ops.cc:5805
+#: editor_ops.cc:5819
 msgid "strip silence"
 msgstr "odstranit ticho"
 
-#: editor_ops.cc:5875 editor_ops.cc:5922
+#: editor_ops.cc:5889 editor_ops.cc:5936
 msgid "Could not unlink %1"
 msgstr "Nepodařilo se zrušit odkaz %1"
 
-#: editor_ops.cc:5915
+#: editor_ops.cc:5929
 msgid "Fork Region(s)"
 msgstr "Rozdvojit oblast(i)"
 
-#: editor_ops.cc:6055
+#: editor_ops.cc:6069
 msgid "de-interlace midi"
 msgstr "zrušit prokládání MIDI"
 
-#: editor_ops.cc:6115
+#: editor_ops.cc:6129
 msgid "reset region gain"
 msgstr "resetovat gain oblasti"
 
-#: editor_ops.cc:6174
+#: editor_ops.cc:6188
 msgid "region polarity invert"
 msgstr "převrátit polaritu oblasti"
 
-#: editor_ops.cc:6208
+#: editor_ops.cc:6222
 msgid "region gain envelope active"
 msgstr "křivka síly zvuku v oblasti činná"
 
-#: editor_ops.cc:6233
+#: editor_ops.cc:6247
 msgid "region lock"
 msgstr "zamknout oblast"
 
-#: editor_ops.cc:6257
+#: editor_ops.cc:6271
 msgid "region unlock"
 msgstr "odemknout oblast"
 
-#: editor_ops.cc:6281
+#: editor_ops.cc:6295
 msgid "toggle region lock"
 msgstr "přepnout zámek oblasti"
 
-#: editor_ops.cc:6305
+#: editor_ops.cc:6319
 msgid "Toggle Video Lock"
 msgstr "Přepnout zámek obrazu"
 
-#: editor_ops.cc:6329
+#: editor_ops.cc:6343
 msgid "change region opacity"
 msgstr "změnit neprůhlednost oblasti"
 
-#: editor_ops.cc:6486
+#: editor_ops.cc:6500
 msgid "fade range"
 msgstr "prolínat oblast"
 
-#: editor_ops.cc:6524
+#: editor_ops.cc:6534
 msgid "set fade in length"
 msgstr "nastavit délku fade in"
 
-#: editor_ops.cc:6531
+#: editor_ops.cc:6542
 msgid "set fade out length"
 msgstr "nastavit délku fade out"
 
-#: editor_ops.cc:6596
+#: editor_ops.cc:6607
 msgid "set fade in shape"
 msgstr "nastavit tvar fade in"
 
-#: editor_ops.cc:6631
+#: editor_ops.cc:6642
 msgid "set fade out shape"
 msgstr "nastavit tvar fade-out"
 
-#: editor_ops.cc:6667
+#: editor_ops.cc:6678
 msgid "set fade in active"
 msgstr "nastavit fade in jako aktivní"
 
-#: editor_ops.cc:6701
+#: editor_ops.cc:6712
 msgid "set fade out active"
 msgstr "nastavit fade out jako aktivní"
 
-#: editor_ops.cc:6761
+#: editor_ops.cc:6772
 msgid "toggle fade active"
 msgstr "přepnout prolínání"
 
-#: editor_ops.cc:6928
+#: editor_ops.cc:6939
 msgid "set loop range from selection"
 msgstr "nastavit rozsah smyčky z výběru"
 
-#: editor_ops.cc:6942
+#: editor_ops.cc:6953
 msgid "set loop range from region"
 msgstr "nastavit rozsah smyčky z oblasti"
 
-#: editor_ops.cc:6960
+#: editor_ops.cc:6971
 msgid "set punch range from selection"
 msgstr "nastavit rozsah přepsání z výběru"
 
-#: editor_ops.cc:6984
+#: editor_ops.cc:6995
 msgid "Auto Punch In"
 msgstr "Automatický začátek přepsání"
 
-#: editor_ops.cc:6991 editor_ops.cc:6995
+#: editor_ops.cc:7002 editor_ops.cc:7006
 msgid "Auto Punch In/Out"
 msgstr "Automatický začátek/konec přepsání"
 
-#: editor_ops.cc:7037
+#: editor_ops.cc:7048
 msgid "set session start/end from selection"
 msgstr "Nastavit začátek/konec sezení z výběru"
 
-#: editor_ops.cc:7072
+#: editor_ops.cc:7083
 msgid "set punch start from EP"
 msgstr "nastavit začátek přepsání z pracovního bodu"
 
-#: editor_ops.cc:7096
+#: editor_ops.cc:7107
 msgid "set punch end from EP"
 msgstr "nastavit konec přepsání z pracovního bodu"
 
-#: editor_ops.cc:7127
+#: editor_ops.cc:7138
 msgid "set loop start from EP"
 msgstr "Nastavit začátek smyčky z pracovního bodu"
 
-#: editor_ops.cc:7152
+#: editor_ops.cc:7163
 msgid "set loop end from EP"
 msgstr "Nastavit konec smyčky z pracovního bodu"
 
-#: editor_ops.cc:7163
+#: editor_ops.cc:7174
 msgid "set punch range from region"
 msgstr "Nastavit rozsah přepsání z oblasti"
 
-#: editor_ops.cc:7196
+#: editor_ops.cc:7207
 msgid "region"
 msgstr "oblast"
 
-#: editor_ops.cc:7250
+#: editor_ops.cc:7261
 msgid "Add new marker"
 msgstr "Přidat novou značku"
 
-#: editor_ops.cc:7251
+#: editor_ops.cc:7262
 msgid "Set global tempo"
 msgstr "Nastavit celkové tempo"
 
-#: editor_ops.cc:7254
+#: editor_ops.cc:7265
 msgid "Define one bar"
 msgstr "Vymezit jeden takt"
 
-#: editor_ops.cc:7255
+#: editor_ops.cc:7266
 msgid "Do you want to set the global tempo or add a new tempo marker?"
 msgstr "Chcete stanovit celkové tempo, nebo přidat novou značku tempa?"
 
-#: editor_ops.cc:7281
+#: editor_ops.cc:7292
 msgid "set tempo from %1"
 msgstr "nastavit tempo z %1"
 
-#: editor_ops.cc:7305
+#: editor_ops.cc:7316
 msgid "split regions"
 msgstr "Rozdělit oblasti"
 
-#: editor_ops.cc:7347
+#: editor_ops.cc:7358
 msgid ""
 "You are about to split\n"
 "%1\n"
@@ -8489,11 +8513,11 @@ msgstr ""
 "do %2 kusů.\n"
 "Toto by mohlo trvat velmi dlouho."
 
-#: editor_ops.cc:7354
+#: editor_ops.cc:7365
 msgid "Call for the Ferret!"
 msgstr "Volání po slídilovi!"
 
-#: editor_ops.cc:7355
+#: editor_ops.cc:7366
 msgid ""
 "Press OK to continue with this split operation\n"
 "or ask the Ferret dialog to tune the analysis"
@@ -8501,47 +8525,47 @@ msgstr ""
 "Stiskněte OK kvůli pokračování v této operaci rozdělení\n"
 "nebo se pokuste v okně slídilově vyladit rozbor."
 
-#: editor_ops.cc:7357
+#: editor_ops.cc:7368
 msgid "Press OK to continue with this split operation"
 msgstr "Stiskněte OK kvůli pokračování v této operaci rozdělení"
 
-#: editor_ops.cc:7360
+#: editor_ops.cc:7371
 msgid "Excessive split?"
 msgstr "Nadměrné rozdělení?"
 
-#: editor_ops.cc:7519
+#: editor_ops.cc:7530
 msgid "place transient"
 msgstr "Umístit přechod"
 
-#: editor_ops.cc:7553
+#: editor_ops.cc:7564
 msgid "snap regions to grid"
 msgstr "Přichytávat oblasti do mřížky"
 
-#: editor_ops.cc:7594
+#: editor_ops.cc:7605
 msgid "Close Region Gaps"
 msgstr "Zavřít mezery oblastí"
 
-#: editor_ops.cc:7599
+#: editor_ops.cc:7610
 msgid "Crossfade length"
 msgstr "Délka prolínání"
 
-#: editor_ops.cc:7610
+#: editor_ops.cc:7621
 msgid "Pull-back length"
 msgstr "Délka ustoupení"
 
-#: editor_ops.cc:7623
+#: editor_ops.cc:7634
 msgid "Ok"
 msgstr "OK"
 
-#: editor_ops.cc:7642
+#: editor_ops.cc:7653
 msgid "close region gaps"
 msgstr "Zavřít mezery oblastí"
 
-#: editor_ops.cc:7950
+#: editor_ops.cc:7961
 msgid "That would be bad news ...."
 msgstr "To by byly nepříjemné zprávy..."
 
-#: editor_ops.cc:7954
+#: editor_ops.cc:7965
 msgid ""
 "Removing the master or monitor bus is such a bad idea\n"
 "that %1 is not going to allow it.\n"
@@ -8557,186 +8581,186 @@ msgstr ""
 "upravte svůj soubor ardour.rc, kde nastavte volbu\n"
 "\"allow-special-bus-removal\" na \"yes\""
 
-#: editor_ops.cc:7971
+#: editor_ops.cc:7982
 msgid "track"
 msgid_plural "tracks"
 msgstr[0] "Stopa"
 msgstr[1] "%1 skladby"
 
-#: editor_ops.cc:7972
+#: editor_ops.cc:7983
 msgid "bus"
 msgid_plural "busses"
 msgstr[0] "Sběrnice"
 msgstr[1] "Busse"
 
-#: editor_ops.cc:7973
+#: editor_ops.cc:7984
 msgid "VCA"
 msgid_plural "VCAs"
 msgstr[0] "VCA"
 msgstr[1] "VCAs"
 
-#: editor_ops.cc:7976
+#: editor_ops.cc:7987
 msgid "Remove various strips"
 msgstr "Odstranit různé proužky"
 
-#: editor_ops.cc:7977
+#: editor_ops.cc:7988
 msgid "Do you really want to remove %1 %2, %3 %4 and %5 %6?"
 msgstr "Opravdu chcete odstranit %1 %2, %3 %4 a %5 %6?"
 
-#: editor_ops.cc:7981 editor_ops.cc:7986 editor_ops.cc:7991
+#: editor_ops.cc:7992 editor_ops.cc:7997 editor_ops.cc:8002
 msgid "Remove %1 and %2"
 msgstr "Odstranit %1 a %2"
 
-#: editor_ops.cc:7982 editor_ops.cc:7987 editor_ops.cc:7992
+#: editor_ops.cc:7993 editor_ops.cc:7998 editor_ops.cc:8003
 msgid "Do you really want to remove %1 %2 and %3 %4?"
 msgstr "Opravdu chcete odstranit %1 %2 a %3 %4?"
 
-#: editor_ops.cc:7996 editor_ops.cc:8001 editor_ops.cc:8006
+#: editor_ops.cc:8007 editor_ops.cc:8012 editor_ops.cc:8017
 #: vca_master_strip.cc:535
 msgid "Remove %1"
 msgstr "Odstranit %1"
 
-#: editor_ops.cc:7997 editor_ops.cc:8002 editor_ops.cc:8007
+#: editor_ops.cc:8008 editor_ops.cc:8013 editor_ops.cc:8018
 msgid "Do you really want to remove %1 %2?"
 msgstr "Opravdu chcete odstranit %1 %2?"
 
-#: editor_ops.cc:8015
+#: editor_ops.cc:8026
 msgid "You may also lose the playlists associated with the %1"
 msgstr "Může také dojít ke ztrátě seznamů oblastí spojených s %1."
 
-#: editor_ops.cc:8018
+#: editor_ops.cc:8029
 msgid "This action cannot be undone, and the session file will be overwritten!"
 msgstr "Tento krok nelze vrátit zpět, a soubor se sezením bude přepsán!"
 
-#: editor_ops.cc:8022
+#: editor_ops.cc:8033
 msgid "Yes, remove them."
 msgstr "Ano, odstranit."
 
-#: editor_ops.cc:8024 editor_snapshots.cc:195 vca_master_strip.cc:541
+#: editor_ops.cc:8035 editor_snapshots.cc:195 vca_master_strip.cc:541
 msgid "Yes, remove it."
 msgstr "Ano, odstranit."
 
-#: editor_ops.cc:8076
+#: editor_ops.cc:8087
 msgid "You must first select some tracks to Insert Time."
 msgstr "Pro vložení času musíte vybrat alespoň jednu stopu."
 
-#: editor_ops.cc:8083
+#: editor_ops.cc:8094
 msgid "You cannot insert time in Lock Edit mode."
 msgstr "V režimu zámku úprav nemůžete vložit čas."
 
-#: editor_ops.cc:8122 editor_ops.cc:8155 editor_ops.cc:8177 editor_ops.cc:8216
-#: editor_ops.cc:8226 editor_ops.cc:8233
+#: editor_ops.cc:8133 editor_ops.cc:8166 editor_ops.cc:8188 editor_ops.cc:8227
+#: editor_ops.cc:8237 editor_ops.cc:8244
 msgid "insert time"
 msgstr "vložit čas"
 
-#: editor_ops.cc:8247
+#: editor_ops.cc:8258
 msgid "You must first select some tracks to Remove Time."
 msgstr "Pro odstranění času musíte vybrat alespoň jednu stopu."
 
-#: editor_ops.cc:8254
+#: editor_ops.cc:8265
 msgid "You cannot remove time in Lock Edit mode."
 msgstr "V režimu zámku úprav nemůžete odstranit čas."
 
-#: editor_ops.cc:8289
+#: editor_ops.cc:8300
 msgid "Cannot insert or delete time when in Lock edit."
 msgstr "Nelze vložit nebo smazat čas v režimu zámku úprav."
 
-#: editor_ops.cc:8303 editor_ops.cc:8322 editor_ops.cc:8393 editor_ops.cc:8407
-#: editor_ops.cc:8411
+#: editor_ops.cc:8314 editor_ops.cc:8333 editor_ops.cc:8404 editor_ops.cc:8418
+#: editor_ops.cc:8422
 msgid "remove time"
 msgstr "Odstranit čas"
 
-#: editor_ops.cc:8482
+#: editor_ops.cc:8493
 msgid "There are too many tracks to fit in the current window"
 msgstr ""
 "Bylo vybráno příliš mnoho stop, než aby se všechny vešly do nynějšího okna"
 
-#: editor_ops.cc:8547
+#: editor_ops.cc:8558
 msgid "Sel"
 msgstr "Výb"
 
-#: editor_ops.cc:8586
+#: editor_ops.cc:8597
 #, c-format
 msgid "Saved view %u"
 msgstr "Uložen pohled %u"
 
-#: editor_ops.cc:8611
+#: editor_ops.cc:8622
 msgid "mute regions"
 msgstr "Ztišit oblasti"
 
-#: editor_ops.cc:8613
+#: editor_ops.cc:8624
 msgid "mute region"
 msgstr "Ztišit oblast"
 
-#: editor_ops.cc:8650
+#: editor_ops.cc:8661
 msgid "combine regions"
 msgstr "Spojit oblasti"
 
-#: editor_ops.cc:8688
+#: editor_ops.cc:8699
 msgid "uncombine regions"
 msgstr "Zrušit spojení oblastí"
 
-#: editor_ops.cc:8727
+#: editor_ops.cc:8738
 msgid "%1: Locked"
 msgstr "%1: Uzamknuto"
 
-#: editor_ops.cc:8735
+#: editor_ops.cc:8746
 msgid "Click to unlock"
 msgstr "Klepněte pro odemknutí"
 
-#: editor_ops.cc:8787
+#: editor_ops.cc:8798
 msgid "Moving embedded files into session folder"
 msgstr "Přesunují se vložené soubory do složky se sezením"
 
-#: editor_ops.cc:8906
+#: editor_ops.cc:8917
 msgid "New Cue Marker Name"
 msgstr "Nový název narážky"
 
-#: editor_ops.cc:8955
+#: editor_ops.cc:8966
 msgid "add cue marker"
 msgstr "přidat narážku"
 
-#: editor_ops.cc:8997
+#: editor_ops.cc:9008
 msgid "remove cue marker"
 msgstr "odstranit narážku"
 
-#: editor_ops.cc:9057
+#: editor_ops.cc:9068
 msgid "clear cue markers"
 msgstr "smazat narážky"
 
-#: editor_ops.cc:9109
+#: editor_ops.cc:9120
 msgid "region markers -> global markers"
 msgstr "Značky oblastí → globální značky"
 
-#: editor_ops.cc:9121
+#: editor_ops.cc:9132
 msgid "Smallest gap size to remove (seconds):"
 msgstr "Nejmenší velikost mezery k odstranění (sekundy):"
 
-#: editor_ops.cc:9130
+#: editor_ops.cc:9141
 msgid "Leave a gap of(seconds):"
 msgstr "Ponechat mezeru (sekund)"
 
-#: editor_ops.cc:9138
+#: editor_ops.cc:9149
 msgid "Shift global markers too"
 msgstr "Posunout také globální značky"
 
-#: editor_ops.cc:9161
+#: editor_ops.cc:9172
 msgid "The threshold value you entered is not a number"
 msgstr "Zadaná prahová hodnota není číslo"
 
-#: editor_ops.cc:9167 editor_ops.cc:9183
+#: editor_ops.cc:9178 editor_ops.cc:9194
 msgid "The threshold value must be larger than or equal to zero"
 msgstr "Prahová hodnota musí být větší nebo rovna nule"
 
-#: editor_ops.cc:9177
+#: editor_ops.cc:9188
 msgid "The leave-gap value you entered is not a number"
 msgstr "Zadaná hodnota mezery k ponechání není číslo"
 
-#: editor_ops.cc:9247
+#: editor_ops.cc:9258
 msgid "remove gaps"
 msgstr "Odstranit mezery"
 
-#: editor_ops.cc:9585
+#: editor_ops.cc:9596
 msgid "Find Track/Bus"
 msgstr "Najít stopu/sběrnici"
 
@@ -9363,14 +9387,14 @@ msgid "Systemic Latency [samples]"
 msgstr "Systémová prodleva [vzorky]"
 
 #: engine_dialog.cc:966 gain_meter.cc:860 io_button.cc:443 io_button.cc:728
-#: io_plugin_window.cc:412 mixer_strip.cc:408 mixer_strip.cc:2044
+#: io_plugin_window.cc:412 mixer_strip.cc:408 mixer_strip.cc:2080
 #: plugin_eq_gui.cc:133 rc_option_editor.cc:2976 export_video_dialog.cc:121
 msgid "Input"
 msgstr "Vstup"
 
 #: engine_dialog.cc:970 foldback_strip.cc:475 gain_meter.cc:866
 #: io_button.cc:443 io_button.cc:728 io_plugin_window.cc:412 mixer_strip.cc:412
-#: mixer_strip.cc:2047 monitor_section.cc:304 plugin_eq_gui.cc:134
+#: mixer_strip.cc:2083 monitor_section.cc:304 plugin_eq_gui.cc:134
 #: rc_option_editor.cc:2980 surround_strip.cc:181 vca_master_strip.cc:253
 msgid "Output"
 msgstr "Výstup"
@@ -9657,10 +9681,6 @@ msgstr "Souborový formát"
 msgid "Time Span"
 msgstr "Časové rozpětí"
 
-#: export_dialog.cc:190
-msgid "Channels"
-msgstr "Kanály"
-
 #: export_dialog.cc:212
 msgid ""
 "Export has been aborted due to an error!\n"
@@ -9914,6 +9934,7 @@ msgid "Add silence at end:"
 msgstr "Přidat ticho na konci:"
 
 #: export_format_dialog.cc:73
+#, c-format
 msgid ""
 "Command to run post-export\n"
 "(%f=file path, %d=directory, %b=basename; see tooltip for more,\n"
@@ -10476,11 +10497,11 @@ msgstr "Zakl"
 msgid "Write|W"
 msgstr "Zaps"
 
-#: gain_meter.cc:862 mixer_strip.cc:2045
+#: gain_meter.cc:862 mixer_strip.cc:2081
 msgid "Pre Fader"
 msgstr "Před-prolínač"
 
-#: gain_meter.cc:864 mixer_strip.cc:2046
+#: gain_meter.cc:864 mixer_strip.cc:2082
 msgid "Post Fader"
 msgstr "Po-prolínač"
 
@@ -11767,7 +11788,7 @@ msgstr "Režim vnějšího zařízení "
 msgid "MIDNAM Channel Display"
 msgstr "Zobrazení MIDNAM kanálu"
 
-#: midi_time_axis.cc:325 midi_time_axis.cc:330 midi_view.cc:4501
+#: midi_time_axis.cc:325 midi_time_axis.cc:330 midi_view.cc:4529
 msgid "Channel "
 msgstr "Kanál "
 
@@ -11849,7 +11870,7 @@ msgstr "Skrýt všechny kanály"
 msgid "Show all channels"
 msgstr "Ukázat všechny kanály"
 
-#: midi_time_axis.cc:934 midi_time_axis.cc:1061 pianoroll.cc:379
+#: midi_time_axis.cc:934 midi_time_axis.cc:1061 pianoroll.cc:388
 msgid "Channel %1"
 msgstr "Kanál %1"
 
@@ -11931,135 +11952,135 @@ msgstr "Ovládací prvky %1-%2"
 msgid "New velocity"
 msgstr "Nová velocity (dynamiku MIDI)"
 
-#: midi_view.cc:872
+#: midi_view.cc:853
 msgid "channel edit"
 msgstr "upravit kanál"
 
-#: midi_view.cc:912
+#: midi_view.cc:893
 msgid "velocity edit"
 msgstr "upravit velocitu (dynamiku MIDI)"
 
-#: midi_view.cc:982
+#: midi_view.cc:963
 msgid "add chord"
 msgstr "přidat akord"
 
-#: midi_view.cc:1000
+#: midi_view.cc:981
 msgid "add note"
 msgstr "přidat notu"
 
-#: midi_view.cc:1052
+#: midi_view.cc:1033
 msgid "add interval"
 msgstr "přidat interval"
 
-#: midi_view.cc:1114
+#: midi_view.cc:1095
 msgid "invert chord (up)"
 msgstr "invertovat akord (nahoru)"
 
-#: midi_view.cc:1117
+#: midi_view.cc:1098
 msgid "invert chord (down)"
 msgstr "invertovat akord (dolů)"
 
-#: midi_view.cc:1155
+#: midi_view.cc:1136
 msgid "drop notes"
 msgstr "snížit tón"
 
-#: midi_view.cc:1195
+#: midi_view.cc:1176
 msgid "replace chord"
 msgstr "vyměnit akord"
 
-#: midi_view.cc:2442
+#: midi_view.cc:2429
 msgid "step add"
 msgstr "přidat krok"
 
-#: midi_view.cc:2547 midi_view.cc:2572
+#: midi_view.cc:2534 midi_view.cc:2559
 msgid "alter patch change"
 msgstr "upravit změnu zvuku"
 
-#: midi_view.cc:2621
+#: midi_view.cc:2608
 msgid "add patch change"
 msgstr "přidat změnu zvuku"
 
-#: midi_view.cc:2642
+#: midi_view.cc:2629
 msgid "move patch change"
 msgstr "přesunout změnu zvuku"
 
-#: midi_view.cc:2656
+#: midi_view.cc:2643
 msgid "delete patch change"
 msgstr "Smazat změnu zvuku"
 
-#: midi_view.cc:2702
+#: midi_view.cc:2689
 msgid "delete selection"
 msgstr "Smazat výběr"
 
-#: midi_view.cc:2721
+#: midi_view.cc:2708
 msgid "delete note"
 msgstr "Smazat notu"
 
-#: midi_view.cc:3399
+#: midi_view.cc:3427
 msgid "move notes"
 msgstr "Přesunout noty"
 
-#: midi_view.cc:3450
+#: midi_view.cc:3478
 msgid "copy notes"
 msgstr "Kopírovat noty"
 
-#: midi_view.cc:4060 velocity_display.cc:410
+#: midi_view.cc:4088 velocity_display.cc:410
 msgid "draw velocities"
 msgstr "vykreslit velocity"
 
-#: midi_view.cc:4128
+#: midi_view.cc:4156
 msgid "set velocities"
 msgstr "nastavit síly tónů"
 
-#: midi_view.cc:4170
+#: midi_view.cc:4198
 msgid "change velocities"
 msgstr "Změnit síly tónů"
 
-#: midi_view.cc:4243
+#: midi_view.cc:4271
 msgid "duplicate notes"
 msgstr "zdvojit noty"
 
-#: midi_view.cc:4309
+#: midi_view.cc:4337
 msgid "transpose"
 msgstr "Transponovat"
 
-#: midi_view.cc:4371
+#: midi_view.cc:4399
 msgid "change note lengths"
 msgstr "Změnit délky not"
 
-#: midi_view.cc:4442
+#: midi_view.cc:4470
 msgid "nudge"
 msgstr "Postrčit"
 
-#: midi_view.cc:4499
+#: midi_view.cc:4527
 msgid "Bank "
 msgstr "Banka "
 
-#: midi_view.cc:4696
+#: midi_view.cc:4724
 msgid "paste"
 msgstr "Vložit"
 
-#: midi_view.cc:5397
+#: midi_view.cc:5425
 msgid "delete sysex"
 msgstr "smazat sysex"
 
-#: midi_view.cc:5689
+#: midi_view.cc:5717
 msgid "split notes"
 msgstr "rozdělit noty"
 
-#: midi_view.cc:5715
+#: midi_view.cc:5743
 msgid "split notes more"
 msgstr "rozdělit noty více"
 
-#: midi_view.cc:5745
+#: midi_view.cc:5773
 msgid "split notes less"
 msgstr "rozdělit noty méně"
 
-#: midi_view.cc:5808
+#: midi_view.cc:5836
 msgid "join notes"
 msgstr "spojit noty"
 
-#: midi_view.cc:5864
+#: midi_view.cc:5892
 msgid "Shift MIDI by %1"
 msgstr "Posunout MIDI o %1"
 
@@ -12521,19 +12542,19 @@ msgstr "I"
 msgid "SoloLock|L"
 msgstr "Zám"
 
-#: mixer_strip.cc:2090 meter_strip.cc:895
+#: mixer_strip.cc:2126 meter_strip.cc:895
 msgid "Change all in Group to %1"
 msgstr "Změnit vše ve skupině na %1"
 
-#: mixer_strip.cc:2092 meter_strip.cc:897
+#: mixer_strip.cc:2128 meter_strip.cc:897
 msgid "Change all to %1"
 msgstr "Změnit vše na %1"
 
-#: mixer_strip.cc:2094 meter_strip.cc:899
+#: mixer_strip.cc:2130 meter_strip.cc:899
 msgid "Change same track-type to %1"
 msgstr "Změnit stejný typ stopy na %1"
 
-#: mixer_ui.cc:189 mixer_ui.cc:1826
+#: mixer_ui.cc:189 mixer_ui.cc:1850
 msgid ""
 "Right-click or Double-click here\n"
 "to add Track, Bus, or VCA channels"
@@ -12594,12 +12615,12 @@ msgstr "Kanál FX"
 msgid "Channel Strip / Track Templates"
 msgstr "Pás kanálů / Předlohy stop"
 
-#: mixer_ui.cc:753
+#: mixer_ui.cc:754
 msgid "Error adding GUI elements for new tracks/busses %1"
 msgstr ""
 "Chyba při přidávání prvků uživatelského rozhraní pro nové stopy/sběrnice %1"
 
-#: mixer_ui.cc:1051
+#: mixer_ui.cc:1052
 msgid ""
 "The Plugin's number of audio outputs ports (%1) does not match the Tracks's "
 "number of audio outputs (%2). Cannot fan out."
@@ -12607,107 +12628,107 @@ msgstr ""
 "Počet výstupních přípojek (port) zvuku modulu (%1) neodpovídá počtu "
 "výstupních přípojek zvuku stopy (%2). Nelze rozvětvit."
 
-#: mixer_ui.cc:1069
+#: mixer_ui.cc:1070
 msgid "Instrument has only 1 output bus. Nothing to fan out."
 msgstr "Nástroj má jen 1 výstupní sběrnici. Není nic k rozvětvení se."
 
-#: mixer_ui.cc:2104 plugin_selector.cc:227 route_list_base.cc:407
+#: mixer_ui.cc:2128 plugin_selector.cc:227 route_list_base.cc:407
 msgid "Show All"
 msgstr "Ukázat vše"
 
-#: mixer_ui.cc:2105 route_list_base.cc:408
+#: mixer_ui.cc:2129 route_list_base.cc:408
 msgid "Hide All"
 msgstr "Skrýt vše"
 
-#: mixer_ui.cc:2106 route_list_base.cc:409
+#: mixer_ui.cc:2130 route_list_base.cc:409
 msgid "Show All Audio Tracks"
 msgstr "Ukázat všechny zvukové stopy"
 
-#: mixer_ui.cc:2107 route_list_base.cc:410
+#: mixer_ui.cc:2131 route_list_base.cc:410
 msgid "Hide All Audio Tracks"
 msgstr "Skrýt všechny zvukové stopy"
 
-#: mixer_ui.cc:2108 route_list_base.cc:411
+#: mixer_ui.cc:2132 route_list_base.cc:411
 msgid "Show All Midi Tracks"
 msgstr "Ukázat všechny MIDI stopy"
 
-#: mixer_ui.cc:2109 route_list_base.cc:412
+#: mixer_ui.cc:2133 route_list_base.cc:412
 msgid "Hide All Midi Tracks"
 msgstr "Skrýt všechny MIDI stopy"
 
-#: mixer_ui.cc:2110 route_list_base.cc:413
+#: mixer_ui.cc:2134 route_list_base.cc:413
 msgid "Show All Busses"
 msgstr "Ukázat všechny sběrnice"
 
-#: mixer_ui.cc:2111 route_list_base.cc:414
+#: mixer_ui.cc:2135 route_list_base.cc:414
 msgid "Hide All Busses"
 msgstr "Skrýt všechny sběrnice"
 
-#: mixer_ui.cc:2156
+#: mixer_ui.cc:2180
 msgid "track display list item for renamed strip not found!"
 msgstr "položka seznamu zobrazených stop pro přejmenovaný kanál nenalezena!"
 
-#: mixer_ui.cc:2255
+#: mixer_ui.cc:2279
 msgid "-all-"
 msgstr "-vše-"
 
-#: mixer_ui.cc:2999
+#: mixer_ui.cc:3023
 msgid "Strips"
 msgstr "Proužky kanálů"
 
-#: mixer_ui.cc:3055 mixer_ui.cc:3061
+#: mixer_ui.cc:3079 mixer_ui.cc:3085
 msgid "Window|Mixer"
 msgstr "Směšovač"
 
-#: mixer_ui.cc:3479 mixer_ui.cc:3811
+#: mixer_ui.cc:3503 mixer_ui.cc:3835
 msgid "No Track/Bus is selected."
 msgstr "Nebyla vybrána žádná stopa nebo sběrnice."
 
-#: mixer_ui.cc:3481
+#: mixer_ui.cc:3505
 msgid "Add at the top"
 msgstr "Přidat nahoře"
 
-#: mixer_ui.cc:3483
+#: mixer_ui.cc:3507
 msgid "Add Pre-Fader"
 msgstr "Přidat před-prolínač"
 
-#: mixer_ui.cc:3485
+#: mixer_ui.cc:3509
 msgid "Add Post-Fader"
 msgstr "Přidat po-prolínač"
 
-#: mixer_ui.cc:3487
+#: mixer_ui.cc:3511
 msgid "Add at the end"
 msgstr "Přidat na konci"
 
-#: mixer_ui.cc:3493
+#: mixer_ui.cc:3517
 msgid "Remove from favorites"
 msgstr "Odstranit z oblíbených"
 
-#: mixer_ui.cc:3499
+#: mixer_ui.cc:3523
 msgid "Delete Preset"
 msgstr "Smazat předvolby"
 
-#: mixer_ui.cc:3813
+#: mixer_ui.cc:3837
 msgid "Apply to Selected Strips"
 msgstr "Použít na vybrané pruhy"
 
-#: mixer_ui.cc:3817
+#: mixer_ui.cc:3841
 msgid "Manage Templates"
 msgstr "Spravovat předlohy"
 
-#: mixer_ui.cc:3833 processor_box.cc:2148
+#: mixer_ui.cc:3857 processor_box.cc:2148
 msgid "Could not understand state file \"%1\""
 msgstr "Neporozuměl jsem souboru stavu \"%1\""
 
-#: mixer_ui.cc:3837 processor_box.cc:2152
+#: mixer_ui.cc:3861 processor_box.cc:2152
 msgid "Invalid route template file \"%1\""
 msgstr "Neplatný soubor předlohy směrování \"%1\""
 
-#: mixer_ui.cc:3843
+#: mixer_ui.cc:3867
 msgid "Route template file \"%1\" is unnamed"
 msgstr "Soubor předlohy směrování \"%1\" nemá název"
 
-#: mixer_ui.cc:3852
+#: mixer_ui.cc:3876
 msgid ""
 "Apply Strip Template \"%1\" to selected track(s)?\n"
 "This operation cannot be undone."
@@ -12715,151 +12736,151 @@ msgstr ""
 "Použít předlohu pruhu \"%1\" na vybrané stopy?\n"
 "Tuto operaci nelze vzít zpět."
 
-#: mixer_ui.cc:3938
+#: mixer_ui.cc:3962
 msgid "Toggle Solo on Mixer-Selected Tracks/Busses"
 msgstr "Přepnout sólo u ve směšovači vybraných stop/sběrnic"
 
-#: mixer_ui.cc:3939
+#: mixer_ui.cc:3963
 msgid "Toggle Mute on Mixer-Selected Tracks/Busses"
 msgstr "Přepnout ztlumení u ve směšovači vybraných stop/sběrnic"
 
-#: mixer_ui.cc:3940
+#: mixer_ui.cc:3964
 msgid "Toggle Rec-enable on Mixer-Selected Tracks/Busses"
 msgstr "Přepnout povolení nahrávání u ve směšovači vybraných stop/sběrnic"
 
-#: mixer_ui.cc:3941
+#: mixer_ui.cc:3965
 msgid "Increase Gain on Mixer-Selected Tracks/Busses"
 msgstr "Zvětšit zisk ve směšovači vybraných stop/sběrnic"
 
-#: mixer_ui.cc:3942
+#: mixer_ui.cc:3966
 msgid "Decrease Gain on Mixer-Selected Tracks/Busses"
 msgstr "Zmenšit zisk ve směšovači vybraných stop/sběrnic"
 
-#: mixer_ui.cc:3943
+#: mixer_ui.cc:3967
 msgid "Set Gain to 0dB on Mixer-Selected Tracks/Busses"
 msgstr "Nastavit zisk na 0 dB u ve směšovači vybraných stop/sběrnic"
 
-#: mixer_ui.cc:3946
+#: mixer_ui.cc:3970
 msgid "Copy Selected Processors"
 msgstr "Kopírovat vybrané zpracovatele"
 
-#: mixer_ui.cc:3947
+#: mixer_ui.cc:3971
 msgid "Cut Selected Processors"
 msgstr "Vyjmout vybrané zpracovatele"
 
-#: mixer_ui.cc:3948
+#: mixer_ui.cc:3972
 msgid "Paste Selected Processors"
 msgstr "Vložit vybrané zpracovatele"
 
-#: mixer_ui.cc:3949 mixer_ui.cc:3950
+#: mixer_ui.cc:3973 mixer_ui.cc:3974
 msgid "Delete Selected Processors"
 msgstr "Smazat vybrané zpracovatele"
 
-#: mixer_ui.cc:3951
+#: mixer_ui.cc:3975
 msgid "Select All (visible) Processors"
 msgstr "Vybrat všechny viditelné zpracovatele"
 
-#: mixer_ui.cc:3952
+#: mixer_ui.cc:3976
 msgid "Toggle Selected Processors"
 msgstr "Přepnout vybrané zpracovatele"
 
-#: mixer_ui.cc:3953
+#: mixer_ui.cc:3977
 msgid "Toggle Selected Plugins"
 msgstr "Přepnout vybrané přídavné moduly"
 
-#: mixer_ui.cc:3954
+#: mixer_ui.cc:3978
 msgid "Deselect all strips and processors"
 msgstr "Odznačit všechny proužky a zpracovatele"
 
-#: mixer_ui.cc:3956
+#: mixer_ui.cc:3980
 msgid "Select Next Mixer Strip"
 msgstr "Vybrat další proužek směšovače"
 
-#: mixer_ui.cc:3957
+#: mixer_ui.cc:3981
 msgid "Select Previous Mixer Strip"
 msgstr "Vybrat předchozí proužek směšovače"
 
-#: mixer_ui.cc:3959
+#: mixer_ui.cc:3983
 msgid "Scroll Mixer Window to the left"
 msgstr "Projíždět okno se směšovačem doleva"
 
-#: mixer_ui.cc:3960
+#: mixer_ui.cc:3984
 msgid "Scroll Mixer Window to the right"
 msgstr "Projíždět okno se směšovačem doprava"
 
-#: mixer_ui.cc:3962
+#: mixer_ui.cc:3986
 msgid "Toggle MIDI Input Active for Mixer-Selected Tracks/Busses"
 msgstr "Přepnout vstup MIDI pro ve směšovači vybrané stopy/sběrnice"
 
-#: mixer_ui.cc:3969 mixer_ui.cc:3973
+#: mixer_ui.cc:3993 mixer_ui.cc:3997
 msgid "Mixer: Show Sidebar List"
 msgstr "Směšovač: ukázat seznam v postranním panelu"
 
-#: mixer_ui.cc:3979
+#: mixer_ui.cc:4003
 msgid "Mixer: Show Properties Bottom"
 msgstr "Směšovač: ukázat vlastnosti vespod"
 
-#: mixer_ui.cc:3984
+#: mixer_ui.cc:4008
 msgid "Mixer: Show VCAs"
 msgstr "Směšovač: Ukázat VCA"
 
-#: mixer_ui.cc:3987
+#: mixer_ui.cc:4011
 msgid "Mixer: Show Mixbusses"
 msgstr "Směšovač: Ukázat sběrnice směšovače"
 
-#: mixer_ui.cc:3990
+#: mixer_ui.cc:4014
 msgid "Mixer: Show Monitor Section"
 msgstr "Směšovač: Ukázat sledovací úsek"
 
-#: mixer_ui.cc:3993
+#: mixer_ui.cc:4017
 msgid "Atmos Surround Master"
 msgstr "Atmos Surround Master"
 
-#: mixer_ui.cc:3995
+#: mixer_ui.cc:4019
 msgid "Surround Master"
 msgstr "Surround Master"
 
-#: mixer_ui.cc:3998
+#: mixer_ui.cc:4022
 msgid "Mixer: Show Foldback Strip"
 msgstr "Směšovač: Ukázat proužek zpětného poslechu"
 
-#: mixer_ui.cc:4000
+#: mixer_ui.cc:4024
 msgid "Toggle Disk Monitoring"
 msgstr "Přepnout na sledování pevného disku"
 
-#: mixer_ui.cc:4001
+#: mixer_ui.cc:4025
 msgid "Toggle Input Monitoring"
 msgstr "Přepnout na sledování vstupu"
 
-#: mixer_ui.cc:4005
+#: mixer_ui.cc:4029
 msgid "Store Mixer Scene #%1"
 msgstr "Uložit scénu směšovače #%1"
 
-#: mixer_ui.cc:4010
+#: mixer_ui.cc:4034
 msgid "Recall Mixer Scene #%1"
 msgstr "Načíst scénu směšovače #%1"
 
-#: mixer_ui.cc:4015
+#: mixer_ui.cc:4039
 msgid "Clear Mixer Scene #%1"
 msgstr "Vymazat scénu směšovače #%1"
 
-#: mixer_ui.cc:4239
+#: mixer_ui.cc:4263
 msgid "Scene is already set. Overwrite it?"
 msgstr "Scéna je již nastavená. Přepsat ji?"
 
-#: mixer_ui.cc:4255
+#: mixer_ui.cc:4279
 msgid "Store Scene"
 msgstr "Uložit scénu"
 
-#: mixer_ui.cc:4256 mixer_ui.cc:4388
+#: mixer_ui.cc:4280 mixer_ui.cc:4412
 msgid "Scene name:"
 msgstr "Název scény:"
 
-#: mixer_ui.cc:4258 mixer_ui.cc:4420
+#: mixer_ui.cc:4282 mixer_ui.cc:4444
 msgid "Store"
 msgstr "Uložit"
 
-#: mixer_ui.cc:4297
+#: mixer_ui.cc:4321
 msgid ""
 "Recall mixer scene \"%1\"?\n"
 "This will overwrite your mixer settings!\n"
@@ -12869,7 +12890,7 @@ msgstr ""
 "Toto přepíše vaše nastavení směšovače!\n"
 "Tuto operaci nelze vzít zpět."
 
-#: mixer_ui.cc:4343
+#: mixer_ui.cc:4367
 msgid ""
 "Clear mixer scene \"%1\"?\n"
 "This operation cannot be undone."
@@ -12877,15 +12898,15 @@ msgstr ""
 "Vymazat scénu směšovače \"%1\"?\n"
 " Tuto operaci nelze vzít zpět."
 
-#: mixer_ui.cc:4387
+#: mixer_ui.cc:4411
 msgid "Rename Scene"
 msgstr "Přejmenovat scénu"
 
-#: mixer_ui.cc:4426
+#: mixer_ui.cc:4450
 msgid "Restore for selected tracks"
 msgstr "Načíst pro vybrané stopy"
 
-#: mixer_ui.cc:4509
+#: mixer_ui.cc:4533
 msgid ""
 "Click to recall this mixer scene\n"
 "%1 for Momentary Restore\n"
@@ -12895,11 +12916,11 @@ msgstr ""
 "%1 aktivuje chvilkové načtení\n"
 "Pravý klik pro kontextovou nabídku"
 
-#: mixer_ui.cc:4530
+#: mixer_ui.cc:4554
 msgid "(Right-Click to Store)"
 msgstr "(Pravý klik pro uložení)"
 
-#: mixer_ui.cc:4673
+#: mixer_ui.cc:4697
 msgid ""
 "Disabling surround master will delete all existing surround panner state.\n"
 "This cannot be undone. Proceed anyway?"
@@ -13134,8 +13155,8 @@ msgstr "Sledování"
 #: monitor_section.cc:779
 msgid "Some per channel monitor buttons will not work due to missing actions"
 msgstr ""
-"Některá tlačítka pro monitoring kanálů nebudou fungovat z důvodu chybějících"
-" akcí"
+"Některá tlačítka pro monitoring kanálů nebudou fungovat z důvodu chybějících "
+"akcí"
 
 #: monitor_section.cc:942
 msgid "Use Monitor Section"
@@ -13650,19 +13671,19 @@ msgstr "Začáteční nota:"
 msgid "End Note:"
 msgstr "Koncová nota:"
 
-#: patch_change_widget.cc:817 patch_change_widget.cc:836
+#: patch_change_widget.cc:831 patch_change_widget.cc:850
 msgid "Trigger Patch Select"
 msgstr "Vyvolat výběr zvuku"
 
-#: patch_change_widget.cc:821
+#: patch_change_widget.cc:835
 msgid "Chn %1"
 msgstr "Kanál %1"
 
-#: patch_change_widget.cc:851
+#: patch_change_widget.cc:865
 msgid "Select Patch for \"%1\" - \"%2\""
 msgstr "Vybrat zvuk pro \"%1\" - \"%2\""
 
-#: patch_change_widget.cc:896 patch_change_widget.cc:909
+#: patch_change_widget.cc:910 patch_change_widget.cc:923
 msgid "Select Patch for \"%1\""
 msgstr "Vybrat zvuk pro \"%1\""
 
@@ -13682,11 +13703,11 @@ msgstr "A"
 msgid "<"
 msgstr "<"
 
-#: pianoroll.cc:122 pianoroll.cc:265
+#: pianoroll.cc:122 pianoroll.cc:274
 msgid "All Regions"
 msgstr "Všechny oblasti"
 
-#: pianoroll.cc:123 pianoroll.cc:268
+#: pianoroll.cc:123 pianoroll.cc:277
 msgid "Active Region"
 msgstr "Aktivní oblast"
 
@@ -13702,315 +13723,315 @@ msgstr "Barevné schéma pro události MIDI"
 msgid "Expand/Collapse MIDI tools"
 msgstr "Rozbalit/sbalit nástroje MIDI"
 
-#: pianoroll.cc:440
+#: pianoroll.cc:449
 msgid "Select visible MIDI automation"
 msgstr "Vybrat viditelnou MIDI automatizaci"
 
-#: pianoroll.cc:1889
+#: pianoroll.cc:1910
 msgid "Attempt to set pianoroll region that was not added!"
 msgstr "Pokus o použití oblasti pianoroll, která nebyla přidána!"
 
-#: pianoroll.cc:2433
+#: pianoroll.cc:2461
 msgid "paste %1"
 msgstr "vložit %1"
 
-#: pianoroll.cc:3183
+#: pianoroll.cc:3309
 msgid "Modulation"
 msgstr "Modulace"
 
-#: pianoroll.cc:3184
+#: pianoroll.cc:3310
 msgid "Breath Ctrlr"
 msgstr "Dechový ovl."
 
-#: pianoroll.cc:3185
+#: pianoroll.cc:3311
 msgid "Foot Ctrlr"
 msgstr "Nožní ovl."
 
-#: pianoroll.cc:3186
+#: pianoroll.cc:3312
 msgid "Portamento Time"
 msgstr "Portamento čas"
 
-#: pianoroll.cc:3187
+#: pianoroll.cc:3313
 msgid "Data Entry MSB"
 msgstr "MSB pro vkládání dat"
 
-#: pianoroll.cc:3188
+#: pianoroll.cc:3314
 msgid "Channel Volume"
 msgstr "Hlasitost kanálu"
 
-#: pianoroll.cc:3189
+#: pianoroll.cc:3315
 msgid "Expression Ctrlr"
 msgstr "Výrazový ovladač"
 
-#: pianoroll.cc:3190
+#: pianoroll.cc:3316
 msgid "Effect Control 1"
 msgstr "Ovládání efektů 1"
 
-#: pianoroll.cc:3191
+#: pianoroll.cc:3317
 msgid "Effect Control 2"
 msgstr "Ovládání efektů 2"
 
-#: pianoroll.cc:3192
+#: pianoroll.cc:3318
 msgid "Gen. Ctrlr 1"
 msgstr "Obecný ovl. 1"
 
-#: pianoroll.cc:3193
+#: pianoroll.cc:3319
 msgid "Gen. Ctrlr 2"
 msgstr "Obecný ovl. 2"
 
-#: pianoroll.cc:3194
+#: pianoroll.cc:3320
 msgid "Gen. Ctrlr 3"
 msgstr "Obecný ovl. 3"
 
-#: pianoroll.cc:3195
+#: pianoroll.cc:3321
 msgid "Gen. Ctrlr 4"
 msgstr "Obecný ovl. 4"
 
-#: pianoroll.cc:3196
+#: pianoroll.cc:3322
 msgid "CC 0 LSB"
 msgstr "CC 0 LSB"
 
-#: pianoroll.cc:3197
+#: pianoroll.cc:3323
 msgid "Modulation LSB"
 msgstr "Modulační LSB"
 
-#: pianoroll.cc:3198
+#: pianoroll.cc:3324
 msgid "Breath LSB"
 msgstr "Dechový LSB"
 
-#: pianoroll.cc:3199
+#: pianoroll.cc:3325
 msgid "CC 3 LSB"
 msgstr "CC 3 LSB"
 
-#: pianoroll.cc:3200
+#: pianoroll.cc:3326
 msgid "Foot LSB"
 msgstr "Nožní LSB"
 
-#: pianoroll.cc:3201
+#: pianoroll.cc:3327
 msgid "Portamento LSB"
 msgstr "Portamento LSB"
 
-#: pianoroll.cc:3202
+#: pianoroll.cc:3328
 msgid "Data LSB"
 msgstr "Datový LSB"
 
-#: pianoroll.cc:3203
+#: pianoroll.cc:3329
 msgid "Chn. Vol LSB"
 msgstr "Hlasitost kanálu LSB"
 
-#: pianoroll.cc:3204
+#: pianoroll.cc:3330
 msgid "Balance LSB"
 msgstr "Vyvážení LSB"
 
-#: pianoroll.cc:3205
+#: pianoroll.cc:3331
 msgid "CC 9 LSB"
 msgstr "CC 9 LSB"
 
-#: pianoroll.cc:3206
+#: pianoroll.cc:3332
 msgid "CC 10 LSB"
 msgstr "CC 10 LSB"
 
-#: pianoroll.cc:3207
+#: pianoroll.cc:3333
 msgid "CC 11 LSB"
 msgstr "CC 11 LSB"
 
-#: pianoroll.cc:3208
+#: pianoroll.cc:3334
 msgid "CC 12 LSB"
 msgstr "CC 12 LSB"
 
-#: pianoroll.cc:3209
+#: pianoroll.cc:3335
 msgid "CC 13 LSB"
 msgstr "CC 13 LSB"
 
-#: pianoroll.cc:3210
+#: pianoroll.cc:3336
 msgid "CC 14 LSB"
 msgstr "CC 14 LSB"
 
-#: pianoroll.cc:3211
+#: pianoroll.cc:3337
 msgid "CC 15 LSB"
 msgstr "CC 15 LSB"
 
-#: pianoroll.cc:3212
+#: pianoroll.cc:3338
 msgid "CC 16 LSB"
 msgstr "CC 16 LSB"
 
-#: pianoroll.cc:3213
+#: pianoroll.cc:3339
 msgid "CC 17 LSB"
 msgstr "CC 17 LSB"
 
-#: pianoroll.cc:3214
+#: pianoroll.cc:3340
 msgid "CC 18 LSB"
 msgstr "CC 18 LSB"
 
-#: pianoroll.cc:3215
+#: pianoroll.cc:3341
 msgid "CC 19 LSB"
 msgstr "CC 19 LSB"
 
-#: pianoroll.cc:3216
+#: pianoroll.cc:3342
 msgid "CC 20 LSB"
 msgstr "CC 20 LSB"
 
-#: pianoroll.cc:3217
+#: pianoroll.cc:3343
 msgid "CC 21 LSB"
 msgstr "CC 21 LSB"
 
-#: pianoroll.cc:3218
+#: pianoroll.cc:3344
 msgid "CC 22 LSB"
 msgstr "CC 22 LSB"
 
-#: pianoroll.cc:3219
+#: pianoroll.cc:3345
 msgid "CC 23 LSB"
 msgstr "CC 23 LSB"
 
-#: pianoroll.cc:3220
+#: pianoroll.cc:3346
 msgid "CC 24 LSB"
 msgstr "CC 24 LSB"
 
-#: pianoroll.cc:3221
+#: pianoroll.cc:3347
 msgid "CC 25 LSB"
 msgstr "CC 25 LSB"
 
-#: pianoroll.cc:3222
+#: pianoroll.cc:3348
 msgid "CC 26 LSB"
 msgstr "CC 26 LSB"
 
-#: pianoroll.cc:3223
+#: pianoroll.cc:3349
 msgid "CC 27 LSB"
 msgstr "CC 27 LSB"
 
-#: pianoroll.cc:3224
+#: pianoroll.cc:3350
 msgid "CC 28 LSB"
 msgstr "CC 28 LSB"
 
-#: pianoroll.cc:3225
+#: pianoroll.cc:3351
 msgid "CC 29 LSB"
 msgstr "CC 29 LSB"
 
-#: pianoroll.cc:3226
+#: pianoroll.cc:3352
 msgid "CC 30 LSB"
 msgstr "CC 30 LSB"
 
-#: pianoroll.cc:3227
+#: pianoroll.cc:3353
 msgid "CC 31 LSB"
 msgstr "CC 31 LSB"
 
-#: pianoroll.cc:3228
+#: pianoroll.cc:3354
 msgid "Sustain on/off"
 msgstr "Sustain zap/vyp"
 
-#: pianoroll.cc:3229
+#: pianoroll.cc:3355
 msgid "Portamento on/off"
 msgstr "Portamento zap/vyp"
 
-#: pianoroll.cc:3230
+#: pianoroll.cc:3356
 msgid "Sostenuto on/off"
 msgstr "Sostenuto zap/vyp"
 
-#: pianoroll.cc:3231
+#: pianoroll.cc:3357
 msgid "Soft Pedal on/off"
 msgstr "Soft Pedal zap/vyp"
 
-#: pianoroll.cc:3232
+#: pianoroll.cc:3358
 msgid "Legato Footswitch"
 msgstr "Nožní ovladač pro legato"
 
-#: pianoroll.cc:3233
+#: pianoroll.cc:3359
 msgid "Hold 2 ≤63 off, ≥64 on"
 msgstr "Hold 2 ≤63 off, ≥64 on"
 
-#: pianoroll.cc:3234
+#: pianoroll.cc:3360
 msgid "Sound Ctrlr 1"
 msgstr "Zvukový ovl. 1"
 
-#: pianoroll.cc:3235
+#: pianoroll.cc:3361
 msgid "Sound Ctrlr 2"
 msgstr "Zvukový ovl. 2"
 
-#: pianoroll.cc:3236
+#: pianoroll.cc:3362
 msgid "Sound Ctrlr 3"
 msgstr "Zvukový ovl. 3"
 
-#: pianoroll.cc:3237
+#: pianoroll.cc:3363
 msgid "Sound Ctrlr 4"
 msgstr "Zvukový ovl. 4"
 
-#: pianoroll.cc:3238
+#: pianoroll.cc:3364
 msgid "Sound Ctrlr 5"
 msgstr "Zvukový ovl. 5"
 
-#: pianoroll.cc:3239
+#: pianoroll.cc:3365
 msgid "Sound Ctrlr 6"
 msgstr "Zvukový ovl. 6"
 
-#: pianoroll.cc:3240
+#: pianoroll.cc:3366
 msgid "Sound Ctrlr 7"
 msgstr "Zvukový ovl. 7"
 
-#: pianoroll.cc:3241
+#: pianoroll.cc:3367
 msgid "Sound Ctrlr 8"
 msgstr "Zvukový ovl. 8"
 
-#: pianoroll.cc:3242
+#: pianoroll.cc:3368
 msgid "Sound Ctrlr 9"
 msgstr "Zvukový ovl. 9"
 
-#: pianoroll.cc:3243
+#: pianoroll.cc:3369
 msgid "Sound Ctrlr 10"
 msgstr "Zvukový ovl. 10"
 
-#: pianoroll.cc:3244
+#: pianoroll.cc:3370
 msgid "Gen. Ctrlr 5 LSB"
 msgstr "Obecný ovl. 5 LSB"
 
-#: pianoroll.cc:3245
+#: pianoroll.cc:3371
 msgid "Gen. Ctrlr 6 LSB"
 msgstr "Obecný ovl. 6 LSB"
 
-#: pianoroll.cc:3246
+#: pianoroll.cc:3372
 msgid "Gen. Ctrlr 7 LSB"
 msgstr "Obecný ovl. 7 LSB"
 
-#: pianoroll.cc:3247
+#: pianoroll.cc:3373
 msgid "Gen. Ctrlr 8 LSB"
 msgstr "Obecný ovl. 8 LSB"
 
-#: pianoroll.cc:3248
+#: pianoroll.cc:3374
 msgid "Portamento (Fine)"
 msgstr "Portamento (Jemně)"
 
-#: pianoroll.cc:3249
+#: pianoroll.cc:3375
 msgid "Hi-Res Velo. Prefix"
 msgstr "Dyn. s vys. rozl. Předpona"
 
-#: pianoroll.cc:3250
+#: pianoroll.cc:3376
 msgid "Effects 1 Depth"
 msgstr "Efekty 1 Hloubka"
 
-#: pianoroll.cc:3251
+#: pianoroll.cc:3377
 msgid "Data Increment"
 msgstr "Data Zvýšení"
 
-#: pianoroll.cc:3252
+#: pianoroll.cc:3378
 msgid "Data Decrement"
 msgstr "Data Snížení"
 
-#: pianoroll.cc:3253
+#: pianoroll.cc:3379
 msgid "NRPN LSB"
 msgstr "NRPN LSB"
 
-#: pianoroll.cc:3254
+#: pianoroll.cc:3380
 msgid "NPRN MSB"
 msgstr "NPRN MSB"
 
-#: pianoroll.cc:3255
+#: pianoroll.cc:3381
 msgid "RPN LSB"
 msgstr "RPN LSB"
 
-#: pianoroll.cc:3256
+#: pianoroll.cc:3382
 msgid "RPN MSB"
 msgstr "RPN MSB"
 
-#: pianoroll_midi_view.cc:456
+#: pianoroll_midi_view.cc:524
 msgid "Clear automation"
 msgstr "Vyčistit automatizaci"
 
@@ -14078,7 +14099,7 @@ msgstr "Nepřidělené"
 msgid "Imported"
 msgstr "Zavedeno"
 
-#: playlist_selector.cc:434 route_ui.cc:2790
+#: playlist_selector.cc:434 route_ui.cc:2786
 msgid "Switch Playlist for track %1"
 msgstr "Změnit playlist pro stopu %1"
 
@@ -14956,7 +14977,7 @@ msgstr "I/O Post"
 msgid "No Plugins"
 msgstr "Žádné přídavné moduly"
 
-#: plugin_window_proxy.cc:185 processor_box.cc:4664
+#: plugin_window_proxy.cc:186 processor_box.cc:4664
 msgid "%1: %2 (by %3) [%4]"
 msgstr "%1: %2 (po %3) [%4]"
 
@@ -15016,7 +15037,7 @@ msgstr "Send/Výstup"
 msgid "Return/Input"
 msgstr "Návrat/Vstup"
 
-#: port_insert_ui.cc:113 route_ui.cc:2220 send_ui.cc:71
+#: port_insert_ui.cc:113 route_ui.cc:2216 send_ui.cc:71
 msgid "Click to invert polarity of all send channels"
 msgstr "Kliknutím převrátíte polaritu všech kanálů pro send"
 
@@ -17052,9 +17073,8 @@ msgid ""
 "MIDI output ports should send panic message at end of a timeline (transport) "
 "loop"
 msgstr ""
-"MIDI výstupní porty mají vyslat zprávu panic na konci smyčky časové"
-" (transportní) "
-"osy"
+"MIDI výstupní porty mají vyslat zprávu panic na konci smyčky časové "
+"(transportní) osy"
 
 #: rc_option_editor.cc:3777
 msgid "Sound MIDI notes as they are selected in the editor"
@@ -19091,7 +19111,7 @@ msgstr "Prahová hodnota pro polohu střihu"
 msgid "Operation"
 msgstr "Operace"
 
-#: rhythm_ferret.cc:312 sfdb_ui.cc:2180 timectl_gui.cc:217
+#: rhythm_ferret.cc:312 sfdb_ui.cc:2183 timectl_gui.cc:217
 msgid "programming error: %1 (%2)"
 msgstr "chyba programu: %1 (%2)"
 
@@ -19187,7 +19207,7 @@ msgstr "Sólo izolované"
 msgid "SoloLock|SS"
 msgstr "ZS"
 
-#: route_list_base.cc:218 route_ui.cc:1501
+#: route_list_base.cc:218 route_ui.cc:1497
 msgid "Solo Safe (Locked)"
 msgstr "Zajištěné sólo (zamknuto)"
 
@@ -19325,7 +19345,7 @@ msgstr "Zarovnat s časem nahrávky"
 msgid "Alignment"
 msgstr "Zarovnání"
 
-#: route_time_axis.cc:825 route_time_axis.cc:1508 route_ui.cc:2555
+#: route_time_axis.cc:825 route_time_axis.cc:1508 route_ui.cc:2551
 #: track_record_axis.cc:175
 msgid "Playlist"
 msgstr "Seznam skladeb"
@@ -19358,7 +19378,7 @@ msgstr "Časová doména"
 msgid "The name \"%1\" is reserved for %2"
 msgstr "Název \"%1\" je vyhrazen pro %2"
 
-#: route_time_axis.cc:1498 route_ui.cc:2548
+#: route_time_axis.cc:1498 route_ui.cc:2544
 msgid "Take: %1.%2"
 msgstr "Verze: %1.%2"
 
@@ -19418,83 +19438,83 @@ msgstr "Sledovat vstup"
 msgid "Monitor playback"
 msgstr "Sledovat přehrávání"
 
-#: route_ui.cc:971
+#: route_ui.cc:974
 msgid "Rec-Safe"
 msgstr "Zajištěné nahrávání"
 
-#: route_ui.cc:976
+#: route_ui.cc:979
 msgid "Step Entry"
 msgstr "Zápis kroku"
 
-#: route_ui.cc:1075
+#: route_ui.cc:1071
 msgid "Assign all tracks (prefader)"
 msgstr "Přiřadit všechny stopy (před-prolínač)"
 
-#: route_ui.cc:1079
+#: route_ui.cc:1075
 msgid "Assign all tracks and busses (prefader)"
 msgstr "Přiřadit všechny stopy a sběrnice (před-prolínač)"
 
-#: route_ui.cc:1083
+#: route_ui.cc:1079
 msgid "Assign all tracks (postfader)"
 msgstr "Přiřadit všechny stopy (po-prolínač)"
 
-#: route_ui.cc:1087
+#: route_ui.cc:1083
 msgid "Assign all tracks and busses (postfader)"
 msgstr "Přiřadit všechny stopy a sběrnice (po-prolínač)"
 
-#: route_ui.cc:1092
+#: route_ui.cc:1088
 msgid "Assign selected tracks (prefader)"
 msgstr "Přiřadit vybrané stopy (před-prolínač)"
 
-#: route_ui.cc:1097
+#: route_ui.cc:1093
 msgid "Assign selected tracks and busses (prefader)"
 msgstr "Přiřadit vybrané stopy a sběrnice (před-prolínač)"
 
-#: route_ui.cc:1101
+#: route_ui.cc:1097
 msgid "Assign selected tracks (postfader)"
 msgstr "Přiřadit vybrané stopy (po-prolínač)"
 
-#: route_ui.cc:1106
+#: route_ui.cc:1102
 msgid "Assign selected tracks and busses (postfader)"
 msgstr "Přiřadit vybrané stopy a sběrnice (po-prolínač)"
 
-#: route_ui.cc:1112
+#: route_ui.cc:1108
 msgid "Copy track/bus gains to sends"
 msgstr "Kopírovat zisk stop/sběrnic na send"
 
-#: route_ui.cc:1113
+#: route_ui.cc:1109
 msgid "Set sends gain to -inf"
 msgstr "Nastavit zisk sendů na -inf."
 
-#: route_ui.cc:1114
+#: route_ui.cc:1110
 msgid "Set sends gain to 0dB"
 msgstr "Nastavit zisk sendů na 0dB"
 
-#: route_ui.cc:1494
+#: route_ui.cc:1490
 msgid "Solo Isolate"
 msgstr "Sólo izolovat"
 
-#: route_ui.cc:1519
+#: route_ui.cc:1515
 msgid "Pre Fader Sends"
 msgstr "Sendy před-prolínače"
 
-#: route_ui.cc:1525
+#: route_ui.cc:1521
 msgid "Post Fader Sends"
 msgstr "Sendy po-prolínače"
 
-#: route_ui.cc:1531
+#: route_ui.cc:1527
 msgid "Control Outs"
 msgstr "Ovládací výstupy"
 
-#: route_ui.cc:1537
+#: route_ui.cc:1533
 msgid "Main Outs"
 msgstr "Hlavní výstupy"
 
-#: route_ui.cc:1543
+#: route_ui.cc:1539
 msgid "Surround Send"
 msgstr "Surround send"
 
-#: route_ui.cc:1766
+#: route_ui.cc:1762
 msgid ""
 "The name includes special characters (<>:\"/\\|?*) which is discouraged in "
 "track and bus names, due to filename restrictions on some systems.\n"
@@ -19502,19 +19522,19 @@ msgstr ""
 "Název obsahuje speciální znaky (<>:\"/\\|?*) což se v názvech stop a sběrnic "
 "nedoporučuje, kvůli omezením názvů souborů na některých systémech.\n"
 
-#: route_ui.cc:1781
+#: route_ui.cc:1777
 msgid "Rename Track"
 msgstr "Přejmenovat stopu"
 
-#: route_ui.cc:1783
+#: route_ui.cc:1779
 msgid "Rename Bus"
 msgstr "Přejmenovat sběrnici"
 
-#: route_ui.cc:2004
+#: route_ui.cc:2000
 msgid "Cannot create template directory %1"
 msgstr "Nelze vytvořit adresář pro předlohu %1"
 
-#: route_ui.cc:2052
+#: route_ui.cc:2048
 msgid ""
 "Listen to this track\n"
 "%2+Click to Override Group\n"
@@ -19528,7 +19548,7 @@ msgstr ""
 "%4 pro chvilkový poslech\n"
 "Pravý-klik zobrazí kontextovou nabídku"
 
-#: route_ui.cc:2059
+#: route_ui.cc:2055
 msgid ""
 "Solo this track\n"
 "%2+Click to Override Group\n"
@@ -19544,7 +19564,7 @@ msgstr ""
 "%4 pro chvilkové sólo\n"
 "Pravý-klik zobrazí kontextovou nabídku"
 
-#: route_ui.cc:2222
+#: route_ui.cc:2218
 msgid ""
 "Left-click to invert polarity of channel %1 of this track. Right-click to "
 "show menu."
@@ -19552,63 +19572,63 @@ msgstr ""
 "Klepnutí levým tlačítkem myši pro obrácení (otočení) polarity kanálu %1 této "
 "stopy. Klepnutí pravým tlačítkem myši zobrazí nabídku."
 
-#: route_ui.cc:2224
+#: route_ui.cc:2220
 msgid "Click to show a menu of channels to invert polarity"
 msgstr "Klepněte pro zobrazení nabídky kanálů pro převrácení polarity"
 
-#: route_ui.cc:2621
+#: route_ui.cc:2617
 msgid "New Playlist for track %1"
 msgstr "Nový playlist pro stopu %1"
 
-#: route_ui.cc:2686
+#: route_ui.cc:2682
 msgid "Select ..."
 msgstr "Vybrat ..."
 
-#: route_ui.cc:2693
+#: route_ui.cc:2689
 msgid "New Playlist..."
 msgstr "Nový playlist..."
 
-#: route_ui.cc:2694
+#: route_ui.cc:2690
 msgid "Copy Playlist..."
 msgstr "Kopírovat playlist..."
 
-#: route_ui.cc:2696
+#: route_ui.cc:2692
 msgid "New Playlist (for group)"
 msgstr "Nový playlist (pro skupinu)"
 
-#: route_ui.cc:2697
+#: route_ui.cc:2693
 msgid "Copy Playlist (for group)"
 msgstr "Kopírovat playlist (pro skupinu)"
 
-#: route_ui.cc:2702
+#: route_ui.cc:2698
 msgid "Clear Current"
 msgstr "Smazat vybrané"
 
-#: route_ui.cc:2704
+#: route_ui.cc:2700
 msgid "Clear Current (for group)"
 msgstr "Vymazat aktuální (pro skupinu)"
 
-#: route_ui.cc:2710
+#: route_ui.cc:2706
 msgid "Copy from ..."
 msgstr "Kopírovat z ..."
 
-#: route_ui.cc:2711
+#: route_ui.cc:2707
 msgid "Share with ..."
 msgstr "Sdílet s ..."
 
-#: route_ui.cc:2712
+#: route_ui.cc:2708
 msgid "Steal from ..."
 msgstr "Ukrást z ..."
 
-#: route_ui.cc:2713
+#: route_ui.cc:2709
 msgid "Advanced"
 msgstr "Pokročilé"
 
-#: route_ui.cc:2862
+#: route_ui.cc:2858
 msgid "Rename Playlist"
 msgstr "Přejmenovat seznam skladeb"
 
-#: route_ui.cc:2863
+#: route_ui.cc:2859
 msgid "New name for playlist:"
 msgstr "Nový název pro seznam skladeb:"
 
@@ -19869,18 +19889,18 @@ msgstr "Advanced Authoring Format (AAF)"
 msgid "All supported files"
 msgstr "Všechny podporované soubory"
 
-#: session_dialog.cc:646 startup_fsm.cc:624 startup_fsm.cc:764
-#: startup_fsm.cc:893
+#: session_dialog.cc:646 startup_fsm.cc:649 startup_fsm.cc:789
+#: startup_fsm.cc:918
 msgid "Session file %1 does not exist"
 msgstr "Soubor sezení %1 neexistuje"
 
-#: session_dialog.cc:650 startup_fsm.cc:628 startup_fsm.cc:768
-#: startup_fsm.cc:897
+#: session_dialog.cc:650 startup_fsm.cc:653 startup_fsm.cc:793
+#: startup_fsm.cc:922
 msgid "Session %1 is from a newer version of %2"
 msgstr "Sezení %1 pochází z novější verze %2"
 
-#: session_dialog.cc:654 startup_fsm.cc:632 startup_fsm.cc:772
-#: startup_fsm.cc:901
+#: session_dialog.cc:654 startup_fsm.cc:657 startup_fsm.cc:797
+#: startup_fsm.cc:926
 msgid "Cannot get existing session information from %1"
 msgstr "Nelze dostat informace o stávajícím sezení od %1"
 
@@ -20001,8 +20021,8 @@ msgstr "Odstranit sezení ze seznamu nedávných"
 msgid ""
 "Failed to retrieve demo sessions list. Please check your internet connection."
 msgstr ""
-"Selhalo získání seznamu demo sezení. Prosím zkontrolujte internetové"
-" připojení."
+"Selhalo získání seznamu demo sezení. Prosím zkontrolujte internetové "
+"připojení."
 
 #: session_dialog.cc:1598
 msgid "Delete Downloaded Session Archive"
@@ -20719,19 +20739,19 @@ msgstr "Dur"
 msgid "Scale Editor"
 msgstr "Úpravy stupnic"
 
-#: sfdb_ui.cc:105 sfdb_ui.cc:1982
+#: sfdb_ui.cc:105 sfdb_ui.cc:1985
 msgid "by track number"
 msgstr "podle čísla stopy"
 
-#: sfdb_ui.cc:107 sfdb_ui.cc:1983
+#: sfdb_ui.cc:107 sfdb_ui.cc:1986
 msgid "by track name"
 msgstr "podle názvu stopy"
 
-#: sfdb_ui.cc:109 sfdb_ui.cc:1984
+#: sfdb_ui.cc:109 sfdb_ui.cc:1987
 msgid "by file and track name"
 msgstr "podle názvu souboru a stopy"
 
-#: sfdb_ui.cc:111 sfdb_ui.cc:1985
+#: sfdb_ui.cc:111 sfdb_ui.cc:1988
 msgid "by instrument name"
 msgstr "Podle názvu nástroje"
 
@@ -20949,31 +20969,31 @@ msgstr "GB"
 msgid "Failed to retrieve XML for file"
 msgstr "Selhalo získání XML pro soubor"
 
-#: sfdb_ui.cc:1675 sfdb_ui.cc:1990 sfdb_ui.cc:2025 sfdb_ui.cc:2043
+#: sfdb_ui.cc:1675 sfdb_ui.cc:1993 sfdb_ui.cc:2028 sfdb_ui.cc:2046
 msgid "one track per file"
 msgstr "Jedna stopa na soubor"
 
-#: sfdb_ui.cc:1678 sfdb_ui.cc:2026 sfdb_ui.cc:2044
+#: sfdb_ui.cc:1678 sfdb_ui.cc:2029 sfdb_ui.cc:2047
 msgid "one track per channel"
 msgstr "Jedna stopa na kanál"
 
-#: sfdb_ui.cc:1685 sfdb_ui.cc:2028 sfdb_ui.cc:2045
+#: sfdb_ui.cc:1685 sfdb_ui.cc:2031 sfdb_ui.cc:2048
 msgid "sequence files"
 msgstr "Soubory seřadit vedle sebe"
 
-#: sfdb_ui.cc:1687 sfdb_ui.cc:2027
+#: sfdb_ui.cc:1687 sfdb_ui.cc:2030
 msgid "all files in one track"
 msgstr "Všechny soubory do jedné stopy"
 
-#: sfdb_ui.cc:1693 sfdb_ui.cc:2030
+#: sfdb_ui.cc:1693 sfdb_ui.cc:2033
 msgid "one region per file"
 msgstr "Jedna oblast na soubor"
 
-#: sfdb_ui.cc:1696 sfdb_ui.cc:2031
+#: sfdb_ui.cc:1696 sfdb_ui.cc:2034
 msgid "one region per channel"
 msgstr "Jedna oblast na kanál"
 
-#: sfdb_ui.cc:1701 sfdb_ui.cc:2032 sfdb_ui.cc:2046
+#: sfdb_ui.cc:1701 sfdb_ui.cc:2035 sfdb_ui.cc:2049
 msgid "all files in one region"
 msgstr "Všechny soubory v jedné oblasti"
 
@@ -20985,91 +21005,91 @@ msgstr ""
 "Jeden nebo více vybraných souborů\n"
 "nemůže být použito %1"
 
-#: sfdb_ui.cc:1892
+#: sfdb_ui.cc:1895
 msgid "Use files temporarily"
 msgstr "Používat soubory dočasně"
 
-#: sfdb_ui.cc:1893
+#: sfdb_ui.cc:1896
 msgid "Copy audio files to session"
 msgstr "Kopírovat zvukové soubory do sezení"
 
-#: sfdb_ui.cc:1894
+#: sfdb_ui.cc:1897
 msgid "Use MIDI Tempo Map"
 msgstr "Použít mapu tempa z MIDI"
 
-#: sfdb_ui.cc:1895
+#: sfdb_ui.cc:1898
 msgid "Import MIDI markers"
 msgstr "Zavést značky MIDI"
 
-#: sfdb_ui.cc:1910 sfdb_ui.cc:2100
+#: sfdb_ui.cc:1913 sfdb_ui.cc:2103
 msgid "file timestamp"
 msgstr "časové razítko souboru"
 
-#: sfdb_ui.cc:1911 sfdb_ui.cc:2102
+#: sfdb_ui.cc:1914 sfdb_ui.cc:2105
 msgid "edit point"
 msgstr "Pracovní bod"
 
-#: sfdb_ui.cc:1912 sfdb_ui.cc:2104
+#: sfdb_ui.cc:1915 sfdb_ui.cc:2107
 msgid "playhead"
 msgstr "Ukazatel polohy"
 
-#: sfdb_ui.cc:1913
+#: sfdb_ui.cc:1916
 msgid "session start"
 msgstr "Začátek sezení"
 
-#: sfdb_ui.cc:1922
+#: sfdb_ui.cc:1925
 msgid "<b>Add files:</b>"
 msgstr "<b>Přidat soubory:</b>"
 
-#: sfdb_ui.cc:1928
+#: sfdb_ui.cc:1931
 msgid "<b>Insert at:</b>"
 msgstr "<b>Vložit na:</b>"
 
-#: sfdb_ui.cc:1934
+#: sfdb_ui.cc:1937
 msgid "<b>Mapping:</b>"
 msgstr "<b>Mapování:</b>"
 
-#: sfdb_ui.cc:1940
+#: sfdb_ui.cc:1943
 msgid "<b>Sort order:</b>"
 msgstr "<b>Třídění:</b>"
 
-#: sfdb_ui.cc:1953
+#: sfdb_ui.cc:1956
 msgid "<b>MIDI Instrument:</b>"
 msgstr "<b>MIDI nástroj:</b>"
 
-#: sfdb_ui.cc:1959
+#: sfdb_ui.cc:1962
 msgid "<b>MIDI Track Names:</b>"
 msgstr "<b>Názvy MIDI stop:</b>"
 
-#: sfdb_ui.cc:1973
+#: sfdb_ui.cc:1976
 msgid "<b>Audio conversion quality:</b>"
 msgstr "<b>Kvalita převodu zvuku:</b>"
 
-#: sfdb_ui.cc:1996 sfdb_ui.cc:2116
+#: sfdb_ui.cc:1999 sfdb_ui.cc:2119
 msgid "Best"
 msgstr "Nejlepší"
 
-#: sfdb_ui.cc:1998 sfdb_ui.cc:2120
+#: sfdb_ui.cc:2001 sfdb_ui.cc:2123
 msgid "Quick"
 msgstr "Rychlý"
 
-#: sfdb_ui.cc:2000
+#: sfdb_ui.cc:2003
 msgid "Fastest"
 msgstr "Nejrychlejší"
 
-#: sfdb_ui.cc:2008 sfdb_ui.cc:2075
+#: sfdb_ui.cc:2011 sfdb_ui.cc:2078
 msgid "by file name"
 msgstr "podle názvu souboru"
 
-#: sfdb_ui.cc:2009 sfdb_ui.cc:2077
+#: sfdb_ui.cc:2012 sfdb_ui.cc:2080
 msgid "by modification time"
 msgstr "podle času úprav"
 
-#: sfdb_ui.cc:2010 sfdb_ui.cc:2079
+#: sfdb_ui.cc:2013 sfdb_ui.cc:2082
 msgid "by selection order"
 msgstr "podle pořadí výběru"
 
-#: sfdb_ui.cc:2082
+#: sfdb_ui.cc:2085
 msgid "programming error: unknown import sort string %1"
 msgstr "chyba programu: neznámý řetězec třídění importu %1"
 
@@ -21329,7 +21349,8 @@ msgid ""
 "If selected, this slot will not respond to Cue events (either starting or "
 "stopping)"
 msgstr ""
-"Při výběru nebude tato pozice reagovat na události scény (buď start nebo stop)"
+"Při výběru nebude tato pozice reagovat na události scény (buď start nebo "
+"stop)"
 
 #: slot_properties_box.cc:634
 msgid "Gain (dB):"
@@ -21400,11 +21421,11 @@ msgstr ""
 "Pravděpodobně něco není v pořádku s nastavením vašeho zvukového zařízení/"
 "zařízení MIDI."
 
-#: startup_fsm.cc:459
+#: startup_fsm.cc:481
 msgid "Starting Audio/MIDI Engine"
 msgstr "Spouští se Audio/MIDI podpora"
 
-#: startup_fsm.cc:513
+#: startup_fsm.cc:536
 msgid ""
 "Engine I/O device has changed since you last opened this session.\n"
 "Please verify that the new device has enough ports, or you may lose some i/o "
@@ -21415,15 +21436,15 @@ msgstr ""
 "Prosím ujistěte se, že nové zařízení má dostatek portů, jinak byste mohli "
 "přijít  o některá I/O spojení."
 
-#: startup_fsm.cc:784
+#: startup_fsm.cc:809
 msgid "Extracting aaf failed"
 msgstr "Selhala extrakce AAF"
 
-#: startup_fsm.cc:943
+#: startup_fsm.cc:968
 msgid "Pre-Release Warning"
 msgstr "Varování pro tuto verzi uvolněnou před hlavním vydáním"
 
-#: startup_fsm.cc:953
+#: startup_fsm.cc:978
 msgid ""
 "<span size=\"x-large\" weight=\"bold\">Welcome to this very-much-not-ready "
 "build of %1 %2</span>\n"
@@ -22904,8 +22925,8 @@ msgid ""
 "The audio engine needs to be running for this operation. See Menu > Window > "
 "Audio/MIDI Setup"
 msgstr ""
-"Pro tuto operaci musí běžet zvukový stroj. Viz Menu > Okno > "
-"Nastavení Audio/MIDI"
+"Pro tuto operaci musí běžet zvukový stroj. Viz Menu > Okno > Nastavení Audio/"
+"MIDI"
 
 #: utils.cc:128
 msgid "Configure Hardware"
@@ -23123,7 +23144,11 @@ msgstr "Odebrat všechny kanály"
 msgid "Drop All Assigned Channels"
 msgstr "Zapomenout všechny přiřazené kanály"
 
-#: video_timeline.cc:461
+#: video_timeline.cc:70
+msgid "Detecing video tools"
+msgstr ""
+
+#: video_timeline.cc:464
 msgid ""
 "Parsing video file info failed. Is the Video Server running? Is the file "
 "readable by the Video Server? Does the docroot match? Is it a video file?"
@@ -23132,7 +23157,7 @@ msgstr ""
 "obrazový server? Je soubor čitelný obrazovým serverem? Souhlasí docroot? Jde "
 "o soubor s obrazem? Je to obrazový záznam?"
 
-#: video_timeline.cc:499
+#: video_timeline.cc:502
 msgid ""
 "Failed to set session-framerate: '%1' does not have a corresponding option "
 "setting in %2."
@@ -23140,7 +23165,7 @@ msgstr ""
 "Nepodařilo se nastavit rychlost snímkování sezení: '%1' nemá nastavení "
 "odpovídající volby v %2."
 
-#: video_timeline.cc:507
+#: video_timeline.cc:510
 msgid ""
 "Video file's framerate is not equal to %1 session timecode's framerate: '%2' "
 "vs '%3'"
@@ -23148,7 +23173,7 @@ msgstr ""
 "Rychlost snímkování souboru s obrazovým záznamem není stejná jako rychlost "
 "snímkování časového kódu sezení %1: '%2' vs '%3'"
 
-#: video_timeline.cc:580
+#: video_timeline.cc:583
 msgid ""
 "Video-server docroot mismatch. %1: '%2', video-server: '%3'. This usually "
 "means that the video server was not started by %1 and uses a different "
@@ -23158,7 +23183,7 @@ msgstr ""
 "obvykle znamená, že obrazový server nebyl %1 spuštěn a používá jinou "
 "kořenovou cestu k dokumentu."
 
-#: video_timeline.cc:717
+#: video_timeline.cc:720
 msgid ""
 "Video-monitor 'xjadeo' was not found. Please install http://xjadeo.sf.net/ "
 "(a custom path to xjadeo can be specified by setting the XJREMOTE "
@@ -23174,15 +23199,15 @@ msgstr ""
 "\n"
 "Podívejte se také na http://manual.ardour.org/video-timeline/setup/"
 
-#: video_timeline.cc:734
+#: video_timeline.cc:737
 msgid "Video-monitor 'xjadeo' cannot be launched."
 msgstr "Program pro sledování obrazu 'xjadeo' nelze spustit"
 
-#: video_timeline.cc:753
+#: video_timeline.cc:756
 msgid "Video-monitor 'xjadeo' version detection timed out."
 msgstr "Vypršel čas čekání na detekci verze video-monitoru 'xjadeo'."
 
-#: video_timeline.cc:775
+#: video_timeline.cc:778
 msgid ""
 "Video-monitor 'xjadeo' is too old. Please install xjadeo version 0.7.7 or "
 "later. http://xjadeo.sf.net/"
@@ -23190,7 +23215,7 @@ msgstr ""
 "Program pro sledování obrazu 'xjadeo' je příliš starý. Nainstalujte, prosím, "
 "xjadeo ve verzi 0.7.7 nebo novější. http://xjadeo.sf.net/"
 
-#: video_timeline.cc:829
+#: video_timeline.cc:832
 msgid "Video-decoder 'harvid' version detection timed out."
 msgstr "Vypršel čas čekání na detekci verze video-dekodéru 'harvid'."
 
@@ -23629,6 +23654,23 @@ msgstr ""
 #: export_video_dialog.cc:815
 msgid "Input Video File"
 msgstr "Vstupní video soubor"
+
+#~ msgid ""
+#~ "Right-click\n"
+#~ "or Double-click here\n"
+#~ "to add Track, Bus,\n"
+#~ " or VCA."
+#~ msgstr ""
+#~ "Pravý-klik\n"
+#~ "nebo dvojklik zde\n"
+#~ "pro přidání stopy, sběrnice,\n"
+#~ " nebo VCA."
+
+#~ msgid "start point trim"
+#~ msgstr "změnit počáteční bod"
+
+#~ msgid "end point trim"
+#~ msgstr "změnit koncový bod"
 
 #~ msgid ""
 #~ "French:\n"
@@ -24274,5 +24316,3 @@ msgstr "Vstupní video soubor"
 
 #~ msgid "Color file for %1 not found along %2"
 #~ msgstr "Soubor s barvou pro %1 nebyl pod %2 nalezen"
-
-

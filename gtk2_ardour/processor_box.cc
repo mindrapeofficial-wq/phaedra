@@ -2771,7 +2771,7 @@ ProcessorBox::processor_button_press_event (GdkEventButton *ev, ProcessorEntry* 
 		// this is purely informational but necessary for route params UI
 		ProcessorSelected (processor); // emit
 
-	} else if (!processor && ev->button == 1 && ev->type == GDK_2BUTTON_PRESS) {
+	} else if (!processor && ev->button == 1) {
 
 		choose_plugin ();
 		_get_plugin_selector()->show_manager ();

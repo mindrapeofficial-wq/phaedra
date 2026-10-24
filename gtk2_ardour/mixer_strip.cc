@@ -1860,6 +1860,42 @@ MixerStrip::state_id () const
 }
 
 void
+MixerStrip::set_docked_compact (bool compact)
+{
+	if (_docked_compact == compact) {
+		return;
+	}
+	_docked_compact = compact;
+	/* The docked mixer is short; reserve room for the processor list. */
+	gpm._unscaled_fader_length = compact ? 70 : 250;
+	static_cast<GainMeterBase&> (gpm).reset_dpi ();
+	if (compact) {
+		apply_docked_compact ();
+	} else {
+		width_hide_box.show ();
+		processor_box.show ();
+		bottom_button_table.show ();
+		_visibility.set_state (UIConfiguration::instance().get_mixer_strip_visibility ());
+		map_frozen ();
+	}
+}
+
+void
+MixerStrip::apply_docked_compact ()
+{
+	width_hide_box.hide ();
+	input_button_box.hide ();
+	invert_button_box.hide ();
+	rec_mon_table.hide ();
+	solo_iso_table.hide ();
+	control_slave_ui.hide ();
+	_tmaster_widget.hide ();
+	output_button.hide ();
+	_comment_button.hide ();
+	bottom_button_table.hide ();
+}
+
+void
 MixerStrip::parameter_changed (string p)
 {
 	if (p == _visibility.get_state_name()) {
@@ -1867,6 +1903,7 @@ MixerStrip::parameter_changed (string p)
 		   our VisibilityGroup to reflect these changes in our widgets.
 		*/
 		_visibility.set_state (UIConfiguration::instance().get_mixer_strip_visibility ());
+		if (_docked_compact) { apply_docked_compact (); }
 	} else if (p == "track-name-number") {
 		name_changed ();
 		update_track_number_visibility();

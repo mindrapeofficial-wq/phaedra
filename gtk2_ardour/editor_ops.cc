@@ -1574,7 +1574,14 @@ Editor::scroll_tracks_up ()
 void
 Editor::scroll_tracks_down_line ()
 {
-	double vert_value = vertical_adjustment.get_value() + 60;
+	double step = 60;
+	for (auto* view : track_views) {
+		if (!view->hidden() && view->covers_y_position (vertical_adjustment.get_value()).first) {
+			step = std::max (1.0, view->current_height() * 0.5);
+			break;
+		}
+	}
+	double vert_value = vertical_adjustment.get_value() + step;
 
 	if (vert_value > vertical_adjustment.get_upper() - _visible_canvas_height) {
 		vert_value = vertical_adjustment.get_upper() - _visible_canvas_height;
@@ -1586,7 +1593,14 @@ Editor::scroll_tracks_down_line ()
 void
 Editor::scroll_tracks_up_line ()
 {
-	reset_y_origin (vertical_adjustment.get_value() - 60);
+	double step = 60;
+	for (auto* view : track_views) {
+		if (!view->hidden() && view->covers_y_position (vertical_adjustment.get_value()).first) {
+			step = std::max (1.0, view->current_height() * 0.5);
+			break;
+		}
+	}
+	reset_y_origin (std::max (0.0, vertical_adjustment.get_value() - step));
 }
 
 void

@@ -470,6 +470,7 @@ private:
 	void toggle_editor_and_mixer ();
 
 	void tabbable_state_change (ArdourWidgets::Tabbable&);
+	void sync_editor_mixer_dock ();
 
 	void toggle_meterbridge ();
 

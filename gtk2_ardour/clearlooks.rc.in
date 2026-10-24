@@ -30,8 +30,8 @@ style "default" = "medium_text"
   GtkButton           :: default-border = { 0, 0, 0, 0 }
   GtkButton           :: default-outside_border = { 0, 0, 0, 0 }
   GtkButton           :: button-relief = GTK_RELIEF_NONE
-  GtkButton           :: child-displacement-x             = 1                 # [               0 ]          How far in x direction to move the button when its depressed.
-  GtkButton           :: child-displacement-y             = 1                 # [               0 ]          ... y
+  GtkButton           :: child-displacement-x             = 0                 # [               0 ]          How far in x direction to move the button when its depressed.
+  GtkButton           :: child-displacement-y             = 0                 # [               0 ]          ... y
   GtkButton           :: default-border                   = { 0, 0, 0, 0 }    #                              Extra space to add for CAN_DEFAULT buttons.
   GtkButton           :: displace-focus                   = 0                 # [               0 ] ( bool ) Whether the child_displacement_x/child_displacement_y properties should also affect the focus rectangle.
   GtkButton           :: image-spacing                    = 2                 # [               2 ] ( >= 0 ) Spacing in pixels between the image and label.
@@ -58,7 +58,7 @@ style "default" = "medium_text"
   GtkScrollbar        :: arrow-scaling                    = 0.4               # [             0.5 ] ( 0.1  ) The arrow size proportion relative to the scroll button size.
   GtkScrollbar        :: fixed-slider-length              = 0                 # [               0 ] ( bool ) Don't change slider size, just lock it to the minimum length.
   GtkScrollbar        :: min-slider-length                = 50                # [              21 ] ( >= 0 ) Minimum length of scrollbar slider.
-  GtkScrollbar        :: slider-width                     = 10                # [              14 ] ( >= 0 ) Width of scrollbar or scale thumb.
+  GtkScrollbar        :: slider-width                     = 7                 # [              14 ] ( >= 0 ) Width of scrollbar or scale thumb.
   GtkScrollbar        :: stepper-spacing                  = 0                 # [               0 ] ( >= 0 ) The spacing between the stepper buttons and thumb. Note that setting this value to anything > 0 will automatically set the trough-under-steppers style property to TRUE as well. Also, stepper-spacing won't have any effect if there are no steppers.
   GtkScrollbar        :: trough-border                    = 0                 # [               1 ] ( >= 0 ) Spacing between thumb/steppers and outer trough bevel.
   GtkScrollbar        :: focus-line-width                 = 0
@@ -99,7 +99,7 @@ style "default" = "medium_text"
   GtkArrow            :: arrow-scaling                    = 0.5               # [             0.7 ] ( 0.1  ) Amount of space used up by arrow.
 
   GtkNotebook         :: arrow-spacing                    = 0                 # [               0 ] ( >= 0 ) Spacing between the scroll arrows and the tabs.
-  GtkNotebook         :: tab-curvature                    = 1                 # [               1 ] ( >= 0 ) Size of tab curvature.
+  GtkNotebook         :: tab-curvature                    = 3                 # [               1 ] ( >= 0 ) Size of tab curvature.
   GtkNotebook         :: tab-overlap                      = 1                 # [               2 ]          Size of tab overlap area.
 
   GtkTreeView         :: horizontal-separator             = 8                 # [               2 ] ( >= 0 ) Horizontal space between cells. Must be an even number.
@@ -138,7 +138,7 @@ style "default" = "medium_text"
 
   engine "clearlooks"
   {
-    menubarstyle       = 2 # 0 = flat, 1 = sunken, 2 = flat gradient
+    menubarstyle       = 0 # 0 = flat, 1 = sunken, 2 = flat gradient
   }
 }
 
@@ -470,6 +470,8 @@ style "editor_dark" = "editor_window"
 
 style "transport_base" = "medium_bold_text"
 {
+  xthickness = 4
+  ythickness = 4
 }
 
 style "default_button" = "small_text"

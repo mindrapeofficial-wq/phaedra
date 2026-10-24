@@ -7,9 +7,9 @@
 # Mireia Farrús <mifarrus@hotmail.com>, 2003.
 # Josep Puigdemont <josep.puigdemont@gmail.com>, 2005, 2006.
 # David Planella <david.planella@gmail.com>, 2008, 2009, 2010.
-#
+# 
 # Recull de termes
-#
+# 
 # Trough      - regata. Es refereix a la barra d'una barra de desplaçament,
 #               sobre la qual llisca. Una altra alternativa seria «pista» o
 #               «carril».
@@ -23,12 +23,12 @@
 #               It is used to select a value in a given range. The user may drag
 #               the thumb across the scale track to adjust the value» .
 #               Vegeu http://wiki.mozilla.org/XUL:Slider_Tag
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: gtk+ 2.8.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-05 15:38+0200\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2010-04-02 18:26+0200\n"
 "Last-Translator: David Planella <david.planella@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
@@ -659,20 +659,20 @@ msgstr "Senyaladors de depuració de GTK+ a inhabilitar"
 
 # Premi a qui va ficar "Per defecte:LTR. M'ha costat
 # trobar en quin mòdul estava l'error. jm
-#: gtkmain.c:698
+#: gtkmain.c:706
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: gtkmain.c:763
+#: gtkmain.c:771
 #, c-format
 msgid "Cannot open display: %s"
 msgstr "No es pot obrir la pantalla: %s"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "GTK+ Options"
 msgstr "Opcions del GTK+"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "Show GTK+ Options"
 msgstr "Mostra les opcions del GTK+"
 

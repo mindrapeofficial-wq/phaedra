@@ -77,81 +77,30 @@ using Gtkmm2ext::Keyboard;
 bool
 Editor::track_canvas_scroll (GdkEventScroll* ev)
 {
-	int direction = ev->direction;
+	if (!_session) { return false; }
+	if (ev->direction == GDK_SCROLL_LEFT) { scroll_left_step (); return true; }
+	if (ev->direction == GDK_SCROLL_RIGHT) { scroll_right_step (); return true; }
+	if (ev->direction != GDK_SCROLL_UP && ev->direction != GDK_SCROLL_DOWN) { return false; }
 
-	/* this event arrives without transformation by the canvas, so we have
-	 * to transform the coordinates to be able to look things up.
-	 */
-
-	Duple event_coords = _track_canvas->window_to_canvas (Duple (ev->x, ev->y));
-
-	switch (direction) {
-	case GDK_SCROLL_UP:
-		if (Keyboard::modifier_state_equals (ev->state, Keyboard::ScrollZoomHorizontalModifier)) {
-			temporal_zoom_step_mouse_focus (false);
-			return true;
-		} else if (Keyboard::modifier_state_equals (ev->state, Keyboard::ScrollHorizontalModifier)) {
-			scroll_left_step ();
-			return true;
-		} else if (Keyboard::modifier_state_equals (ev->state, Keyboard::ScrollZoomVerticalModifier)) {
-			if (!current_stepping_trackview) {
-				step_timeout = Glib::signal_timeout().connect (sigc::mem_fun(*this, &Editor::track_height_step_timeout), 500);
-				std::pair<TimeAxisView*, int> const p = trackview_by_y_position (event_coords.y, false);
-				current_stepping_trackview = p.first;
-				if (!current_stepping_trackview) {
-					return false;
-				}
-			}
-			last_track_height_step_timestamp = get_microseconds();
-			current_stepping_trackview->step_height (false);
-			return true;
-		} else {
-			scroll_up_one_track ();
-			return true;
-		}
-		break;
-
-	case GDK_SCROLL_DOWN:
-		if (Keyboard::modifier_state_equals (ev->state, Keyboard::ScrollZoomHorizontalModifier)) {
-			temporal_zoom_step_mouse_focus (true);
-			return true;
-		} else if (Keyboard::modifier_state_equals (ev->state, Keyboard::ScrollHorizontalModifier)) {
-			scroll_right_step ();
-			return true;
-		} else if (Keyboard::modifier_state_equals (ev->state, Keyboard::ScrollZoomVerticalModifier)) {
-			if (!current_stepping_trackview) {
-				step_timeout = Glib::signal_timeout().connect (sigc::mem_fun(*this, &Editor::track_height_step_timeout), 500);
-				std::pair<TimeAxisView*, int> const p = trackview_by_y_position (event_coords.y, false);
-				current_stepping_trackview = p.first;
-				if (!current_stepping_trackview) {
-					return false;
-				}
-			}
-			last_track_height_step_timestamp = get_microseconds();
-			current_stepping_trackview->step_height (true);
-			return true;
-		} else {
-			scroll_down_one_track ();
-			return true;
-		}
-		break;
-
-	case GDK_SCROLL_LEFT:
-		scroll_left_step ();
-		return true;
-		break;
-
-	case GDK_SCROLL_RIGHT:
-		scroll_right_step ();
-		return true;
-		break;
-
-	default:
-		/* what? */
-		break;
+	const bool down = ev->direction == GDK_SCROLL_DOWN;
+	const guint mods = ev->state & (GDK_CONTROL_MASK | GDK_SHIFT_MASK | GDK_MOD1_MASK | GDK_SUPER_MASK);
+	if (mods == 0) {
+		/* Keep the configured zoom anchor; do not move the edit cursor. */
+		temporal_zoom_step_scale (down, 1.4);
+	} else if (mods == GDK_CONTROL_MASK) {
+		if (down) { control_vertical_zoom_out_all (); }
+		else { control_vertical_zoom_in_all (); }
+	} else if (mods == GDK_MOD1_MASK) {
+		if (down) { scroll_right_step (); } else { scroll_left_step (); }
+	} else if (mods == (GDK_CONTROL_MASK | GDK_MOD1_MASK)) {
+		if (down) { scroll_tracks_down_line (); } else { scroll_tracks_up_line (); }
+	} else if (mods == (GDK_CONTROL_MASK | GDK_SHIFT_MASK)) {
+		if (down) { control_vertical_zoom_out_selected (); }
+		else { control_vertical_zoom_in_selected (); }
+	} else {
+		return false;
 	}
-
-	return false;
+	return true;
 }
 
 bool
@@ -1021,53 +970,7 @@ Editor::canvas_ruler_event (GdkEvent *event, ArdourCanvas::Item* item, ItemType 
 	bool handled = false;
 
 	if (event->type == GDK_SCROLL) {
-
-		/* scroll events in the rulers are handled a little differently from
-		   scrolling elsewhere in the canvas.
-		*/
-
-		switch (event->scroll.direction) {
-		case GDK_SCROLL_UP:
-			if (Keyboard::modifier_state_equals (event->scroll.state, Keyboard::ScrollHorizontalModifier)) {
-				scroll_left_step ();
-			} else if (UIConfiguration::instance().get_use_mouse_position_as_zoom_focus_on_scroll()) {
-				temporal_zoom_step_mouse_focus (false);
-			} else if (Keyboard::modifier_state_equals (event->scroll.state, Keyboard::PrimaryModifier)) {
-				temporal_zoom_step_mouse_focus (false);
-			} else {
-				temporal_zoom_step (false);
-			}
-			handled = true;
-			break;
-
-		case GDK_SCROLL_DOWN:
-			if (Keyboard::modifier_state_equals (event->scroll.state, Keyboard::ScrollHorizontalModifier)) {
-				scroll_right_step ();
-			} else if (UIConfiguration::instance().get_use_mouse_position_as_zoom_focus_on_scroll()) {
-				temporal_zoom_step_mouse_focus (true);
-			} else if (Keyboard::modifier_state_equals (event->scroll.state, Keyboard::PrimaryModifier)) {
-				temporal_zoom_step_mouse_focus (true);
-			} else {
-				temporal_zoom_step (true);
-			}
-			handled = true;
-			break;
-
-		case GDK_SCROLL_LEFT:
-			scroll_left_half_page ();
-			handled = true;
-			break;
-
-		case GDK_SCROLL_RIGHT:
-			scroll_right_half_page ();
-			handled = true;
-			break;
-
-		default:
-			/* what? */
-			break;
-		}
-		return handled;
+		return track_canvas_scroll (&event->scroll);
 	}
 
 	return typed_event (item, event, type);

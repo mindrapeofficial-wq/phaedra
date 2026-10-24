@@ -20,6 +20,7 @@
 #define _transport_control_ui_h_
 
 #include <ytkmm/box.h>
+#include <ytkmm/eventbox.h>
 
 #include "pbd/signals.h"
 #include "ardour/session_handle.h"
@@ -73,6 +74,7 @@ protected:
 	ArdourWidgets::ArdourButton _rec_button;
 	ArdourWidgets::ArdourButton _midi_panic_button;
 	ArdourWidgets::ArdourButton _click_button;
+	Gtk::EventBox _transport_spacer;
 
 private:
 	PBD::ScopedConnection config_connection;

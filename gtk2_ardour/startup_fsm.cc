@@ -248,7 +248,7 @@ StartupFSM::dialog_response_handler (int response, StartupFSM::DialogID dialog_i
 			switch (response) {
 			case RESPONSE_OK:
 				end_dialog (&new_user_dialog);
-				show_session_dialog (new_session_required);
+				handle_waiting_for_session_path ();
 				break;
 			default:
 				_signal_response (QuitProgram);
@@ -370,9 +370,29 @@ StartupFSM::handle_waiting_for_session_path ()
 {
 	if (ARDOUR_COMMAND_LINE::session_name.empty()) {
 
-		/* nothing given on the command line ... show new session dialog */
-
-		show_session_dialog (new_session_required);
+		/* A normal Phaedra launch goes straight to a fresh arrangement.
+		 * Explicit session paths and File > New retain their own workflows. */
+		GDateTime* now = g_date_time_new_now_local ();
+		gchar* stamp = g_date_time_format (now, "%Y-%m-%d_%H-%M-%S");
+		const string base = string ("Proyecto-") + stamp;
+		g_free (stamp);
+		g_date_time_unref (now);
+		/* Automatic startup sessions must not depend on the Documents folder:
+		 * it may be redirected or protected even when it exists. */
+		const string parent = Glib::build_filename (user_config_directory (), "Sessions");
+		session_name = base;
+		session_path = Glib::build_filename (parent, session_name);
+		for (unsigned n = 2; Glib::file_test (session_path, Glib::FILE_TEST_EXISTS); ++n) {
+			session_name = string_compose ("%1-%2", base, n);
+			session_path = Glib::build_filename (parent, session_name);
+		}
+		session_template.clear ();
+		session_is_new = true;
+		session_name_edited = false;
+		session_existing_sample_rate = 0;
+		bus_profile.master_out_channels = 2;
+		new_session_required = true;
+		start_audio_midi_setup ();
 
 	} else {
 
@@ -480,8 +500,9 @@ StartupFSM::start_audio_midi_setup ()
 		}
 	}
 
-	bool try_autostart = !new_user && (Config->get_try_autostart_engine () || g_getenv ("ARDOUR_TRY_AUTOSTART_ENGINE"));
-	if (session_is_new) {
+	const bool automatic_new = session_is_new && !new_user && ARDOUR_COMMAND_LINE::session_name.empty ();
+	bool try_autostart = !new_user && (automatic_new || Config->get_try_autostart_engine () || g_getenv ("ARDOUR_TRY_AUTOSTART_ENGINE"));
+	if (session_is_new && !automatic_new) {
 		try_autostart = false;
 	} else if (!backend) {
 		try_autostart = false;
@@ -519,10 +540,25 @@ StartupFSM::start_audio_midi_setup ()
 
 	if (setup_required) {
 		if (try_autostart) {
-			AudioEngine::instance()->set_sample_rate(session_existing_sample_rate);
+			if (session_existing_sample_rate > 0) {
+				AudioEngine::instance()->set_sample_rate(session_existing_sample_rate);
+			}
 			if (!AudioEngine::instance()->start ()) {
 				if (ARDOUR::AudioEngine::instance()->running()) {
 					DEBUG_TRACE (DEBUG::GuiStartup, "autostart successful, audio/MIDI setup dialog not required\n");
+					engine_running ();
+					return;
+				}
+			}
+		}
+
+		if (!backend && !AudioEngine::instance()->running()) {
+			if (AudioEngine::instance()->set_backend ("PortAudio", "", "")) {
+				DEBUG_TRACE (DEBUG::GuiStartup, "PortAudio fallback set\n");
+			}
+			if (!AudioEngine::instance()->start ()) {
+				if (ARDOUR::AudioEngine::instance()->running()) {
+					DEBUG_TRACE (DEBUG::GuiStartup, "PortAudio fallback autostart successful\n");
 					engine_running ();
 					return;
 				}

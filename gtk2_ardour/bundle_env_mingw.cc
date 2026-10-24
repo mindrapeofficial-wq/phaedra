@@ -67,9 +67,21 @@ fixup_bundle_environment (int, char* [], string & localedir)
 	if (ARDOUR::translations_are_enabled ()) {
 		path = windows_search_path().to_string();
 		path += "\\locale";
-		Glib::setenv ("GTK_LOCALEDIR", path, true);
 
-		// and return the same path to our caller
+		if (!Glib::file_test (path, Glib::FILE_TEST_IS_DIR)) {
+			const char* data_path = getenv ("ARDOUR_DATA_PATH");
+			if (data_path) {
+				std::string dp (data_path);
+				std::string::size_type colon = dp.find (':');
+				std::string first = (colon != std::string::npos) ? dp.substr (0, colon) : dp;
+				std::string alt = Glib::build_filename (first, "locale");
+				if (Glib::file_test (alt, Glib::FILE_TEST_IS_DIR)) {
+					path = alt;
+				}
+			}
+		}
+
+		Glib::setenv ("GTK_LOCALEDIR", path, true);
 		localedir = path;
 	}
 

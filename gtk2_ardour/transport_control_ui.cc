@@ -104,13 +104,10 @@ TransportControlUI::setup (TransportControlProvider* ui)
 	Glib::RefPtr<SizeGroup> transport_button_size_group = SizeGroup::create (SIZE_GROUP_BOTH);
 	if (!ARDOUR::Profile->get_mixbus()) {
 		transport_button_size_group->add_widget (_goto_start_button);
-		transport_button_size_group->add_widget (_goto_end_button);
 		transport_button_size_group->add_widget (_auto_loop_button);
 		transport_button_size_group->add_widget (_rec_button);
-		transport_button_size_group->add_widget (_play_selection_button);
 		transport_button_size_group->add_widget (_roll_button);
 		transport_button_size_group->add_widget (_stop_button);
-		transport_button_size_group->add_widget (_midi_panic_button);
 		transport_button_size_group->add_widget (_click_button);
 	}
 
@@ -122,15 +119,13 @@ TransportControlUI::setup (TransportControlProvider* ui)
 #undef PX_SCALE
 
 	if (!ARDOUR::Profile->get_mixbus()) {
-		pack_start (_midi_panic_button, true, true, 0);
-		pack_start (_click_button, true, true, 0);
 		pack_start (_goto_start_button, true, true);
-		pack_start (_goto_end_button, true, true);
-		pack_start (_auto_loop_button, true, true);
-		pack_start (_play_selection_button, true, true);
-		pack_start (_roll_button, true, true);
 		pack_start (_stop_button, true, true);
+		pack_start (_roll_button, true, true);
 		pack_start (_rec_button, true, true, 3);
+		pack_start (_transport_spacer, false, false, 6);
+		pack_start (_click_button, true, true, 0);
+		pack_start (_auto_loop_button, true, true);
 	}
 
 	_roll_button.set_name ("transport button");

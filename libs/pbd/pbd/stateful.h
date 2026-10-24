@@ -45,7 +45,7 @@ class PropertyList;
 class OwnedPropertyList;
 
 /** Base class for objects with saveable and undoable state */
-class /*LIBPBD_API*/ Stateful {
+class LIBPBD_API Stateful {
   public:
 	LIBPBD_API Stateful ();
 	LIBPBD_API virtual ~Stateful();
@@ -76,11 +76,11 @@ class /*LIBPBD_API*/ Stateful {
 	/* RAII structure to manage thread-local ID regeneration. */
 	struct ForceIDRegeneration {
 		ForceIDRegeneration () {
-			_old_val = _regenerate_xml_or_string_ids;
-			_regenerate_xml_or_string_ids = true;
+			_old_val = regenerate_xml_or_string_ids_ref();
+			regenerate_xml_or_string_ids_ref() = true;
 		}
 		~ForceIDRegeneration () {
-			_regenerate_xml_or_string_ids = _old_val;
+			regenerate_xml_or_string_ids_ref() = _old_val;
 		}
 		private:
 			bool _old_val;
@@ -140,7 +140,7 @@ class /*LIBPBD_API*/ Stateful {
 
   private:
 	friend struct ForceIDRegeneration;
-	static thread_local bool _regenerate_xml_or_string_ids;
+	LIBPBD_API static bool& regenerate_xml_or_string_ids_ref();
 
 	PBD::ID           _id;
 	std::atomic<int> _stateful_frozen;

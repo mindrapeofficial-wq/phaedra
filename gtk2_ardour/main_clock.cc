@@ -31,7 +31,11 @@
 #include "actions.h"
 #include "main_clock.h"
 #include "public_editor.h"
+#include "tempo_map_change.h"
 #include "ardour_ui.h"
+
+#include <ytkmm/entry.h>
+#include <ytkmm/window.h>
 
 #include "pbd/i18n.h"
 
@@ -66,8 +70,8 @@ void
 MainClock::set_session (ARDOUR::Session *s)
 {
 	AudioClock::set_session (s);
-	_left_btn.set_related_action (ActionManager::get_action (X_("Editor"), X_("edit-current-tempo")));
-	_right_btn.set_related_action (ActionManager::get_action (X_("Editor"), X_("edit-current-meter")));
+	_left_btn.signal_button_press_event().connect (sigc::mem_fun (*this, &MainClock::on_tempo_btn_press), false);
+	_right_btn.signal_button_press_event().connect (sigc::mem_fun (*this, &MainClock::on_meter_btn_press), false);
 }
 
 void
@@ -216,6 +220,102 @@ MainClock::render (Cairo::RefPtr<Cairo::Context> const& ctx, cairo_rectangle_t* 
 	Gtkmm2ext::set_source_rgba (ctx, text_color);
 	cairo_move_to (cr, get_width() - _layout_width * 1.5 , (get_height() - _layout_height) / 2.0);
 	pango_cairo_show_layout (cr, _layout->gobj());
+}
+
+bool
+MainClock::on_tempo_btn_press (GdkEventButton* ev)
+{
+	if (ev->button == 3) {
+		edit_current_tempo ();
+		return true;
+	}
+	if (ev->button == 1 && _session) {
+		show_inline_edit (_left_btn, true);
+		return true;
+	}
+	return false;
+}
+
+bool
+MainClock::on_meter_btn_press (GdkEventButton* ev)
+{
+	if (ev->button == 3) {
+		edit_current_meter ();
+		return true;
+	}
+	if (ev->button == 1 && _session) {
+		show_inline_edit (_right_btn, false);
+		return true;
+	}
+	return false;
+}
+
+void
+MainClock::show_inline_edit (ArdourWidgets::ArdourButton& btn, bool is_tempo)
+{
+	Gtk::Window* toplevel = dynamic_cast<Gtk::Window*> (get_toplevel ());
+	if (!toplevel) return;
+
+	Temporal::TempoMap::SharedPtr tmap (Temporal::TempoMap::use());
+	timepos_t pos (timepos_t (_session->transport_sample ()));
+	Temporal::TempoMetric m (tmap->metric_at (pos));
+
+	Gtk::Window popup (Gtk::WINDOW_POPUP);
+	Gtk::Entry entry;
+
+	if (is_tempo) {
+		char buf[32];
+		snprintf (buf, sizeof(buf), "%.1f", m.tempo().note_types_per_minute_at_DOUBLE (pos));
+		entry.set_text (buf);
+	} else {
+		char buf[32];
+		snprintf (buf, sizeof(buf), "%d/%d", m.meter().divisions_per_bar(), m.meter().note_value());
+		entry.set_text (buf);
+	}
+
+	entry.set_width_chars (8);
+	entry.select_region (0, -1);
+	popup.add (entry);
+	popup.set_decorated (false);
+	popup.set_transient_for (*toplevel);
+
+	int x, y;
+	btn.get_window()->get_origin (x, y);
+	popup.move (x, y);
+	popup.set_size_request (btn.get_width(), btn.get_height());
+	popup.show_all ();
+	entry.grab_focus ();
+
+	bool done = false;
+	bool accepted = false;
+
+	entry.signal_activate().connect ([&]() { accepted = true; done = true; Gtk::Main::quit(); });
+	entry.signal_key_press_event().connect ([&](GdkEventKey* ev) -> bool {
+		if (ev->keyval == GDK_Escape) { done = true; Gtk::Main::quit(); return true; }
+		return false;
+	}, false);
+	entry.signal_focus_out_event().connect ([&](GdkEventFocus*) -> bool { done = true; Gtk::Main::quit(); return false; });
+
+	Gtk::Main::run ();
+
+	if (accepted) {
+		std::string txt = entry.get_text ();
+		if (is_tempo) {
+			double bpm = atof (txt.c_str());
+			if (bpm > 0 && bpm < 1000) {
+				Temporal::Tempo new_tempo (bpm, m.tempo().note_type());
+				TempoMapChange edit (PublicEditor::instance (), _("edit tempo"));
+				edit.map ().change_tempo (edit.map ().metric_at (pos).get_editable_tempo (), new_tempo);
+			}
+		} else {
+			int num = 0, den = 0;
+			if (sscanf (txt.c_str(), "%d/%d", &num, &den) == 2 && num > 0 && den > 0) {
+				Temporal::Meter new_meter (num, den);
+				TempoMapChange edit (PublicEditor::instance (), _("edit time signature"));
+				edit.map ().set_meter (new_meter, pos);
+			}
+		}
+	}
 }
 
 void

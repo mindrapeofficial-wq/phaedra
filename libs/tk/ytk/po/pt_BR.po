@@ -16,12 +16,12 @@
 # Rodrigo L. M. Flores <mail@rodrigoflores.org>
 # Fabrício Godoy <skarllot@gmail.com>, 2010.
 # Jonh Wendell <jwendell@gnome.org>, 2009, 2010.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: gtk+\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-05 15:38+0200\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2010-09-21 21:07-0300\n"
 "Last-Translator: Jonh Wendell <jwendell@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
@@ -651,20 +651,20 @@ msgstr "FLAGS"
 msgid "GTK+ debugging flags to unset"
 msgstr "Opções de depuração do GTK+ a serem desativadas"
 
-#: gtkmain.c:698
+#: gtkmain.c:706
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: gtkmain.c:763
+#: gtkmain.c:771
 #, c-format
 msgid "Cannot open display: %s"
 msgstr "Não foi possível abrir a tela: %s"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "GTK+ Options"
 msgstr "Opções do GTK+"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "Show GTK+ Options"
 msgstr "Mostra as opções do GTK+"
 

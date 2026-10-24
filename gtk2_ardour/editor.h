@@ -163,6 +163,11 @@ public:
 	Editor ();
 	~Editor ();
 
+	Gtk::Box& mixer_dock_box () { return _mixer_dock_box; }
+	void set_mixer_dock_available (bool);
+	void toggle_mixer_dock ();
+
+
 	void             set_session (ARDOUR::Session*);
 
 	Gtk::Window* use_own_window (bool and_fill_it);
@@ -587,6 +592,13 @@ private:
 	void add_notebook_page (std::string const&, std::string const&, Gtk::Widget&);
 
 	ArdourWidgets::VPane editor_summary_pane;
+	ArdourWidgets::VPane _arrange_mixer_pane;
+	Gtk::ScrolledWindow _mixer_dock_scroller;
+	Gtk::VBox _mixer_dock_box;
+	ArdourWidgets::ArdourButton _mixer_dock_button;
+	Glib::RefPtr<Gtk::ToggleAction> _show_mixer_dock_action;
+	bool _mixer_dock_available = false;
+
 
 	Gtk::EventBox meter_base;
 	Gtk::EventBox marker_base;

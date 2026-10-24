@@ -463,9 +463,9 @@ Editor::restore_ruler_visibility ()
 		ruler_minsec_action->set_active (td == Temporal::AudioTime);
 		ruler_timecode_action->set_active (td == Temporal::AudioTime);
 		ruler_samples_action->set_active (false);
-		ruler_bbt_action->set_active (td == Temporal::BeatTime);
-		ruler_meter_action->set_active (td == Temporal::BeatTime);
-		ruler_tempo_action->set_active (td == Temporal::BeatTime);
+		ruler_bbt_action->set_active (true);
+		ruler_meter_action->set_active (true);
+		ruler_tempo_action->set_active (true);
 		ruler_range_action->set_active (true);
 		ruler_marker_action->set_active (true);
 		ruler_section_action->set_active (td == Temporal::BeatTime);

@@ -1,9 +1,9 @@
 # translation of gtk+-master-po-ru-9735.merged.po to Russian
 # Russian translation of gtk+
 # Copyright (C) 1999-2009, 2010 Free Software Foundation, Inc.
-#
-#
-#
+# 
+# 
+# 
 # Sergey Panov <sipan@mit.edu>, 1999.
 # Valek Filippov <frob@df.ru>, 2000-2002.
 # Dmitry Mastrukov <dmitry@taurussoft.org>, 2002-2004.
@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gtk+.master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-05 15:38+0200\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2010-02-24 21:20+0300\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -646,20 +646,20 @@ msgstr "ФЛАГИ"
 msgid "GTK+ debugging flags to unset"
 msgstr "Сбросить указанные отладочные флаги GTK+"
 
-#: gtkmain.c:698
+#: gtkmain.c:706
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: gtkmain.c:763
+#: gtkmain.c:771
 #, c-format
 msgid "Cannot open display: %s"
 msgstr "Не удалось открыть дисплей: %s"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "GTK+ Options"
 msgstr "Параметры GTK+"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "Show GTK+ Options"
 msgstr "Показать параметры GTK+"
 

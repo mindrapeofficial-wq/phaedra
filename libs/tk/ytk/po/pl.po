@@ -10,12 +10,12 @@
 # Tomasz Dominikowski <dominikowski@gmail.com>, 2007-2009.
 # Piotr Drąg <piotrdrag@gmail.com>, 2010-2017.
 # Aviary.pl <community-poland@mozilla.org>, 2007-2017.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: gtk+\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-05 15:38+0200\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2017-12-02 18:38+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
@@ -644,20 +644,20 @@ msgstr "ZNACZNIKI"
 msgid "GTK+ debugging flags to unset"
 msgstr "Wyczyszczone znaczniki debugowania biblioteki GTK+"
 
-#: gtkmain.c:698
+#: gtkmain.c:706
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: gtkmain.c:763
+#: gtkmain.c:771
 #, c-format
 msgid "Cannot open display: %s"
 msgstr "Nie można otworzyć ekranu: %s"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "GTK+ Options"
 msgstr "Opcje biblioteki GTK+"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "Show GTK+ Options"
 msgstr "Wyświetla opcje biblioteki GTK+"
 

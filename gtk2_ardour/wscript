@@ -823,16 +823,16 @@ def build(bld):
     else: # Linux/X11 & Windows fonts
         basefont = '' # unspecified - use system defaults
         font_sizes = {
-                'VERYSMALL' : '8',
-                'SMALLER' : '6',
-                'SMALL' : '7',
-                'NORMAL' : '8',
-                'BIG' : '11',
-                'BIGGER' : '13.5',
-                'LARGE' : '14.5',
-                'LARGER' : '19',
-                'HUGER' : '27',
-                'MASSIVE' : '48',
+                'VERYSMALL' : '9',
+                'SMALLER' : '8',
+                'SMALL' : '9',
+                'NORMAL' : '10',
+                'BIG' : '13',
+                'BIGGER' : '15',
+                'LARGE' : '16',
+                'LARGER' : '22',
+                'HUGER' : '30',
+                'MASSIVE' : '50',
         }
         font_names = {
                 'MONOSPACE' : 'ArdourMono',
@@ -862,7 +862,7 @@ def build(bld):
         key = font_sym
         font_subst_dict[key] = text
 
-    font_subst_dict['FONTFAMILY'] = ''
+    font_subst_dict['FONTFAMILY'] = 'Segoe UI'
     # RC file
 
     obj              = bld(features = 'subst')
@@ -871,7 +871,7 @@ def build(bld):
     obj.install_path = bld.env['CONFDIR']
     set_subst_dict(obj, font_subst_dict)
 
-    font_subst_dict['FONTFAMILY'] = 'ArdourSans'
+    font_subst_dict['FONTFAMILY'] = 'Segoe UI'
 
     obj              = bld(features = 'subst')
     obj.source       = [ 'clearlooks.rc.in' ]
@@ -981,15 +981,21 @@ def build(bld):
     #
     # If you add or delete some ,bindings files, be sure to edit fmt_bindings too, or better yet,
     # hack fmt-bindings and this wscript file so that the list is defined here and passed in.
-    if sys.version_info[0] > 2:
-        a_rule = '%s %s/tools/fmt-bindings.py --platform="%s" --winkey="%s" --accelmap 1 ${SRC[0].abspath()} >${TGT}' % (sys.executable, bld.top_dir, sys.platform, bld.env['WINDOWS_KEY'])
-    else:
-        a_rule = 'perl %s/tools/fmt-bindings --platform="%s" --winkey="%s" --accelmap 1 ${SRC[0].abspath()} >${TGT}' % (bld.top_dir, sys.platform, bld.env['WINDOWS_KEY'] )
+    import subprocess
+    _fmt_py = os.path.join(bld.top_dir, 'tools', 'fmt-bindings.py')
+    _fmt_platform = sys.platform
+    _fmt_winkey = bld.env['WINDOWS_KEY']
+    def fmt_bindings_rule(task):
+        src = task.inputs[0].abspath()
+        tgt = task.outputs[0].abspath()
+        cmd = [sys.executable, _fmt_py, '--platform=%s' % _fmt_platform,
+               '--winkey=%s' % _fmt_winkey, '--accelmap', '1', '-o', tgt, src]
+        return subprocess.call(cmd)
     for b in [ 'ardour' ] :
         obj = bld(
             target = b + '.keys',
             source = [ b + '.keys.in', 'mixer.bindings', 'processor_box.bindings', 'step_editing.bindings', 'monitor.bindings', 'trigger.bindings', 'regionfx_box.bindings', 'automation.bindings' ],
-            rule = a_rule
+            rule = fmt_bindings_rule
             )
         obj.install_path = bld.env['CONFDIR']
 

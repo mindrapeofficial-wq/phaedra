@@ -2,15 +2,14 @@
 # Copyright (C) YEAR "Paul Davis"
 # This file is distributed under the same license as the PACKAGE package.
 # PORRUMENTZIO <PORRUMENTZIO@RISEUP.NET>, 2020.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Ardour 6.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-20 14:36-0600\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2020-04-02 17:51+0200\n"
-"Last-Translator: Enara Larraitz & Porrumentzio <porrumentzio@riseup."
-"net>>\n"
+"Last-Translator: Enara Larraitz & Porrumentzio <porrumentzio@riseup.net>>\n"
 "Language-Team: Euskara <porrumentzio@riseup.net>\n"
 "Language: eu\n"
 "MIME-Version: 1.0\n"
@@ -20,51 +19,27 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Bookmarks: 0,-1,-1,-1,-1,-1,-1,-1,-1,-1\n"
 
-#: actions.cc:215
+#: actions.cc:219
 msgid "Unknown action name: %1/%2"
 msgstr "Ekintza-izen ezezaguna: %1/%2"
 
-#: action_model.cc:56 action_model.cc:171
+#: action_model.cc:56 action_model.cc:157
 msgid "Disabled"
 msgstr "Desgaituta"
 
-#: action_model.cc:83
-msgid "Main_menu"
-msgstr "Menu_nagusia"
-
-#: action_model.cc:85
-msgid "JACK"
-msgstr "JACK"
-
-#: action_model.cc:87
-msgid "redirectmenu"
-msgstr "birbideratzemenua"
-
-#: action_model.cc:89
-msgid "Editor_menus"
-msgstr "Editore_menuak"
-
-#: action_model.cc:91
-msgid "RegionList"
-msgstr "EremuZerrenda"
-
-#: action_model.cc:93
-msgid "ProcessorMenu"
-msgstr "ProzesadoreMenua"
-
-#: bindings.cc:840 bindings.cc:842
+#: bindings.cc:951 bindings.cc:953
 msgid "Window"
 msgstr "Leihoa"
 
-#: bindings.cc:840
+#: bindings.cc:951
 msgid " (Categorized)"
 msgstr " (Kategoriaka)"
 
-#: bindings.cc:842
+#: bindings.cc:953
 msgid " (Alphabetical)"
 msgstr " (Alfabetikoki)"
 
-#: bindings.cc:858
+#: bindings.cc:969
 msgid "Uncategorized"
 msgstr "Kategoriarik  gabe"
 
@@ -76,11 +51,11 @@ msgstr "%1 fitxategiak errore bat du %2. linean"
 msgid "ABCDEFGHIJLKMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 msgstr "ABCDEFGHIJLKMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 
-#: gtk_ui.cc:126
+#: gtk_ui.cc:135
 msgid "Log"
 msgstr "Erregistroa"
 
-#: gtk_ui.cc:395
+#: gtk_ui.cc:432
 msgid ""
 "\n"
 "\n"
@@ -90,74 +65,112 @@ msgstr ""
 "\n"
 "Laster-tekla: "
 
-#: gtk_ui.cc:694
+#: gtk_ui.cc:724
 msgid "Press To Exit"
 msgstr "Sakatu irteteko"
 
-#: gtk_ui.cc:730
+#: gtk_ui.cc:761
 msgid "I'm sorry %1, I can't do that"
 msgstr "%1, ezin da hori burutu"
 
-#: keyboard.cc:75
+#: keyboard.cc:80
 msgid "Command"
 msgstr "Komandua"
 
-#: keyboard.cc:76 keyboard.cc:98
+#: keyboard.cc:85 keyboard.cc:146
 msgid "Control"
 msgstr "Kontrola"
 
-#: keyboard.cc:77 keyboard.cc:82 keyboard.cc:100 keyboard.cc:105
+#: keyboard.cc:90 keyboard.cc:120 keyboard.cc:156 keyboard.cc:186
 msgid "Key|Shift"
 msgstr "Maius"
 
-#: keyboard.cc:78
+#: keyboard.cc:95
 msgid "Option"
 msgstr "Aukera"
 
-#: keyboard.cc:80
+#: keyboard.cc:100
+msgid "Middle Click (or Ctrl+Alt+Click)"
+msgstr ""
+
+#: keyboard.cc:105
+msgid "Cmd+Click (or Middle-Click)"
+msgstr ""
+
+#: keyboard.cc:110
 msgid "Cmd"
 msgstr "Cmd"
 
-#: keyboard.cc:81 keyboard.cc:103
+#: keyboard.cc:115 keyboard.cc:176
 msgid "Ctrl"
 msgstr "Ktrl"
 
-#: keyboard.cc:83
+#: keyboard.cc:125
 msgid "Opt"
 msgstr "Opt"
 
-#: keyboard.cc:99 keyboard.cc:104
+#: keyboard.cc:151 keyboard.cc:181
 msgid "Alt"
 msgstr "Alt"
 
-#: keyboard.cc:101
+#: keyboard.cc:161
 msgid "Windows"
 msgstr "Windows"
 
-#: keyboard.cc:106
+#: keyboard.cc:166 keyboard.cc:171
+msgid "Middle-Click"
+msgstr ""
+
+#: keyboard.cc:191
 msgid "Win"
 msgstr "Win"
 
-#: keyboard.cc:159 keyboard.cc:605
+#: keyboard.cc:204
+msgid "CapsLock"
+msgstr ""
+
+#: keyboard.cc:210
+msgid "Lock"
+msgstr ""
+
+#: keyboard.cc:301 keyboard.cc:785
 msgid "Unknown"
 msgstr "Ezezaguna"
 
-#: keyboard.cc:616
+#: keyboard.cc:795
 msgid "key bindings file not found at \"%2\" or contains errors."
 msgstr "laster-teklen fitxategia ez dago %2-(e)n edo akatsak ditu."
 
-#: keyboard.cc:642
+#: keyboard.cc:821
 msgid "Keyboard binding found without a name"
 msgstr "Laster-teklak ez du izenik"
 
-#: keyboard.cc:674
+#: keyboard.cc:853
 msgid "Cannot save key bindings to %1"
 msgstr "Ezin dira gorde laster-teklak %1-(e)n"
 
-#: keyboard.cc:690
+#: keyboard.cc:868
 msgid "Cannot rename your own keybinding file (%1)"
 msgstr "Ezin da berrizendatu zure laster-teklen fitxategia (%1)"
 
 #: textviewer.cc:32
 msgid "Close"
 msgstr "Itxi"
+
+#~ msgid "Main_menu"
+#~ msgstr "Menu_nagusia"
+
+#~ msgid "JACK"
+#~ msgstr "JACK"
+
+#~ msgid "redirectmenu"
+#~ msgstr "birbideratzemenua"
+
+#~ msgid "Editor_menus"
+#~ msgstr "Editore_menuak"
+
+#~ msgid "RegionList"
+#~ msgstr "EremuZerrenda"
+
+#~ msgid "ProcessorMenu"
+#~ msgstr "ProzesadoreMenua"

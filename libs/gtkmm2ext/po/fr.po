@@ -1,6 +1,6 @@
 # Header entry was created by Lokalize.
-#
-#
+# 
+# 
 # Romain Arnaud <roming22@gmail.com>, 2011.
 # Olivier Humbert <trebmuh@librazik.org>, 2016.
 # stratojaune <fred_rech@laposte.net>, 2020.
@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gtkmm2ext\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-17 09:06+0100\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2026-02-17 11:53+0100\n"
 "Last-Translator: Fred Rech <fred_rech@laposte.net>\n"
 "Language-Team: French <>\n"
@@ -26,37 +26,9 @@ msgstr ""
 msgid "Unknown action name: %1/%2"
 msgstr "Nom d'action inconnu : %1/%2"
 
-#: action_model.cc:56 action_model.cc:171
+#: action_model.cc:56 action_model.cc:157
 msgid "Disabled"
 msgstr "Désactivé"
-
-#: action_model.cc:83
-msgid "Main_menu"
-msgstr ""
-
-#: action_model.cc:85
-msgid "JACK"
-msgstr ""
-
-#: action_model.cc:87
-msgid "redirectmenu"
-msgstr ""
-
-#: action_model.cc:89
-msgid "Editor_menus"
-msgstr ""
-
-#: action_model.cc:91
-msgid "RegionList"
-msgstr ""
-
-#: action_model.cc:93
-msgid "ProcessorMenu"
-msgstr ""
-
-#: bindings.cc:519
-msgid "Escape"
-msgstr "Échap"
 
 #: bindings.cc:951 bindings.cc:953
 msgid "Window"
@@ -190,6 +162,9 @@ msgstr "Impossible de renommer votre propre fichier de raccourcis-clavier (%1)"
 #: textviewer.cc:32
 msgid "Close"
 msgstr "Fermer"
+
+#~ msgid "Escape"
+#~ msgstr "Échap"
 
 #~ msgid "Unknown action name: %1"
 #~ msgstr "Nom d'action inconnu : %1"

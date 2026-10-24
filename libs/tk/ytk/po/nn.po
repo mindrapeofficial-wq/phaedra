@@ -1,7 +1,7 @@
 # translation of nn.po to Norwegian Nynorsk
 # Norwegian translation of gtk+.
 # Copyright (C) 1998-2002, 2003, 2004 Free Software Foundation, Inc.
-#
+# 
 # Kjartan Maraas <kmaraas@gnome.org>, 1998-2001.
 # Roy-Magne Mo <rmo@sunnmore.net>, 2001-2002.
 # Åsmund Skjæveland <aasmunds@fys.uio.no>, 2003, 2004.
@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-05 15:38+0200\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2009-01-22 11:03+0100\n"
 "Last-Translator: Åsmund Skjæveland <aasmunds@ulrik.uio.no>\n"
 "Language-Team: Norwegian Nynorsk <i18n-nn@lister.ping.uio.no>\n"
@@ -22,18 +22,18 @@ msgstr ""
 "X-Generator: Lokalize 0.2\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
-#
+# 
 #: gtkaboutdialog.c:245
 #, fuzzy
 msgid "Could not show link"
 msgstr "Klarte ikkje tømme lista"
 
-#
+# 
 #: gtkaboutdialog.c:399 gtkaboutdialog.c:2286
 msgid "License"
 msgstr "Lisens"
 
-#
+# 
 #: gtkaboutdialog.c:400
 msgid "The license of the program"
 msgstr "Programmets lisens"
@@ -42,7 +42,7 @@ msgstr "Programmets lisens"
 msgid "C_redits"
 msgstr "_Heider og ære"
 
-#
+# 
 #: gtkaboutdialog.c:660
 msgid "_License"
 msgstr "_Lisens"
@@ -56,22 +56,22 @@ msgstr "Om %s"
 msgid "Credits"
 msgstr "Heider og ære"
 
-#
+# 
 #: gtkaboutdialog.c:2238
 msgid "Written by"
 msgstr "Skrivne av"
 
-#
+# 
 #: gtkaboutdialog.c:2241
 msgid "Documented by"
 msgstr "Dokumentert av"
 
-#
+# 
 #: gtkaboutdialog.c:2253
 msgid "Translated by"
 msgstr "Omsett av"
 
-#
+# 
 #: gtkaboutdialog.c:2257
 msgid "Artwork by"
 msgstr "Grafikk av"
@@ -173,7 +173,7 @@ msgstr "_Blå:"
 msgid "Amount of blue light in the color."
 msgstr "Kor mykje blått lys det er i fargen."
 
-#
+# 
 #: gtkcolorsel.c:418
 msgid "Op_acity:"
 msgstr "_Ugjennomsiktighet:"
@@ -182,7 +182,7 @@ msgstr "_Ugjennomsiktighet:"
 msgid "Transparency of the color."
 msgstr "Kor klar den valde fargen er."
 
-#
+# 
 #: gtkcolorsel.c:442
 msgid "Color _name:"
 msgstr "Farge_namn:"
@@ -195,12 +195,12 @@ msgstr ""
 "Du kan skriva inn ein heksadesimal fargeverdi i HTML-stil, eller eit "
 "fargenamn som t.d. «oransje»."
 
-#
+# 
 #: gtkcolorsel.c:486
 msgid "_Palette:"
 msgstr "_Palett:"
 
-#
+# 
 #: gtkcolorsel.c:515
 msgid "Color Wheel"
 msgstr "Fargehjul"
@@ -270,12 +270,12 @@ msgstr ""
 msgid "Desktop"
 msgstr "Skrivebord"
 
-#
+# 
 #: gtkfilechooserbutton.c:66
 msgid "(None)"
 msgstr "(Inga)"
 
-#
+# 
 #: gtkfilechooserbutton.c:2175
 msgid "Other..."
 msgstr "Anna …"
@@ -284,27 +284,27 @@ msgstr "Anna …"
 msgid "Type name of new folder"
 msgstr "Skriv namnet på den nye mappa"
 
-#
+# 
 #: gtkfilechooserdefault.c:958
 msgid "Could not retrieve information about the file"
 msgstr "Kunne ikkje henta informasjon om fila"
 
-#
+# 
 #: gtkfilechooserdefault.c:969
 msgid "Could not add a bookmark"
 msgstr "Kunne ikkje leggja til bokmerke"
 
-#
+# 
 #: gtkfilechooserdefault.c:980
 msgid "Could not remove bookmark"
 msgstr "Kunne ikkje fjerna bokmerke"
 
-#
+# 
 #: gtkfilechooserdefault.c:991
 msgid "The folder could not be created"
 msgstr "Mappa kunne ikkje opprettas"
 
-#
+# 
 #: gtkfilechooserdefault.c:1004
 msgid ""
 "The folder could not be created, as a file with the same name already "
@@ -328,12 +328,12 @@ msgid ""
 "try using a different item."
 msgstr ""
 
-#
+# 
 #: gtkfilechooserdefault.c:1043
 msgid "Invalid file name"
 msgstr "Ugyldig filnamn"
 
-#
+# 
 #: gtkfilechooserdefault.c:1053
 msgid "The folder contents could not be displayed"
 msgstr "Mappeinholdet kunne ikkje vert viste"
@@ -343,17 +343,17 @@ msgstr "Mappeinholdet kunne ikkje vert viste"
 msgid "%1$s on %2$s"
 msgstr "%1$s på %2$s"
 
-#
+# 
 #: gtkfilechooserdefault.c:1735
 msgid "Search"
 msgstr "Søk"
 
-#
+# 
 #: gtkfilechooserdefault.c:1759 gtkfilechooserdefault.c:4877
 msgid "Recently Used"
 msgstr "Sist brukt"
 
-#
+# 
 #: gtkfilechooserdefault.c:2389
 msgid "Select which types of files are shown"
 msgstr "Vel kva filtypar som skal vert viste"
@@ -381,47 +381,47 @@ msgstr "Fjern bokmerke «%s»"
 msgid "Bookmark '%s' cannot be removed"
 msgstr ""
 
-#
+# 
 #: gtkfilechooserdefault.c:2848 gtkfilechooserdefault.c:3742
 msgid "Remove the selected bookmark"
 msgstr "Fjern vald bokmerke"
 
-#
+# 
 #: gtkfilechooserdefault.c:3423
 msgid "Remove"
 msgstr "Fjern"
 
-#
+# 
 #: gtkfilechooserdefault.c:3432
 msgid "Rename..."
 msgstr "Gje nytt namn …"
 
-#
+# 
 #: gtkfilechooserdefault.c:3599
 msgid "Places"
 msgstr "Stader"
 
-#
+# 
 #: gtkfilechooserdefault.c:3656
 msgid "_Places"
 msgstr "_Stader"
 
-#
+# 
 #: gtkfilechooserdefault.c:3730
 msgid "Add the selected folder to the Bookmarks"
 msgstr "Legg til vald mappe i bokmerke"
 
-#
+# 
 #: gtkfilechooserdefault.c:3874
 msgid "Could not select file"
 msgstr "Kunne ikkje velja fil"
 
-#
+# 
 #: gtkfilechooserdefault.c:4047
 msgid "_Add to Bookmarks"
 msgstr "L_egg til i bokmerke"
 
-#
+# 
 #: gtkfilechooserdefault.c:4060
 msgid "Show _Hidden Files"
 msgstr "Vis sk_julte filer"
@@ -450,7 +450,7 @@ msgstr "Endra"
 msgid "_Name:"
 msgstr "_Namn:"
 
-#
+# 
 #: gtkfilechooserdefault.c:4715
 msgid "Type a file name"
 msgstr "Skriv eit filnamn"
@@ -463,18 +463,18 @@ msgstr ""
 msgid "Please type a file name"
 msgstr ""
 
-#
+# 
 #: gtkfilechooserdefault.c:4839
 msgid "Create Fo_lder"
 msgstr "Opprett _mappe"
 
-#
+# 
 #: gtkfilechooserdefault.c:4887
 #, fuzzy
 msgid "Search:"
 msgstr "Søk"
 
-#
+# 
 #: gtkfilechooserdefault.c:4938
 msgid "_Location:"
 msgstr "_Stad:"
@@ -502,12 +502,12 @@ msgstr "Kunne ikkje finne rotmappa"
 msgid "Unknown"
 msgstr "Ukjent"
 
-#
+# 
 #: gtkfilechooserdefault.c:6596
 msgid "%H:%M"
 msgstr "%H:%M"
 
-#
+# 
 #: gtkfilechooserdefault.c:6598
 msgid "Yesterday at %H:%M"
 msgstr "I går kl. %H:%M"
@@ -539,17 +539,17 @@ msgstr ""
 "Fila finst allereie i «%s». Viss du byter ut denne vil du overskrive "
 "innhaldet."
 
-#
+# 
 #: gtkfilechooserdefault.c:8263
 msgid "_Replace"
 msgstr "E_rstatt"
 
-#
+# 
 #: gtkfilechooserdefault.c:9136
 msgid "Could not start the search process"
 msgstr "Kunne ikkje starta søkjeprosessen"
 
-#
+# 
 #: gtkfilechooserdefault.c:9137
 msgid ""
 "The program was not able to create a connection to the indexer daemon.  "
@@ -558,7 +558,7 @@ msgstr ""
 "Programmet kunne ikkje oppretta ein tilkopling til indekseringstenesten. "
 "Sjekk at denne køyrer."
 
-#
+# 
 #: gtkfilechooserdefault.c:9151
 msgid "Could not send the search request"
 msgstr "Kunne ikkje sende søkjeforespørselen"
@@ -573,7 +573,7 @@ msgstr "Kunne ikkje montere %s"
 msgid "Error creating folder '%s': %s"
 msgstr "Feil under oppretting av mappe «%s»: %s"
 
-#
+# 
 #: gtkfilesystem.c:52
 msgid "File System"
 msgstr "Filsystem"
@@ -654,62 +654,62 @@ msgstr "Opna adresse"
 msgid "Copy _Link Address"
 msgstr ""
 
-#
+# 
 #: gtklinkbutton.c:428
 msgid "Copy URL"
 msgstr "Kopier URL"
 
-#
+# 
 #: gtklinkbutton.c:586
 msgid "Invalid URI"
 msgstr "Ugyldig URI"
 
-#
+# 
 #: gtkmain.c:412
 msgid "Load additional GTK+ modules"
 msgstr "Last tilleggsmodular for GTK+"
 
-#
+# 
 #: gtkmain.c:413
 msgid "MODULES"
 msgstr "MODULAR"
 
-#
+# 
 #: gtkmain.c:415
 msgid "Make all warnings fatal"
 msgstr "La alle advarsler vera fatale"
 
-#
+# 
 #: gtkmain.c:418
 msgid "GTK+ debugging flags to set"
 msgstr "Feilsøkingsflagg som skal setjes for GTK+"
 
-#
+# 
 #: gtkmain.c:419 gtkmain.c:422
 msgid "FLAGS"
 msgstr "FLAGG"
 
-#
+# 
 #: gtkmain.c:421
 msgid "GTK+ debugging flags to unset"
 msgstr "Feilsøkingsflagg som skal fjernes for GTK+"
 
-#: gtkmain.c:698
+#: gtkmain.c:706
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: gtkmain.c:763
+#: gtkmain.c:771
 #, c-format
 msgid "Cannot open display: %s"
 msgstr "Klarte ikkje opna display: %s"
 
-#
-#: gtkmain.c:800
+# 
+#: gtkmain.c:808
 msgid "GTK+ Options"
 msgstr "Alternativ for GTK+"
 
-#
-#: gtkmain.c:800
+# 
+#: gtkmain.c:808
 msgid "Show GTK+ Options"
 msgstr "Vis alternativ for GTK+"
 
@@ -767,17 +767,17 @@ msgstr ""
 msgid "Page %u"
 msgstr "Side %u"
 
-#
+# 
 #: gtkpathbar.c:151
 msgid "Up Path"
 msgstr "Opp stig"
 
-#
+# 
 #: gtkpathbar.c:153
 msgid "Down Path"
 msgstr "Ned stig"
 
-#
+# 
 #: gtkpathbar.c:1467
 msgid "File System Root"
 msgstr "Filsystemrot"
@@ -798,7 +798,7 @@ msgstr "Klarte ikkje finna biletefila i pixmap_path: «%s»"
 msgid "This function is not implemented for widgets of class '%s'"
 msgstr "Denne funksjonen er ikkje implementert for komponentar av klasse «%s»"
 
-#
+# 
 #: gtkrecentchooserdefault.c:481
 msgid "Select which type of documents are shown"
 msgstr "Vel kva dokumenttypar som skal verta viste"
@@ -808,42 +808,42 @@ msgstr "Vel kva dokumenttypar som skal verta viste"
 msgid "No item for URI '%s' found"
 msgstr "Inga oppføring funne for URI «%s»"
 
-#
+# 
 #: gtkrecentchooserdefault.c:1299
 msgid "Untitled filter"
 msgstr "Filter utan tittel"
 
-#
+# 
 #: gtkrecentchooserdefault.c:1652
 msgid "Could not remove item"
 msgstr "Klarte ikkje fjerna oppføring"
 
-#
+# 
 #: gtkrecentchooserdefault.c:1696
 msgid "Could not clear list"
 msgstr "Klarte ikkje tømme lista"
 
-#
+# 
 #: gtkrecentchooserdefault.c:1780
 msgid "Copy _Location"
 msgstr "Kopier _stad"
 
-#
+# 
 #: gtkrecentchooserdefault.c:1793
 msgid "_Remove From List"
 msgstr "Fje_rn frå lista"
 
-#
+# 
 #: gtkrecentchooserdefault.c:1802
 msgid "_Clear List"
 msgstr "_Tøm lista"
 
-#
+# 
 #: gtkrecentchooserdefault.c:1816
 msgid "Show _Private Resources"
 msgstr "Vis _private ressursar"
 
-#
+# 
 #: gtkrecentchoosermenu.c:342
 msgid "No items found"
 msgstr "Ingen oppføringar funne"
@@ -858,7 +858,7 @@ msgstr "Fann ingen nyleg brukt ressurs med URI «%s»"
 msgid "Open '%s'"
 msgstr "Opna «%s»"
 
-#
+# 
 #: gtkrecentchoosermenu.c:804
 msgid "Unknown item"
 msgstr "Ukjend oppføring"
@@ -1384,7 +1384,7 @@ msgstr "Attributt «%s» er ugyldig på <%s>-element i denne konteksten"
 msgid "Tag \"%s\" has not been defined."
 msgstr "Tagg «%s» er ikkje definert."
 
-#
+# 
 #: gtktextbufferserialize.c:1035
 msgid "Anonymous tag found and tags can not be created."
 msgstr "Anonym tagg funne, og taggar kan ikkje opprettast."
@@ -1442,7 +1442,7 @@ msgstr "Det ytste elementet i ein tekst må vera <text_view_markup>, ikkje <%s>"
 msgid "A <%s> element has already been specified"
 msgstr "Eit element <%s> er allereie spesifisert"
 
-#
+# 
 #: gtktextbufferserialize.c:1381
 msgid "A <text> element can't occur before a <tags> element"
 msgstr "Eit <text>-element kan ikkje brukast før eit <tags>-element"
@@ -1525,43 +1525,43 @@ msgstr "Tom"
 #~ msgid "Error parsing option --gdk-no-debug"
 #~ msgstr "Feil ved tolking av val: --gdk-no-debug"
 
-#
+# 
 #~ msgid "Program class as used by the window manager"
 #~ msgstr "Programklasse som vet brukt av vindaugehandsamaren"
 
-#
+# 
 #~ msgid "CLASS"
 #~ msgstr "KLASSE"
 
-#
+# 
 #~ msgid "Program name as used by the window manager"
 #~ msgstr "Programnamn som vert brukt av vindaugehandsamaren"
 
-#
+# 
 #~ msgid "NAME"
 #~ msgstr "NAMN"
 
-#
+# 
 #~ msgid "X display to use"
 #~ msgstr "X-display som skal brukast"
 
-#
+# 
 #~ msgid "DISPLAY"
 #~ msgstr "DISPLAY"
 
-#
+# 
 #~ msgid "X screen to use"
 #~ msgstr "X-skjerm som skal brukast"
 
-#
+# 
 #~ msgid "SCREEN"
 #~ msgstr "SKJERM"
 
-#
+# 
 #~ msgid "Gdk debugging flags to set"
 #~ msgstr "Feilsøkingsflagg som skal setjast for Gdk"
 
-#
+# 
 #~ msgid "Gdk debugging flags to unset"
 #~ msgstr "Feilsøkingsflagg for Gdk som skal fjernast"
 
@@ -2282,11 +2282,11 @@ msgstr "Tom"
 #~ msgid "Failed to load TIFF image"
 #~ msgstr "Klarte ikkje å lasta TIFF-bilete"
 
-#
+# 
 #~ msgid "Failed to save TIFF image"
 #~ msgstr "Klarte ikkje å lagra TIFF-bilete"
 
-#
+# 
 #~ msgid "Failed to write TIFF data"
 #~ msgstr "Klarte ikkje å lagra TIFF-data"
 
@@ -2387,30 +2387,30 @@ msgstr "Tom"
 #~ msgid "The WMF image format"
 #~ msgstr "WMF-bileteformatet"
 
-#
+# 
 #~ msgid "Don't batch GDI requests"
 #~ msgstr "Ikkje send fleire GDI-førespurnader saman"
 
 #~ msgid "Don't use the Wintab API for tablet support"
 #~ msgstr "Ikkje bruk Wintab-APIet for støtte for notatblokk-PC"
 
-#
+# 
 #~ msgid "Same as --no-wintab"
 #~ msgstr "Same som --no-wintab"
 
-#
+# 
 #~ msgid "Do use the Wintab API [default]"
 #~ msgstr "Ikkje bruk Wintab-API [forvald]"
 
-#
+# 
 #~ msgid "Size of the palette in 8 bit mode"
 #~ msgstr "Storleik på paletten i 8-bits modus"
 
-#
+# 
 #~ msgid "COLORS"
 #~ msgstr "FARGAR"
 
-#
+# 
 #~ msgid "Make X calls synchronous"
 #~ msgstr "Gjer kall til X-bibliotekene synkrone"
 
@@ -2488,7 +2488,7 @@ msgstr "Tom"
 #~ msgid "Disabled"
 #~ msgstr "Kopla ut"
 
-#
+# 
 #, fuzzy
 #~ msgctxt "Accelerator"
 #~ msgid "Invalid"
@@ -2499,23 +2499,23 @@ msgstr "Tom"
 #~ msgid "%d %%"
 #~ msgstr "%d %%"
 
-#
+# 
 #~ msgid "default:mm"
 #~ msgstr "default:mm"
 
-#
+# 
 #~ msgid "Manage Custom Sizes"
 #~ msgstr "Handter eigendefinerte storleikar"
 
-#
+# 
 #~ msgid "inch"
 #~ msgstr "tomme"
 
-#
+# 
 #~ msgid "mm"
 #~ msgstr "mm"
 
-#
+# 
 #~ msgid "Margins from Printer..."
 #~ msgstr "Margar frå skrivar …"
 
@@ -2523,39 +2523,39 @@ msgstr "Tom"
 #~ msgid "Custom Size %d"
 #~ msgstr "Eigendefinert storleik %d"
 
-#
+# 
 #~ msgid "_Width:"
 #~ msgstr "_Breidd:"
 
-#
+# 
 #~ msgid "_Height:"
 #~ msgstr "_Storleik:"
 
-#
+# 
 #~ msgid "Paper Size"
 #~ msgstr "Papirstorleik"
 
-#
+# 
 #~ msgid "_Top:"
 #~ msgstr "_Topp:"
 
-#
+# 
 #~ msgid "_Bottom:"
 #~ msgstr "_Botn:"
 
-#
+# 
 #~ msgid "_Left:"
 #~ msgstr "_Venstre:"
 
-#
+# 
 #~ msgid "_Right:"
 #~ msgstr "Høg_re:"
 
-#
+# 
 #~ msgid "Paper Margins"
 #~ msgstr "Margar for papir"
 
-#
+# 
 #~ msgid "Select A File"
 #~ msgstr "Vel ei fil"
 
@@ -2571,18 +2571,18 @@ msgstr "Tom"
 #~ msgid "Invalid path"
 #~ msgstr "Ugyldig stige"
 
-#
+# 
 #~ msgid "No match"
 #~ msgstr "Inga treff"
 
 #~ msgid "Sole completion"
 #~ msgstr "Einaste fullføring"
 
-#
+# 
 #~ msgid "Complete, but not unique"
 #~ msgstr "Ferdig, men ikkje unik"
 
-#
+# 
 #~ msgid "Completing..."
 #~ msgstr "Fullfører …"
 
@@ -2708,7 +2708,7 @@ msgstr "Tom"
 #~ msgid "System"
 #~ msgstr "System"
 
-#
+# 
 #, fuzzy
 #~ msgctxt "input method menu"
 #~ msgid "None"
@@ -2737,39 +2737,39 @@ msgstr "Tom"
 #~ msgid "Window"
 #~ msgstr "Vindauge"
 
-#
+# 
 #~ msgid "_Mode:"
 #~ msgstr "_Modus:"
 
-#
+# 
 #~ msgid "Axes"
 #~ msgstr "Aksar"
 
-#
+# 
 #~ msgid "Keys"
 #~ msgstr "Tastar"
 
-#
+# 
 #~ msgid "_X:"
 #~ msgstr "_X:"
 
-#
+# 
 #~ msgid "_Y:"
 #~ msgstr "_Y:"
 
-#
+# 
 #~ msgid "_Pressure:"
 #~ msgstr "_Trykk:"
 
-#
+# 
 #~ msgid "X _tilt:"
 #~ msgstr "X-_helling:"
 
-#
+# 
 #~ msgid "Y t_ilt:"
 #~ msgstr "Y-hell_ing:"
 
-#
+# 
 #~ msgid "_Wheel:"
 #~ msgstr "_Hjul:"
 
@@ -2782,7 +2782,7 @@ msgstr "Tom"
 #~ msgid "(unknown)"
 #~ msgstr "(ukjent)"
 
-#
+# 
 #~ msgid "Cl_ear"
 #~ msgstr "_Tøm"
 
@@ -2790,7 +2790,7 @@ msgstr "Tom"
 #~ msgid "Terminal Pager"
 #~ msgstr "_Førehandsvising av utskrift"
 
-#
+# 
 #, fuzzy
 #~ msgid "Top Command"
 #~ msgstr "Kommandolinje"
@@ -2798,12 +2798,12 @@ msgstr "Tom"
 #~ msgid "Not a valid page setup file"
 #~ msgstr "Ikkje ei gyldig fil for sideoppsett"
 
-#
+# 
 #, fuzzy
 #~ msgid "Any Printer"
 #~ msgstr "Skrivar"
 
-#
+# 
 #, fuzzy
 #~ msgid "For portable documents"
 #~ msgstr ""
@@ -2824,36 +2824,36 @@ msgstr "Tom"
 #~ " Topp: %s %s\n"
 #~ " Botn: %s %s"
 
-#
+# 
 #~ msgid "Manage Custom Sizes..."
 #~ msgstr "Handter eigendefinerte storleikar …"
 
-#
+# 
 #~ msgid "_Format for:"
 #~ msgstr "_Format for:"
 
-#
+# 
 #~ msgid "_Paper size:"
 #~ msgstr "_Papirstorleik:"
 
-#
+# 
 #~ msgid "_Orientation:"
 #~ msgstr "_Retning:"
 
-#
+# 
 #~ msgid "Page Setup"
 #~ msgstr "Sideoppsett"
 
-#
+# 
 #, fuzzy
 #~ msgid "Authentication"
 #~ msgstr "Program"
 
-#
+# 
 #~ msgid "Not available"
 #~ msgstr "Ikkje tilgjengeleg"
 
-#
+# 
 #~ msgid "_Save in folder:"
 #~ msgstr "_Lagra i mappe:"
 
@@ -2901,7 +2901,7 @@ msgstr "Tom"
 #~ msgid "Preparing %d"
 #~ msgstr "Førebur %d"
 
-#
+# 
 #, c-format
 #~ msgid "Preparing"
 #~ msgstr "Førebur"
@@ -2919,37 +2919,37 @@ msgstr "Tom"
 #~ "The most probable reason is that a temporary file could not be created."
 #~ msgstr "Det kjem truleg av at det ikkje gjekk å oppretta ei mellombels fil."
 
-#
+# 
 #, c-format
 #~ msgid "Error launching preview"
 #~ msgstr "Feil under start av førehandsvising"
 
-#
+# 
 #, c-format
 #~ msgid "Error printing"
 #~ msgstr "Feil ved utskrift"
 
-#
+# 
 #~ msgid "Application"
 #~ msgstr "Program"
 
-#
+# 
 #~ msgid "Printer offline"
 #~ msgstr "Skrivar er fråkopla"
 
-#
+# 
 #~ msgid "Out of paper"
 #~ msgstr "Tom for papir"
 
-#
+# 
 #~ msgid "Paused"
 #~ msgstr "Pausa"
 
-#
+# 
 #~ msgid "Need user intervention"
 #~ msgstr "Krev tilsyn av brukar"
 
-#
+# 
 #~ msgid "Custom size"
 #~ msgstr "Sjølvvald storleik"
 
@@ -2977,23 +2977,23 @@ msgstr "Tom"
 #~ msgid "Unspecified error"
 #~ msgstr "Uspesifisert feil"
 
-#
+# 
 #~ msgid "Printer"
 #~ msgstr "Skrivar"
 
-#
+# 
 #~ msgid "Location"
 #~ msgstr "Stad"
 
-#
+# 
 #~ msgid "Status"
 #~ msgstr "Status"
 
-#
+# 
 #~ msgid "Range"
 #~ msgstr "Område"
 
-#
+# 
 #~ msgid "_All Pages"
 #~ msgstr "_Alle sidene"
 
@@ -3004,11 +3004,11 @@ msgstr "Tom"
 #~ msgid "Se_lection"
 #~ msgstr "_Utval: "
 
-#
+# 
 #~ msgid "Pag_es:"
 #~ msgstr "Sid_er:"
 
-#
+# 
 #~ msgid ""
 #~ "Specify one or more page ranges,\n"
 #~ " e.g. 1-3,7,11"
@@ -3016,28 +3016,28 @@ msgstr "Tom"
 #~ "Oppgje eitt eller fleire sidespenn,\n"
 #~ " t.d. 1-3,7,11"
 
-#
+# 
 #, fuzzy
 #~ msgid "Pages"
 #~ msgstr "Sid_er:"
 
-#
+# 
 #~ msgid "Copies"
 #~ msgstr "Kopiar"
 
-#
+# 
 #~ msgid "Copie_s:"
 #~ msgstr "_Kopiar:"
 
-#
+# 
 #~ msgid "C_ollate"
 #~ msgstr "S_lå saman"
 
-#
+# 
 #~ msgid "_Reverse"
 #~ msgstr "_Omvendt"
 
-#
+# 
 #~ msgid "General"
 #~ msgstr "Allment"
 
@@ -3082,58 +3082,58 @@ msgstr "Tom"
 #~ msgid "Bottom to top"
 #~ msgstr "Botn til topp, venstre til høgre"
 
-#
+# 
 #~ msgid "Layout"
 #~ msgstr "Utforming"
 
-#
+# 
 #~ msgid "T_wo-sided:"
 #~ msgstr "T_osidig:"
 
-#
+# 
 #~ msgid "Pages per _side:"
 #~ msgstr "_Sider på arket:"
 
 #~ msgid "Page or_dering:"
 #~ msgstr "Si_desortering:"
 
-#
+# 
 #~ msgid "_Only print:"
 #~ msgstr "_Berre skriv ut:"
 
-#
+# 
 #~ msgid "All sheets"
 #~ msgstr "Alle arka"
 
-#
+# 
 #~ msgid "Even sheets"
 #~ msgstr "Partalsark"
 
-#
+# 
 #~ msgid "Odd sheets"
 #~ msgstr "Oddetalsark"
 
-#
+# 
 #~ msgid "Sc_ale:"
 #~ msgstr "Sk_aler:"
 
-#
+# 
 #~ msgid "Paper"
 #~ msgstr "Papir"
 
-#
+# 
 #~ msgid "Paper _type:"
 #~ msgstr "Papir_type:"
 
-#
+# 
 #~ msgid "Paper _source:"
 #~ msgstr "Papi_rkjelde:"
 
-#
+# 
 #~ msgid "Output t_ray:"
 #~ msgstr "U_tskuff:"
 
-#
+# 
 #, fuzzy
 #~ msgid "Or_ientation:"
 #~ msgstr "_Retning:"
@@ -3154,27 +3154,27 @@ msgstr "Tom"
 #~ msgid "Reverse landscape"
 #~ msgstr "Omvendt landskap"
 
-#
+# 
 #~ msgid "Job Details"
 #~ msgstr "Detaljar for jobb"
 
-#
+# 
 #~ msgid "Pri_ority:"
 #~ msgstr "Pri_oritet:"
 
-#
+# 
 #~ msgid "_Billing info:"
 #~ msgstr "_Faktureringsinformasjon:"
 
-#
+# 
 #~ msgid "Print Document"
 #~ msgstr "Skriv ut dokument"
 
-#
+# 
 #~ msgid "_Now"
 #~ msgstr "_No"
 
-#
+# 
 #~ msgid "A_t:"
 #~ msgstr "_Tidspunkt:"
 
@@ -3185,50 +3185,50 @@ msgstr "Tom"
 #~ "Oppgje når dokumentet skal skrivast ut,\n"
 #~ "t.d. 15.30, 14.35, 14.15.20, 16"
 
-#
+# 
 #~ msgid "On _hold"
 #~ msgstr "På _vent"
 
 #~ msgid "Hold the job until it is explicitly released"
 #~ msgstr "Hald utskriftsjobben til han vert aktivt frigjort"
 
-#
+# 
 #~ msgid "Add Cover Page"
 #~ msgstr "Legg til omslag"
 
-#
+# 
 #~ msgid "Be_fore:"
 #~ msgstr "_Før:"
 
-#
+# 
 #~ msgid "_After:"
 #~ msgstr "_Etter:"
 
-#
+# 
 #~ msgid "Job"
 #~ msgstr "Jobb"
 
-#
+# 
 #~ msgid "Advanced"
 #~ msgstr "Avansert"
 
-#
+# 
 #~ msgid "Image Quality"
 #~ msgstr "Biletkvalitet"
 
-#
+# 
 #~ msgid "Color"
 #~ msgstr "Farge"
 
-#
+# 
 #~ msgid "Finishing"
 #~ msgstr "Avsluttar"
 
-#
+# 
 #~ msgid "Some of the settings in the dialog conflict"
 #~ msgstr "Nokon av innstillingane i dialogvindauget er i konflikt"
 
-#
+# 
 #~ msgid "Print"
 #~ msgstr "Skriv ut"
 
@@ -3254,7 +3254,7 @@ msgstr "Tom"
 #~ msgid "--- No Tip ---"
 #~ msgstr "--- Ingen tips ---"
 
-#
+# 
 #~ msgid "Volume"
 #~ msgstr "Lydstyrke"
 
@@ -3264,25 +3264,25 @@ msgstr "Tom"
 #~ msgid "Adjusts the volume"
 #~ msgstr "Justerer lydstyrken"
 
-#
+# 
 #~ msgid "Volume Down"
 #~ msgstr "Lyd ned"
 
 #~ msgid "Decreases the volume"
 #~ msgstr "Skrur ned lyden"
 
-#
+# 
 #~ msgid "Volume Up"
 #~ msgstr "Lyd opp"
 
 #~ msgid "Increases the volume"
 #~ msgstr "Skrur opp lyden"
 
-#
+# 
 #~ msgid "Muted"
 #~ msgstr "Dempa"
 
-#
+# 
 #~ msgid "Full Volume"
 #~ msgstr "Full lydstyrke"
 
@@ -3996,27 +3996,27 @@ msgstr "Tom"
 #~ msgid "Cache file created successfully.\n"
 #~ msgstr "Bufferoppretting vellukka.\n"
 
-#
+# 
 #~ msgid "Overwrite an existing cache, even if up to date"
 #~ msgstr "Overskriv ein eksisterande buffer, sjølv om han er oppdatert"
 
-#
+# 
 #~ msgid "Don't check for the existence of index.theme"
 #~ msgstr "Ikkje sjekk om index.theme finst"
 
-#
+# 
 #~ msgid "Don't include image data in the cache"
 #~ msgstr "Ikkje ta med biletdata i bufferen"
 
-#
+# 
 #~ msgid "Output a C header file"
 #~ msgstr "Skriv ut ei C-headerfil"
 
-#
+# 
 #~ msgid "Turn off verbose output"
 #~ msgstr "Slå av ekstra utdata"
 
-#
+# 
 #~ msgid "Validate existing icon cache"
 #~ msgstr "Valider eksisterande ikonbuffer"
 
@@ -4051,18 +4051,18 @@ msgstr "Tom"
 #~ msgid "Cyrillic (Transliterated)"
 #~ msgstr "Kyrillisk (transliterert)"
 
-#
+# 
 #~ msgid "Inuktitut (Transliterated)"
 #~ msgstr "Inukitut (transliterert)"
 
 #~ msgid "IPA"
 #~ msgstr "IPA"
 
-#
+# 
 #~ msgid "Multipress"
 #~ msgstr "Multipress"
 
-#
+# 
 #~ msgid "Thai-Lao"
 #~ msgstr "Thai-Lao"
 
@@ -4148,19 +4148,19 @@ msgstr "Tom"
 #~ msgid "Rejecting Jobs"
 #~ msgstr "Avviser jobbar"
 
-#
+# 
 #~ msgid "Two Sided"
 #~ msgstr "Tosidig"
 
-#
+# 
 #~ msgid "Paper Type"
 #~ msgstr "Papirtype"
 
-#
+# 
 #~ msgid "Paper Source"
 #~ msgstr "Papirkjelde"
 
-#
+# 
 #~ msgid "Output Tray"
 #~ msgstr "Utskuff"
 
@@ -4168,15 +4168,15 @@ msgstr "Tom"
 #~ msgid "Resolution"
 #~ msgstr "Spørsmål"
 
-#
+# 
 #~ msgid "One Sided"
 #~ msgstr "Einsidig"
 
-#
+# 
 #~ msgid "Auto Select"
 #~ msgstr "Vel automatisk"
 
-#
+# 
 #~ msgid "Printer Default"
 #~ msgstr "Forval for skrivar"
 
@@ -4184,19 +4184,19 @@ msgstr "Tom"
 #~ msgid "No pre-filtering"
 #~ msgstr "Ingen skrivar funnen"
 
-#
+# 
 #~ msgid "Urgent"
 #~ msgstr "Hastar"
 
-#
+# 
 #~ msgid "High"
 #~ msgstr "Høg"
 
-#
+# 
 #~ msgid "Medium"
 #~ msgstr "Middels"
 
-#
+# 
 #~ msgid "Low"
 #~ msgstr "Låg"
 
@@ -4209,31 +4209,31 @@ msgstr "Tom"
 #~ msgid "Billing Info"
 #~ msgstr "Faktureringsinformasjon"
 
-#
+# 
 #~ msgid "None"
 #~ msgstr "Inga"
 
-#
+# 
 #~ msgid "Classified"
 #~ msgstr "Klassifisert"
 
-#
+# 
 #~ msgid "Confidential"
 #~ msgstr "Konfidensielt"
 
-#
+# 
 #~ msgid "Secret"
 #~ msgstr "Hemmeleg"
 
-#
+# 
 #~ msgid "Standard"
 #~ msgstr "Vanleg"
 
-#
+# 
 #~ msgid "Top Secret"
 #~ msgstr "Topphemmeleg"
 
-#
+# 
 #~ msgid "Unclassified"
 #~ msgstr "Ikkje klassifisert"
 
@@ -4257,43 +4257,43 @@ msgstr "Tom"
 #~ msgid "output.%s"
 #~ msgstr "utfil.%s"
 
-#
+# 
 #~ msgid "Print to File"
 #~ msgstr "Skriv til fil"
 
-#
+# 
 #~ msgid "PDF"
 #~ msgstr "PDF"
 
-#
+# 
 #~ msgid "Postscript"
 #~ msgstr "Postscript"
 
-#
+# 
 #~ msgid "Pages per _sheet:"
 #~ msgstr "_Sider per ark:"
 
-#
+# 
 #~ msgid "File"
 #~ msgstr "Fil"
 
-#
+# 
 #~ msgid "_Output format"
 #~ msgstr "F_ormat"
 
-#
+# 
 #~ msgid "Print to LPR"
 #~ msgstr "Skriv til LPR"
 
-#
+# 
 #~ msgid "Pages Per Sheet"
 #~ msgstr "Sider per ark"
 
-#
+# 
 #~ msgid "Command Line"
 #~ msgstr "Kommandolinje"
 
-#
+# 
 #, fuzzy
 #~ msgid "printer offline"
 #~ msgstr "Skrivar er fråkopla"
@@ -4302,7 +4302,7 @@ msgstr "Tom"
 #~ msgid "ready to print"
 #~ msgstr "Førebur utskrift"
 
-#
+# 
 #, fuzzy
 #~ msgid "paused"
 #~ msgstr "Pausa"
@@ -4315,7 +4315,7 @@ msgstr "Tom"
 #~ msgid "test-output.%s"
 #~ msgstr "testutfil.%s"
 
-#
+# 
 #~ msgid "Print to Test Printer"
 #~ msgstr "Skriv til testskrivar"
 
@@ -4327,21 +4327,21 @@ msgstr "Tom"
 #~ msgid "(Empty)"
 #~ msgstr "(Tom)"
 
-#
+# 
 #, fuzzy
 #~ msgid "<b>_Search:</b>"
 #~ msgstr "_Søk:"
 
-#
+# 
 #, fuzzy
 #~ msgid "<b>Recently Used</b>"
 #~ msgstr "Sist brukt"
 
-#
+# 
 #~ msgid "directfb arg"
 #~ msgstr " directfb-argument"
 
-#
+# 
 #~ msgid "sdl|system"
 #~ msgstr "sdl|system"
 
@@ -4358,147 +4358,147 @@ msgstr "Tom"
 #~ msgid "You have an active input method"
 #~ msgstr "Du har ein aktiv inndatametode"
 
-#
+# 
 #~ msgid "keyboard label|BackSpace"
 #~ msgstr "Rettetast"
 
-#
+# 
 #~ msgid "keyboard label|Tab"
 #~ msgstr "Tab"
 
-#
+# 
 #~ msgid "keyboard label|Return"
 #~ msgstr "Enter"
 
-#
+# 
 #~ msgid "keyboard label|Pause"
 #~ msgstr "Pause"
 
-#
+# 
 #~ msgid "keyboard label|Scroll_Lock"
 #~ msgstr "Scroll Lock"
 
-#
+# 
 #~ msgid "keyboard label|Sys_Req"
 #~ msgstr "Sys Req"
 
-#
+# 
 #~ msgid "keyboard label|Escape"
 #~ msgstr "Escape"
 
-#
+# 
 #~ msgid "keyboard label|Multi_key"
 #~ msgstr "Multi_key"
 
-#
+# 
 #~ msgid "keyboard label|Home"
 #~ msgstr "Home"
 
-#
+# 
 #~ msgid "keyboard label|Left"
 #~ msgstr "Venstre"
 
-#
+# 
 #~ msgid "keyboard label|Up"
 #~ msgstr "Opp"
 
-#
+# 
 #~ msgid "keyboard label|Right"
 #~ msgstr "Høgre"
 
-#
+# 
 #~ msgid "keyboard label|Down"
 #~ msgstr "Ned"
 
-#
+# 
 #~ msgid "keyboard label|Page_Up"
 #~ msgstr "Page Up"
 
-#
+# 
 #~ msgid "keyboard label|Page_Down"
 #~ msgstr "Page Down"
 
-#
+# 
 #~ msgid "keyboard label|End"
 #~ msgstr "End"
 
-#
+# 
 #~ msgid "keyboard label|Begin"
 #~ msgstr "Begin"
 
-#
+# 
 #~ msgid "keyboard label|Print"
 #~ msgstr "Print Screen"
 
-#
+# 
 #~ msgid "keyboard label|Insert"
 #~ msgstr "Insert"
 
-#
+# 
 #~ msgid "keyboard label|Num_Lock"
 #~ msgstr "Num Lock"
 
-#
+# 
 #~ msgid "keyboard label|KP_Space"
 #~ msgstr "KP_Space"
 
-#
+# 
 #~ msgid "keyboard label|KP_Tab"
 #~ msgstr "KP_Tab"
 
-#
+# 
 #~ msgid "keyboard label|KP_Enter"
 #~ msgstr "KP_Enter"
 
-#
+# 
 #~ msgid "keyboard label|KP_Home"
 #~ msgstr "KP_Home"
 
-#
+# 
 #~ msgid "keyboard label|KP_Left"
 #~ msgstr "KP_Left"
 
-#
+# 
 #~ msgid "keyboard label|KP_Up"
 #~ msgstr "KP_Up"
 
-#
+# 
 #~ msgid "keyboard label|KP_Right"
 #~ msgstr "KP_Right"
 
-#
+# 
 #~ msgid "keyboard label|KP_Down"
 #~ msgstr "KP_Down"
 
-#
+# 
 #~ msgid "keyboard label|KP_Page_Up"
 #~ msgstr "KP_Page_Up"
 
-#
+# 
 #~ msgid "keyboard label|KP_Prior"
 #~ msgstr "KP_Prior"
 
-#
+# 
 #~ msgid "keyboard label|KP_Next"
 #~ msgstr "KP_Next"
 
-#
+# 
 #~ msgid "keyboard label|KP_End"
 #~ msgstr "KP_End"
 
-#
+# 
 #~ msgid "keyboard label|KP_Begin"
 #~ msgstr "KP_Begin"
 
-#
+# 
 #~ msgid "keyboard label|KP_Insert"
 #~ msgstr "KP_Insert"
 
-#
+# 
 #~ msgid "keyboard label|KP_Delete"
 #~ msgstr "KP_Delete"
 
-#
+# 
 #~ msgid "keyboard label|Delete"
 #~ msgstr "Delete"
 
@@ -4506,39 +4506,39 @@ msgstr "Tom"
 #~ msgid "Couldn't create pixbuf"
 #~ msgstr "Kan ikkje laga nytt pixbuf"
 
-#
+# 
 #~ msgid "keyboard label|Shift"
 #~ msgstr "Shift"
 
-#
+# 
 #~ msgid "keyboard label|Ctrl"
 #~ msgstr "Ctrl"
 
-#
+# 
 #~ msgid "keyboard label|Alt"
 #~ msgstr "Alt"
 
-#
+# 
 #~ msgid "keyboard label|Super"
 #~ msgstr "Super"
 
-#
+# 
 #~ msgid "keyboard label|Hyper"
 #~ msgstr "Hyper"
 
-#
+# 
 #~ msgid "keyboard label|Meta"
 #~ msgstr "Meta"
 
-#
+# 
 #~ msgid "keyboard label|Space"
 #~ msgstr "Mellomrom"
 
-#
+# 
 #~ msgid "keyboard label|Backslash"
 #~ msgstr "Omvendt skråstrek"
 
-#
+# 
 #~ msgid "year measurement template|2000"
 #~ msgstr "2000"
 
@@ -4548,11 +4548,11 @@ msgstr "Tom"
 #~ msgid "calendar:week:digits|%d"
 #~ msgstr "%d"
 
-#
+# 
 #~ msgid "calendar year format|%Y"
 #~ msgstr "%Y"
 
-#
+# 
 #~ msgid "Accelerator|Disabled"
 #~ msgstr "Deaktivert"
 
@@ -4568,39 +4568,39 @@ msgstr "Tom"
 #~ msgid "%.1f GB"
 #~ msgstr "%.1f GB"
 
-#
+# 
 #~ msgid "input method menu|System"
 #~ msgstr "System"
 
-#
+# 
 #~ msgid "print operation status|Initial state"
 #~ msgstr "Starttilstand"
 
-#
+# 
 #~ msgid "print operation status|Preparing to print"
 #~ msgstr "Førebur utskrift"
 
-#
+# 
 #~ msgid "print operation status|Generating data"
 #~ msgstr "Oppretter data"
 
-#
+# 
 #~ msgid "print operation status|Sending data"
 #~ msgstr "Sendar data"
 
-#
+# 
 #~ msgid "print operation status|Waiting"
 #~ msgstr "Venter"
 
-#
+# 
 #~ msgid "print operation status|Blocking on issue"
 #~ msgstr "Blokkert"
 
-#
+# 
 #~ msgid "print operation status|Printing"
 #~ msgstr "Skrivar ut"
 
-#
+# 
 #~ msgid "print operation status|Finished"
 #~ msgstr "Fullført"
 
@@ -4610,546 +4610,546 @@ msgstr "Tom"
 #~ msgid "recent menu label|%d. %s"
 #~ msgstr "%d. %s"
 
-#
+# 
 #~ msgid "Navigation|_Bottom"
 #~ msgstr "_Botn"
 
-#
+# 
 #~ msgid "Navigation|_First"
 #~ msgstr "_Fyrste"
 
-#
+# 
 #~ msgid "Navigation|_Last"
 #~ msgstr "_Siste"
 
-#
+# 
 #~ msgid "Navigation|_Top"
 #~ msgstr "_Topp"
 
-#
+# 
 #~ msgid "Navigation|_Back"
 #~ msgstr "Til_bake"
 
-#
+# 
 #~ msgid "Navigation|_Down"
 #~ msgstr "Ne_d"
 
-#
+# 
 #~ msgid "Navigation|_Forward"
 #~ msgstr "_Framover"
 
-#
+# 
 #~ msgid "Navigation|_Up"
 #~ msgstr "_Opp"
 
-#
+# 
 #~ msgid "Justify|_Center"
 #~ msgstr "_Sentrer"
 
-#
+# 
 #~ msgid "Justify|_Fill"
 #~ msgstr "_Fyll"
 
-#
+# 
 #~ msgid "Justify|_Left"
 #~ msgstr "_Venstre"
 
-#
+# 
 #~ msgid "Justify|_Right"
 #~ msgstr "Høg_re"
 
-#
+# 
 #~ msgid "Media|_Next"
 #~ msgstr "_Neste"
 
-#
+# 
 #~ msgid "Media|P_ause"
 #~ msgstr "P_ause"
 
-#
+# 
 #~ msgid "Media|_Play"
 #~ msgstr "S_pel av"
 
-#
+# 
 #~ msgid "Media|_Stop"
 #~ msgstr "_Stopp"
 
 #~ msgid "volume percentage|%d %%"
 #~ msgstr "%d %%"
 
-#
+# 
 #~ msgid "paper size|asme_f"
 #~ msgstr "asme_f"
 
-#
+# 
 #~ msgid "paper size|A0x2"
 #~ msgstr "A0x2"
 
-#
+# 
 #~ msgid "paper size|A0"
 #~ msgstr "A0"
 
-#
+# 
 #~ msgid "paper size|A0x3"
 #~ msgstr "A0x3"
 
-#
+# 
 #~ msgid "paper size|A1"
 #~ msgstr "A1"
 
-#
+# 
 #~ msgid "paper size|A10"
 #~ msgstr "A10"
 
-#
+# 
 #~ msgid "paper size|A1x3"
 #~ msgstr "A1x3"
 
-#
+# 
 #~ msgid "paper size|A1x4"
 #~ msgstr "A1x4"
 
-#
+# 
 #~ msgid "paper size|A2"
 #~ msgstr "A2"
 
-#
+# 
 #~ msgid "paper size|A2x3"
 #~ msgstr "A2x3"
 
-#
+# 
 #~ msgid "paper size|A2x4"
 #~ msgstr "A2x4"
 
-#
+# 
 #~ msgid "paper size|A2x5"
 #~ msgstr "A2x5"
 
-#
+# 
 #~ msgid "paper size|A3"
 #~ msgstr "A3"
 
-#
+# 
 #~ msgid "paper size|A3 Extra"
 #~ msgstr "A3 ekstra"
 
-#
+# 
 #~ msgid "paper size|A3x3"
 #~ msgstr "A3x3"
 
-#
+# 
 #~ msgid "paper size|A3x4"
 #~ msgstr "A3x4"
 
-#
+# 
 #~ msgid "paper size|A3x5"
 #~ msgstr "A3x5"
 
-#
+# 
 #~ msgid "paper size|A3x6"
 #~ msgstr "A3x6"
 
-#
+# 
 #~ msgid "paper size|A3x7"
 #~ msgstr "A3x7"
 
-#
+# 
 #~ msgid "paper size|A4"
 #~ msgstr "A4"
 
-#
+# 
 #~ msgid "paper size|A4 Extra"
 #~ msgstr "A4 ekstra"
 
-#
+# 
 #~ msgid "paper size|A4 Tab"
 #~ msgstr "A4 tab"
 
-#
+# 
 #~ msgid "paper size|A4x3"
 #~ msgstr "A4x3"
 
-#
+# 
 #~ msgid "paper size|A4x4"
 #~ msgstr "A4x4"
 
-#
+# 
 #~ msgid "paper size|A4x5"
 #~ msgstr "A4x5"
 
-#
+# 
 #~ msgid "paper size|A4x6"
 #~ msgstr "A4x6"
 
-#
+# 
 #~ msgid "paper size|A4x7"
 #~ msgstr "A4x7"
 
-#
+# 
 #~ msgid "paper size|A4x8"
 #~ msgstr "A4x8"
 
-#
+# 
 #~ msgid "paper size|A4x9"
 #~ msgstr "A4x9"
 
-#
+# 
 #~ msgid "paper size|A5"
 #~ msgstr "A5"
 
-#
+# 
 #~ msgid "paper size|A5 Extra"
 #~ msgstr "A5 ekstra"
 
-#
+# 
 #~ msgid "paper size|A6"
 #~ msgstr "A6"
 
-#
+# 
 #~ msgid "paper size|A7"
 #~ msgstr "A7"
 
-#
+# 
 #~ msgid "paper size|A8"
 #~ msgstr "A8"
 
-#
+# 
 #~ msgid "paper size|A9"
 #~ msgstr "A9"
 
-#
+# 
 #~ msgid "paper size|B0"
 #~ msgstr "B0"
 
-#
+# 
 #~ msgid "paper size|B1"
 #~ msgstr "B1"
 
-#
+# 
 #~ msgid "paper size|B10"
 #~ msgstr "B10"
 
-#
+# 
 #~ msgid "paper size|B2"
 #~ msgstr "B2"
 
-#
+# 
 #~ msgid "paper size|B3"
 #~ msgstr "B3"
 
-#
+# 
 #~ msgid "paper size|B4"
 #~ msgstr "B4"
 
-#
+# 
 #~ msgid "paper size|B5"
 #~ msgstr "B5"
 
-#
+# 
 #~ msgid "paper size|B5 Extra"
 #~ msgstr "B5 ekstra"
 
-#
+# 
 #~ msgid "paper size|B6"
 #~ msgstr "B6"
 
-#
+# 
 #~ msgid "paper size|B6/C4"
 #~ msgstr "B6/C4"
 
-#
+# 
 #~ msgid "paper size|B7"
 #~ msgstr "B7"
 
-#
+# 
 #~ msgid "paper size|B8"
 #~ msgstr "B8"
 
-#
+# 
 #~ msgid "paper size|B9"
 #~ msgstr "B9"
 
-#
+# 
 #~ msgid "paper size|C0"
 #~ msgstr "C0"
 
-#
+# 
 #~ msgid "paper size|C1"
 #~ msgstr "C1"
 
-#
+# 
 #~ msgid "paper size|C10"
 #~ msgstr "C10"
 
-#
+# 
 #~ msgid "paper size|C2"
 #~ msgstr "C2"
 
-#
+# 
 #~ msgid "paper size|C3"
 #~ msgstr "C3"
 
-#
+# 
 #~ msgid "paper size|C4"
 #~ msgstr "C4"
 
-#
+# 
 #~ msgid "paper size|C5"
 #~ msgstr "C5"
 
-#
+# 
 #~ msgid "paper size|C6"
 #~ msgstr "C6"
 
-#
+# 
 #~ msgid "paper size|C6/C5"
 #~ msgstr "C6/C5"
 
-#
+# 
 #~ msgid "paper size|C7"
 #~ msgstr "C7"
 
-#
+# 
 #~ msgid "paper size|C7/C6"
 #~ msgstr "C7/C6"
 
-#
+# 
 #~ msgid "paper size|C8"
 #~ msgstr "C8"
 
-#
+# 
 #~ msgid "paper size|C9"
 #~ msgstr "C9"
 
-#
+# 
 #~ msgid "paper size|RA0"
 #~ msgstr "RA0"
 
-#
+# 
 #~ msgid "paper size|RA1"
 #~ msgstr "RA1"
 
-#
+# 
 #~ msgid "paper size|RA2"
 #~ msgstr "RA2"
 
-#
+# 
 #~ msgid "paper size|SRA0"
 #~ msgstr "SRA0"
 
-#
+# 
 #~ msgid "paper size|SRA1"
 #~ msgstr "SRA1"
 
-#
+# 
 #~ msgid "paper size|SRA2"
 #~ msgstr "SRA2"
 
-#
+# 
 #~ msgid "paper size|JB0"
 #~ msgstr "JB0"
 
-#
+# 
 #~ msgid "paper size|JB1"
 #~ msgstr "JB1"
 
-#
+# 
 #~ msgid "paper size|JB10"
 #~ msgstr "JB10"
 
-#
+# 
 #~ msgid "paper size|JB2"
 #~ msgstr "JB2"
 
-#
+# 
 #~ msgid "paper size|JB3"
 #~ msgstr "JB3"
 
-#
+# 
 #~ msgid "paper size|JB4"
 #~ msgstr "JB4"
 
-#
+# 
 #~ msgid "paper size|JB5"
 #~ msgstr "JB5"
 
-#
+# 
 #~ msgid "paper size|JB6"
 #~ msgstr "JB6"
 
-#
+# 
 #~ msgid "paper size|JB7"
 #~ msgstr "JB7"
 
-#
+# 
 #~ msgid "paper size|JB8"
 #~ msgstr "JB8"
 
-#
+# 
 #~ msgid "paper size|JB9"
 #~ msgstr "JB9"
 
-#
+# 
 #~ msgid "paper size|jis exec"
 #~ msgstr "jis exec"
 
-#
+# 
 #~ msgid "paper size|10x11"
 #~ msgstr "10x11"
 
-#
+# 
 #~ msgid "paper size|10x13"
 #~ msgstr "10x13"
 
-#
+# 
 #~ msgid "paper size|10x14"
 #~ msgstr "10x14"
 
-#
+# 
 #~ msgid "paper size|10x15"
 #~ msgstr "10x15"
 
-#
+# 
 #~ msgid "paper size|11x12"
 #~ msgstr "11x12"
 
-#
+# 
 #~ msgid "paper size|11x15"
 #~ msgstr "11x15"
 
-#
+# 
 #~ msgid "paper size|12x19"
 #~ msgstr "12x19"
 
-#
+# 
 #~ msgid "paper size|5x7"
 #~ msgstr "5x7"
 
-#
+# 
 #~ msgid "paper size|Arch A"
 #~ msgstr "Arch A"
 
-#
+# 
 #~ msgid "paper size|Arch B"
 #~ msgstr "Arch B"
 
-#
+# 
 #~ msgid "paper size|Arch C"
 #~ msgstr "Arch C"
 
-#
+# 
 #~ msgid "paper size|Arch D"
 #~ msgstr "Arch D"
 
-#
+# 
 #~ msgid "paper size|Arch E"
 #~ msgstr "Arch E"
 
-#
+# 
 #~ msgid "paper size|b-plus"
 #~ msgstr "b-pluss"
 
-#
+# 
 #~ msgid "paper size|c"
 #~ msgstr "c"
 
-#
+# 
 #~ msgid "paper size|d"
 #~ msgstr "d"
 
-#
+# 
 #~ msgid "paper size|e"
 #~ msgstr "e"
 
-#
+# 
 #~ msgid "paper size|edp"
 #~ msgstr "edp"
 
-#
+# 
 #~ msgid "paper size|Executive"
 #~ msgstr "Executive"
 
-#
+# 
 #~ msgid "paper size|f"
 #~ msgstr "f"
 
-#
+# 
 #~ msgid "paper size|Index 3x5"
 #~ msgstr "Indeks 3x5"
 
-#
+# 
 #~ msgid "paper size|Index 5x8"
 #~ msgstr "Indeks 5x8"
 
-#
+# 
 #~ msgid "paper size|Invoice"
 #~ msgstr "Faktura"
 
-#
+# 
 #~ msgid "paper size|Tabloid"
 #~ msgstr "Tabloid"
 
-#
+# 
 #~ msgid "paper size|US Legal"
 #~ msgstr "US juridisk"
 
-#
+# 
 #~ msgid "paper size|Quarto"
 #~ msgstr "Quarto"
 
-#
+# 
 #~ msgid "paper size|Super A"
 #~ msgstr "Super A"
 
-#
+# 
 #~ msgid "paper size|Super B"
 #~ msgstr "Super B"
 
-#
+# 
 #~ msgid "paper size|Folio"
 #~ msgstr "Folie"
 
-#
+# 
 #~ msgid "paper size|Folio sp"
 #~ msgstr "Folie sp"
 
-#
+# 
 #~ msgid "paper size|pa-kai"
 #~ msgstr "pa-kai"
 
-#
+# 
 #~ msgid "paper size|prc 16k"
 #~ msgstr "prc 16k"
 
-#
+# 
 #~ msgid "paper size|prc 32k"
 #~ msgstr "prc 32k"
 
-#
+# 
 #~ msgid "paper size|prc5 Envelope"
 #~ msgstr "prc5 konvolutt"
 
-#
+# 
 #~ msgid "paper size|ROC 16k"
 #~ msgstr "ROC 16k"
 
-#
+# 
 #~ msgid "paper size|ROC 8k"
 #~ msgstr "ROC 8k"
 
-#
+# 
 #~ msgid "URI"
 #~ msgstr "URI"
 
-#
+# 
 #~ msgid "The URI bound to this button"
 #~ msgstr "URI bundet til denne knappen"
 
-#
+# 
 #~ msgid "Arrow spacing"
 #~ msgstr "Mellomrom mellom piler"
 
-#
+# 
 #~ msgid "Scroll arrow spacing"
 #~ msgstr "Mellomrom mellom piler i rullefelt"
 

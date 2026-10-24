@@ -120,17 +120,7 @@ NewUserWizard::~NewUserWizard ()
 bool
 NewUserWizard::required ()
 {
-	if (Glib::file_test (ARDOUR::been_here_before_path (), Glib::FILE_TEST_EXISTS)) {
-		return false;
-	}
-#ifdef __APPLE__
-	/* since we cannot use std::optional<bool> as UI_CONFIG_VARIABLE
-	 * this is likely the best place for a special case..
-	 */
-	set_default_cocoa_invalidation ();
-#endif
-
-	return true;
+	return false;
 }
 
 void

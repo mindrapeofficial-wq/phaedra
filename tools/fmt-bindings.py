@@ -36,8 +36,12 @@ parser.add_argument("--cheatsheet", type=int, default=make_cheatsheet)
 parser.add_argument("--accelmap", type=int, default=make_accelmap)
 parser.add_argument("--merge", default=merge_from)
 parser.add_argument("--html", type=int, default=html)
+parser.add_argument("-o", "--output", default=None)
 parser.add_argument("input")
 args = parser.parse_args()
+
+if args.output:
+    sys.stdout = open(args.output, 'w', encoding='utf-8')
 
 platform = args.platform
 winkey = args.winkey

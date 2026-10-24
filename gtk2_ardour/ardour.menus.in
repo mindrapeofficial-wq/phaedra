@@ -21,11 +21,6 @@
 
       <separator/>
 
-      <menuitem action='OpenVideo'/>
-      <menuitem action='CloseVideo'/>
-
-      <separator/>
-
       <menu name='Export' action='Export'>
         <menuitem action='QuickExport'/>
         <menuitem action='ExportAudio'/>
@@ -33,7 +28,6 @@
         <menuitem action='SurroundExport'/>
 #endif
         <menuitem action='StemExport'/>
-        <menuitem action='ExportVideo'/>
       </menu>
 
       <separator/>
@@ -574,7 +568,6 @@
       </menu>
       <menu action="RulerMenu">
         <menuitem action="toggle-minsec-ruler"/>
-        <menuitem action="toggle-timecode-ruler"/>
         <menuitem action="toggle-samples-ruler"/>
         <menuitem action="toggle-bbt-ruler"/>
         <separator/>
@@ -583,8 +576,6 @@
         <menuitem action="toggle-range-ruler"/>
         <menuitem action="toggle-arrangement-ruler"/>
         <menuitem action="toggle-marker-ruler"/>
-        <separator/>
-        <menuitem action="toggle-video-ruler"/>
       </menu>
       <separator/>
       <menu action="ZoomMenu">
@@ -613,18 +604,6 @@
         <menuitem action='scroll-tracks-up'/>
         <menuitem action='scroll-forward'/>
         <menuitem action='scroll-backward'/>
-      </menu>
-      <separator/>
-      <menu action="VideoMonitorMenu">
-        <menuitem action="zoom-vmon-100"/>
-        <menuitem action="toggle-vmon-letterbox"/>
-        <separator/>
-        <menuitem action="toggle-vmon-ontop"/>
-        <menuitem action="toggle-vmon-fullscreen"/>
-        <separator/>
-        <menuitem action="toggle-vmon-timecode"/>
-        <menuitem action="toggle-vmon-frame"/>
-        <menuitem action="toggle-vmon-osdbg"/>
       </menu>
       <separator/>
       <menu action="SavedViewMenu">
@@ -657,6 +636,7 @@
       <separator/>
 
       <menuitem action='show-editor-mixer'/>
+      <menuitem action='show-mixer-dock'/>
       <menuitem action='show-editor-list'/>
       <menuitem action='show-editor-props'/>
 
@@ -830,7 +810,6 @@
 
   <popup action="RulerMenuPopup" accelerators='true'>
     <menuitem action="toggle-minsec-ruler"/>
-    <menuitem action="toggle-timecode-ruler"/>
     <menuitem action="toggle-samples-ruler"/>
     <menuitem action="toggle-bbt-ruler"/>
     <separator/>
@@ -838,8 +817,6 @@
     <menuitem action="toggle-tempo-ruler"/>
     <menuitem action="toggle-range-ruler"/>
     <menuitem action="toggle-marker-ruler"/>
-    <separator/>
-    <menuitem action="toggle-video-ruler"/>
   </popup>
 
   <popup name='ProcessorMenu' accelerators='true'>

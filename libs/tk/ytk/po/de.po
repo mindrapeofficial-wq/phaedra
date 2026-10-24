@@ -1,8 +1,8 @@
 # German GTK+ translation
 # Copyright (C) 1998-2004 Free Software Foundation, Inc.
-#
+# 
 # IM = Input method => Eingabemethode
-#
+# 
 # Daniel Egger <Daniel.Egger@t-online>, 1998.
 # Karsten Weiss <karsten@addx.au.s.shuttle.de>, 1999.
 # Matthias Warkus <mawarkus@gnome.org>, 2001, 2002.
@@ -13,12 +13,12 @@
 # Mario Blättermann <mariobl@freenet.de>, 2009-2011.
 # Christian Kirbach  <Christian.Kirbach@googlemail.com>, 2009, 2010.
 # Hendrik Knackstedt <hendrik.knackstedt@t-online.de>, 2013.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: GTK+ 2-24\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-05 15:38+0200\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2011-07-13 20:16+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@freenet.de>\n"
 "Language-Team: Deutsch <gnome-de@gnome.org>\n"
@@ -654,20 +654,20 @@ msgstr "OPTIONEN"
 msgid "GTK+ debugging flags to unset"
 msgstr "Nicht zu übergebende GTK+-Fehlerdiagnoseoptionen"
 
-#: gtkmain.c:698
+#: gtkmain.c:706
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: gtkmain.c:763
+#: gtkmain.c:771
 #, c-format
 msgid "Cannot open display: %s"
 msgstr "Anzeige kann nicht geöffnet werden: %s"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "GTK+ Options"
 msgstr "GTK+-Optionen"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "Show GTK+ Options"
 msgstr "GTK+-Optionen anzeigen"
 

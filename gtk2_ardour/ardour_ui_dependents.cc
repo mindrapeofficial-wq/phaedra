@@ -44,6 +44,7 @@
 #include "ardour_ui.h"
 #include "audio_clip_editor.h"
 #include "public_editor.h"
+#include "editor.h"
 #include "meterbridge.h"
 #include "luainstance.h"
 #include "luawindow.h"
@@ -76,6 +77,19 @@ namespace ARDOUR {
 
 using namespace ARDOUR;
 using namespace Gtkmm2ext;
+
+void
+ARDOUR_UI::sync_editor_mixer_dock ()
+{
+	if (!editor || !mixer) {
+		return;
+	}
+	Editor* arrangement = static_cast<Editor*> (editor);
+	/* A visible dedicated mixer keeps its strips. Otherwise use the dock. */
+	bool dock = !mixer->contents().get_mapped ();
+	mixer->set_editor_dock (dock ? &arrangement->mixer_dock_box () : 0);
+	arrangement->set_mixer_dock_available (dock);
+}
 
 void
 ARDOUR_UI::we_have_dependents ()
@@ -298,6 +312,12 @@ ARDOUR_UI::setup_windows ()
 	editor->add_to_notebook (_tabs);
 	recorder->add_to_notebook (_tabs);
 	trigger_page->add_to_notebook (_tabs);
+
+	editor->contents().signal_map().connect (sigc::mem_fun (*this, &ARDOUR_UI::sync_editor_mixer_dock));
+	mixer->contents().signal_map().connect (sigc::mem_fun (*this, &ARDOUR_UI::sync_editor_mixer_dock));
+	mixer->contents().signal_unmap().connect (sigc::mem_fun (*this, &ARDOUR_UI::sync_editor_mixer_dock));
+	sync_editor_mixer_dock ();
+
 
 	top_packer.pack_start (menu_bar_base, false, false);
 

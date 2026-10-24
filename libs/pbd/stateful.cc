@@ -42,7 +42,12 @@ namespace PBD {
 int Stateful::current_state_version = 0;
 int Stateful::loading_state_version = 0;
 
-thread_local bool Stateful::_regenerate_xml_or_string_ids (false);
+bool&
+Stateful::regenerate_xml_or_string_ids_ref()
+{
+	static thread_local bool val = false;
+	return val;
+}
 
 Stateful::Stateful ()
 	: _extra_xml (nullptr)
@@ -385,7 +390,7 @@ Stateful::clear_owned_changes ()
 bool
 Stateful::set_id (const XMLNode& node)
 {
-	if (_regenerate_xml_or_string_ids) {
+	if (regenerate_xml_or_string_ids_ref()) {
 		reset_id ();
 		return true;
 	}
@@ -406,7 +411,7 @@ Stateful::reset_id ()
 void
 Stateful::set_id (const string& str)
 {
-	if (_regenerate_xml_or_string_ids) {
+	if (regenerate_xml_or_string_ids_ref()) {
 		reset_id ();
 	} else {
 		_id = str;
@@ -416,7 +421,7 @@ Stateful::set_id (const string& str)
 bool
 Stateful::regenerate_xml_or_string_ids () const
 {
-	if (_regenerate_xml_or_string_ids) {
+	if (regenerate_xml_or_string_ids_ref()) {
 		return true;
 	} else {
 		return false;

@@ -446,7 +446,7 @@ EditingContext::set_action_defaults ()
 	mouse_mode_actions[Editing::MouseObject]->set_active (false);
 	mouse_mode_actions[Editing::MouseObject]->set_active (true);
 	zoom_focus_actions[Editing::ZoomFocusLeft]->set_active (false);
-	zoom_focus_actions[Editing::ZoomFocusLeft]->set_active (true);
+	zoom_focus_actions[Editing::ZoomFocusPlayhead]->set_active (true);
 
 	if (snap_mode_actions[Editing::SnapMagnetic]) {
 		snap_mode_actions[Editing::SnapMagnetic]->set_active (false);
@@ -2733,17 +2733,9 @@ EditingContext::set_common_editing_state (XMLNode const & node)
 		reset_zoom (samples_per_pixel);
 	}
 
-	GridType grid_type;
-	if (!node.get_property ("grid-type", grid_type)) {
-		grid_type = GridTypeNone;
-	}
-	set_grid_type (grid_type);
+	set_grid_type (GridTypeBeat);
 
-	SnapMode sm;
-	if (!node.get_property ("snap-mode", sm)) {
-		sm = SnapOff;
-	}
-	set_snap_mode (sm);
+	set_snap_mode (SnapMagnetic);
 
 	node.get_property ("internal-grid-type", internal_grid_type);
 	node.get_property ("internal-snap-mode", internal_snap_mode);
@@ -3290,7 +3282,7 @@ EditingContext::temporal_zoom_step (bool zoom_out)
 {
 	EC_LOCAL_TEMPO_SCOPE;
 
-	temporal_zoom_step_scale (zoom_out, 2.0);
+	temporal_zoom_step_scale (zoom_out, 1.2);
 }
 
 void

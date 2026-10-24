@@ -59,6 +59,9 @@ private:
 	void edit_current_meter ();
 	void insert_new_tempo ();
 	void insert_new_meter ();
+	bool on_tempo_btn_press (GdkEventButton*);
+	bool on_meter_btn_press (GdkEventButton*);
+	void show_inline_edit (ArdourWidgets::ArdourButton& btn, bool is_tempo);
 	bool _suspend_delta_mode_signal;
 	std::string _widget_name;
 

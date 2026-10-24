@@ -85,7 +85,7 @@ ArdourButton::ArdourButton (Element e, bool toggle)
 	, _text_width (0)
 	, _text_height (0)
 	, _diameter (0)
-	, _corner_radius (3.5)
+	, _corner_radius (6.0)
 	, _corner_mask (0xf)
 	, _border_mask (0x0)
 	, _angle(0)
@@ -136,7 +136,7 @@ ArdourButton::ArdourButton (const std::string& str, Element e, bool toggle)
 	, _text_width (0)
 	, _text_height (0)
 	, _diameter (0)
-	, _corner_radius (3.5)
+	, _corner_radius (6.0)
 	, _corner_mask (0xf)
 	, _border_mask (0x0)
 	, _angle(0)
@@ -1063,11 +1063,11 @@ ArdourButton::build_patterns ()
 	//convex gradient
 	convex_pattern = cairo_pattern_create_linear (0.0, 0, 0.0,  get_height());
 	cairo_pattern_add_color_stop_rgba (convex_pattern, 0.0, 0,0,0, 0.0);
-	cairo_pattern_add_color_stop_rgba (convex_pattern, 1.0, 0,0,0, 0.35);
+	cairo_pattern_add_color_stop_rgba (convex_pattern, 1.0, 0,0,0, 0.12);
 
 	//concave gradient
 	concave_pattern = cairo_pattern_create_linear (0.0, 0, 0.0,  get_height());
-	cairo_pattern_add_color_stop_rgba (concave_pattern, 0.0, 0,0,0, 0.5);
+	cairo_pattern_add_color_stop_rgba (concave_pattern, 0.0, 0,0,0, 0.15);
 	cairo_pattern_add_color_stop_rgba (concave_pattern, 0.7, 0,0,0, 0.0);
 
 	led_inset_pattern = cairo_pattern_create_linear (0.0, 0.0, 0.0, _diameter);

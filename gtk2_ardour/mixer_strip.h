@@ -131,6 +131,9 @@ public:
 	void hide_master_spacer (bool);
 
 	void hide_things ();
+	void set_docked_compact (bool);
+	void apply_docked_compact ();
+	bool _docked_compact = false;
 
 	sigc::signal<void> WidthChanged;
 

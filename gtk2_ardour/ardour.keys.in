@@ -265,15 +265,15 @@ This mode provides many different operations on both regions and control points,
 
 ;; arrow keys, navigation etc.
 
-@vis|Editor/step-tracks-up|                                           Up|scroll up (step)
+@vis|Editor/navigation-zoom-in|                                           Up|zoom in
 @trans|Transport/TransitionToRoll|                        <@TERTIARY@>Up|transition to roll
-@select|Editor/select-prev-route|                        <@SECONDARY@>Up|select previous track/bus
+@select|Editor/select-prev-route||select previous track/bus
 @select|Editor/select-prev-stripable|        <@SECONDARY@><@TERTIARY@>Up|select previous strip
 @vis|Editor/move-selected-tracks-up|                       <@PRIMARY@>Up|move selected tracks up
 
-@vis|Editor/step-tracks-down|                                       Down|scroll down (step)
+@vis|Editor/navigation-zoom-out|                                       Down|zoom out
 @trans|Transport/TransitionToReverse|                   <@TERTIARY@>Down|transition to reverse
-@select|Editor/select-next-route|                      <@SECONDARY@>Down|select next track/bus
+@select|Editor/select-next-route||select next track/bus
 @select|Editor/select-next-stripable|      <@SECONDARY@><@TERTIARY@>Down|select next strip
 @vis|Editor/move-selected-tracks-down|                   <@PRIMARY@>Down|move selected tracks down
 
@@ -297,8 +297,12 @@ This mode provides many different operations on both regions and control points,
 
 @wvis|Common/next-tab|             <@PRIMARY@>Page_Down|next tab
 @wvis|Common/previous-tab|           <@PRIMARY@>Page_Up|previous tab
-@vis|Editor/scroll-tracks-down|               Page_Down|scroll down (page)
-@vis|Editor/scroll-tracks-up|                   Page_Up|scroll up (page)
+@vis|Editor/navigation-zoom-tracks-out| Page_Down|decrease track heights
+@vis|Editor/navigation-zoom-tracks-in| Page_Up|increase track heights
+@vis|Editor/navigation-scroll-left| <@SECONDARY@>Left|scroll view left
+@vis|Editor/navigation-scroll-right| <@SECONDARY@>Right|scroll view right
+@vis|Editor/navigation-scroll-up| <@SECONDARY@>Up|scroll view up
+@vis|Editor/navigation-scroll-down| <@SECONDARY@>Down|scroll view down
 @movp|Transport/GotoStart|                         Home|to start marker
 @movp|Transport/GotoEnd|                            End|to end marker
 @editing|Editing/editor-delete|                   Delete|delete

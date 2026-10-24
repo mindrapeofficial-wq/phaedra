@@ -1,12 +1,12 @@
 # Copyright (C) YEAR "Paul Davis"
 # This file is distributed under the same license as the ardour package.
-#
+# 
 # Daniel Nylander <po@danielnylander.se>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-26 15:25+0100\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2026-01-16 21:20+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: sv\n"
@@ -21,51 +21,23 @@ msgstr ""
 msgid "Unknown action name: %1/%2"
 msgstr "Okänt åtgärdsnamn: %1/%2"
 
-#: action_model.cc:56 action_model.cc:171
+#: action_model.cc:56 action_model.cc:157
 msgid "Disabled"
 msgstr "Inaktiverad"
 
-#: action_model.cc:83
-msgid "Main_menu"
-msgstr "Huvudmeny"
-
-#: action_model.cc:85
-msgid "JACK"
-msgstr "JACK"
-
-#: action_model.cc:87
-msgid "redirectmenu"
-msgstr "omdirigeringsmeny"
-
-#: action_model.cc:89
-msgid "Editor_menus"
-msgstr "Redigerarmenyer"
-
-#: action_model.cc:91
-msgid "RegionList"
-msgstr "Regionlista"
-
-#: action_model.cc:93
-msgid "ProcessorMenu"
-msgstr "ProcessorMeny"
-
-#: bindings.cc:514
-msgid "Escape"
-msgstr "Escape"
-
-#: bindings.cc:937 bindings.cc:939
+#: bindings.cc:951 bindings.cc:953
 msgid "Window"
 msgstr "Fönster"
 
-#: bindings.cc:937
+#: bindings.cc:951
 msgid " (Categorized)"
 msgstr " (Kategoriserad)"
 
-#: bindings.cc:939
+#: bindings.cc:953
 msgid " (Alphabetical)"
 msgstr " (Alfabetisk)"
 
-#: bindings.cc:955
+#: bindings.cc:969
 msgid "Uncategorized"
 msgstr "Okategoriserad"
 
@@ -182,3 +154,24 @@ msgstr "Det går inte att byta namn på din egen tangentbindningsfil (%1)"
 #: textviewer.cc:32
 msgid "Close"
 msgstr "Stäng"
+
+#~ msgid "Main_menu"
+#~ msgstr "Huvudmeny"
+
+#~ msgid "JACK"
+#~ msgstr "JACK"
+
+#~ msgid "redirectmenu"
+#~ msgstr "omdirigeringsmeny"
+
+#~ msgid "Editor_menus"
+#~ msgstr "Redigerarmenyer"
+
+#~ msgid "RegionList"
+#~ msgstr "Regionlista"
+
+#~ msgid "ProcessorMenu"
+#~ msgstr "ProcessorMeny"
+
+#~ msgid "Escape"
+#~ msgstr "Escape"

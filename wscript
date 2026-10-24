@@ -17,6 +17,10 @@ from waflib.Tools.compiler_cxx import cxx_compiler
 c_compiler['darwin'] = ['gcc', 'clang' ]
 cxx_compiler['darwin'] = ['g++', 'clang++' ]
 
+# Force gcc on Windows/MSYS2 (skip MSVC)
+c_compiler['win32'] = ['gcc', 'clang']
+cxx_compiler['win32'] = ['g++', 'clang++']
+
 compiler_flags_dictionaries= {
     'gcc' : {
         # Flags required when building a debug build
@@ -497,6 +501,10 @@ int main() { return 0; }''',
             linker_flags.append('/OPT:REF,ICF')
 
     autowaf.set_basic_compiler_flags (conf,flags_dict)
+
+    # GCC 16+ treats u8"" as char8_t in C++20; disable to keep const char* compat
+    if compiler_name != 'msvc':
+        cxx_flags.append('-fno-char8_t')
 
     if conf.options.asan:
         if conf.check_cxx(cxxflags=["-fsanitize=address", "-fno-omit-frame-pointer"], linkflags=["-fsanitize=address"], mandatory = False):

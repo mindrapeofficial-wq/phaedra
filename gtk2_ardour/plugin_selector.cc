@@ -366,6 +366,7 @@ void
 PluginSelector::row_activated(Gtk::TreeModel::Path, Gtk::TreeViewColumn*)
 {
 	btn_add_clicked();
+	response (RESPONSE_APPLY);
 }
 
 void

@@ -1,12 +1,12 @@
 # Copyright (C) YEAR "Paul Davis"
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Hiroki Inagaki <hiroki.ingk@gmail.com>, 2017.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-30 12:44-0600\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2017-10-22 06:13-0700\n"
 "Last-Translator: Hiroki Inagaki <hiroki.ingk@gmail.com>\n"
 "Language-Team: Japanese <ardour-dev@lists.ardour.org>\n"
@@ -17,51 +17,27 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 1.8.7.1\n"
 
-#: actions.cc:215
+#: actions.cc:219
 msgid "Unknown action name: %1/%2"
 msgstr "不明なアクション名: %1/%2"
 
-#: action_model.cc:56 action_model.cc:171
+#: action_model.cc:56 action_model.cc:157
 msgid "Disabled"
 msgstr ""
 
-#: action_model.cc:83
-msgid "Main_menu"
-msgstr ""
-
-#: action_model.cc:85
-msgid "JACK"
-msgstr ""
-
-#: action_model.cc:87
-msgid "redirectmenu"
-msgstr ""
-
-#: action_model.cc:89
-msgid "Editor_menus"
-msgstr ""
-
-#: action_model.cc:91
-msgid "RegionList"
-msgstr ""
-
-#: action_model.cc:93
-msgid "ProcessorMenu"
-msgstr ""
-
-#: bindings.cc:840 bindings.cc:842
+#: bindings.cc:951 bindings.cc:953
 msgid "Window"
 msgstr "ウインドウ"
 
-#: bindings.cc:840
+#: bindings.cc:951
 msgid " (Categorized)"
 msgstr "(カテゴリ化済み)"
 
-#: bindings.cc:842
+#: bindings.cc:953
 msgid " (Alphabetical)"
 msgstr "(アルファベット順)"
 
-#: bindings.cc:858
+#: bindings.cc:969
 msgid "Uncategorized"
 msgstr "カテゴリなし"
 
@@ -73,11 +49,11 @@ msgstr "カーソル・ホットスポット情報ファイル %1 は %2 行目�
 msgid "ABCDEFGHIJLKMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 msgstr "ABCDEFGHIJLKMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 
-#: gtk_ui.cc:126
+#: gtk_ui.cc:135
 msgid "Log"
 msgstr "ログ"
 
-#: gtk_ui.cc:395
+#: gtk_ui.cc:432
 msgid ""
 "\n"
 "\n"
@@ -87,71 +63,91 @@ msgstr ""
 "\n"
 "ショートカット: "
 
-#: gtk_ui.cc:694
+#: gtk_ui.cc:724
 msgid "Press To Exit"
 msgstr "押して終了"
 
-#: gtk_ui.cc:730
+#: gtk_ui.cc:761
 msgid "I'm sorry %1, I can't do that"
 msgstr "すみません %1、それはできません"
 
-#: keyboard.cc:75
+#: keyboard.cc:80
 msgid "Command"
 msgstr "Command"
 
-#: keyboard.cc:76 keyboard.cc:98
+#: keyboard.cc:85 keyboard.cc:146
 msgid "Control"
 msgstr "Control"
 
-#: keyboard.cc:77 keyboard.cc:82 keyboard.cc:100 keyboard.cc:105
+#: keyboard.cc:90 keyboard.cc:120 keyboard.cc:156 keyboard.cc:186
 msgid "Key|Shift"
 msgstr "Shift"
 
-#: keyboard.cc:78
+#: keyboard.cc:95
 msgid "Option"
 msgstr "Option"
 
-#: keyboard.cc:80
+#: keyboard.cc:100
+msgid "Middle Click (or Ctrl+Alt+Click)"
+msgstr ""
+
+#: keyboard.cc:105
+msgid "Cmd+Click (or Middle-Click)"
+msgstr ""
+
+#: keyboard.cc:110
 msgid "Cmd"
 msgstr "Cmd"
 
-#: keyboard.cc:81 keyboard.cc:103
+#: keyboard.cc:115 keyboard.cc:176
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: keyboard.cc:83
+#: keyboard.cc:125
 msgid "Opt"
 msgstr "Opt"
 
-#: keyboard.cc:99 keyboard.cc:104
+#: keyboard.cc:151 keyboard.cc:181
 msgid "Alt"
 msgstr "Alt"
 
-#: keyboard.cc:101
+#: keyboard.cc:161
 msgid "Windows"
 msgstr "Windows"
 
-#: keyboard.cc:106
+#: keyboard.cc:166 keyboard.cc:171
+msgid "Middle-Click"
+msgstr ""
+
+#: keyboard.cc:191
 msgid "Win"
 msgstr "Win"
 
-#: keyboard.cc:159 keyboard.cc:605
+#: keyboard.cc:204
+msgid "CapsLock"
+msgstr ""
+
+#: keyboard.cc:210
+msgid "Lock"
+msgstr ""
+
+#: keyboard.cc:301 keyboard.cc:785
 msgid "Unknown"
 msgstr "不明"
 
-#: keyboard.cc:616
+#: keyboard.cc:795
 msgid "key bindings file not found at \"%2\" or contains errors."
 msgstr "“%2” にキーバインドファイルが見つからなか、エラーが含まれています。"
 
-#: keyboard.cc:642
+#: keyboard.cc:821
 msgid "Keyboard binding found without a name"
 msgstr "名前のないキーボードバインドが見つかりました"
 
-#: keyboard.cc:674
+#: keyboard.cc:853
 msgid "Cannot save key bindings to %1"
 msgstr "キーバインドを %1 に保存できません"
 
-#: keyboard.cc:690
+#: keyboard.cc:868
 msgid "Cannot rename your own keybinding file (%1)"
 msgstr "利用中のキーバインドファイルを名前変更できません (%1)"
 

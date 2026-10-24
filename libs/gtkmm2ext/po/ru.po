@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gtkmm2ext\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-30 12:44-0600\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2014-10-10 23:22+0300\n"
 "Last-Translator: Александр Кольцов <ag1455@mail.ru>\n"
 "Language-Team: русский <ru>\n"
@@ -15,56 +15,32 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2); 10<=4 && (n%100<10 || n"
-"%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2); 10<=4 && (n%100<10 || "
+"n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: actions.cc:215
+#: actions.cc:219
 msgid "Unknown action name: %1/%2"
 msgstr ""
 
-#: action_model.cc:56 action_model.cc:171
+#: action_model.cc:56 action_model.cc:157
 msgid "Disabled"
 msgstr ""
 
-#: action_model.cc:83
-msgid "Main_menu"
-msgstr ""
-
-#: action_model.cc:85
-msgid "JACK"
-msgstr ""
-
-#: action_model.cc:87
-msgid "redirectmenu"
-msgstr ""
-
-#: action_model.cc:89
-msgid "Editor_menus"
-msgstr ""
-
-#: action_model.cc:91
-msgid "RegionList"
-msgstr ""
-
-#: action_model.cc:93
-msgid "ProcessorMenu"
-msgstr ""
-
-#: bindings.cc:840 bindings.cc:842
+#: bindings.cc:951 bindings.cc:953
 msgid "Window"
 msgstr ""
 
-#: bindings.cc:840
+#: bindings.cc:951
 msgid " (Categorized)"
 msgstr ""
 
-#: bindings.cc:842
+#: bindings.cc:953
 msgid " (Alphabetical)"
 msgstr ""
 
-#: bindings.cc:858
+#: bindings.cc:969
 msgid "Uncategorized"
 msgstr ""
 
@@ -76,11 +52,11 @@ msgstr "Информационный файл курсора горячих то
 msgid "ABCDEFGHIJLKMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 msgstr ""
 
-#: gtk_ui.cc:126
+#: gtk_ui.cc:135
 msgid "Log"
 msgstr "Журнал"
 
-#: gtk_ui.cc:395
+#: gtk_ui.cc:432
 msgid ""
 "\n"
 "\n"
@@ -90,71 +66,91 @@ msgstr ""
 "\n"
 "Комбинация клавиш: "
 
-#: gtk_ui.cc:694
+#: gtk_ui.cc:724
 msgid "Press To Exit"
 msgstr "Нажмите для выхода"
 
-#: gtk_ui.cc:730
+#: gtk_ui.cc:761
 msgid "I'm sorry %1, I can't do that"
 msgstr "Простите, %1, я не могу этого сделать"
 
-#: keyboard.cc:75
+#: keyboard.cc:80
 msgid "Command"
 msgstr "Команда"
 
-#: keyboard.cc:76 keyboard.cc:98
+#: keyboard.cc:85 keyboard.cc:146
 msgid "Control"
 msgstr "Ctrl"
 
-#: keyboard.cc:77 keyboard.cc:82 keyboard.cc:100 keyboard.cc:105
+#: keyboard.cc:90 keyboard.cc:120 keyboard.cc:156 keyboard.cc:186
 msgid "Key|Shift"
 msgstr "Shift"
 
-#: keyboard.cc:78
+#: keyboard.cc:95
 msgid "Option"
 msgstr "Опции"
 
-#: keyboard.cc:80
+#: keyboard.cc:100
+msgid "Middle Click (or Ctrl+Alt+Click)"
+msgstr ""
+
+#: keyboard.cc:105
+msgid "Cmd+Click (or Middle-Click)"
+msgstr ""
+
+#: keyboard.cc:110
 msgid "Cmd"
 msgstr ""
 
-#: keyboard.cc:81 keyboard.cc:103
+#: keyboard.cc:115 keyboard.cc:176
 msgid "Ctrl"
 msgstr ""
 
-#: keyboard.cc:83
+#: keyboard.cc:125
 msgid "Opt"
 msgstr ""
 
-#: keyboard.cc:99 keyboard.cc:104
+#: keyboard.cc:151 keyboard.cc:181
 msgid "Alt"
 msgstr "Alt"
 
-#: keyboard.cc:101
+#: keyboard.cc:161
 msgid "Windows"
 msgstr ""
 
-#: keyboard.cc:106
+#: keyboard.cc:166 keyboard.cc:171
+msgid "Middle-Click"
+msgstr ""
+
+#: keyboard.cc:191
 msgid "Win"
 msgstr ""
 
-#: keyboard.cc:159 keyboard.cc:605
+#: keyboard.cc:204
+msgid "CapsLock"
+msgstr ""
+
+#: keyboard.cc:210
+msgid "Lock"
+msgstr ""
+
+#: keyboard.cc:301 keyboard.cc:785
 msgid "Unknown"
 msgstr "Неизвестно"
 
-#: keyboard.cc:616
+#: keyboard.cc:795
 msgid "key bindings file not found at \"%2\" or contains errors."
 msgstr "Файл привязки клавиш не найден в \"% 2 \" или содержит ошибки."
 
-#: keyboard.cc:642
+#: keyboard.cc:821
 msgid "Keyboard binding found without a name"
 msgstr ""
 
-#: keyboard.cc:674
+#: keyboard.cc:853
 msgid "Cannot save key bindings to %1"
 msgstr ""
 
-#: keyboard.cc:690
+#: keyboard.cc:868
 msgid "Cannot rename your own keybinding file (%1)"
 msgstr "Невозможно переименовать ваш ​​файл биндинга клавиш (%1)"
 

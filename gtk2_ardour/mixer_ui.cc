@@ -402,8 +402,8 @@ Mixer_UI::Mixer_UI ()
 	inner_pane.add (scroller);
 	inner_pane.add (vca_vpacker);
 
-	global_hpacker.pack_start (inner_pane, true, true);
 	global_hpacker.pack_start (out_packer, false, false);
+	global_hpacker.pack_start (inner_pane, true, true);
 
 	inner_pane.set_divider (0, .8);
 
@@ -717,6 +717,7 @@ Mixer_UI::add_stripables (StripableList& slist)
 
 				strip = new MixerStrip (*this, _session, route);
 				strip->set_selected (route->is_selected ());
+				strip->set_docked_compact (_editor_docked);
 				strips.push_back (strip);
 
 				UIConfiguration::instance().get_default_narrow_ms() ? _strip_width = Narrow : _strip_width = Wide;
@@ -1529,9 +1530,32 @@ Mixer_UI::stop_updating ()
 }
 
 void
+Mixer_UI::set_editor_dock (Gtk::Box* dock)
+{
+	_editor_docked = dock != 0;
+	for (auto& strip : strips) {
+		strip->set_docked_compact (_editor_docked);
+	}
+	Gtk::Container* destination = dock ? static_cast<Gtk::Container*> (dock) : static_cast<Gtk::Container*> (&content_main);
+	if (global_hpacker.get_parent () == destination) {
+		return;
+	}
+	Gtk::Container* parent = dynamic_cast<Gtk::Container*> (global_hpacker.get_parent ());
+	if (parent) {
+		parent->remove (global_hpacker);
+	}
+	if (dock) {
+		dock->pack_start (global_hpacker, true, true);
+	} else {
+		content_main.add (global_hpacker);
+	}
+	global_hpacker.show ();
+}
+
+void
 Mixer_UI::fast_update_strips ()
 {
-	if (!UIConfiguration::instance().get_no_strobe() && contents().get_mapped () && _session) {
+	if (!UIConfiguration::instance().get_no_strobe() && global_hpacker.get_mapped () && _session) {
 		for (auto & s : strips) {
 			s->fast_update ();
 		}

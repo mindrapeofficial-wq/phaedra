@@ -24,6 +24,7 @@
 
 #include "gtkmm2ext/colors.h"
 #include "gtkmm2ext/rgb_macros.h"
+#include "gtkmm2ext/utils.h"
 #include "widgets/ardour_icon.h"
 
 using namespace ArdourWidgets::ArdourIcon;
@@ -577,11 +578,12 @@ static void
 icon_transport_stop (cairo_t* cr, const int width, const int height, const uint32_t fg_color)
 {
 	const int wh = std::min (width, height);
-	cairo_rectangle (cr,
-	                 (width - wh) * .5 + wh * .24,
-	                 (height - wh) * .5 + wh * .24,
-	                 wh * .48, wh * .48);
-	VECTORICONSTROKEFILLFG (0.9); // small 'shine'
+	const double x0 = (width - wh) * .5 + wh * .24;
+	const double y0 = (height - wh) * .5 + wh * .24;
+	const double sz = wh * .48;
+	const double r  = sz * .2;
+	Gtkmm2ext::rounded_rectangle (cr, x0, y0, sz, sz, r);
+	VECTORICONSTROKEFILLFG (0.9);
 }
 
 /** play triangle */

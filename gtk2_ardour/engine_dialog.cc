@@ -135,6 +135,9 @@ EngineControl::EngineControl ()
 		set_resizable (false);
 	}
 	set_name (X_("AudioMIDISetup"));
+	if (Glib::RefPtr<Gdk::Pixbuf> icon = ::get_icon (PROGRAM_NAME "-icon_48px")) {
+		set_icon (icon);
+	}
 
 	/* the backend combo is the one thing that is ALWAYS visible */
 

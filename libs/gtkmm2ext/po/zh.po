@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ardour 6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-11 21:39+0800\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2021-02-12 10:30+0800\n"
 "Last-Translator: 一善鱼 <YQ-YSY@163.com>\n"
 "Language-Team: 一善鱼 YQ-YSY@163.com\n"
@@ -17,51 +17,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.1\n"
 
-#: actions.cc:215
+#: actions.cc:219
 msgid "Unknown action name: %1/%2"
 msgstr "未知的动作名称：%1/%2"
 
-#: action_model.cc:56 action_model.cc:171
+#: action_model.cc:56 action_model.cc:157
 msgid "Disabled"
 msgstr "禁用"
 
-#: action_model.cc:83
-msgid "Main_menu"
-msgstr "主菜单"
-
-#: action_model.cc:85
-msgid "JACK"
-msgstr ""
-
-#: action_model.cc:87
-msgid "redirectmenu"
-msgstr "重定向菜单"
-
-#: action_model.cc:89
-msgid "Editor_menus"
-msgstr "编辑器菜单"
-
-#: action_model.cc:91
-msgid "RegionList"
-msgstr "区域列表"
-
-#: action_model.cc:93
-msgid "ProcessorMenu"
-msgstr "处理器菜单"
-
-#: bindings.cc:840 bindings.cc:842
+#: bindings.cc:951 bindings.cc:953
 msgid "Window"
 msgstr "窗口"
 
-#: bindings.cc:840
+#: bindings.cc:951
 msgid " (Categorized)"
 msgstr " （分类）"
 
-#: bindings.cc:842
+#: bindings.cc:953
 msgid " (Alphabetical)"
 msgstr " （按字母顺序）"
 
-#: bindings.cc:858
+#: bindings.cc:969
 msgid "Uncategorized"
 msgstr "未分类"
 
@@ -73,11 +49,11 @@ msgstr "游标热点信息文件 %1 在线路 %2 上有一个错误"
 msgid "ABCDEFGHIJLKMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 msgstr ""
 
-#: gtk_ui.cc:126
+#: gtk_ui.cc:135
 msgid "Log"
 msgstr "日志"
 
-#: gtk_ui.cc:412
+#: gtk_ui.cc:432
 msgid ""
 "\n"
 "\n"
@@ -87,77 +63,112 @@ msgstr ""
 "\n"
 "快捷键： "
 
-#: gtk_ui.cc:720
+#: gtk_ui.cc:724
 msgid "Press To Exit"
 msgstr "按下退出"
 
-#: gtk_ui.cc:756
+#: gtk_ui.cc:761
 msgid "I'm sorry %1, I can't do that"
 msgstr "对不起 %1，我不能那样做"
 
-#: keyboard.cc:75
+#: keyboard.cc:80
 msgid "Command"
 msgstr "命令"
 
-#: keyboard.cc:76 keyboard.cc:98
+#: keyboard.cc:85 keyboard.cc:146
 msgid "Control"
 msgstr "Control"
 
-#: keyboard.cc:77 keyboard.cc:82 keyboard.cc:100 keyboard.cc:105
+#: keyboard.cc:90 keyboard.cc:120 keyboard.cc:156 keyboard.cc:186
 msgid "Key|Shift"
 msgstr "Shift"
 
-#: keyboard.cc:78
+#: keyboard.cc:95
 msgid "Option"
 msgstr "选项"
 
-#: keyboard.cc:80
+#: keyboard.cc:100
+msgid "Middle Click (or Ctrl+Alt+Click)"
+msgstr ""
+
+#: keyboard.cc:105
+msgid "Cmd+Click (or Middle-Click)"
+msgstr ""
+
+#: keyboard.cc:110
 msgid "Cmd"
 msgstr "命令"
 
-#: keyboard.cc:81 keyboard.cc:103
+#: keyboard.cc:115 keyboard.cc:176
 msgid "Ctrl"
 msgstr ""
 
-#: keyboard.cc:83
+#: keyboard.cc:125
 msgid "Opt"
 msgstr "选项"
 
-#: keyboard.cc:99 keyboard.cc:104
+#: keyboard.cc:151 keyboard.cc:181
 msgid "Alt"
 msgstr ""
 
-#: keyboard.cc:101
+#: keyboard.cc:161
 msgid "Windows"
 msgstr ""
 
-#: keyboard.cc:106
+#: keyboard.cc:166 keyboard.cc:171
+msgid "Middle-Click"
+msgstr ""
+
+#: keyboard.cc:191
 msgid "Win"
 msgstr ""
 
-#: keyboard.cc:159 keyboard.cc:605
+#: keyboard.cc:204
+msgid "CapsLock"
+msgstr ""
+
+#: keyboard.cc:210
+msgid "Lock"
+msgstr ""
+
+#: keyboard.cc:301 keyboard.cc:785
 msgid "Unknown"
 msgstr "未知"
 
-#: keyboard.cc:616
+#: keyboard.cc:795
 msgid "key bindings file not found at \"%2\" or contains errors."
 msgstr "在 \"%2\" 找不到按键绑定文件或者包含有错误。"
 
-#: keyboard.cc:642
+#: keyboard.cc:821
 msgid "Keyboard binding found without a name"
 msgstr "键盘绑定发现没有一个名称"
 
-#: keyboard.cc:674
+#: keyboard.cc:853
 msgid "Cannot save key bindings to %1"
 msgstr "无法保存按键绑定到 %1"
 
-#: keyboard.cc:690
+#: keyboard.cc:868
 msgid "Cannot rename your own keybinding file (%1)"
 msgstr "无法重命名您自己的按键绑定文件（%1）"
 
 #: textviewer.cc:32
 msgid "Close"
 msgstr "关闭"
+
+#~ msgid "Main_menu"
+#~ msgstr "主菜单"
+
+#~ msgid "redirectmenu"
+#~ msgstr "重定向菜单"
+
+#~ msgid "Editor_menus"
+#~ msgstr "编辑器菜单"
+
+#~ msgid "RegionList"
+#~ msgstr "区域列表"
+
+#~ msgid "ProcessorMenu"
+#~ msgstr "处理器菜单"
 
 #~ msgid "Unknown action name: %1"
 #~ msgstr "未知的动作名称：%1"

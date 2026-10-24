@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gtk+\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 12:00+0200\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2026-09-28 09:42+0200\n"
 "Last-Translator: Martin Vlk <martin@vlkk.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -1444,5 +1444,3 @@ msgstr "Neočekávaná data znaků na řádku %d, znak %d"
 #: gtkuimanager.c:2444
 msgid "Empty"
 msgstr "Prázdný"
-
-

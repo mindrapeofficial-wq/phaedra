@@ -186,6 +186,20 @@ Editor::register_actions ()
 	*/
 	ActionManager::register_action (editor_actions, "lock", S_("Session|Lock"), sigc::mem_fun (*this, &Editor::lock));
 
+	_show_mixer_dock_action = ActionManager::register_toggle_action (editor_actions, "show-mixer-dock", _("Show Channels Below Tracks"), sigc::mem_fun (*this, &Editor::toggle_mixer_dock));
+	_show_mixer_dock_action->set_tooltip (_("Show or hide the channel mixer below the arrangement"));
+	_mixer_dock_button.set_related_action (_show_mixer_dock_action);
+	_show_mixer_dock_action->set_active (true);
+
+	reg_sens (editor_actions, "navigation-zoom-in", _("Zoom In"), sigc::bind (sigc::mem_fun (*this, &Editor::temporal_zoom_step), false));
+	reg_sens (editor_actions, "navigation-zoom-out", _("Zoom Out"), sigc::bind (sigc::mem_fun (*this, &Editor::temporal_zoom_step), true));
+	reg_sens (editor_actions, "navigation-zoom-tracks-in", _("Increase Track Heights"), sigc::mem_fun (*this, &Editor::control_vertical_zoom_in_all));
+	reg_sens (editor_actions, "navigation-zoom-tracks-out", _("Decrease Track Heights"), sigc::mem_fun (*this, &Editor::control_vertical_zoom_out_all));
+	reg_sens (editor_actions, "navigation-scroll-left", _("Scroll View Left"), sigc::mem_fun (*this, &Editor::scroll_left_half_page));
+	reg_sens (editor_actions, "navigation-scroll-right", _("Scroll View Right"), sigc::mem_fun (*this, &Editor::scroll_right_half_page));
+	reg_sens (editor_actions, "navigation-scroll-up", _("Scroll View Up"), sigc::mem_fun (*this, &Editor::scroll_tracks_up_line));
+	reg_sens (editor_actions, "navigation-scroll-down", _("Scroll View Down"), sigc::mem_fun (*this, &Editor::scroll_tracks_down_line));
+
 	/* attachments visibility (editor-mixer-strip, bottom properties, sidebar list) */
 
 	show_editor_list_action = ActionManager::register_toggle_action (editor_actions, "show-editor-list", _("Show Editor List"), sigc::mem_fun (*this, &Tabbable::att_right_button_toggled));
@@ -615,8 +629,8 @@ Editor::register_actions ()
 
 	no_ruler_shown_update = true;
 
-	ruler_minsec_action->set_active (false);
-	ruler_timecode_action->set_active (true);
+	ruler_minsec_action->set_active (true);
+	ruler_timecode_action->set_active (false);
 	ruler_samples_action->set_active (false);
 	ruler_bbt_action->set_active (true);
 	ruler_meter_action->set_active (true);

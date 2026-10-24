@@ -3,12 +3,12 @@
 # Tomas Ögren <stric@ing.umu.se>, 1999.
 # Christian Rose <menthos@menthos.com>, 2000, 2001, 2002, 2003, 2004, 2005.
 # Daniel Nylander <po@danielnylander.se>, 2006, 2007, 2008, 2009, 2010, 2026.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: gtk+\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-05 15:38+0200\n"
+"POT-Creation-Date: 2026-10-24 10:41+0200\n"
 "PO-Revision-Date: 2026-01-16 20:38+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -636,20 +636,20 @@ msgstr "FLAGGOR"
 msgid "GTK+ debugging flags to unset"
 msgstr "GTK+-felsökningsflaggor att inte ställa in"
 
-#: gtkmain.c:698
+#: gtkmain.c:706
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: gtkmain.c:763
+#: gtkmain.c:771
 #, c-format
 msgid "Cannot open display: %s"
 msgstr "Kan inte öppna display: %s"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "GTK+ Options"
 msgstr "GTK+-flaggor"
 
-#: gtkmain.c:800
+#: gtkmain.c:808
 msgid "Show GTK+ Options"
 msgstr "Visa GTK+-flaggor"
 
@@ -1701,7 +1701,7 @@ msgstr "Tom"
 #~ msgstr "calendar:MY"
 
 # I Sverige börjar veckan på måndag
-#
+# 
 #~ msgid "calendar:week_start:0"
 #~ msgstr "calendar:week_start:1"
 
@@ -4339,7 +4339,7 @@ msgstr "Tom"
 #~ msgstr "%d"
 
 # I Sverige börjar veckan på måndag
-#
+# 
 #~ msgid "calendar:week:digits|%d"
 #~ msgstr "%d"
 

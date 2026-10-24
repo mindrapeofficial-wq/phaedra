@@ -1059,8 +1059,25 @@ AudioClock::set_slave_info ()
 			break;
 		}
 	} else {
-		_left_btn.set_text (string_compose ("%1/%2", _("INT"), tm->display_name()), false);
-		_right_btn.set_text ("", false);
+		if (_session) {
+			timepos_t pos (timepos_t (_session->transport_sample ()));
+			TempoMap::SharedPtr tmap (TempoMap::use());
+			TempoMetric m (tmap->metric_at (pos));
+			char buf[64];
+			if (m.tempo().note_type() == 4) {
+				snprintf (buf, sizeof(buf), u8"♩ = %.1f BPM", m.tempo().note_types_per_minute_at_DOUBLE (pos));
+			} else if (m.tempo().note_type() == 8) {
+				snprintf (buf, sizeof(buf), u8"♪ = %.1f BPM", m.tempo().note_types_per_minute_at_DOUBLE (pos));
+			} else {
+				snprintf (buf, sizeof(buf), "%.1f BPM", m.tempo().note_types_per_minute_at_DOUBLE (pos));
+			}
+			_left_btn.set_text (buf, false);
+			snprintf (buf, sizeof(buf), "%d/%d", m.meter().divisions_per_bar(), m.meter().note_value());
+			_right_btn.set_text (buf, false);
+		} else {
+			_left_btn.set_text ("", false);
+			_right_btn.set_text ("", false);
+		}
 	}
 }
 

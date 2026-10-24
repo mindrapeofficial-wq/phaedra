@@ -1791,6 +1791,12 @@ PluginManager::windows_vst_discover_from_path (string path, bool cache_only)
 	size_t all_modules = plugin_objects.size ();
 	for (x = plugin_objects.begin(); x != plugin_objects.end (); ++x, ++n) {
 		reset_scan_cancel_state (true);
+		{
+			std::string pname = Glib::path_get_basename (*x);
+			std::string::size_type dot = pname.rfind ('.');
+			if (dot != std::string::npos) { pname = pname.substr (0, dot); }
+			BootMessage (string_compose (_("Scanning VST2 Plugins (%1 / %2): %3"), n, all_modules, pname));
+		}
 		ARDOUR::PluginScanMessage (string_compose (_("VST2 (%1 / %2)"), n, all_modules), *x, !cache_only && !cancelled());
 		vst2_discover (*x, Windows_VST, cache_only || cancelled());
 	}
@@ -2096,6 +2102,12 @@ PluginManager::vst3_discover_from_path (string const& path, bool cache_only)
 		++n;
 		DEBUG_TRACE (DEBUG::PluginManager, string_compose ("VST3: discover '%1'\n", path));
 		reset_scan_cancel_state (true);
+		{
+			std::string pname = Glib::path_get_basename (path);
+			std::string::size_type dot = pname.rfind ('.');
+			if (dot != std::string::npos) { pname = pname.substr (0, dot); }
+			BootMessage (string_compose (_("Scanning VST3 Plugins (%1 / %2): %3"), n, all_modules, pname));
+		}
 		ARDOUR::PluginScanMessage (string_compose (_("VST3 (%1 / %2)"), n, all_modules), path, !cache_only && !cancelled());
 
 #ifndef PLATFORM_WINDOWS

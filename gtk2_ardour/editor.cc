@@ -465,7 +465,7 @@ Editor::Editor ()
 	controls_layout.add (edit_controls_vbox);
 
 	if (UIConfiguration::instance().get_render_plus_hints ()) {
-		controls_layout.signal_expose_event ().connect (sigc::bind (sigc::ptr_fun (&ArdourWidgets::ArdourIcon::expose_with_text), &controls_layout, ArdourWidgets::ArdourIcon::ShadedPlusSign, _("Right-click\nor Double-click here\nto add Track, Bus,\n or VCA.")));
+		controls_layout.signal_expose_event ().connect (sigc::bind (sigc::ptr_fun (&ArdourWidgets::ArdourIcon::expose_with_text), &controls_layout, ArdourWidgets::ArdourIcon::ShadedPlusSign, _("Add Track")));
 	}
 
 	HSeparator* separator = manage (new HSeparator());
@@ -661,7 +661,22 @@ Editor::Editor ()
 	content_att_right.add (_editor_list_vbox);
 	content_att_bottom.add (_bottom_hbox);
 	content_main_top.add (global_vpacker);
-	content_main.add (editor_summary_pane);
+	/* One arrangement view, with the session's existing mixer below it. */
+	_arrange_mixer_pane.add (editor_summary_pane);
+	_mixer_dock_scroller.set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+	_mixer_dock_scroller.set_shadow_type (Gtk::SHADOW_NONE);
+	_mixer_dock_scroller.add (_mixer_dock_box);
+	_arrange_mixer_pane.add (_mixer_dock_scroller);
+	_arrange_mixer_pane.set_child_minsize (editor_summary_pane, 160);
+	_arrange_mixer_pane.set_child_minsize (_mixer_dock_scroller, 120);
+	_arrange_mixer_pane.set_divider (0, 0.65);
+	_arrange_mixer_pane.set_drag_cursor (*_cursors->expand_up_down);
+	_arrange_mixer_pane.show ();
+	_mixer_dock_box.show ();
+	content_main.add (_arrange_mixer_pane);
+	_mixer_dock_button.set_text (_("Channels"));
+	_mixer_dock_button.set_no_show_all (true);
+
 
 	/* need to show the "contents" widget so that notebook will show if tab is switched to
 	 */
@@ -2239,6 +2254,23 @@ Editor::focus_on_clock()
 	_application_bar.focus_on_clock();
 }
 
+void
+Editor::set_mixer_dock_available (bool available)
+{
+	_mixer_dock_available = available;
+	toggle_mixer_dock ();
+}
+
+void
+Editor::toggle_mixer_dock ()
+{
+	if (_mixer_dock_available && _show_mixer_dock_action && _show_mixer_dock_action->get_active ()) {
+		_mixer_dock_scroller.show ();
+	} else {
+		_mixer_dock_scroller.hide ();
+	}
+}
+
 int
 Editor::set_state (const XMLNode& node, int version)
 {
@@ -2247,6 +2279,15 @@ Editor::set_state (const XMLNode& node, int version)
 	bool yn;
 
 	Tabbable::set_state (node, version);
+
+	float mixer_split = 0.60f;
+	if (node.get_property ("phaedra-mixer-split", mixer_split)) {
+		_arrange_mixer_pane.set_divider (0, std::max (0.20f, std::min (0.85f, mixer_split)));
+	}
+	bool mixer_visible = true;
+	node.get_property ("phaedra-mixer-visible", mixer_visible);
+	_show_mixer_dock_action->set_active (mixer_visible);
+
 
 	samplepos_t ph_pos;
 	if (_session && node.get_property ("playhead", ph_pos)) {
@@ -2267,7 +2308,7 @@ Editor::set_state (const XMLNode& node, int version)
 
 	ZoomFocus zf;
 	if (!node.get_property ("zoom-focus", zf)) {
-		zf = ZoomFocusLeft;
+		zf = ZoomFocusPlayhead;
 	}
 	set_zoom_focus (zf);
 
@@ -2314,13 +2355,7 @@ Editor::set_state (const XMLNode& node, int version)
 	node.get_property ("stationary-playhead", yn);
 	set_stationary_playhead (yn);
 
-	yn = true;
-	node.get_property ("show-editor-mixer", yn);
-	/* force a change to sync action state and actual attachment visibility.
-	 * Otherwise after creating a new session from a running instance
-	 * the editor-mixer and bottom attachment are not visible, even though
-	 * the actions are enabled.
-	 */
+	yn = false;
 	show_editor_mixer_action->set_active (!yn);
 	show_editor_mixer_action->set_active (yn);
 
@@ -2406,6 +2441,8 @@ Editor::get_state () const
 	node->add_child_nocopy (Tabbable::get_state());
 
 	node->set_property("edit-vertical-pane-size", editor_summary_pane.get_absolute_divider());
+	node->set_property ("phaedra-mixer-split", _arrange_mixer_pane.get_divider ());
+	node->set_property ("phaedra-mixer-visible", _show_mixer_dock_action->get_active ());
 
 	maybe_add_mixer_strip_width (*node);
 
@@ -4802,7 +4839,7 @@ Editor::add_stripables (StripableList& sl)
 
 		} else if ((r = std::dynamic_pointer_cast<Route> (s)) != 0) {
 
-			if (r->is_auditioner() || r->is_monitor() || r->is_surround_master ()) {
+			if (r->is_auditioner() || r->is_monitor() || r->is_surround_master () || r->is_master ()) {
 				continue;
 			}
 

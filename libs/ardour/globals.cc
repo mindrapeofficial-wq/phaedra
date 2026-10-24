@@ -976,7 +976,7 @@ ARDOUR::setup_fpu ()
 
 
 #if defined(PLATFORM_WINDOWS) || defined(__APPLE__)
-static const bool translate_by_default = false;
+static const bool translate_by_default = true;
 #else
 static const bool translate_by_default = true;
 #endif

@@ -397,12 +397,12 @@ ARDOUR_UI::update_title ()
 		}
 
 		WindowTitle title (session_name);
-		title += Glib::get_application_name();
+		title += "Phaedra by Galante";
 		_main_window.set_title (title.get_string());
 
 		snap_label << Gtkmm2ext::markup_escape_text (session_name);
 	} else {
-		WindowTitle title (Glib::get_application_name());
+		WindowTitle title ("Phaedra by Galante");
 		_main_window.set_title (title.get_string());
 		snap_label << "-";
 	}
