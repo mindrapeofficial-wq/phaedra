@@ -14,6 +14,7 @@ $backup = $null
 $backedUp = $false
 $stage = $null
 $download = $null
+$userApproved = $false
 
 function Run-App {
     $launcher = Join-Path $root 'Phaedra.exe'
@@ -102,6 +103,7 @@ try {
          [Environment]::NewLine + '¿Actualizar antes de abrir?'),
         'Actualización de Phaedra', 'YesNo', 'Question')
     if ($choice -ne 'Yes') { return }
+    $userApproved = $true
 
     $download = Join-Path $env:TEMP ('Phaedra-' + [Guid]::NewGuid().ToString('N') + '.zip')
     Invoke-WebRequest -Uri $assets[0].browser_download_url -Headers $headers -OutFile $download -UseBasicParsing -TimeoutSec 300
@@ -113,7 +115,11 @@ try {
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $archive = [IO.Compression.ZipFile]::OpenRead($download)
     try {
+        if ($archive.Entries.Count -gt 50000) { throw 'Too many files in release' }
+        $unpackedBytes = [int64]0
         foreach ($entry in $archive.Entries) {
+            $unpackedBytes += $entry.Length
+            if ($unpackedBytes -gt 4294967296) { throw 'Release too large after extraction' }
             $relative = Safe-Relative $entry.FullName
             $absolute = [IO.Path]::GetFullPath((Join-Path $stage $relative))
             if (!$absolute.StartsWith(($stage + '\'), [StringComparison]::OrdinalIgnoreCase)) {
@@ -147,6 +153,7 @@ try {
         throw
     }
 } catch {
+    if ($userApproved) {
     try {
         Add-Type -AssemblyName PresentationFramework -ErrorAction SilentlyContinue
         [System.Windows.MessageBox]::Show(
@@ -154,6 +161,7 @@ try {
              [Environment]::NewLine + $_.Exception.Message),
             'Phaedra', 'OK', 'Warning') | Out-Null
     } catch { }
+    }
 } finally {
     if ($backedUp -and !(Test-Path -LiteralPath $root) -and $backup) {
         try { Move-Item -LiteralPath $backup -Destination $root -ErrorAction Stop } catch { }
