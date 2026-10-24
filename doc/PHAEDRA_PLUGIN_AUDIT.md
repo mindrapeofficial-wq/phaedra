@@ -57,12 +57,14 @@ Phaedra retains its previous default instrument as a fallback.
 - Do not distribute a Phaedra ZIP that a user has augmented with their personal
   Vital installation unless authorized by the relevant license terms.
 
-## Current eight LV2 plugin modules found in this repository
+## Seven enabled LV2 modules and one disabled source module
 
-The Waf sources live under `libs/plugins/` and are expected to build into
-`build/libs/LV2/` (the Windows portable script copies that directory).
-This is a **source-tree inventory**, not a confirmation that any particular
-Windows release ZIP built successfully or contains all eight.
+The Waf sources live under `libs/plugins/`. The top-level `wscript` enables
+seven modules and **comments out `a-vapor.lv2`**, which is therefore not
+expected to be built in the normal configuration. Enabled modules should
+build into `build/libs/LV2/` (the Windows portable script copies this directory).
+This is a **source-tree and build-configuration inventory**, not confirmation
+that any particular Windows release ZIP compiled successfully.
 
 | Current source module | Role | Strong free alternative to evaluate | Priority |
 | --- | --- | --- | --- |
@@ -73,11 +75,10 @@ Windows release ZIP built successfully or contains all eight.
 | ACE Expander | Expander / gate-like dynamics | **Venn Free Gate**; LSP Expander / Gate source option | P1 |
 | ACE Reverb | Basic algorithmic reverb | **Dragonfly Reverb**, **Venn Free Reverb** or **Valhalla Supermassive** | P1 |
 | ACE Delay | Delay with BPM sync | **Venn Free Delay** or a new Phaedra beat-synced native delay | P2 |
-| ACE Vapor | Binaural / multichannel rendering | **IEM Plug-in Suite** where its channel layouts and renderers match the route | P2 |
+| ACE Vapor (**disabled in wscript**) | Binaural / multichannel rendering | **IEM Plug-in Suite** where its channel layouts and renderers match the route | P2 |
 
 Additional tools in `share/scripts/` are Lua scripts, some of which act as DSP
-processors, editors or workflows. Those are distinct from the eight compiled LV2
-plugin modules above. Built-in route processors (faders, pans, meters) are another
+processors, editors or workflows. Those are distinct from the seven enabled LV2 modules and the disabled ACE Vapor source. Built-in route processors (faders, pans, meters) are another
 distinct category. Third-party VSTs/LV2s installed on a user's PC cannot be
 enumerated solely from the source repository.
 
