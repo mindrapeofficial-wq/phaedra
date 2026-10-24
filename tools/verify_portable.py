@@ -24,6 +24,15 @@ def verify(root):
     ver = (root / "version.txt").read_text(encoding="utf-8-sig").strip()
     if not re.fullmatch(r"\d+\.\d+\.\d+", ver):
         raise RuntimeError("Invalid version in version.txt: " + repr(ver))
+    preview_marker = root / "preview-channel.flag"
+    if preview_marker.is_file():
+        if preview_marker.read_text(encoding="ascii").strip() != "preview":
+            raise RuntimeError("Invalid preview channel marker")
+        if ver != "0.0.0":
+            raise RuntimeError("Preview packages must use version 0.0.0")
+        config_lines = (root / "update_config.ini").read_text(encoding="utf-8").splitlines()
+        if "check_updates=false" not in config_lines or "check_updates=true" in config_lines:
+            raise RuntimeError("Preview must never join the stable update channel")
     files = {}
     for raw in (root / "MANIFEST.sha256").read_text(encoding="utf-8").splitlines():
         match = re.fullmatch(r"([a-f0-9]{64})  (.+)", raw)
