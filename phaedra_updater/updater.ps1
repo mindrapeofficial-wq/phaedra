@@ -127,8 +127,9 @@ try {
     }
 
     if ($isInstallerManaged) {
-        # Preserve a recoverable file snapshot before the signed-by-publisher
-        # installation process runs. Inno owns its uninstall registry and logs.
+        # Preserve a recoverable file snapshot before the Inno installer runs.
+        # Inno owns its uninstall registry and logs; Authenticode signing is
+        # not assumed. SHA256 confirms the asset downloaded from GitHub.
         # Never move/overwrite unins000.exe using the portable ZIP strategy.
         $backup = Join-Path $parent ('.phaedra-backup-' + $local + '-' +
                                      [Guid]::NewGuid().ToString('N'))
@@ -157,10 +158,14 @@ try {
     try {
         if ($archive.Entries.Count -gt 50000) { throw 'Too many files in release' }
         $unpackedBytes = [int64]0
+        $archivePaths = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
         foreach ($entry in $archive.Entries) {
             $unpackedBytes += $entry.Length
             if ($unpackedBytes -gt 4294967296) { throw 'Release too large after extraction' }
             $relative = Safe-Relative $entry.FullName
+            if (!$archivePaths.Add($relative.TrimEnd('\'))) { throw 'Duplicate ZIP entry' }
+            $unixType = (($entry.ExternalAttributes -shr 16) -band 0xF000)
+            if ($unixType -eq 0xA000) { throw 'ZIP symbolic links are not allowed' }
             $absolute = [IO.Path]::GetFullPath((Join-Path $stage $relative))
             if (!$absolute.StartsWith(($stage + '\'), [StringComparison]::OrdinalIgnoreCase)) {
                 throw 'Archive entry escapes installation staging area'
