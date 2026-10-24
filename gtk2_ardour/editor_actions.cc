@@ -625,18 +625,20 @@ Editor::register_actions ()
 	xjadeo_letterbox_action = Glib::RefPtr<ToggleAction>::cast_static (ActionManager::register_toggle_action (editor_actions, X_("toggle-vmon-letterbox"), _("Letterbox"), sigc::bind (sigc::mem_fun (*this, &Editor::set_xjadeo_viewoption), (int) 6)));
 	xjadeo_zoom_100 = reg_sens (editor_actions, "zoom-vmon-100", _("Original Size"), sigc::bind (sigc::mem_fun (*this, &Editor::set_xjadeo_viewoption), (int) 7));
 
-	/* set defaults here */
-
+	/* Phaedra starts with a single musical Bars:Beats ruler. A session's
+	 * saved RulerVisibility state overrides these initial action defaults.
+	 */
 	no_ruler_shown_update = true;
 
-	ruler_minsec_action->set_active (true);
+	ruler_minsec_action->set_active (false);
 	ruler_timecode_action->set_active (false);
 	ruler_samples_action->set_active (false);
 	ruler_bbt_action->set_active (true);
-	ruler_meter_action->set_active (true);
-	ruler_tempo_action->set_active (true);
-	ruler_range_action->set_active (true);
-	ruler_marker_action->set_active (true);
+	ruler_meter_action->set_active (false);
+	ruler_tempo_action->set_active (false);
+	ruler_range_action->set_active (false);
+	ruler_marker_action->set_active (false);
+	ruler_section_action->set_active (false);
 
 	ruler_video_action->set_active (false);
 	xjadeo_proc_action->set_active (false);
