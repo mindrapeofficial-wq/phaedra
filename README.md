@@ -49,9 +49,36 @@ Release ZIPs are named Phaedra-vX.Y.Z-win-x64.zip and include:
 * BUILD-DEPENDENCIES.txt, MANIFEST.sha256 and version.txt;
 * updater/updater.ps1, update_config.ini.
 
-The workflow produces a matching SHA256 sidecar and a source archive
-from the same commit. Never publish a release if the build or smoke
-tests fail. Changes to dependencies require renewed testing.
+The workflow produces matching SHA256 sidecars and a source archive
+from the same commit. Stable tagged releases also include the per-user
+`Phaedra-vX.Y.Z-Setup-win-x64.exe` installer and its SHA256. The Inno
+Setup 6 script is `installer/Phaedra.iss`; Windows CI actually installs,
+self-tests and uninstalls the resulting EXE before releasing anything.
+Never publish a release if the build, packaging or smoke tests fail.
+Changes to dependencies require renewed testing.
+
+## Standard Windows installation
+
+Use the verified `Phaedra-vX.Y.Z-Setup-win-x64.exe` for an installed
+version with Start-menu shortcuts and an uninstaller. This is a per-user
+Inno Setup installation, without administrator privileges. The default
+location is `%LOCALAPPDATA%\\Programs\\Phaedra`; audio projects and
+preferences must remain outside that folder. Stable installations use
+`%APPDATA%\\Phaedra8` for preferences.
+
+The update worker distinguishes an Inno-managed installation by its
+`unins000.exe`. With explicit user approval, it downloads the matching
+GitHub-published Setup EXE, validates its SHA256, makes an adjacent file
+backup and runs Inno Setup to preserve its uninstall metadata. A portable
+installation instead downloads a verified ZIP and swaps folders with
+rollback. The installer-path backup is for manual recovery, not an
+automatic restore of installer registry entries.
+
+No installer is released until the full Windows CI pipeline succeeds.
+There is no Authenticode signature yet, and SHA256 alone is not proof
+of publisher identity or malware-free binaries. Preview installations
+use a separate application identity and folder, and preview channels
+do not update the stable installation.
 
 ## Portable Windows usage
 
