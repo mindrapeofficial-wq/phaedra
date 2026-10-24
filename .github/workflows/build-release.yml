@@ -1,19 +1,31 @@
-name: Build and Release Phaedra
+name: Phaedra Windows CI and release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  build:
-    runs-on: windows-latest
+  windows:
+    name: Build and verify portable Windows DAW
+    runs-on: windows-2022
+    timeout-minutes: 180
+    env:
+      PHAEDRA_ENGINE_VERSION: '8.12.0'
     defaults:
       run:
         shell: msys2 {0}
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
 
       - uses: msys2/setup-msys2@v2
         with:
@@ -21,10 +33,9 @@ jobs:
           update: true
           install: >-
             mingw-w64-ucrt-x86_64-gcc
-            mingw-w64-ucrt-x86_64-pkg-config
+            mingw-w64-ucrt-x86_64-pkgconf
             mingw-w64-ucrt-x86_64-boost
             mingw-w64-ucrt-x86_64-gtk2
-            mingw-w64-ucrt-x86_64-gtkmm
             mingw-w64-ucrt-x86_64-libsndfile
             mingw-w64-ucrt-x86_64-libsamplerate
             mingw-w64-ucrt-x86_64-fftw
@@ -57,7 +68,28 @@ jobs:
             zip
             python
 
-      - name: Configure
+      - name: Select product version
+        run: |
+          if [[ "$GITHUB_REF_TYPE" == tag ]]; then
+            if ! [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Release tag must be vMAJOR.MINOR.PATCH" >&2
+              exit 1
+            fi
+            version="$(printf '%s' "$GITHUB_REF_NAME" | cut -c2-)"
+          else
+            version="0.0.0"
+          fi
+          echo "PHAEDRA_PACKAGE_VERSION=$version" >> "$GITHUB_ENV"
+          echo "Building Phaedra $version with libardour ABI $PHAEDRA_ENGINE_VERSION"
+
+      - name: Static syntax checks
+        run: |
+          python -m py_compile wscript tools/package_windows.py tools/verify_portable.py
+          python -m unittest discover -s tools/tests -v
+          gcc -fsyntax-only tools/phaedra_launcher.c
+          powershell.exe -NoProfile -Command '$errorsFound = $null; $tokens = $null; [void][System.Management.Automation.Language.Parser]::ParseFile("phaedra_updater/updater.ps1", [ref]$tokens, [ref]$errorsFound); if ($errorsFound.Count) { $errorsFound | Format-List; exit 1 }'
+
+      - name: Configure audio engine
         run: |
           python waf configure \
             --with-backends=portaudio,dummy \
@@ -66,26 +98,93 @@ jobs:
             --optimize \
             --program-name=Phaedra
 
-      - name: Build
+      - name: Compile Phaedra
         run: python waf build -j4
 
-      - name: Package Portable
-        run: bash make_portable.sh
-
-      - name: Update version in portable
+      - name: Package Windows portable
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          echo "$VERSION" > Phaedra-Portable/version.txt
+          bash make_portable.sh
+          python tools/verify_portable.py Phaedra-Portable
 
-      - name: Create ZIP
+      - name: Smoke-test Windows launch and core executable
+        shell: pwsh
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          cd Phaedra-Portable && zip -r "../Phaedra-v${VERSION}.zip" . && cd ..
+          $bundle = Join-Path $pwd 'Phaedra-Portable'
+          $bin = Join-Path $bundle 'bin'
+          $launcher = Join-Path $bundle 'Phaedra.exe'
+          $exe = Join-Path $bin 'Phaedra.exe'
+          $check = Start-Process -FilePath $launcher -ArgumentList '--self-test' -WorkingDirectory $bundle -Wait -PassThru
+          if ($check.ExitCode -ne 0) { throw "Launcher self-test failed: $($check.ExitCode)" }
+          $env:PATH = "$bin;$env:PATH"
+          $env:ARDOUR_DATA_PATH = Join-Path $bundle 'share\ardour8'
+          $env:ARDOUR_DLL_PATH = Join-Path $bundle 'lib\ardour8'
+          $env:ARDOUR_CONFIG_PATH = Join-Path $env:RUNNER_TEMP 'PhaedraSmokeConfig'
+          $env:FONTCONFIG_FILE = Join-Path $bundle 'etc\fonts\fonts.conf'
+          $env:GTK_PATH = Join-Path $bundle 'lib'
+          $process = Start-Process -FilePath $exe -ArgumentList '--version' -WorkingDirectory $bin -PassThru
+          if (-not $process.WaitForExit(30000)) {
+            $process.Kill()
+            throw 'DAW --version did not exit within 30 seconds'
+          }
+          if ($process.ExitCode -ne 0) { throw "DAW --version returned $($process.ExitCode)" }
 
-      - name: Upload Release
-        uses: softprops/action-gh-release@v2
+      - name: Produce checksum-verified portable ZIP and matching source ZIP
+        run: |
+          package="Phaedra-v$PHAEDRA_PACKAGE_VERSION-win-x64.zip"
+          (cd Phaedra-Portable && find . -type f -print | LC_ALL=C sort | zip -X -q -9 "../$package" -@)
+          sha256sum "$package" > "$package.sha256"
+          python - "$package" <<'PY'
+          import sys, zipfile
+          with zipfile.ZipFile(sys.argv[1]) as bundle:
+              assert bundle.testzip() is None, "Corrupt release ZIP"
+              assert "version.txt" in bundle.namelist()
+              assert "MANIFEST.sha256" in bundle.namelist()
+          PY
+          source="Phaedra-v$PHAEDRA_PACKAGE_VERSION-source.zip"
+          git archive --format=zip --output="$source" HEAD
+          python - "$source" <<'PY'
+          import sys, zipfile
+          from pathlib import Path
+          revision = Path('libs/ardour/revision.cc')
+          if not revision.is_file():
+              raise SystemExit('Missing generated revision.cc in source export')
+          with zipfile.ZipFile(sys.argv[1], 'a', compression=zipfile.ZIP_DEFLATED) as bundle:
+              bundle.write(revision, 'libs/ardour/revision.cc')
+          PY
+          sha256sum "$source" > "$source.sha256"
+
+      - name: Preserve reviewed assets and corresponding sources
+        uses: actions/upload-artifact@v4
         with:
-          files: Phaedra-v*.zip
+          name: windows-build
+          path: |
+            Phaedra-v*-win-x64.zip
+            Phaedra-v*-win-x64.zip.sha256
+            Phaedra-v*-source.zip
+            Phaedra-v*-source.zip.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+  publish:
+    name: Release only after successful Windows smoke test
+    needs: windows
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-build
+          path: dist
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/Phaedra-v*-win-x64.zip
+            dist/Phaedra-v*-win-x64.zip.sha256
+            dist/Phaedra-v*-source.zip
+            dist/Phaedra-v*-source.zip.sha256
+          fail_on_unmatched_files: true
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
