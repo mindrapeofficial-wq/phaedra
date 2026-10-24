@@ -1,33 +1,42 @@
 # Phaedra · Sitio oficial
 
-Sitio web de Phaedra DAW: https://phaedra-daw.vercel.app
+Web oficial de Phaedra DAW: https://phaedra-daw.vercel.app
+
+## Diseño (v2, 25/10/2026)
+
+Dirección visual: identidad editorial e industrial, con tipografía a gran escala, márgenes amplios, ritmo de retícula y contraste entre papel cálido, tinta oscura y violeta Phaedra.
+
+Referencias estudiadas:
+- Teenage Engineering OP–1 field: https://teenage.engineering/products/op-1 (tipografía editorial y fichas técnicas).
+- Ableton Live: https://www.ableton.com/en/live/ (bloques de contenido y exposición del flujo creativo).
+- Bitwig Studio: https://www.bitwig.com/overview/ (secciones centradas en el producto y su entorno de trabajo).
+
+No se han copiado HTML, CSS, imágenes comerciales, logos ni activos de estas webs. Esta implementación es original y usa el emblema real de Phaedra alojado en su propio repositorio: `gtk2_ardour/resources/Phaedra-icon_512px.png`.
+
+La representación del editor multipista es **conceptual** y se identifica como tal en la página. Sustituirla más adelante por una captura auténtica y verificada del software cuando esté disponible.
+
+**REA** (Reverse Engineer Anything) no estaba conectado a este entorno de ChatGPT y tampoco se pudo instalar por ausencia de acceso al registro npm. Por tanto, las referencias se investigaron con páginas públicas, no mediante un informe de REA. Una investigación futura puede conectarlo en un cliente de programación compatible, siguiendo https://rea.tools/.
 
 ## Archivos
 
-- `index.html`: web estática autocontenida (HTML, CSS y JavaScript).
-- No necesita dependencias, backend ni proceso de compilación.
-- Idioma inicial: español.
-- Diseño adaptable a móvil y escritorio.
+- `index.html`: implementación HTML, CSS y JavaScript sin dependencias ni compilación.
+- Idioma inicial: español. Diseño responsive y navegación por teclado.
+- Novedades y descarga: API pública de GitHub Releases con `v1.0.0` como respaldo.
 
 ## Publicación
 
-El proyecto Vercel se llama `phaedra-daw` y su directorio de salida es `.`.
+Proyecto Vercel: `phaedra-daw`. Sitio de producción: https://phaedra-daw.vercel.app. Directorio publicado: `.`.
 
-**Estado de sincronización (25/10/2026):** el sitio se publicó mediante una subida directa a Vercel. No existe aún una conexión GitHub-Vercel autorizada. Modificar este archivo en GitHub **no** actualizará automáticamente el sitio hasta que se conecte el repositorio y se configure `website` como directorio raíz en Vercel, o hasta que se vuelva a desplegar manualmente.
+El despliegue inicial y el rediseño se publicaron **mediante subida directa** a Vercel, ya que la integración GitHub de la cuenta Vercel aún no está autorizada.
 
-Configuración recomendada al conectar GitHub:
-- Repositorio: `mindrapeofficial-wq/phaedra`
+**Importante:** modificar este archivo en GitHub NO actualiza Vercel automáticamente. Para habilitar despliegues automáticos hay que vincular `mindrapeofficial-wq/phaedra` a Vercel y configurar:
 - Rama: `main`
 - Directorio raíz: `website`
 - Framework: Other / sin framework
 - Directorio de salida: `.`
 
-## Versiones
+## Distribución
 
-La tarjeta de descarga y el bloque de novedades consultan, cuando es posible, la API pública de GitHub Releases. En caso de falta de conexión o límite de peticiones, muestran la versión de respaldo `v1.0.0`. No indican que un instalador esté validado. La URL del ZIP procede de un recurso real del repositorio.
+La versión `v1.0.0` publicada es un ZIP portátil experimental de Windows. No se anuncia como instalador estable ni se afirma que la compilación funcione en todos los equipos. El sitio deja claro que Phaedra es gratuito por ahora, sin suscripciones ni registro obligatorio.
 
-## Avisos
-
-Phaedra es gratuito por ahora. La primera publicación es un ZIP experimental, no un instalador Windows validado. La web distingue claramente entre funcionalidades, objetivos y trabajos pendientes.
-
-El repositorio contiene código derivado de Ardour con obligaciones de licencia. Mantener siempre los archivos de licencia, el crédito de derechos de autor correspondiente y la oferta del código fuente. Consulta `COPYING` en la raíz.
+Phaedra contiene código derivado de Ardour con obligaciones de licencia. Conservar los avisos de copyright pertinentes y el acceso al código fuente correspondiente. Consultar `COPYING` y licencias de componentes.
