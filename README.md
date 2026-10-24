@@ -62,9 +62,9 @@ Changes to dependencies require renewed testing.
 Use the verified `Phaedra-vX.Y.Z-Setup-win-x64.exe` for an installed
 version with Start-menu shortcuts and an uninstaller. This is a per-user
 Inno Setup installation, without administrator privileges. The default
-location is `%LOCALAPPDATA%\\Programs\\Phaedra`; audio projects and
+location is `%LOCALAPPDATA%\Programs\Phaedra`; audio projects and
 preferences must remain outside that folder. Stable installations use
-`%APPDATA%\\Phaedra8` for preferences.
+`%APPDATA%\Phaedra8` for preferences.
 
 The update worker distinguishes an Inno-managed installation by its
 `unins000.exe`. With explicit user approval, it downloads the matching
