@@ -30,7 +30,7 @@ jobs:
         run: |
           $destination = Join-Path $env:RUNNER_TEMP "Phaedra-Test/Plugins/VST3"
           & ./tools/install_free_plugins.ps1 -ManifestPath ./tools/phaedra-plugin-replacements.json -Destination $destination -Group "${{ matrix.group }}"
-          if ($LASTEXITCODE -ne 0) { throw "Installer failed with $LASTEXITCODE" }
+          if (-not $?) { throw "El instalador PowerShell termino con error." }
           $bundles = @(Get-ChildItem -Path $destination -Filter '*.vst3')
           if ($bundles.Count -eq 0) { throw 'No VST3 bundles were installed' }
           Write-Host ('Bundles: ' + ($bundles.Name -join ', '))
