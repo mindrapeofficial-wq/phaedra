@@ -458,17 +458,20 @@ Editor::restore_ruler_visibility ()
 		}
 
 	} else {
-		Temporal::TimeDomain const td (_session->config.get_default_time_domain ());
-		/* New session: no rulers have been displayed yet. let's assign default rulers from the session's time domain */
-		ruler_minsec_action->set_active (td == Temporal::AudioTime);
-		ruler_timecode_action->set_active (td == Temporal::AudioTime);
+		/* A new session has no saved RulerVisibility: display the musical
+		 * timeline exactly once, without extra audio or marker rulers.
+		 * Sessions with a saved RulerVisibility retain their own layout.
+		 */
+		ruler_minsec_action->set_active (false);
+		ruler_timecode_action->set_active (false);
 		ruler_samples_action->set_active (false);
 		ruler_bbt_action->set_active (true);
-		ruler_meter_action->set_active (true);
-		ruler_tempo_action->set_active (true);
-		ruler_range_action->set_active (true);
-		ruler_marker_action->set_active (true);
-		ruler_section_action->set_active (td == Temporal::BeatTime);
+		ruler_meter_action->set_active (false);
+		ruler_tempo_action->set_active (false);
+		ruler_range_action->set_active (false);
+		ruler_marker_action->set_active (false);
+		ruler_section_action->set_active (false);
+		ruler_video_action->set_active (false);
 	}
 
 	no_ruler_shown_update = false;
