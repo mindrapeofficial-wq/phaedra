@@ -91,7 +91,14 @@ try {
     $remote = $Matches[1]
     if ([version]$remote -le [version]$local) { return }
 
-    $name = 'Phaedra-v' + $remote + '-win-x64.zip'
+    # Inno installations must be upgraded through Inno Setup. Replacing their
+    # folder with a portable ZIP would delete unins000.exe and break uninstall.
+    $isInstallerManaged = Test-Path -LiteralPath (Join-Path $root 'unins000.exe') -PathType Leaf
+    if ($isInstallerManaged) {
+        $name = 'Phaedra-v' + $remote + '-Setup-win-x64.exe'
+    } else {
+        $name = 'Phaedra-v' + $remote + '-win-x64.zip'
+    }
     $assets = @($response.assets | Where-Object { $_.name -ceq $name })
     if ($assets.Count -ne 1 -or $assets[0].digest -notmatch '^sha256:([0-9a-fA-F]{64})$') { return }
     $digest = $Matches[1].ToUpperInvariant()
@@ -105,11 +112,44 @@ try {
     if ($choice -ne 'Yes') { return }
     $userApproved = $true
 
-    $download = Join-Path $env:TEMP ('Phaedra-' + [Guid]::NewGuid().ToString('N') + '.zip')
+    $download = Join-Path $env:TEMP ('Phaedra-' + [Guid]::NewGuid().ToString('N') +
+                                      [IO.Path]::GetExtension($name))
     Invoke-WebRequest -Uri $assets[0].browser_download_url -Headers $headers -OutFile $download -UseBasicParsing -TimeoutSec 300
     if ((Get-FileHash -LiteralPath $download -Algorithm SHA256).Hash -cne $digest) {
         throw 'Downloaded release failed the GitHub SHA256 check'
     }
+    # Refuse both upgrade strategies while any DAW instance is still running.
+    $binExe = Join-Path $root 'bin\Phaedra.exe'
+    foreach ($p in @(Get-Process -Name 'Phaedra' -ErrorAction SilentlyContinue)) {
+        try {
+            if ($p.Path -ieq $binExe) { throw 'Please close Phaedra before upgrading' }
+        } catch [System.ComponentModel.Win32Exception] { }
+    }
+
+    if ($isInstallerManaged) {
+        # Preserve a recoverable file snapshot before the signed-by-publisher
+        # installation process runs. Inno owns its uninstall registry and logs.
+        # Never move/overwrite unins000.exe using the portable ZIP strategy.
+        $backup = Join-Path $parent ('.phaedra-backup-' + $local + '-' +
+                                     [Guid]::NewGuid().ToString('N'))
+        Copy-Item -LiteralPath $root -Destination $backup -Recurse -Force -ErrorAction Stop
+        if (!(Test-Path -LiteralPath (Join-Path $backup 'Phaedra.exe') -PathType Leaf)) {
+            throw 'Backup of installed Phaedra was not created'
+        }
+        $setup = Start-Process -FilePath $download -ArgumentList @(
+            '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/CLOSEAPPLICATIONS'
+        ) -Wait -PassThru
+        if ($setup.ExitCode -ne 0) {
+            throw ('Installer upgrade failed with exit code ' + $setup.ExitCode)
+        }
+        $newVersionFile = Join-Path $root 'version.txt'
+        if (!(Test-Path -LiteralPath $newVersionFile -PathType Leaf) -or
+            (Get-Content -LiteralPath $newVersionFile -TotalCount 1).Trim() -ne $remote) {
+            throw 'Installed version does not match the release'
+        }
+        return
+    }
+
     $stage = Join-Path $parent ('.phaedra-stage-' + [Guid]::NewGuid().ToString('N'))
     New-Item -ItemType Directory -Path $stage -ErrorAction Stop | Out-Null
     Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -131,12 +171,6 @@ try {
     Expand-Archive -LiteralPath $download -DestinationPath $stage -Force
     Check-Stage $stage $remote
 
-    $binExe = Join-Path $root 'bin\Phaedra.exe'
-    foreach ($p in @(Get-Process -Name 'Phaedra' -ErrorAction SilentlyContinue)) {
-        try {
-            if ($p.Path -ieq $binExe) { throw 'Please close Phaedra before upgrading' }
-        } catch [System.ComponentModel.Win32Exception] { }
-    }
     $backup = Join-Path $parent ('.phaedra-backup-' + $local + '-' +
                                  [Guid]::NewGuid().ToString('N'))
     Move-Item -LiteralPath $root -Destination $backup -ErrorAction Stop
