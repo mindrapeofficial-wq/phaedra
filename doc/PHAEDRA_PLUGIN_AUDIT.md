@@ -68,11 +68,11 @@ Windows release ZIP built successfully or contains all eight.
 | --- | --- | --- | --- |
 | ACE Reasonable Synth | Minimal default MIDI synthesizer | **Vital** (wavetable; user-installed), **Surge XT** (open source) | P0 |
 | ACE Fluid Synth | SoundFont / GM instrument | **Decent Sampler** for sampled instruments; keep Fluid Synth for SF2/GM compatibility | P2 |
-| ACE EQ | Channel equalizer | **TDR Nova** (dynamic EQ, separately installed), **LSP Parametric Equalizer** | P1 |
-| ACE Compressor | Mono / stereo dynamics | **TDR Kotelnikov** or **LSP Compressor** | P1 |
-| ACE Expander | Expander / gate-like dynamics | **LSP Expander** / **LSP Gate** | P1 |
-| ACE Reverb | Basic algorithmic reverb | **Dragonfly Reverb**, **Valhalla Supermassive** (separate install) | P1 |
-| ACE Delay | Delay with BPM sync | **LSP Artistic Delay** or a new Phaedra beat-synced native delay | P2 |
+| ACE EQ | Channel equalizer | **TDR Nova** (dynamic EQ) / **Venn Free EQ**; LSP Parametric EQ source option | P1 |
+| ACE Compressor | Mono / stereo dynamics | **TDR Kotelnikov** / **Venn Free Comp**; LSP Compressor source option | P1 |
+| ACE Expander | Expander / gate-like dynamics | **Venn Free Gate**; LSP Expander / Gate source option | P1 |
+| ACE Reverb | Basic algorithmic reverb | **Dragonfly Reverb**, **Venn Free Reverb** or **Valhalla Supermassive** | P1 |
+| ACE Delay | Delay with BPM sync | **Venn Free Delay** or a new Phaedra beat-synced native delay | P2 |
 | ACE Vapor | Binaural / multichannel rendering | **IEM Plug-in Suite** where its channel layouts and renderers match the route | P2 |
 
 Additional tools in `share/scripts/` are Lua scripts, some of which act as DSP
@@ -99,7 +99,14 @@ curated recommended-effects palette. Offer manual, reversible migration and test
 - **P3**: consider a self-contained Vital-inspired/derived wavetable instrument
   only after the license, trademark, presets and Windows build pipeline pass review.
 
+For Windows, **Venn Audio Free Suite** is a simple coherent VST3 upgrade
+(EQ, comp, gate, delay, reverb and more) with no registration: see link below.
+LSP source is open, but obtaining its 2026 Windows builds may involve the
+publisher's separate personal-build distribution site; do not represent those
+Windows binaries as an instantly available no-account free bundle.
+
 Useful official links (download != redistribution authorization):
+- <https://www.vennaudio.com/free-suite/> 
 - <https://vital.audio/>
 - <https://surge-synthesizer.github.io/>
 - <https://www.tokyodawn.net/>
