@@ -14,8 +14,8 @@ class InstallerDeliveryTests(unittest.TestCase):
         self.assertIn("Phaedra.Galante.Preview.Win64", script)
         self.assertIn("Phaedra.Galante.Win64", script)
         self.assertIn("UninstallLogMode=append", script)
-        self.assertIn('Phaedra-Portable\\\\*', script)
-        self.assertIn('LicenseFile=..\\\\COPYING', script)
+        self.assertIn('Phaedra-Portable\\*', script)
+        self.assertIn('LicenseFile=..\\COPYING', script)
 
     def test_updater_uses_setup_for_inno_managed_installs(self):
         updater = (ROOT / "phaedra_updater/updater.ps1").read_text(encoding="utf-8")
