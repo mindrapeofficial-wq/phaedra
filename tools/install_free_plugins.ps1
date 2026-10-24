@@ -24,7 +24,7 @@ function Find-Vst3Bundles([string] $path) {
         Where-Object { $_.Name -match '(?i)\.vst3$' })
     $bundles = New-Object System.Collections.ArrayList
     foreach ($candidate in $candidates) {
-        $parent = $candidate.Parent
+        $parent = if ($candidate.PSIsContainer) { $candidate.Parent } else { $candidate.Directory }
         $nested = $false
         while ($null -ne $parent -and $parent.FullName.StartsWith($path, [StringComparison]::OrdinalIgnoreCase)) {
             if ($parent.Name -match '(?i)\.vst3$') {
