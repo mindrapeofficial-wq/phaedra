@@ -9,8 +9,10 @@ static int fail(const wchar_t *message) {
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previous, PWSTR args, int show) {
     wchar_t root[MAX_PATH], bin[MAX_PATH], exe[MAX_PATH], data[MAX_PATH];
     wchar_t dlls[MAX_PATH], gtk[MAX_PATH], fonts[MAX_PATH], config[MAX_PATH];
+    wchar_t vst3_dir[MAX_PATH];
     wchar_t *slash, *appdata = NULL, *path = NULL, *oldpath = NULL;
-    DWORD appdata_len, path_len;
+    wchar_t *oldvst3 = NULL, *vst3_path = NULL;
+    DWORD appdata_len, path_len, vst3_len;
     STARTUPINFOW startup = {0};
     PROCESS_INFORMATION process = {0};
     (void)instance; (void)previous; (void)args; (void)show;
@@ -24,6 +26,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previous, PWSTR args, int show
     swprintf(dlls, MAX_PATH, L"%ls\\lib\\ardour8", root);
     swprintf(gtk, MAX_PATH, L"%ls\\lib", root);
     swprintf(fonts, MAX_PATH, L"%ls\\etc\\fonts\\fonts.conf", root);
+    swprintf(vst3_dir, MAX_PATH, L"%ls\\Plugins\\VST3", root);
     if (GetFileAttributesW(exe) == INVALID_FILE_ATTRIBUTES ||
         GetFileAttributesW(data) == INVALID_FILE_ATTRIBUTES ||
         GetFileAttributesW(dlls) == INVALID_FILE_ATTRIBUTES)
@@ -46,6 +49,23 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previous, PWSTR args, int show
     swprintf(path, wcslen(bin) + path_len + 3, L"%ls;%ls", bin, oldpath);
     SetEnvironmentVariableW(L"PATH", path);
     free(oldpath); free(path);
+    // Scan VST3 plugins installed locally for this portable Phaedra copy.
+    // Preserve any VST3_PATH that the user has already configured.
+    vst3_len = GetEnvironmentVariableW(L"VST3_PATH", NULL, 0);
+    if (vst3_len) {
+        oldvst3 = calloc(vst3_len, sizeof(wchar_t));
+        vst3_path = calloc(wcslen(vst3_dir) + vst3_len + 2, sizeof(wchar_t));
+        if (!oldvst3 || !vst3_path) {
+            free(oldvst3); free(vst3_path);
+            return fail(L"No hay memoria suficiente para configurar los plugins VST3.");
+        }
+        GetEnvironmentVariableW(L"VST3_PATH", oldvst3, vst3_len);
+        swprintf(vst3_path, wcslen(vst3_dir) + vst3_len + 2, L"%ls;%ls", vst3_dir, oldvst3);
+        SetEnvironmentVariableW(L"VST3_PATH", vst3_path);
+        free(oldvst3); free(vst3_path);
+    } else {
+        SetEnvironmentVariableW(L"VST3_PATH", vst3_dir);
+    }
     SetEnvironmentVariableW(L"ARDOUR_DATA_PATH", data);
     SetEnvironmentVariableW(L"ARDOUR_CONFIG_PATH", config);
     SetEnvironmentVariableW(L"ARDOUR_DLL_PATH", dlls);
