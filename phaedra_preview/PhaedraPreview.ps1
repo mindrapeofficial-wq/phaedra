@@ -235,8 +235,10 @@ function Invoke-Check([bool]$startApp) {
 }
 
 try {
-    $hasLock = $mutex.WaitOne(0)
-    if (!$hasLock) { throw 'Phaedra Preview Bridge ya se esta ejecutando.' }
+    if ($Mode -eq 'Run') {
+        $hasLock = $mutex.WaitOne(0)
+        if (!$hasLock) { throw 'Ya hay una instalacion Phaedra Preview en curso.' }
+    }
     switch ($Mode) {
         'Check' { Invoke-Check $false }
         'Run' { Invoke-Check $true }
