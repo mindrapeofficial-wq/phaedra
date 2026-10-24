@@ -95,6 +95,7 @@ jobs:
           python waf configure \
             --with-backends=portaudio,dummy \
             --no-phone-home \
+            --no-drmingw \
             --dist-target=mingw \
             --optimize \
             --program-name=Phaedra
