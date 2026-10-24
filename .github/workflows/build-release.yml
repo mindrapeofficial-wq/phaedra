@@ -87,7 +87,7 @@ jobs:
             version="0.0.0"
           fi
           echo "PHAEDRA_PACKAGE_VERSION=$version" >> "$GITHUB_ENV"
-          if [[ "$GITHUB_REF" == refs/heads/preview/live ]]; then
+          if [[ "$GITHUB_REF" == refs/heads/preview/live || "$GITHUB_BASE_REF" == preview/live ]]; then
             echo "PHAEDRA_CHANNEL=preview" >> "$GITHUB_ENV"
           else
             echo "PHAEDRA_CHANNEL=stable" >> "$GITHUB_ENV"
@@ -167,6 +167,39 @@ jobs:
           PY
           sha256sum "$source" > "$source.sha256"
 
+      - name: Build and smoke-test per-user Windows installer
+        shell: pwsh
+        run: |
+          $compiler = Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6\ISCC.exe'
+          if (-not (Test-Path -LiteralPath $compiler -PathType Leaf)) {
+            throw 'Inno Setup compiler not installed on Windows runner'
+          }
+          & $compiler "/DProductVersion=$env:PHAEDRA_PACKAGE_VERSION" "/DPackageChannel=$env:PHAEDRA_CHANNEL" 'installer\Phaedra.iss'
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup compilation failed: $LASTEXITCODE" }
+          $suffix = if ($env:PHAEDRA_CHANNEL -eq 'preview') { '-Preview-Setup-win-x64.exe' } else { '-Setup-win-x64.exe' }
+          $name = 'Phaedra-v' + $env:PHAEDRA_PACKAGE_VERSION + $suffix
+          $setup = Join-Path $pwd $name
+          if (-not (Test-Path -LiteralPath $setup -PathType Leaf)) { throw "Missing installer: $name" }
+          $installRoot = Join-Path $env:RUNNER_TEMP ('PhaedraSetupSmoke-' + [Guid]::NewGuid().ToString('N'))
+          $installation = Start-Process -FilePath $setup -ArgumentList @(
+            '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', ('/DIR=' + $installRoot)
+          ) -Wait -PassThru
+          if ($installation.ExitCode -ne 0) { throw "Installer returned $($installation.ExitCode)" }
+          $launcher = Join-Path $installRoot 'Phaedra.exe'
+          if (-not (Test-Path -LiteralPath $launcher -PathType Leaf)) { throw 'Installer missing Phaedra.exe' }
+          try {
+            $check = Start-Process -FilePath $launcher -ArgumentList '--self-test' -WorkingDirectory $installRoot -Wait -PassThru
+            if ($check.ExitCode -ne 0) { throw "Installed launcher self-test returned $($check.ExitCode)" }
+          } finally {
+            $uninstall = Join-Path $installRoot 'unins000.exe'
+            if (-not (Test-Path -LiteralPath $uninstall -PathType Leaf)) { throw 'Installer missing its uninstaller' }
+            $removed = Start-Process -FilePath $uninstall -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART') -Wait -PassThru
+            if ($removed.ExitCode -ne 0) { throw "Uninstall failed: $($removed.ExitCode)" }
+          }
+          if (Test-Path -LiteralPath $launcher -PathType Leaf) { throw 'Uninstall left the Phaedra launcher in place' }
+          $hash = (Get-FileHash -LiteralPath $setup -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  $name" | Set-Content -LiteralPath ($setup + '.sha256') -Encoding Ascii
+
       - name: Preserve reviewed assets and corresponding sources
         uses: actions/upload-artifact@v4
         with:
@@ -176,6 +209,8 @@ jobs:
             Phaedra-v*-win-x64.zip.sha256
             Phaedra-v*-source.zip
             Phaedra-v*-source.zip.sha256
+            Phaedra-v*-Setup-win-x64.exe
+            Phaedra-v*-Setup-win-x64.exe.sha256
           if-no-files-found: error
           retention-days: 14
 
@@ -198,6 +233,8 @@ jobs:
             dist/Phaedra-v*-win-x64.zip.sha256
             dist/Phaedra-v*-source.zip
             dist/Phaedra-v*-source.zip.sha256
+            dist/Phaedra-v*-Setup-win-x64.exe
+            dist/Phaedra-v*-Setup-win-x64.exe.sha256
           fail_on_unmatched_files: true
           generate_release_notes: true
         env:
