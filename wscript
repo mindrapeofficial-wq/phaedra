@@ -271,7 +271,12 @@ def set_version (from_file = False):
     if base_engine:
         if not re.fullmatch(r'[0-9]+[.][0-9]+[.][0-9]+', base_engine):
             raise ValueError('PHAEDRA_ENGINE_VERSION must be MAJOR.MINOR.PATCH')
-        rev = base_engine
+        # The historical Ardour parser below expects MAJOR.MINOR[-MICRO],
+        # not a three-component semantic version. Keep the engine ABI at
+        # 8.12.0 instead of accidentally producing MINOR='12.0' and
+        # VERSION='8.12.0.0' for PHAEDRA_ENGINE_VERSION=8.12.0.
+        engine_major, engine_minor, engine_micro = base_engine.split('.')
+        rev = engine_major + '.' + engine_minor + '-' + engine_micro
         if os.path.isdir(os.path.join(os.getcwd(), '.git')):
             rev_date = subprocess.check_output(
                 ['git', 'log', '-1', '--format=%cs'], universal_newlines=True
