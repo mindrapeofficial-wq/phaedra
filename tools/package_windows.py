@@ -114,7 +114,7 @@ def configure_channel(dest, channel):
         contents.replace("check_updates=true", "check_updates=false"),
         encoding="utf-8",
     )
-    (Path(dest) / "preview-channel.flag").write_text("preview\\n", encoding="ascii")
+    (Path(dest) / "preview-channel.flag").write_text("preview\n", encoding="ascii")
 
 
 def write_manifest():
