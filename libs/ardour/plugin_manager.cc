@@ -2085,6 +2085,14 @@ PluginManager::vst3_discover_from_path (string const& path, bool cache_only)
 		Searchpath custom (Config->get_plugin_path_vst3 ());
 		paths += custom;
 	}
+	// Always honour VST3_PATH on rescan, including existing Phaedra profiles.
+	// This lets the portable launcher discover user-provided VST3 bundles.
+	if (const char* env_vst3_path = getenv ("VST3_PATH")) {
+		if (*env_vst3_path) {
+			Searchpath extra (env_vst3_path);
+			paths += extra;
+		}
+	}
 
 	DEBUG_TRACE (DEBUG::PluginManager, string_compose ("VST3: search along: [%1]\n", paths.to_string ()));
 
