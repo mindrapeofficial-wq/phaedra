@@ -19,13 +19,13 @@ static int isdir(const wchar_t *path) {
     return a != INVALID_FILE_ATTRIBUTES && (a & FILE_ATTRIBUTE_DIRECTORY);
 }
 static int configure(const wchar_t *root, const wchar_t *bin,
-                     const wchar_t *data, const wchar_t *dlls) {
+                     const wchar_t *data, const wchar_t *dlls, int preview) {
     wchar_t appdata[PBUF], config[PBUF], fonts[PBUF], gtk[PBUF];
     wchar_t *oldpath = NULL, *newpath = NULL;
     DWORD len, ok;
     len = GetEnvironmentVariableW(L"APPDATA", appdata, PBUF);
     if (!len || len >= PBUF) return 0;
-    if (swprintf(config, PBUF, L"%ls\\Phaedra8", appdata) < 0 ||
+    if (swprintf(config, PBUF, L"%ls\\%ls", appdata, preview ? L"PhaedraPreview8" : L"Phaedra8") < 0 ||
         swprintf(fonts, PBUF, L"%ls\\etc\\fonts\\fonts.conf", root) < 0 ||
         swprintf(gtk, PBUF, L"%ls\\lib", root) < 0) return 0;
     len = GetEnvironmentVariableW(L"PATH", NULL, 0);
@@ -46,6 +46,7 @@ static int configure(const wchar_t *root, const wchar_t *bin,
 int WINAPI wWinMain(HINSTANCE h, HINSTANCE previous, PWSTR args, int show) {
     wchar_t root[PBUF], bin[PBUF], exe[PBUF], data[PBUF], dlls[PBUF];
     wchar_t updater[PBUF], tmp[PBUF], tmp_script[PBUF], command[PBUF];
+    wchar_t preview_marker[PBUF];
     wchar_t *sep;
     STARTUPINFOW si = {0};
     PROCESS_INFORMATION pi = {0};
@@ -63,9 +64,11 @@ int WINAPI wWinMain(HINSTANCE h, HINSTANCE previous, PWSTR args, int show) {
         swprintf(dlls, PBUF, L"%ls\\lib\\ardour8", root) < 0 ||
         swprintf(updater, PBUF, L"%ls\\updater\\updater.ps1", root) < 0)
         return fail(L"Ruta de instalacion demasiado larga.");
+    if (swprintf(preview_marker, PBUF, L"%ls\\preview-channel.flag", root) < 0)
+        return fail(L"Ruta de preview demasiado larga.");
     if (!isfile(exe) || !isdir(data) || !isdir(dlls))
         return fail(L"Paquete incompleto. Extrae todo el ZIP.");
-    if (!configure(root, bin, data, dlls))
+    if (!configure(root, bin, data, dlls, isfile(preview_marker)))
         return fail(L"No se pudieron configurar las rutas de Phaedra.");
     if (test) return 0;
 
