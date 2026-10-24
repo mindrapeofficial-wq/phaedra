@@ -26,10 +26,12 @@ def build_portaudio (bld, name, defines):
     obj.name     = name
     obj.target   = name
     obj.use      = 'libardour libpbd'
+    # Use the PortAudio import library exposed by pkg-config rather than
+    # forcing a static libportaudio link that depends on obsolete jack64.
+    # Keep WinMM and the other native Windows libraries for our MIDI I/O.
     obj.uselib   = 'PORTAUDIO GLIBMM XML'
     if bld.env['build_target'] == 'mingw' and sys.platform == "win32":
-        obj.stlib = ['portaudio']
-        obj.lib = ['ole32', 'setupapi', 'uuid', 'winmm', 'ksuser', 'jack64']
+        obj.lib = ['ole32', 'setupapi', 'uuid', 'winmm', 'ksuser']
     obj.install_path  = os.path.join(bld.env['LIBDIR'], 'backends')
     obj.defines = ['PACKAGE="' + I18N_PACKAGE + '"',
                    'ARDOURBACKEND_DLL_EXPORTS',
