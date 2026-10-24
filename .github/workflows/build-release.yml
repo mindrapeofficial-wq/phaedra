@@ -2,7 +2,7 @@ name: Phaedra Windows CI and release
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'preview/live']
     tags: ['v*']
   pull_request:
   workflow_dispatch:
@@ -54,6 +54,7 @@ jobs:
             mingw-w64-ucrt-x86_64-libarchive
             mingw-w64-ucrt-x86_64-portaudio
             mingw-w64-ucrt-x86_64-cairo
+            mingw-w64-ucrt-x86_64-cairomm
             mingw-w64-ucrt-x86_64-pango
             mingw-w64-ucrt-x86_64-glib2
             mingw-w64-ucrt-x86_64-glibmm
@@ -81,6 +82,11 @@ jobs:
             version="0.0.0"
           fi
           echo "PHAEDRA_PACKAGE_VERSION=$version" >> "$GITHUB_ENV"
+          if [[ "$GITHUB_REF" == refs/heads/preview/live ]]; then
+            echo "PHAEDRA_CHANNEL=preview" >> "$GITHUB_ENV"
+          else
+            echo "PHAEDRA_CHANNEL=stable" >> "$GITHUB_ENV"
+          fi
           echo "Building Phaedra $version with libardour ABI $PHAEDRA_ENGINE_VERSION"
 
       - name: Static syntax checks
@@ -89,6 +95,7 @@ jobs:
           python -m unittest discover -s tools/tests -v
           gcc -fsyntax-only tools/phaedra_launcher.c
           powershell.exe -NoProfile -Command '$errorsFound = $null; $tokens = $null; [void][System.Management.Automation.Language.Parser]::ParseFile("phaedra_updater/updater.ps1", [ref]$tokens, [ref]$errorsFound); if ($errorsFound.Count) { $errorsFound | Format-List; exit 1 }'
+          powershell.exe -NoProfile -Command '$errorsFound = $null; $tokens = $null; [void][System.Management.Automation.Language.Parser]::ParseFile("phaedra_preview/PhaedraPreview.ps1", [ref]$tokens, [ref]$errorsFound); if ($errorsFound.Count) { $errorsFound | Format-List; exit 1 }'
 
       - name: Configure audio engine
         run: |
@@ -190,3 +197,32 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish_preview:
+    name: Publish an isolated Phaedra Preview after successful Windows tests
+    needs: windows
+    if: github.event_name == 'push' && github.ref == 'refs/heads/preview/live'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-build
+          path: dist
+      - uses: softprops/action-gh-release@v3
+        with:
+          tag_name: preview-${{ github.sha }}
+          target_commitish: ${{ github.sha }}
+          name: Phaedra Preview ${{ github.sha }}
+          prerelease: true
+          make_latest: false
+          body: |
+            Experimental Windows build. Tested by GitHub Actions.
+            Separate from the stable update channel; keep project backups.
+          files: |
+            dist/Phaedra-v0.0.0-win-x64.zip
+            dist/Phaedra-v0.0.0-win-x64.zip.sha256
+            dist/Phaedra-v0.0.0-source.zip
+            dist/Phaedra-v0.0.0-source.zip.sha256
+          fail_on_unmatched_files: true
