@@ -306,7 +306,6 @@ ApplicationBar::on_parent_changed (Gtk::Widget*)
 	_cue_play_enable.set_no_show_all ();
 	_cuectrl_spacer.set_no_show_all ();
 	_mini_timeline.set_no_show_all();
-	_left_hbox.set_no_show_all();
 
 	_table.show_all (); // TODO: update visibility somewhere else
 	pack_start (_table, true, true);
@@ -500,13 +499,17 @@ ApplicationBar::repack_transport_hbox ()
 	if (_mini_timeline.get_parent()) {
 		_transport_hbox.remove (_mini_timeline);
 	}
+	/* Keep an expanding column on both sides of the clocks.
+	 * If the left column is hidden, the right-hand transport box takes
+	 * all spare width and leaves the clock/tempo/meter group at x = 0.
+	 * This must remain true even when the mini-timeline is visible.
+	 */
+	_left_hbox.show ();
 	if (UIConfiguration::instance().get_show_mini_timeline ()) {
 		_transport_hbox.pack_start (_mini_timeline, true, true);
 		_mini_timeline.show();
-		_left_hbox.hide ();
 		_primary_clock_spacer.show ();
 	} else {
-		_left_hbox.show ();
 		_primary_clock_spacer.hide ();
 	}
 
