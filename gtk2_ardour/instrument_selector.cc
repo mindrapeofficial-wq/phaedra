@@ -25,6 +25,7 @@
 #include "gtkmm2ext/gui_thread.h"
 
 #include "instrument_selector.h"
+#include "phaedra_plugin_upgrades.h"
 
 #include "pbd/i18n.h"
 
@@ -37,6 +38,8 @@ InstrumentSelector::InstrumentSelector (InstrumentListDisposition disp)
 	: _reasonable_synth_id (0)
 	, _gmsynth_id (UINT32_MAX)
 	, _vital_synth_id (UINT32_MAX)
+	, _surge_synth_id (UINT32_MAX)
+	, _shortcircuit_synth_id (UINT32_MAX)
 	, _disposition (disp)
 {
 	refill ();
@@ -80,6 +83,10 @@ InstrumentSelector::refill()
 		// Prefer the user's installed Vital VST3 for new MIDI tracks.
 		if (_vital_synth_id != UINT32_MAX) {
 			set_active (_vital_synth_id);
+		} else if (_surge_synth_id != UINT32_MAX) {
+			set_active (_surge_synth_id);
+		} else if (_shortcircuit_synth_id != UINT32_MAX) {
+			set_active (_shortcircuit_synth_id);
 		} else if (_gmsynth_id != UINT32_MAX) {
 			set_active(_gmsynth_id);
 		} else {
@@ -107,7 +114,7 @@ pluginsort (const PluginInfoPtr& a, const PluginInfoPtr& b)
 
 static bool
 invalid_instrument (PluginInfoPtr p) {
-	const PluginManager& manager = PluginManager::instance();
+	PluginManager& manager = PluginManager::instance();
 	if (manager.get_status(p) == PluginManager::Hidden) {
 		return true;
 	}
@@ -117,7 +124,7 @@ invalid_instrument (PluginInfoPtr p) {
 	if (p->is_internal ()) {
 		return true;
 	}
-	return !p->is_instrument();
+	return !p->is_instrument() || PhaedraPlugins::hide_legacy_in_browser (manager, p);
 }
 
 void
@@ -158,6 +165,8 @@ InstrumentSelector::build_instrument_list()
 
 	_longest_instrument_name = "";
 	_vital_synth_id = UINT32_MAX;
+	_surge_synth_id = UINT32_MAX;
+	_shortcircuit_synth_id = UINT32_MAX;
 	_gmsynth_id = UINT32_MAX;
 	_reasonable_synth_id = 0;
 
@@ -218,6 +227,13 @@ InstrumentSelector::build_instrument_list()
 		}
 		if (p->unique_id == "http://gareus.org/oss/lv2/gmsynth") {
 			_gmsynth_id = n;
+		}
+		const std::string candidate = PBD::downcase (p->name);
+		if (candidate == "surge xt") {
+			_surge_synth_id = n;
+		}
+		if (candidate == "shortcircuit xt" || candidate == "shortcircuitxt" || candidate == "shortcircuit-xt") {
+			_shortcircuit_synth_id = n;
 		}
 #ifdef VST3_SUPPORT
 		// The official Vital binary is not redistributed by Phaedra.
