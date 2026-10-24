@@ -265,7 +265,17 @@ def set_version (from_file = False):
     global PROGRAM_VERSION
     global rev_date
 
-    if not from_file and os.path.isdir (os.path.join(os.getcwd(), '.git')):
+    # Phaedra tags (v1.x.x) describe the product, not the Ardour engine ABI.
+    # Keep libardour's ABI/versioned data paths tied to an explicit base version.
+    base_engine = os.environ.get('PHAEDRA_ENGINE_VERSION', '').strip()
+    if base_engine:
+        if not re.fullmatch(r'[0-9]+\\.[0-9]+\\.[0-9]+', base_engine):
+            raise ValueError('PHAEDRA_ENGINE_VERSION must be MAJOR.MINOR.PATCH')
+        rev = base_engine
+        rev_date = subprocess.check_output(
+            ['git', 'log', '-1', '--format=%cs'], universal_newlines=True
+        ).strip()
+    elif not from_file and os.path.isdir (os.path.join(os.getcwd(), '.git')):
         rev, rev_date = fetch_git_revision_date()
     else:
         rev, rev_date = fetch_tarball_revision_date()
