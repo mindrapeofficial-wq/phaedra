@@ -1013,15 +1013,9 @@ ARDOUR_UI::finish()
 
 		if (_session->dirty() || unnamed) {
 			vector<string> actions;
-			actions.push_back (_("Don't quit"));
-
-			if (_session->unnamed()) {
-				actions.push_back (_("Discard session"));
-				actions.push_back (_("Name session and quit"));
-			} else {
-				actions.push_back (_("Just quit"));
-				actions.push_back (_("Save and quit"));
-			}
+			actions.push_back (_("Cancel"));
+			actions.push_back (_("Don't Save"));
+			actions.push_back (_("Save"));
 
 			switch (ask_about_saving_session (actions)) {
 			case -1:
@@ -1030,15 +1024,15 @@ ARDOUR_UI::finish()
 			case 1:
 				if (unnamed) {
 					rename_session (true);
+					if (_session->unnamed()) {
+						return; /* naming was cancelled */
+					}
 				}
 				/* use the default name */
 				if (save_state_canfail ("")) {
 					/* failed - don't quit */
 					ArdourMessageDialog msg (_main_window,
-							   string_compose (_("\
-%1 was unable to save your session.\n\n\
-If you still wish to quit, please use the\n\n\
-\"Just quit\" option."), PROGRAM_NAME));
+							   string_compose (_("%1 was unable to save your session. Your session remains open."), PROGRAM_NAME));
 					msg.run ();
 					return;
 				}
@@ -1071,15 +1065,10 @@ If you still wish to quit, please use the\n\n\
 	if (_session) {
 
 		if (delete_unnamed_session) {
-
-			/* This may run a recursive dialog, which will allow
-			 * for the GTK idle handler to do things. Not a problem
-			 * in itself, but something to keep in mind since it
-			 * isn't visually apparent that this will allow a
-			 * recursive main loop to execute.
-			 */
-
-			ask_about_scratch_deletion ();
+#ifdef PLATFORM_WINDOWS
+			_session->close_all_sources ();
+#endif
+			PBD::remove_directory (_session->path ());
 		}
 
 		_session->set_clean ();

@@ -213,56 +213,16 @@ ApplicationBar::on_parent_changed (Gtk::Widget*)
 	int col = 0;
 #define TCOL col, col + 1
 
-	_table.attach (_transport_ctrl, TCOL, 0, 1 , SHRINK, SHRINK, 0, 0);
-	_table.attach (*ssbox,         TCOL, 1, 2 , FILL,   SHRINK, 0, 0);
+	_table.attach (_transport_ctrl, TCOL, 0, 2 , SHRINK, SHRINK, 0, 0);
 	++col;
 
-	_table.attach (_recpunch_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 8, 0);
-	++col;
-
-	_table.attach (_punch_label, TCOL, 0, 1 , FILL, SHRINK, 3, 0);
-	_table.attach (_layered_label, TCOL, 1, 2 , FILL, SHRINK, 3, 0);
-	++col;
-
-	_table.attach (_punch_in_button,      col,      col + 1, 0, 1 , FILL, SHRINK, hpadding, vpadding);
-	_table.attach (_punch_space,          col + 1,  col + 2, 0, 1 , FILL, SHRINK, 0, vpadding);
-	_table.attach (_punch_out_button,     col + 2,  col + 3, 0, 1 , FILL, SHRINK, hpadding, vpadding);
-	_table.attach (_record_mode_selector, col,      col + 3, 1, 2 , FILL, SHRINK, hpadding, vpadding);
-	col += 3;
-
-	_table.attach (_latency_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 8, 0);
-	++col;
-
-	_table.attach (_latency_disable_button, TCOL, 0, 1 , FILL, SHRINK, hpadding, vpadding);
-	_table.attach (_route_latency_value, TCOL, 1, 2 , SHRINK, EXPAND|FILL, hpadding, 0);
-	++col;
-
-	_route_latency_value.set_alignment (Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
-
-	_left_hbox.set_spacing (3);
-	_table.attach (_left_hbox, TCOL, 0, 2, EXPAND|FILL, EXPAND|FILL, hpadding, 0);
-	++col;
-
-	_table.attach (_primary_clock_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 8, 0);
+	_table.attach (_primary_clock_spacer, TCOL, 0, 2 , EXPAND|FILL, EXPAND|FILL, 8, 0);
 	++col;
 
 	_table.attach (_primary_clock,                col,     col + 2, 0, 1 , FILL, SHRINK, hpadding, 0);
 	_table.attach (*(_primary_clock.left_btn()),  col,     col + 1, 1, 2 , FILL, SHRINK, hpadding, 0);
 	_table.attach (*(_primary_clock.right_btn()), col + 1, col + 2, 1, 2 , FILL, SHRINK, hpadding, 0);
 	col += 2;
-
-	if (!ARDOUR::Profile->get_small_screen()) {
-		_table.attach (_secondary_clock_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 8, 0);
-		++col;
-
-		_table.attach (_secondary_clock,                col,     col + 2, 0, 1 , FILL, SHRINK, hpadding, 0);
-		_table.attach (*(_secondary_clock.left_btn()),  col,     col + 1, 1, 2 , FILL, SHRINK, hpadding, 0);
-		_table.attach (*(_secondary_clock.right_btn()), col + 1, col + 2, 1, 2 , FILL, SHRINK, hpadding, 0);
-		(ARDOUR_UI::instance()->secondary_clock)->set_no_show_all (true);
-		(ARDOUR_UI::instance()->secondary_clock)->left_btn()->set_no_show_all (true);
-		(ARDOUR_UI::instance()->secondary_clock)->right_btn()->set_no_show_all (true);
-		col += 2;
-	}
 
 	/* editor-meter, mini-timeline and selection clock are options in the transport_hbox */
 	_transport_hbox.set_spacing (3);
@@ -306,6 +266,7 @@ ApplicationBar::on_parent_changed (Gtk::Widget*)
 	_cue_play_enable.set_no_show_all ();
 	_cuectrl_spacer.set_no_show_all ();
 	_mini_timeline.set_no_show_all();
+	_left_hbox.set_no_show_all();
 
 	_table.show_all (); // TODO: update visibility somewhere else
 	pack_start (_table, true, true);
@@ -499,17 +460,13 @@ ApplicationBar::repack_transport_hbox ()
 	if (_mini_timeline.get_parent()) {
 		_transport_hbox.remove (_mini_timeline);
 	}
-	/* Keep an expanding column on both sides of the clocks.
-	 * If the left column is hidden, the right-hand transport box takes
-	 * all spare width and leaves the clock/tempo/meter group at x = 0.
-	 * This must remain true even when the mini-timeline is visible.
-	 */
-	_left_hbox.show ();
 	if (UIConfiguration::instance().get_show_mini_timeline ()) {
 		_transport_hbox.pack_start (_mini_timeline, true, true);
 		_mini_timeline.show();
+		_left_hbox.hide ();
 		_primary_clock_spacer.show ();
 	} else {
+		_left_hbox.show ();
 		_primary_clock_spacer.hide ();
 	}
 

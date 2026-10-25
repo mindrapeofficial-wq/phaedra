@@ -622,14 +622,8 @@ Editor::Editor ()
 
 	editor_summary_pane.add (_summary_vbox);
 
-	HBox* tabbox = manage (new HBox (true));
-	tabbox->set_spacing (3);
-	tabbox->pack_start (_notebook_tab1);
-	tabbox->pack_start (_notebook_tab2);
-
 	_editor_list_vbox.set_spacing (3);
 	_editor_list_vbox.pack_start (*manage (new ArdourVSpacer (0)), false, false, 2); // align top with editor shadow
-	_editor_list_vbox.pack_start (*tabbox, false, false);
 	_editor_list_vbox.pack_start (_the_notebook, true, true, 3);
 
 	content_right_pane.set_drag_cursor (*_cursors->expand_left_right);
@@ -2938,9 +2932,7 @@ Editor::setup_toolbar ()
 	toolbar_hbox.pack_start (grid_box, false, false);
 	toolbar_hbox.pack_start (_draw_box_spacer, false, false, 3);
 	toolbar_hbox.pack_start (draw_box, false, false);
-	toolbar_hbox.pack_end (_zoom_box, false, false, 2);
-	toolbar_hbox.pack_end (*(manage (new ArdourVSpacer ())), false, false, 3);
-	toolbar_hbox.pack_end (_track_box, false, false);
+	/* Phaedra: zoom and track count selectors removed */
 	toolbar_hbox.pack_end (*(manage (new ArdourVSpacer ())), false, false, 3);
 	toolbar_hbox.pack_end (*follow_mode_hbox, false, false);
 

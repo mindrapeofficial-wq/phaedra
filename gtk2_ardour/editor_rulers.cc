@@ -417,22 +417,63 @@ Editor::store_ruler_visibility ()
 void
 Editor::restore_ruler_visibility ()
 {
-	/* Start every session with a clean musical timeline. Users can enable
-	 * other rulers from the Rulers menu while working. */
+	XMLNode * node = _session->extra_xml (X_("RulerVisibility"));
+
 	no_ruler_shown_update = true;
-	ruler_minsec_action->set_active (false);
-	ruler_timecode_action->set_active (false);
-	ruler_samples_action->set_active (false);
-	ruler_bbt_action->set_active (true);
-	ruler_meter_action->set_active (false);
-	ruler_tempo_action->set_active (false);
-	ruler_range_action->set_active (false);
-	ruler_marker_action->set_active (false);
-	ruler_section_action->set_active (false);
-	ruler_video_action->set_active (false);
+
+	bool yn;
+	if (node) {
+		if (node->get_property ("timecode", yn)) {
+			ruler_timecode_action->set_active (yn);
+		}
+		if (node->get_property ("bbt", yn)) {
+			ruler_bbt_action->set_active (yn);
+		}
+		if (node->get_property ("samples", yn)) {
+			ruler_samples_action->set_active (yn);
+		}
+		if (node->get_property ("minsec", yn)) {
+			ruler_minsec_action->set_active (yn);
+		}
+		if (node->get_property ("tempo", yn)) {
+			ruler_tempo_action->set_active (yn);
+		}
+		if (node->get_property ("meter", yn)) {
+			ruler_meter_action->set_active (yn);
+		}
+		if (node->get_property ("marker", yn)) {
+			ruler_marker_action->set_active (yn);
+		}
+		if (node->get_property ("rangemarker", yn)) {
+			ruler_range_action->set_active (yn);
+		}
+		if (node->get_property ("arrangement", yn)) {
+			ruler_section_action->set_active (yn);
+		} else {
+			ruler_section_action->set_active (true);
+		}
+
+		if (node->get_property ("videotl", yn)) {
+			ruler_video_action->set_active (yn);
+		}
+
+	} else {
+		/* New sessions show the musical ruler only. */
+		ruler_minsec_action->set_active (false);
+		ruler_timecode_action->set_active (false);
+		ruler_samples_action->set_active (false);
+		ruler_bbt_action->set_active (true);
+		ruler_meter_action->set_active (false);
+		ruler_tempo_action->set_active (false);
+		ruler_range_action->set_active (false);
+		ruler_marker_action->set_active (false);
+		ruler_section_action->set_active (false);
+	}
+
 	no_ruler_shown_update = false;
 	update_ruler_visibility ();
 }
+
 void
 Editor::update_ruler_visibility ()
 {

@@ -4,19 +4,13 @@
       <menuitem action='New'/>
       <menuitem action='Open'/>
       <menuitem action='Recent'/>
-      <menuitem action='Close'/>
-
       <separator/>
 
       <menuitem action='Save'/>
-      <menuitem action='Rename'/>
-      <menuitem action='SnapshotStay'/>
-      <menuitem action='SnapshotSwitch'/>
       <menuitem action='SaveAs'/>
 
       <separator/>
 
-      <menuitem action='AddTrackBus'/>
       <menuitem action='addExistingAudioFiles'/>
 
       <separator/>
@@ -28,53 +22,60 @@
         <menuitem action='SurroundExport'/>
 #endif
         <menuitem action='StemExport'/>
+        <separator/>
+        <menuitem action='LoudnessAssistant'/>
       </menu>
-
-      <separator/>
-
-#ifdef PTFORMAT
-      <menuitem action='addExistingPTFiles'/>
-#endif
-      <menuitem action='ImportStrips'/>
-      <menuitem action='ExportStrips'/>
-      <menuitem action='SaveTemplate'/>
 
       <separator/>
 
       <menuitem action='toggle-session-options-editor'/>
-#ifdef VAPOR
-      <menuitem action='ToggleSurroundMaster'/>
+
+      <menu name='AdvancedSession' action='AdvancedSession'>
+        <menuitem action='Close'/>
+        <menuitem action='Rename'/>
+        <menuitem action='SnapshotStay'/>
+        <menuitem action='SnapshotSwitch'/>
+        <separator/>
+
+#ifdef PTFORMAT
+        <menuitem action='addExistingPTFiles'/>
 #endif
-      <menuitem action='LoudnessAssistant'/>
+        <menuitem action='ImportStrips'/>
+        <menuitem action='ExportStrips'/>
+        <menuitem action='SaveTemplate'/>
 
-      <menu name='MonitorMenu' action='MonitorMenu'>
-        <menuitem action='UseMonitorSection'/>
-        <menuitem action='monitor-cut-all'/>
-        <menuitem action='monitor-dim-all'/>
-        <menuitem action='monitor-mono'/>
+#ifdef VAPOR
+        <menuitem action='ToggleSurroundMaster'/>
+#endif
+
+        <menu name='MonitorMenu' action='MonitorMenu'>
+          <menuitem action='UseMonitorSection'/>
+          <menuitem action='monitor-cut-all'/>
+          <menuitem action='monitor-dim-all'/>
+          <menuitem action='monitor-mono'/>
+        </menu>
+
+        <menu name='Metadata' action='Metadata'>
+          <menuitem action='EditMetadata'/>
+          <menuitem action='ImportMetadata'/>
+        </menu>
+
+        <menu name='Cleanup' action='Cleanup'>
+          <menuitem action='bring-into-session'/>
+          <menuitem action='CleanupPeakFiles'/>
+          <menuitem action='CleanupUnusedSources'/>
+          <menuitem action='CleanupUnusedRegions'/>
+          <menuitem action='FlushWastebasket'/>
+        </menu>
+
+        <menuitem action='Archive'/>
+#ifndef MIXBUS
+        <menuitem action='lock'/>
+#endif
       </menu>
-
-      <menu name='Metadata' action='Metadata'>
-        <menuitem action='EditMetadata'/>
-        <menuitem action='ImportMetadata'/>
-      </menu>
-
-      <menu name='Cleanup' action='Cleanup'>
-        <menuitem action='bring-into-session'/>
-        <menuitem action='CleanupPeakFiles'/>
-        <menuitem action='CleanupUnusedSources'/>
-        <menuitem action='CleanupUnusedRegions'/>
-        <menuitem action='FlushWastebasket'/>
-      </menu>
-
-      <menuitem action='Archive'/>
 
 #ifdef __APPLE__
       <menuitem action='toggle-about'/>
-#endif
-#ifndef MIXBUS
-      <separator/>
-      <menuitem action='lock'/>
 #endif
 #ifndef __APPLE__
       <separator/>
@@ -754,6 +755,7 @@
 #ifndef __APPLE__
       <menuitem action='toggle-about'/>
 #endif
+      <menuitem action='version-history'/>
 #ifdef MIXBUS
       <menuitem action='website'/>
       <menuitem action='tutorial'/>

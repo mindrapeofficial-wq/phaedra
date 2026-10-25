@@ -1,6 +1,6 @@
 #define AppName "Phaedra"
 #ifndef AppVersion
-#define AppVersion "1.0.1"
+#define AppVersion "1.0.4"
 #endif
 #ifndef PortableRoot
 #define PortableRoot "Phaedra-Portable"
@@ -12,7 +12,8 @@ AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName=Phaedra
 AppPublisher=Galante Studio
-DefaultDirName={localappdata}\Programs\Phaedra
+DefaultDirName={localappdata}\Programs\Phaedra by Galante
+UsePreviousAppDir=no
 DefaultGroupName=Phaedra
 DisableDirPage=yes
 DisableProgramGroupPage=yes

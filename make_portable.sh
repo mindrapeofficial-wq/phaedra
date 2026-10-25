@@ -21,7 +21,7 @@ mkdir -p "$DESTDIR/share/ardour8"
 mkdir -p "$DESTDIR/etc/fonts"
 
 echo "--- Copying main executable..."
-APP_EXE=$(find build/gtk2_ardour -maxdepth 1 -type f -name 'ardour-*.exe' -print -quit)
+APP_EXE=$(ls -t build/gtk2_ardour/ardour-*.exe 2>/dev/null | head -n 1)
 test -n "$APP_EXE" || { echo "Phaedra executable not found" >&2; exit 1; }
 cp "$APP_EXE" "$DESTDIR/bin/Phaedra.exe"
 
