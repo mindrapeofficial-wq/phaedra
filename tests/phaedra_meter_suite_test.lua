@@ -163,6 +163,35 @@ for mode = 0, 6 do
 end
 expect (context.calls > 250, "renderers did not draw")
 
+-- Verify circular writes that cross the end of the ring.
+shared:atomic_set_int (0, ring_frames - 16)
+local wl, wr, wol, wor = {}, {}, {}, {}
+for i = 0, 63 do
+    wl[i] = i / 100
+    wr[i] = -i / 100
+    wol[i] = 3
+    wor[i] = 3
+end
+dsp_runmap (buffers ({audio (wl), audio (wr), audio (wol), audio (wor)}),
+            channel_map ({0, 1}), channel_map ({2, 3}), 64, 0)
+expect (shared:atomic_get_int (0) == 48, "ring write wrap index incorrect")
+for i = 0, 63 do
+    local pos = (ring_frames - 16 + i) % ring_frames
+    expect (math.abs (wol[i] - wl[i]) < .0001, "left signal changed on wrap")
+    expect (math.abs (wor[i] - wr[i]) < .0001, "right signal changed on wrap")
+    expect (math.abs ((shared.m[4 + pos] or 0) - wl[i]) < .0001, "L ring wrap")
+    expect (math.abs ((shared.m[4 + ring_frames + pos] or 0) - wr[i]) < .0001, "R ring wrap")
+end
+
+-- Running with source and destination mapped to the SAME buffer must not alter it.
+local il, ir = {}, {}
+for i = 0, 31 do il[i] = .2; ir[i] = -.3 end
+dsp_runmap (buffers ({audio (il), audio (ir)}),
+            channel_map ({0, 1}), channel_map ({0, 1}), 32, 0)
+for i = 0, 31 do
+    expect (il[i] == .2 and ir[i] == -.3, "in-place route modified audio")
+end
+
 -- Mono clips are mirrored in the display ring, not in output audio.
 dsp_configure (channel_count (1), channel_count (1))
 local mono, mono_out = {}, {}
