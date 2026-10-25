@@ -121,6 +121,7 @@ private:
 	std::vector<Iec2ppmdsp*> _iec2meter;
 	std::vector<Vumeterdsp*> _vumeter;
 	std::unique_ptr<LUFSMeter> _lufs_meter;
+	std::atomic<bool> _lufs_reset_requested {false};
 	std::atomic<float> _lufs_momentary {-200.f};
 	std::atomic<float> _lufs_short_term {-200.f};
 	std::atomic<float> _lufs_integrated {-200.f};

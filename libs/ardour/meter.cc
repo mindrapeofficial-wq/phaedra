@@ -87,7 +87,7 @@ void
 PeakMeter::reset_lufs ()
 {
 	if (_lufs_meter) {
-		_lufs_meter->reset ();
+		_lufs_reset_requested.store (true, std::memory_order_relaxed);
 		_lufs_momentary.store (-200.f, std::memory_order_relaxed);
 		_lufs_short_term.store (-200.f, std::memory_order_relaxed);
 		_lufs_integrated.store (-200.f, std::memory_order_relaxed);
@@ -124,6 +124,9 @@ PeakMeter::run (BufferSet& bufs, samplepos_t /*start_sample*/, samplepos_t /*end
 	const uint32_t n_audio = min (current_meters.n_audio (), bufs.count ().n_audio ());
 	const uint32_t n_midi  = min (current_meters.n_midi (), bufs.count ().n_midi ());
 	if (_lufs_meter && n_audio > 0) {
+		if (_lufs_reset_requested.exchange (false, std::memory_order_relaxed)) {
+			_lufs_meter->reset ();
+		}
 		float const* audio[2] = { bufs.get_audio (0).data (), bufs.get_audio (n_audio > 1 ? 1 : 0).data () };
 		_lufs_meter->run (audio, nframes);
 		_lufs_momentary.store (_lufs_meter->momentary (), std::memory_order_relaxed);
