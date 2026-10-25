@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import { bodyOf, digest, json, noMethod, remoteKey, sameOrigin, secureEqual, sessionFor, sqlClient } from './_common.mjs';
+import { bodyOf, digest, json, noMethod, remoteKey, sameOrigin, secureEqual, sessionFor, sqlClient } from '../lib/server.mjs';
 import { ROOMS, normalizeMessage, normalizeNickname, validAfter, validRoom } from '../lib/validation.mjs';
 
 const MAX_DAILY_MESSAGES = 120;
