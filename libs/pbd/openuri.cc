@@ -46,10 +46,19 @@ bool
 PBD::open_uri (const char* uri)
 {
 #ifdef PLATFORM_WINDOWS
+	if (!uri || !*uri) {
+		return false;
+	}
 	gunichar2* wuri = g_utf8_to_utf16 (uri, -1, NULL, NULL, NULL);
-	ShellExecuteW(NULL, L"open", (LPCWSTR)wuri, NULL, NULL, SW_SHOWNORMAL);
+	if (!wuri) {
+		return false;
+	}
+	/* ShellExecute returns a value greater than 32 on success. Do not
+	 * claim a link opened if Windows could not start its default browser.
+	 */
+	HINSTANCE result = ShellExecuteW (NULL, L"open", (LPCWSTR)wuri, NULL, NULL, SW_SHOWNORMAL);
 	g_free (wuri);
-	return true;
+	return reinterpret_cast<INT_PTR> (result) > 32;
 #elif __APPLE__
 	return cocoa_open_url (uri);
 #else
