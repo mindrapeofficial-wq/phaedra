@@ -1,4 +1,3 @@
-@import url("");
 :root{color-scheme:dark;--bg:#12111b;--side:#191724;--panel:#171522;--line:#302b3e;--text:#f0ecf6;--muted:#8c859e;--accent:#ae8bfd;--accent2:#d8bffe;--cyan:#9ad4d9;--red:#ef8296}
 *{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Inter,Arial,Helvetica,system-ui,sans-serif;background:var(--bg);color:var(--text)}body{overflow:hidden}
 button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}
