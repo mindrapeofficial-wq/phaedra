@@ -1000,6 +1000,7 @@ bool
 Editor::draw_lufs_scope (GdkEventExpose*)
 {
 	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_scope.get_window ()->gobj ()));
+	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
 	const double cx = 36.0, cy = 34.0;
 	cairo_set_source_rgb (cr, 0.35, 0.42, 0.52);
 	cairo_set_line_width (cr, 1.0);
@@ -1027,6 +1028,7 @@ bool
 Editor::draw_lufs_correlation (GdkEventExpose*)
 {
 	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_correlation.get_window ()->gobj ()));
+	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
 	double cross = 0.0, lsum = 0.0, rsum = 0.0;
 	for (size_t i = 0; i < _lufs_preview_left.size (); ++i) {
 		cross += _lufs_preview_left[i] * _lufs_preview_right[i];
@@ -1054,6 +1056,7 @@ bool
 Editor::draw_lufs_needle (GdkEventExpose*)
 {
 	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_needle.get_window ()->gobj ()));
+	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
 	const double cx = 65.0, cy = 64.0, radius = 49.0;
 	cairo_set_line_width (cr, 2.0);
 	for (int i = 0; i <= 12; ++i) {
@@ -1083,6 +1086,7 @@ bool
 Editor::draw_lufs_bars (GdkEventExpose*)
 {
 	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_bars.get_window ()->gobj ()));
+	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
 	std::shared_ptr<PeakMeter> meter;
 	if (_session && _session->master_out ()) meter = _session->master_out ()->shared_peak_meter ();
 	const double values[3] = { meter ? meter->lufs_momentary () : -60.0, meter ? meter->lufs_short_term () : -60.0, meter ? meter->lufs_integrated () : -60.0 };
@@ -1107,6 +1111,7 @@ bool
 Editor::draw_lufs_spectrogram (GdkEventExpose*)
 {
 	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_spectrogram.get_window ()->gobj ()));
+	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
 	for (size_t x = 0; x < _lufs_spectrum_history.size (); ++x) {
 		for (size_t bin = 0; bin < 64; ++bin) {
 			const double v = _lufs_spectrum_history[x][bin];
@@ -1123,6 +1128,7 @@ bool
 Editor::draw_lufs_waveform (GdkEventExpose*)
 {
 	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_waveform.get_window ()->gobj ()));
+	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
 	cairo_set_source_rgb (cr, 0.35, 0.30, 0.49);
 	for (int channel = 0; channel < 2; ++channel) {
 		const double center = channel ? 51.0 : 17.0;
@@ -1151,6 +1157,7 @@ bool
 Editor::draw_lufs_oscilloscope (GdkEventExpose*)
 {
 	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_oscilloscope.get_window ()->gobj ()));
+	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
 	cairo_set_source_rgb (cr, 0.35, 0.30, 0.49);
 	cairo_move_to (cr, 0, 34); cairo_line_to (cr, 120, 34); cairo_stroke (cr);
 	cairo_set_line_width (cr, 1.2);
@@ -1172,6 +1179,7 @@ bool
 Editor::draw_lufs_spectrum (GdkEventExpose*)
 {
 	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_spectrum.get_window ()->gobj ()));
+	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
 	cairo_pattern_t* fill = cairo_pattern_create_linear (0, 0, 230, 0);
 	cairo_pattern_add_color_stop_rgba (fill, 0.0, 0.42, 0.12, 0.82, 0.75);
 	cairo_pattern_add_color_stop_rgba (fill, 0.45, 0.92, 0.10, 0.58, 0.75);
