@@ -13,7 +13,7 @@ export function normalizeNickname(v) {
   if (typeof v !== 'string') return '';
   const nick = v.normalize('NFC').trim().replace(/\s+/g, ' ');
   if (nick.length < 2 || nick.length > 24 || !/^[\p{L}\p{N}_ -]+$/u.test(nick)) return '';
-  if (/^(?:admin|administrator|moderador|moderator|system|sistema|staff|soporte|support|phaedra)(?:\s|$)/i.test(nick)) return '';
+  if (/^(?:admin|administrator|administrador|moderador|moderator|system|sistema|staff|soporte|support|phaedra)(?:\s|$)/i.test(nick)) return '';
   return nick;
 }
 
