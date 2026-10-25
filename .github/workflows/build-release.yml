@@ -54,6 +54,7 @@ jobs:
             mingw-w64-ucrt-x86_64-libvorbis
             mingw-w64-ucrt-x86_64-cppunit
             mingw-w64-ucrt-x86_64-readline
+            git
             base-devel
             zip
             python
