@@ -12,5 +12,5 @@ assignees: []
 
 ## Versión de Phaedra y sistema operativo
 
-Antes de publicar, puedes probar el chat IRC: https://web.libera.chat/?nick=PhaedraGuest?#phaedra-daw
+Antes de publicar, puedes probar el chat IRC: https://github.com/mindrapeofficial-wq/phaedra/blob/preview/live/docs/phaedra/comunidad.md
 No compartas datos privados ni credenciales.
