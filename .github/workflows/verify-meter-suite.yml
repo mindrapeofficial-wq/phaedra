@@ -1,0 +1,28 @@
+name: Phaedra Meter Suite Lua smoke tests
+
+on:
+  push:
+    branches:
+      - feat/phaedra-meter-suite-native
+  pull_request:
+    paths:
+      - 'share/scripts/phaedra_meter_suite.lua'
+      - 'tests/phaedra_meter_suite_test.lua'
+      - '.github/workflows/verify-meter-suite.yml'
+  workflow_dispatch:
+
+jobs:
+  meter-suite:
+    name: Syntax and audio passthrough (Lua 5.4)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua 5.4
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends lua5.4
+      - name: Compile-check Lua source
+        run: luac5.4 -p share/scripts/phaedra_meter_suite.lua tests/phaedra_meter_suite_test.lua
+      - name: Exercise all modes with fake Ardour audio buffers
+        run: lua5.4 tests/phaedra_meter_suite_test.lua
