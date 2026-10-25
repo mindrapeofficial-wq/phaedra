@@ -177,6 +177,7 @@ protected:
 	/*            _content_vbox                   * toplevel
 	 *             toolbar_frame                  * the frame is managed in the implementation */
 	Gtk::HBox       content_header_hbox;
+	EventBoxExt     content_top_bar;           /* optional full-width meter strip above transport */
 	EventBoxExt       content_app_bar;           /* a placeholder for the transport bar, if you want one */
 	Gtk::EventBox     content_attachments;       /* a placeholder the (strip, list, props) visibility buttons for this tab */
 	Gtk::HBox           content_attachment_hbox;

@@ -261,6 +261,9 @@ Route::init ()
 	*/
 
 	_meter.reset (new PeakMeter (_session, _name));
+	if (is_master ()) {
+		_meter->enable_lufs ();
+	}
 	_meter->set_owner (this);
 	_meter->set_display_to_user (false);
 	_meter->activate ();

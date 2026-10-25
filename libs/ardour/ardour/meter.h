@@ -22,6 +22,7 @@
 #pragma once
 
 #include <atomic>
+#include <memory>
 #include <vector>
 
 #include "pbd/fastlog.h"
@@ -33,6 +34,7 @@
 #include "ardour/iec1ppmdsp.h"
 #include "ardour/iec2ppmdsp.h"
 #include "ardour/kmeterdsp.h"
+#include "ardour/lufs_meter.h"
 #include "ardour/vumeterdsp.h"
 
 namespace ARDOUR {
@@ -81,6 +83,12 @@ public:
 	ChanCount output_streams () const { return current_meters; }
 
 	float meter_level (uint32_t n, MeterType type);
+	void enable_lufs ();
+	void reset_lufs ();
+	float lufs_momentary () const { return _lufs_momentary.load (); }
+	float lufs_short_term () const { return _lufs_short_term.load (); }
+	float lufs_integrated () const { return _lufs_integrated.load (); }
+	float lufs_true_peak () const { return _lufs_true_peak.load (); }
 
 	void      set_meter_type (MeterType t);
 	MeterType meter_type () const { return _meter_type; }
@@ -112,6 +120,11 @@ private:
 	std::vector<Iec1ppmdsp*> _iec1meter;
 	std::vector<Iec2ppmdsp*> _iec2meter;
 	std::vector<Vumeterdsp*> _vumeter;
+	std::unique_ptr<LUFSMeter> _lufs_meter;
+	std::atomic<float> _lufs_momentary {-200.f};
+	std::atomic<float> _lufs_short_term {-200.f};
+	std::atomic<float> _lufs_integrated {-200.f};
+	std::atomic<float> _lufs_true_peak {-200.f};
 
 	MeterType _meter_type;
 };

@@ -585,6 +585,16 @@ private:
 	void update_join_object_range_location (double);
 
 	Gtk::VBox                 _editor_list_vbox;
+	Gtk::EventBox             _lufs_strip_background;
+	Gtk::HBox                 _lufs_strip_box;
+	Gtk::Label                _lufs_m_label;
+	Gtk::Label                _lufs_s_label;
+	Gtk::Label                _lufs_i_label;
+	Gtk::Label                _lufs_tp_label;
+	Gtk::Button               _lufs_reset_button;
+	sigc::connection          _lufs_strip_timer;
+	bool                      update_lufs_strip ();
+	void                      reset_lufs_strip ();
 	Gtk::Notebook             _the_notebook;
 	ArdourWidgets::MetaButton _notebook_tab1;
 	ArdourWidgets::MetaButton _notebook_tab2;
