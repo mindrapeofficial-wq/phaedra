@@ -80,7 +80,7 @@ void open_phaedra_support_url (const char* url)
         ArdourMessageDialog dialog (_("Unable to open the browser."), true);
         dialog.set_title (_("Phaedra Help"));
         dialog.set_secondary_text (
-            std::string (_("Open this address manually:\\n")) + url);
+            std::string (_("Open this address manually:\n")) + url);
         dialog.run ();
     }
 }
