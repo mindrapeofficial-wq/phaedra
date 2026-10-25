@@ -17,7 +17,7 @@ El código está disponible en [chat/](../../chat/) y su explicación técnica e
 
 ## Acceso desde el programa
 
-El menú **Ayuda → Live Community Chat** se está cambiando para acceder únicamente al servicio propio. Hasta que se verifique el despliegue no abrirá salas de terceros ni enlaces que no existan. Para pruebas locales, los desarrolladores pueden establecer `PHAEDRA_CHAT_URL=http://127.0.0.1:3000` o la URL segura de una implementación verificada.
+El menú **Ayuda → Live Community Chat** abre [Phaedra Chat](https://phaedra-chat.vercel.app/), una aplicación propia. **El despliegue de la interfaz ya existe**, pero la mensajería solo quedará operativa cuando se configure la conexión privada con la base de datos y se completen las pruebas de dos usuarios. Para pruebas locales, los desarrolladores pueden establecer `PHAEDRA_CHAT_URL=http://127.0.0.1:3000`.
 
 ## Estado de beta
 
