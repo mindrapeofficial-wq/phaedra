@@ -645,11 +645,13 @@ About::About ()
 #endif
 
 	set_translator_credits (t);
-	set_copyright (_("Copyright (C) 1999-2026 Paul Davis\n"));
+	/* Preserve upstream credit: Phaedra still derives from Ardour. */
+	set_copyright (_("Phaedra DAW (C) 2026 contributors\nBased on Ardour (C) 1999-2026 Paul Davis and contributors"));
 	set_license (gpl);
-	set_name (X_("Ardour"));
-	set_website (X_("https://ardour.org/"));
-	set_website_label (_("http://ardour.org/"));
+	set_name (X_("Phaedra"));
+	set_comments (_("Phaedra is a free digital audio workstation derived from Ardour.\nSee the included licenses and source code for attribution."));
+	set_website (X_("https://phaedra-daw.vercel.app/"));
+	set_website_label (_("Phaedra Website"));
 	set_version ((string_compose(_("%1%2\n(rev %3)\n%4%5"),
 				     VERSIONSTRING,
 				     codename,
