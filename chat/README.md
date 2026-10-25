@@ -47,6 +47,18 @@ Ejecutar `db/schema.sql` una vez en la base de datos dedicada. El cliente funcio
 - `POST ?action=logout`: invalida la sesión.
 - `POST ?action=moderate`: ocultar mensaje, requiere cabecera `X-Phaedra-Admin-Key`.
 
+
+## Despliegue de Phaedra
+
+- Proyecto Vercel: [phaedra-chat](https://vercel.com/mindrapeofficial-4309/phaedra-chat).
+- Dominio asignado: https://phaedra-chat.vercel.app/
+- GitHub: ruta `chat/` de la rama `preview/live`.
+- Base de datos: proyecto Neon independiente **Phaedra Chat**, con rol restringido `phaedra_chat_app`.
+- `CHAT_IP_PEPPER` y `CHAT_ADMIN_KEY` están configuradas en Vercel para Preview y Producción.
+- **Pendiente**: `DATABASE_URL`. El propietario debe copiar la cadena del rol restringido **directamente** desde la consola de Neon a **Vercel → phaedra-chat → Settings → Environment Variables**, marcando Producción y Preview. No pegarla en conversaciones ni en archivos del repositorio. Una vez guardada, volver a desplegar y verificar el endpoint `/api/chat?action=health` y el intercambio entre dos usuarios.
+
+El primer despliegue verifica que la función API se empaqueta, pero sin `DATABASE_URL` devuelve indisponibilidad para operaciones de mensajería. No anunciarlo como chat funcional hasta comprobar envío, recepción y moderación en producción.
+
 ## Antes de publicar para todos
 
 Pendiente añadir registro y verificación de cuentas, bloqueo de usuarios, borrado/expiración del historial, panel de moderación, términos/aviso de privacidad y monitorización de abuso. La versión actual es una **beta para pruebas con invitados**, no una red social endurecida.
