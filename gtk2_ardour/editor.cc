@@ -933,9 +933,14 @@ Editor::update_lufs_strip ()
 	std::array<float, 4096> fft_input;
 	for (size_t i = 0; i < fft_input.size (); ++i) {
 		const size_t sample = _lufs_preview_left.size () - fft_input.size () + i;
-		fft_input[i] = 0.5f * (_lufs_preview_left[sample] + _lufs_preview_right[sample]);
+		fft_input[i] = _lufs_preview_left[sample];
 	}
 	_lufs_fft->reset ();
+	_lufs_fft->analyze (fft_input.data (), GTKArdour::FFT::HANN);
+	for (size_t i = 0; i < fft_input.size (); ++i) {
+		const size_t sample = _lufs_preview_right.size () - fft_input.size () + i;
+		fft_input[i] = _lufs_preview_right[sample];
+	}
 	_lufs_fft->analyze (fft_input.data (), GTKArdour::FFT::HANN);
 	_lufs_fft->calculate ();
 	const double sample_rate = _session ? _session->nominal_sample_rate () : 48000.0;
@@ -1119,21 +1124,25 @@ Editor::draw_lufs_waveform (GdkEventExpose*)
 {
 	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_waveform.get_window ()->gobj ()));
 	cairo_set_source_rgb (cr, 0.35, 0.30, 0.49);
-	cairo_move_to (cr, 0, 34); cairo_line_to (cr, 120, 34); cairo_stroke (cr);
-	cairo_set_source_rgb (cr, 0.68, 0.43, 0.98);
-	for (size_t x = 0; x < 120; ++x) {
-		float low = 1.f, high = -1.f;
-		const size_t first = 4096 + x * 4096 / 120;
-		const size_t last = 4096 + (x + 1) * 4096 / 120;
-		for (size_t i = first; i < last; ++i) {
-			const float value = 0.5f * (_lufs_preview_left[i] + _lufs_preview_right[i]);
-			low = std::min (low, value);
-			high = std::max (high, value);
+	for (int channel = 0; channel < 2; ++channel) {
+		const double center = channel ? 51.0 : 17.0;
+		cairo_set_source_rgb (cr, 0.35, 0.30, 0.49);
+		cairo_move_to (cr, 0, center); cairo_line_to (cr, 120, center); cairo_stroke (cr);
+		cairo_set_source_rgb (cr, channel ? 0.92 : 0.68, channel ? 0.43 : 0.43, channel ? 0.78 : 0.98);
+		for (size_t x = 0; x < 120; ++x) {
+			float low = 1.f, high = -1.f;
+			const size_t first = 4096 + x * 4096 / 120;
+			const size_t last = 4096 + (x + 1) * 4096 / 120;
+			for (size_t i = first; i < last; ++i) {
+				const float value = channel ? _lufs_preview_right[i] : _lufs_preview_left[i];
+				low = std::min (low, value);
+				high = std::max (high, value);
+			}
+			cairo_move_to (cr, x, center - high * 15);
+			cairo_line_to (cr, x, center - low * 15);
 		}
-		cairo_move_to (cr, x, 34 - high * 30);
-		cairo_line_to (cr, x, 34 - low * 30);
+		cairo_stroke (cr);
 	}
-	cairo_stroke (cr);
 	cairo_destroy (cr);
 	return true;
 }
@@ -1144,14 +1153,17 @@ Editor::draw_lufs_oscilloscope (GdkEventExpose*)
 	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_oscilloscope.get_window ()->gobj ()));
 	cairo_set_source_rgb (cr, 0.35, 0.30, 0.49);
 	cairo_move_to (cr, 0, 34); cairo_line_to (cr, 120, 34); cairo_stroke (cr);
-	cairo_set_source_rgb (cr, 0.70, 0.49, 0.99);
 	cairo_set_line_width (cr, 1.2);
-	for (size_t x = 0; x < 120; ++x) {
-		const size_t index = _lufs_preview_left.size () - 512 + x * 512 / 120;
-		const double y = 34.0 - 30.0 * 0.5 * (_lufs_preview_left[index] + _lufs_preview_right[index]);
-		if (x == 0) cairo_move_to (cr, x, y); else cairo_line_to (cr, x, y);
+	for (int channel = 0; channel < 2; ++channel) {
+		cairo_set_source_rgba (cr, channel ? 0.96 : 0.70, channel ? 0.39 : 0.49, channel ? 0.72 : 0.99, 0.8);
+		for (size_t x = 0; x < 120; ++x) {
+			const size_t index = _lufs_preview_left.size () - 512 + x * 512 / 120;
+			const double value = channel ? _lufs_preview_right[index] : _lufs_preview_left[index];
+			const double y = 34.0 - 30.0 * value;
+			if (x == 0) cairo_move_to (cr, x, y); else cairo_line_to (cr, x, y);
+		}
+		cairo_stroke (cr);
 	}
-	cairo_stroke (cr);
 	cairo_destroy (cr);
 	return true;
 }
