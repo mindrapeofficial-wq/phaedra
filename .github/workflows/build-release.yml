@@ -30,6 +30,7 @@ jobs:
           update: true
           install: >-
             mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-drmingw
             mingw-w64-ucrt-x86_64-pkg-config
             mingw-w64-ucrt-x86_64-boost
             mingw-w64-ucrt-x86_64-gtk2
