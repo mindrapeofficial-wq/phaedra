@@ -175,7 +175,7 @@ compiler_flags_dictionaries['clang15-darwin'] = clang15_darwin_dict
 # Version stuff
 
 def fetch_git_revision_date ():
-    cmd = ["git", "describe", "--match", "8.[0-9]*", "--exclude", "8.*.*", "HEAD"]
+    cmd = ["git", "describe", "--match", "8.*", "HEAD"]
     output = subprocess.Popen(cmd, stderr=subprocess.STDOUT, stdout=subprocess.PIPE).communicate()[0].splitlines()
     rev = re.sub(r"^[A-Za-z0-9]*\+", "", output[0].decode('utf-8'))
 
@@ -279,7 +279,7 @@ def set_version (from_file = False):
     parts = sanitize(rev).split ('.', 1)
     MAJOR = parts[0]
     other = parts[1].split('-', 1)
-    MINOR = other[0]
+    MINOR = other[0].split('.', 1)[0]
     if len(other) > 1:
         MICRO = other[1].rsplit('-',1)[0].replace('-','.')
     else:
