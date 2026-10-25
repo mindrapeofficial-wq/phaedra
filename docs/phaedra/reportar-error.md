@@ -31,6 +31,6 @@ No publiques contraseñas, tokens, claves API, licencias personales, rutas priva
 
 ## Antes de abrir un informe
 
-Busca si ya hay una incidencia similar en [Issues](https://github.com/mindrapeofficial-wq/phaedra/issues). Si se trata de una consulta general puedes preguntar en el [chat comunitario](https://web.libera.chat/?nick=PhaedraGuest?#phaedra-daw). El chat no sustituye un informe reproducible.
+Busca si ya hay una incidencia similar en [Issues](https://github.com/mindrapeofficial-wq/phaedra/issues). Si se trata de una consulta general puedes preguntar en el [Phaedra Chat](./comunidad.md). El chat no sustituye un informe reproducible.
 
 El código de Phaedra deriva parcialmente de Ardour: atribuye bien el origen del error si lo conoces, sin redirigir automáticamente a sus rastreadores.

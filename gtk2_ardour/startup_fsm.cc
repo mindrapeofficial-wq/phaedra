@@ -997,7 +997,7 @@ considered finished at this time.\n\
 3) For reproducible bugs, use the Phaedra GitHub issue tracker, not Ardour forums.\n\
 4) Include your Phaedra version, Windows version and reproduction steps.\n\
 5) Join the community chat from Help > Live Community Chat. This opens\n\
-   the #phaedra-daw channel on Libera.Chat in your default browser.\n\
+   Phaedra's own community rooms when our chat server is available.\n\
 6) Contributions and patches belong in the Phaedra GitHub repository.\n\
 \n\
 Support information and downloads:\n\

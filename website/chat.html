@@ -1,77 +1,32 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#191917">
-<meta name="description" content="Entra en la comunidad de Phaedra DAW en tiempo real. Sala IRC para músicos, usuarios y desarrolladores.">
-<title>PHAEDRA® · Chat comunitario</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Phaedra Chat, comunidad independiente de usuarios del DAW.">
+<meta name="theme-color" content="#16121e">
+<title>PHAEDRA® · CHAT PROPIO</title>
 <style>
-:root{--paper:#f2f0ea;--ink:#191917;--purple:#a68cdd;--line:#c8c5bb;--soft:#595850}
-*{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,system-ui,sans-serif}
-a{color:inherit}
-header{display:flex;justify-content:space-between;align-items:center;gap:20px;background:var(--ink);color:#fff;padding:20px clamp(20px,4vw,74px)}
-.brand{font-size:22px;font-weight:900;letter-spacing:-.06em;text-decoration:none}
-.back{font-weight:700;text-underline-offset:4px}
-main{padding:clamp(22px,3.7vw,68px);max-width:1680px;margin:auto}
-.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:800}
-h1{font-size:clamp(45px,8vw,120px);letter-spacing:-.08em;line-height:.95;margin:16px 0 22px}
-.intro{max-width:800px;font-size:clamp(16px,2vw,23px);line-height:1.45}
-.grid{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:26px;margin-top:36px}
-.window{background:#111116;border:1px solid #49464f;overflow:hidden;min-width:0}
-.window-heading{display:flex;justify-content:space-between;align-items:center;color:white;gap:15px;padding:17px 21px;border-bottom:1px solid #49464f}
-.window-heading strong{letter-spacing:.06em;text-transform:uppercase;font-size:13px}
-.window-heading .status{font-size:12px;color:#c6b0ff}
-iframe{display:block;width:100%;height:610px;border:0;background:#1c1929}
-aside{border-top:4px solid var(--ink);padding-top:17px}
-aside h2{font-size:22px;margin:0 0 16px;letter-spacing:-.04em}
-aside p,aside li{line-height:1.55;font-size:14px}
-aside ul{padding-left:20px}
-.button{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;font-size:13px;font-weight:700;padding:15px 19px;margin-top:13px}
-.note{font-size:13px;line-height:1.5;color:var(--soft);margin:24px 0}
-footer{border-top:1px solid var(--line);padding-top:20px;margin-top:44px;font-size:13px}
-a:focus-visible{outline:3px solid var(--purple);outline-offset:4px}
-@media(max-width:950px){.grid{grid-template-columns:1fr}iframe{height:560px}}
-@media(max-width:540px){header{padding:15px 20px}.back{font-size:12px}iframe{height:580px}.window-heading{padding:13px}}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#16121e;color:#eee7fa;font-family:Arial,Helvetica,sans-serif}
+header{padding:25px clamp(20px,5vw,70px);border-bottom:1px solid #44344e;display:flex;justify-content:space-between;align-items:center}
+header a{color:inherit;text-decoration:none;font-weight:800}header strong{font-size:24px;letter-spacing:-.07em}
+main{max-width:1100px;margin:0 auto;padding:clamp(50px,8vw,120px) 24px}
+.tag{font-size:12px;color:#bb9deb;letter-spacing:.15em;font-weight:800}
+h1{font-size:clamp(46px,8vw,105px);line-height:.99;letter-spacing:-.085em;margin:24px 0}h1 span{color:#b797ef}
+p{font-size:clamp(17px,2vw,22px);line-height:1.55;color:#aea6b9;max-width:630px}
+.links{display:flex;gap:18px;flex-wrap:wrap;margin-top:45px}.links a{padding:16px 22px;border:1px solid #725c83;color:#eee7fa;text-decoration:none;font-size:13px;font-weight:700}
+.links a.primary{background:#ad8ae8;border-color:#ad8ae8;color:#211429}
+small{display:block;margin-top:65px;color:#877a97;font-size:12px}
 </style>
 </head>
 <body>
-<header>
-  <a class="brand" href="./index.html">PHAEDRA®</a>
-  <a class="back" href="./index.html">VOLVER AL ESTUDIO</a>
-</header>
+<header><a href="./index.html"><strong>PHAEDRA®</strong></a><a href="./index.html">VOLVER A PHAEDRA</a></header>
 <main>
-  <div class="eyebrow">/ COMUNIDAD · EN TIEMPO REAL</div>
-  <h1>HABLEMOS<br>DE MÚSICA.</h1>
-  <p class="intro">Una sala para resolver dudas, compartir ideas y conversar con otros usuarios de Phaedra. Puedes entrar con un apodo, sin crear una cuenta.</p>
-  <div class="grid">
-    <section class="window" aria-label="Sala IRC #phaedra-daw">
-      <div class="window-heading">
-        <strong>#phaedra-daw</strong>
-        <span class="status">IRC / LIBERA.CHAT</span>
-      </div>
-      <iframe
-        src="https://web.libera.chat/?nick=PhaedraGuest?#phaedra-daw"
-        title="Chat comunitario de Phaedra en Libera.Chat"
-        loading="lazy"
-        referrerpolicy="strict-origin-when-cross-origin"
-      ></iframe>
-    </section>
-    <aside>
-      <h2>Entra y participa.</h2>
-      <ul>
-        <li>Elige tu apodo y pulsa conectar en el chat.</li>
-        <li>Pregunta por audio, MIDI, plugins y desarrollo.</li>
-        <li>Respeta a los demás; no compartas datos personales o contraseñas.</li>
-        <li>Si no responde nadie, puedes dejar un informe en GitHub.</li>
-      </ul>
-      <a class="button" href="https://web.libera.chat/?nick=PhaedraGuest?#phaedra-daw" target="_blank" rel="noopener noreferrer">ABRIR CHAT EN OTRA VENTANA</a>
-      <p class="note">Este canal usa un servicio de terceros. Todavía debe registrarse con ChanServ para que Phaedra pueda administrarlo permanentemente. No hay garantías de soporte inmediato ni de historial de mensajes.</p>
-      <a href="https://github.com/mindrapeofficial-wq/phaedra/issues" target="_blank" rel="noopener noreferrer">Ayuda e incidencias en GitHub</a>
-    </aside>
-  </div>
-  <footer><strong>PHAEDRA®</strong> · DAW gratuito en desarrollo · <a href="./index.html">Sitio oficial</a></footer>
+<div class="tag">COMUNIDAD / PLATAFORMA PROPIA</div>
+<h1>UN ESTUDIO.<br><span>MIL VOCES.</span></h1>
+<p>Estamos poniendo en línea Phaedra Chat: una plataforma desarrollada para nuestra comunidad, con salas, apodos de invitado, historial y mensajes. Sin IRC ni plataformas de chat externas.</p>
+<p>El servidor ya tiene su propia base de datos. Esta página se conectará a la aplicación cuando hayamos comprobado su despliegue y seguridad.</p>
+<div class="links"><a class="primary" href="https://github.com/mindrapeofficial-wq/phaedra/tree/preview/live/chat">VER EL DESARROLLO</a><a href="https://github.com/mindrapeofficial-wq/phaedra/issues">SUGERENCIAS Y AYUDA</a></div>
+<small>La mensajería todavía no está disponible públicamente. No solicitamos credenciales en esta página.</small>
 </main>
 </body>
 </html>

@@ -51,12 +51,13 @@ using namespace std;
 /* Phaedra support destinations. Keep these centralized so the application
  * does not accidentally send Phaedra users to Ardour's project channels.
  *
- * The IRC channel is a live third-party community room, not a server
- * operated by Phaedra. It still needs ChanServ registration by the owner.
+ * The IRC channel is a first-party room. Hosting must be configured before opening it.
  */
 namespace {
-const char* const phaedra_chat_url =
-    "https://web.libera.chat/?nick=PhaedraGuest?#phaedra-daw";
+/* Set by the Phaedra installer after the first-party chat host is verified.
+ * Do not redirect users to an unrelated third-party chat or dead address.
+ */
+const char* const phaedra_chat_config = "PHAEDRA_CHAT_URL";
 const char* const phaedra_website_url = "https://phaedra-daw.vercel.app/";
 const char* const phaedra_getting_started_url =
     "https://github.com/mindrapeofficial-wq/phaedra/blob/preview/live/docs/phaedra/primeros-pasos.md";
@@ -89,10 +90,21 @@ void open_phaedra_support_url (const char* url)
 void
 ARDOUR_UI::launch_chat ()
 {
-    /* One click goes straight to the room with a suggested guest nickname.
-     * The web client asks the user to connect, no sign-up is required.
-     */
-    open_phaedra_support_url (phaedra_chat_url);
+    const gchar* configured = g_getenv (phaedra_chat_config);
+    const std::string url = configured ? configured : "";
+    /* Allow a verified HTTPS service, or localhost for developers. */
+    if (url.rfind ("https://", 0) == 0 ||
+        url.rfind ("http://localhost:", 0) == 0 ||
+        url.rfind ("http://127.0.0.1:", 0) == 0) {
+        open_phaedra_support_url (url.c_str());
+        return;
+    }
+    ArdourMessageDialog dialog (_("Phaedra Chat is not deployed yet."), true);
+    dialog.set_title (_("Phaedra Chat"));
+    dialog.set_secondary_text (
+        _("Our own chat server is being prepared. There is no IRC fallback. "
+          "Once it is published, Phaedra will open the community room directly."));
+    dialog.run ();
 }
 
 void

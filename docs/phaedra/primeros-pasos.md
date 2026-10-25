@@ -35,7 +35,7 @@ Selecciona el rango musical deseado y utiliza las opciones de exportación de Ph
 
 ## ¿Necesitas ayuda?
 
-- [Chat comunitario en directo](https://web.libera.chat/?nick=PhaedraGuest?#phaedra-daw) (IRC, necesita pulsar conectar en la página).
+- [Phaedra Chat, comunidad propia](./comunidad.md) (servicio en preparación).
 - [Manual y referencia](./manual.md).
 - [Cómo informar de un error](./reportar-error.md).
 

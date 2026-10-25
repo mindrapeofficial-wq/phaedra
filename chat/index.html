@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#12111b">
+<meta name="description" content="Chat oficial de Phaedra: salas propias para música, producción y desarrollo.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; form-action 'self'; object-src 'none'; base-uri 'self'">
+<meta name="referrer" content="no-referrer">
+<title>PHAEDRA / CHAT</title>
+<link rel="stylesheet" href="/style.css">
+<script type="module" src="/app.js"></script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" aria-label="Navegación del chat">
+    <a class="brand" href="https://phaedra-daw.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label="Phaedra DAW: web oficial">
+      <span class="brand-emblem">P</span><span class="brand-type"><strong>PHAEDRA</strong><small>COMMUNITY / ONLINE</small></span>
+    </a>
+    <div class="sidebar-label">CANALES / SALAS</div>
+    <nav id="rooms" class="rooms" aria-label="Salas"></nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-label">TU IDENTIDAD</div>
+      <div class="identity"><span id="identity-avatar" class="avatar">?</span><span><strong id="identity-nick">Invitado</strong><small id="identity-subtitle">Sin conectar</small></span></div>
+      <button id="logout" class="ghost-button" type="button" hidden>Cambiar de apodo</button>
+      <div class="sidebar-foot">CHAT / v0.1<br>UN PROYECTO DE PHAEDRA</div>
+    </div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-title"><div class="breadcrumb">COMUNIDAD / <span id="room-slug">GENERAL</span></div><h1 id="room-title">General</h1></div>
+      <div class="connection">
+        <span id="status-dot" class="status-dot"></span>
+        <span id="connection-label" role="status" aria-live="polite">Conectando</span>
+        <span class="divider"></span>
+        <span id="online-count">0 conectados</span>
+      </div>
+    </header>
+    <section class="timeline" id="timeline" aria-label="Mensajes del chat" aria-live="polite" aria-relevant="additions">
+      <div class="welcome" id="welcome">
+        <span class="welcome-icon">P /</span>
+        <span class="welcome-eyebrow">PHAEDRA CHAT · ESPACIO COMPARTIDO</span>
+        <h2 id="welcome-title">Tu estudio tiene comunidad.</h2>
+        <p id="welcome-description">Conecta con otros productores, comparte ideas y pregunta sobre Phaedra. Las conversaciones suceden aquí, en nuestro propio chat.</p>
+        <span class="welcome-rule">01 / RESPETO &nbsp; 02 / SIN SPAM &nbsp; 03 / HABLEMOS DE MÚSICA</span>
+      </div>
+      <div id="message-list" class="messages"></div>
+    </section>
+    <form id="message-form" class="composer">
+      <label class="sr-only" for="message-input">Escribe un mensaje</label>
+      <input id="message-input" name="message" maxlength="500" autocomplete="off" spellcheck="true" placeholder="Escribe algo en #general..." disabled required>
+      <button id="send" type="submit" disabled>ENVIAR <span aria-hidden="true">↗</span></button>
+    </form>
+    <div class="footline"><span id="hint" role="status" aria-live="polite">Entra con un apodo para participar.</span><span>COMUNICACIÓN DIRECTA · PHAEDRA</span></div>
+  </main>
+  <aside class="people-panel" aria-label="Usuarios conectados">
+    <div class="people-heading"><span>EN LA SALA</span><span id="presence-number">00</span></div>
+    <div id="people" class="people-list"></div>
+    <div class="people-note"><strong>Comunidad independiente.</strong><p>Este chat pertenece a Phaedra. Es una versión inicial con apodos de invitado, sin cuentas verificadas.</p><a href="https://github.com/mindrapeofficial-wq/phaedra/issues" target="_blank" rel="noopener noreferrer">Enviar sugerencias ↗</a></div>
+  </aside>
+</div>
+<div id="join-overlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="join-title">
+  <form id="join-form" class="join-card">
+    <div class="join-head"><span class="tiny-label">BIENVENIDO A PHAEDRA</span><span>01 / 01</span></div>
+    <div class="join-mark">P.</div>
+    <h2 id="join-title">Entra en<br>la conversación.</h2>
+    <p>Una sala de chat creada para Phaedra. Sin IRC, sin enlaces externos y sin registro obligatorio.</p>
+    <label for="nickname">ELIGE UN APODO</label>
+    <input id="nickname" name="nickname" minlength="2" maxlength="24" autocomplete="nickname" placeholder="Tu nombre artístico" required autofocus>
+    <p class="join-note">El apodo es temporal y no está verificado. No compartas datos personales ni contraseñas.</p>
+    <div id="join-error" class="error" role="alert"></div>
+    <button id="join-button" class="join-button" type="submit">ENTRAR EN PHAEDRA CHAT <span aria-hidden="true">↗</span></button>
+  </form>
+</div>
+</body>
+</html>
