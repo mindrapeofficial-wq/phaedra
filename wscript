@@ -265,7 +265,7 @@ def set_version (from_file = False):
     global PROGRAM_VERSION
     global rev_date
 
-    if not from_file and os.path.isdir (os.path.join(os.getcwd(), '.git')):
+    if not from_file and os.path.exists (os.path.join(os.getcwd(), '.git')):
         rev, rev_date = fetch_git_revision_date()
     else:
         rev, rev_date = fetch_tarball_revision_date()
