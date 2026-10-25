@@ -124,8 +124,22 @@ cp -r share/mcp "$DESTDIR/share/ardour8/" 2>/dev/null || true
 cp -r share/midi_maps "$DESTDIR/share/ardour8/" 2>/dev/null || true
 cp share/chords.txt "$DESTDIR/share/ardour8/"
 
-# Locale
-cp -r build/share/ardour8/locale "$DESTDIR/share/locale" 2>/dev/null || true
+# Compile every available application translation into the location used by
+# bundle_env_mingw.cc. Waf does not build .mo files during a normal build.
+echo "--- Compiling translations..."
+command -v msgfmt >/dev/null || { echo "msgfmt is required to package translations" >&2; exit 1; }
+for catalog in gtk2_ardour/po/*.po libs/ardour/po/*.po libs/gtkmm2ext/po/*.po libs/tk/ytk/po/*.po; do
+    language="$(basename "$catalog" .po)"
+    case "$catalog" in
+        gtk2_ardour/po/*) domain=gtk2_ardour8 ;;
+        libs/ardour/po/*) domain=ardour8 ;;
+        libs/gtkmm2ext/po/*) domain=gtkmm2ext3 ;;
+        libs/tk/ytk/po/*) domain=ytk8 ;;
+    esac
+    locale_dir="$DESTDIR/share/ardour8/locale/$language/LC_MESSAGES"
+    mkdir -p "$locale_dir"
+    msgfmt -o "$locale_dir/$domain.mo" "$catalog"
+done
 
 # Fontconfig
 cp "$MINGW_PREFIX/etc/fonts/fonts.conf" "$DESTDIR/etc/fonts/" 2>/dev/null || true
