@@ -993,18 +993,16 @@ on the cue page is rapidly evolving, but if you are seeing this message it is no
 considered finished at this time.\n\
 1) Please do <b>NOT</b> use this software with the expectation that it is stable or reliable\n\
    though it may be so, depending on your workflow.\n\
-2) Please wait for a helpful writeup of new features.\n\
-3) <b>Please do NOT use the forums at ardour.org to report issues</b>.\n\
-4) <b>Please do NOT file bugs for this alpha-development versions at this point in time</b>.\n\
-   There is no bug triaging before the initial development concludes and\n\
-   reporting issue for incomplete, ongoing work-in-progress is mostly useless.\n\
-5) Please <b>DO</b> join us on IRC for real time discussions about %1 %2. You\n\
-   can get there directly from within the program via the Help -> Chat menu option.\n\
-6) Please <b>DO</b> submit patches for issues after discussing them on IRC.\n\
+2) Use Help > Getting Started or User Manual for Phaedra documentation.\n\
+3) For reproducible bugs, use the Phaedra GitHub issue tracker, not Ardour forums.\n\
+4) Include your Phaedra version, Windows version and reproduction steps.\n\
+5) Join the community chat from Help > Live Community Chat. This opens\n\
+   the #phaedra-daw channel on Libera.Chat in your default browser.\n\
+6) Contributions and patches belong in the Phaedra GitHub repository.\n\
 \n\
-Full information on all the above can be found on the support page at\n\
+Support information and downloads:\n\
 \n\
-                http://ardour.org/support</span>\n\
+                https://phaedra-daw.vercel.app/#ayuda</span>\n\
 "), PROGRAM_NAME, VERSIONSTRING));
 
 
