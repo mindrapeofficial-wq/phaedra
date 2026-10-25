@@ -1,0 +1,45 @@
+name: Phaedra Chat checks
+
+on:
+  pull_request:
+    paths:
+      - 'chat/**'
+      - 'gtk2_ardour/ardour_ui_access_web.cc'
+      - '.github/workflows/phaedra-chat.yml'
+  push:
+    branches:
+      - 'preview/live'
+    paths:
+      - 'chat/**'
+      - '.github/workflows/phaedra-chat.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Chat validation and source safety
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: chat/package-lock.json
+      - name: Install pinned dependencies
+        working-directory: chat
+        run: npm ci --ignore-scripts
+      - name: Run application tests
+        working-directory: chat
+        run: npm test
+      - name: Check JavaScript syntax
+        working-directory: chat
+        run: |
+          node --check app.js
+          node --check api/_common.mjs
+          node --check api/chat.mjs
+          node --check lib/validation.mjs
