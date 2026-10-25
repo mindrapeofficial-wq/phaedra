@@ -6878,16 +6878,7 @@ Editor::split_region ()
 
 		RegionSelection rs;
 
-		//new behavior:  the Split action will prioritize the entered_regionview rather than selected regions.
-		//this fixes the unexpected case where you point at a region, but
-		//  * nothing happens OR
-		//  * some other region (maybe off-screen) is split.
-		//NOTE:  if the entered_regionview is /part of the selection/ then we should operate on the selection as usual
-		if (_edit_point == EditAtMouse && entered_regionview && !entered_regionview->selected()) {
-			rs.add (entered_regionview);
-		} else {
-			rs = selection->regions;   //might be empty
-		}
+		rs = selection->regions;
 
 		if (rs.empty()) {
 			TrackViewList tracks = selection->tracks;
@@ -6896,12 +6887,12 @@ Editor::split_region ()
 				/* no region selected or entered, but some selected tracks:
 				 * act on all regions on the selected tracks at the edit point
 				 */
-				timepos_t const where = get_preferred_edit_position (Editing::EDIT_IGNORE_NONE, false, false);
+				timepos_t const where = timepos_t (_session->transport_sample ());
 				get_regions_at (rs, where, tracks);
 			}
 		}
 
-		const timepos_t pos = get_preferred_edit_position();
+		const timepos_t pos (_session->transport_sample ());
 
 		if (rs.empty()) {
 			return;
