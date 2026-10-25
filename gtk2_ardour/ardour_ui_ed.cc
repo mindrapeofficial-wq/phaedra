@@ -313,6 +313,7 @@ ARDOUR_UI::install_actions ()
 
 	ActionManager::register_action (common_actions, X_("chat"), _("Chat"),  sigc::mem_fun(*this, &ARDOUR_UI::launch_chat));
 	ActionManager::register_action (common_actions, X_("tutorial"), S_("Help|Tutorial"),  mem_fun(*this, &ARDOUR_UI::launch_tutorial));
+	ActionManager::register_action (common_actions, X_("check-for-updates"), _("Check for Updates"), mem_fun(*this, &ARDOUR_UI::check_for_updates));
 	ActionManager::register_action (common_actions, X_("reference"), S_("Manual|Reference"),  mem_fun(*this, &ARDOUR_UI::launch_reference));
 	ActionManager::register_action (common_actions, X_("tracker"), _("Report a Bug"), mem_fun(*this, &ARDOUR_UI::launch_tracker));
 	ActionManager::register_action (common_actions, X_("website"), _("Website"), mem_fun(*this, &ARDOUR_UI::launch_website));

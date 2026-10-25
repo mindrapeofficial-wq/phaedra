@@ -2744,6 +2744,7 @@ Editor::snap_to_marker (timepos_t const & presnap, Temporal::RoundMode direction
 void
 Editor::setup_toolbar ()
 {
+	using namespace Menu_Helpers;
 	const int spc = Profile->get_mixbus() ? 0 : 2;
 
 	HBox* mode_box = manage(new HBox);
@@ -2789,6 +2790,13 @@ Editor::setup_toolbar ()
 	mouse_mode_size_group->add_widget (nudge_forward_button);
 	mouse_mode_size_group->add_widget (nudge_backward_button);
 
+	tool_selector.set_name ("mouse mode button");
+	tool_selector.set_text (smart_mode_action && smart_mode_action->get_active () ? _("Smart") : _("Select"));
+	tool_selector.add_menu_elem (MenuElem (_("Smart / Select"), sigc::bind (sigc::mem_fun (*this, &Editor::select_tool), -1)));
+	tool_selector.add_menu_elem (MenuElem (_("Select"), sigc::bind (sigc::mem_fun (*this, &Editor::select_tool), (int) Editing::MouseObject)));
+	tool_selector.add_menu_elem (MenuElem (_("Cut"), sigc::bind (sigc::mem_fun (*this, &Editor::select_tool), (int) Editing::MouseCut)));
+	tool_selector.add_menu_elem (MenuElem (_("Draw"), sigc::bind (sigc::mem_fun (*this, &Editor::select_tool), (int) Editing::MouseDraw)));
+	tool_selector.add_menu_elem (MenuElem (_("Range"), sigc::bind (sigc::mem_fun (*this, &Editor::select_tool), (int) Editing::MouseRange)));
 	mouse_mode_hbox->set_spacing (spc);
 	mouse_mode_hbox->pack_start (smart_mode_button, false, false);
 
@@ -2923,6 +2931,23 @@ Editor::setup_toolbar ()
 	ebox_vpacker.pack_start(*spacer, false, false);
 	ebox_vpacker.show();
 
+	Gtk::HBox* advanced_box = manage (new Gtk::HBox);
+	advanced_box->set_spacing (2);
+	advanced_box->pack_start (*mode_box, false, false);
+	advanced_box->pack_start (*nudge_box, false, false);
+	advanced_box->pack_start (grid_box, false, false);
+	advanced_box->pack_start (draw_box, false, false);
+	advanced_box->pack_end (_zoom_box, false, false);
+	advanced_box->pack_end (_track_box, false, false);
+	advanced_box->pack_end (*follow_mode_hbox, false, false);
+	advanced_box->set_no_show_all ();
+	ebox_vpacker.pack_start (*advanced_box, false, false);
+	Gtk::ToggleButton* advanced_button = manage (new Gtk::ToggleButton (_("Advanced")));
+	advanced_button->signal_toggled ().connect ([advanced_button, advanced_box] () {
+	    if (advanced_button->get_active ()) advanced_box->show_all ();
+	    else advanced_box->hide ();
+	});
+
 	HBox* toolbar_left = manage (new HBox);
 	HBox* toolbar_center = manage (new HBox);
 	HBox* toolbar_right = manage (new HBox);
@@ -2933,15 +2958,9 @@ Editor::setup_toolbar ()
 	balanced_sides->add_widget (*toolbar_right);
 
 	_application_bar.move_to_editor_toolbar (*toolbar_left, *toolbar_center, *toolbar_right);
-	toolbar_left->pack_start (*mode_box, false, false);
+	toolbar_left->pack_start (tool_selector, false, false);
 	toolbar_left->pack_start (snap_box, false, false);
-	toolbar_left->pack_start (*nudge_box, false, false);
-	toolbar_left->pack_start (_grid_box_spacer, false, false, 3);
-	toolbar_left->pack_start (grid_box, false, false);
-	toolbar_left->pack_start (_draw_box_spacer, false, false, 3);
-	toolbar_left->pack_start (draw_box, false, false);
-	/* Phaedra: zoom and track count selectors removed */
-	toolbar_right->pack_start (*follow_mode_hbox, false, false);
+	toolbar_right->pack_start (*advanced_button, false, false);
 	content_header_hbox.remove (content_tabbables);
 	toolbar_right->pack_end (content_tabbables, false, false);
 	toolbar_hbox.pack_start (*toolbar_left, true, true);

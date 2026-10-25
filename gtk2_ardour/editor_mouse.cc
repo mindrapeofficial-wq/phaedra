@@ -124,6 +124,19 @@ Editor::mouse_mode_object_range_toggled()
 }
 
 void
+Editor::select_tool (int mode)
+{
+	if (mode < 0) {
+		smart_mode_action->set_active (true);
+		mouse_mode_actions[Editing::MouseObject]->set_active (true);
+		tool_selector.set_text (_("Smart"));
+	} else {
+		smart_mode_action->set_active (false);
+		mouse_mode_actions[static_cast<Editing::MouseMode> (mode)]->set_active (true);
+	}
+}
+
+void
 Editor::mouse_mode_chosen (MouseMode m)
 {
 	if (!mouse_mode_actions[m]->get_active()) {
@@ -222,6 +235,17 @@ Editor::mouse_mode_chosen (MouseMode m)
 		 */
 		get_selection().clear_regions ();
 	}
+
+	switch (mouse_mode) {
+	case MouseObject: tool_selector.set_text (smart_mode_action->get_active () ? _("Smart") : _("Select")); break;
+	case MouseCut: tool_selector.set_text (_("Cut")); break;
+	case MouseDraw: tool_selector.set_text (_("Draw")); break;
+	case MouseRange: tool_selector.set_text (_("Range")); break;
+	case MouseTimeFX: tool_selector.set_text (_("Stretch")); break;
+	case MouseGrid: tool_selector.set_text (_("Grid")); break;
+	case MouseContent: tool_selector.set_text (_("Content")); break;
+	default: break;
+}
 
 	MouseModeChanged (); /* EMIT SIGNAL */
 

@@ -752,6 +752,7 @@
     </menu>
 
     <menu name='Help' action='Help'>
+      <menuitem action='check-for-updates'/>
 #ifndef __APPLE__
       <menuitem action='toggle-about'/>
 #endif
