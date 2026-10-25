@@ -21,7 +21,9 @@ mkdir -p "$DESTDIR/share/ardour8"
 mkdir -p "$DESTDIR/etc/fonts"
 
 echo "--- Copying main executable..."
-cp build/gtk2_ardour/ardour-8.12.0.exe "$DESTDIR/bin/Phaedra.exe"
+APP_EXE=$(find build/gtk2_ardour -maxdepth 1 -type f -name 'ardour-*.exe' -print -quit)
+test -n "$APP_EXE" || { echo "Phaedra executable not found" >&2; exit 1; }
+cp "$APP_EXE" "$DESTDIR/bin/Phaedra.exe"
 
 echo "--- Copying Ardour DLLs..."
 for dll in \
