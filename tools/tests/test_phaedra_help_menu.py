@@ -18,13 +18,14 @@ class PhaedraHelpMenuTests(unittest.TestCase):
         self.actions = (UI / "ardour_ui_ed.cc").read_text(encoding="utf-8")
         self.about = (UI / "about.cc").read_text(encoding="utf-8")
 
-    def test_chat_uses_autojoin_url_and_no_ardour_chat(self):
-        self.assertIn(
-            'https://web.libera.chat/?nick=PhaedraGuest?#phaedra-daw',
-            self.web
-        )
-        self.assertIn('open_phaedra_support_url (phaedra_chat_url);', self.web)
-        self.assertNotIn('https://ardour.org/chat', self.web)
+    def test_chat_has_first_party_host_configuration_only(self):
+        self.assertIn('PHAEDRA_CHAT_URL', self.web)
+        self.assertIn('Phaedra Chat is not deployed yet.', self.web)
+        self.assertNotIn('libera.chat', self.web)
+        self.assertNotIn('ardour.org/chat', self.web)
+        self.assertNotIn('NickServ', self.web)
+        self.assertTrue((ROOT / 'chat/api/chat.mjs').is_file())
+        self.assertTrue((ROOT / 'chat/index.html').is_file())
 
     def test_web_destinations_are_phaedra_specific(self):
         for path in (
