@@ -20,7 +20,8 @@ class PhaedraHelpMenuTests(unittest.TestCase):
 
     def test_chat_has_first_party_host_configuration_only(self):
         self.assertIn('PHAEDRA_CHAT_URL', self.web)
-        self.assertIn('Phaedra Chat is not deployed yet.', self.web)
+        self.assertIn('https://phaedra-chat.vercel.app/', self.web)
+        self.assertIn('Invalid Phaedra Chat URL.', self.web)
         self.assertNotIn('libera.chat', self.web)
         self.assertNotIn('ardour.org/chat', self.web)
         self.assertNotIn('NickServ', self.web)
