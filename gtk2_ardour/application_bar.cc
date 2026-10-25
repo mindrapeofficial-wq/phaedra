@@ -68,14 +68,6 @@
 
 #include "actions.h"
 #include "application_bar.h"
-#ifdef _WIN32
-#define NOMINMAX
-#include <windows.h>
-#include <wchar.h>
-#include <gdk/gdkwin32.h>
-#include <glibmm/main.h>
-#endif
-
 #include "ardour_ui.h"
 #include "debug.h"
 #include "gui_object.h"
@@ -118,64 +110,6 @@ static const gchar *_record_mode_strings_[] = {
 
 #define PX_SCALE(px) std::max((float)px, rintf((float)px * UIConfiguration::instance().get_ui_scale()))
 
-#ifdef _WIN32
-struct MiniMetersWindowSearch {
-	HWND window;
-	long score;
-};
-
-static BOOL CALLBACK
-find_minimeters_window (HWND window, LPARAM data)
-{
-	if (!IsWindowVisible (window) || GetWindow (window, GW_OWNER)) {
-		return TRUE;
-	}
-	DWORD pid = 0;
-	GetWindowThreadProcessId (window, &pid);
-	HANDLE process = OpenProcess (PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
-	if (!process) {
-		return TRUE;
-	}
-	wchar_t path[MAX_PATH];
-	DWORD length = MAX_PATH;
-	bool match = QueryFullProcessImageNameW (process, 0, path, &length) != 0;
-	CloseHandle (process);
-	if (!match) {
-		return TRUE;
-	}
-	const wchar_t* name = wcsrchr (path, L'\\');
-	name = name ? name + 1 : path;
-	if (_wcsicmp (name, L"MiniMeters.exe") != 0) {
-		return TRUE;
-	}
-	RECT rect;
-	if (!GetWindowRect (window, &rect)) {
-		return TRUE;
-	}
-	const long width = rect.right - rect.left;
-	const long height = rect.bottom - rect.top;
-	if (width < 160 || height < 40) {
-		return TRUE;
-	}
-	const long score = (width > height * 2 ? 1000000 : 0) + width * height;
-	MiniMetersWindowSearch* search = reinterpret_cast<MiniMetersWindowSearch*> (data);
-	if (score > search->score) {
-		search->window = window;
-		search->score = score;
-	}
-	return TRUE;
-}
-
-static HWND
-find_minimeters_main_window ()
-{
-	MiniMetersWindowSearch search = {nullptr, 0};
-	EnumWindows (find_minimeters_window, reinterpret_cast<LPARAM> (&search));
-	return search.window;
-}
-#endif
-
-
 ApplicationBar::ApplicationBar ()
 	: _have_layout (false)
 	, _basic_ui (0)
@@ -191,10 +125,6 @@ ApplicationBar::ApplicationBar ()
 	, _time_info_box (0)
 	, _editor_meter_peak_display()
 	, _editor_meter(0)
-	#ifdef _WIN32
-	, _minimeters_window (nullptr)
-	, _minimeters_original_style (0)
-#endif
 	, _feedback_exists (false)
 	, _ambiguous_latency (false)
 	, _clear_editor_meter (true)
@@ -208,58 +138,9 @@ ApplicationBar::ApplicationBar ()
 
 ApplicationBar::~ApplicationBar ()
 {
-#ifdef _WIN32
-	_minimeters_poll_connection.disconnect ();
-	if (_minimeters_window && IsWindow (static_cast<HWND> (_minimeters_window))) {
-		HWND window = static_cast<HWND> (_minimeters_window);
-		SetParent (window, nullptr);
-		SetWindowLong (window, GWL_STYLE, _minimeters_original_style);
-		SetWindowPos (window, nullptr, 100, 100, 900, 120, SWP_NOZORDER | SWP_FRAMECHANGED);
-	}
-#endif
 	delete _time_info_box;
 	_time_info_box = 0;
 }
-
-#ifdef _WIN32
-bool
-ApplicationBar::poll_minimeters_window ()
-{
-	if (!_minimeters_host.get_window ()) {
-		return true;
-	}
-	HWND window = find_minimeters_main_window ();
-	if (!window) {
-		return true;
-	}
-	HWND host = GDK_WINDOW_HWND (_minimeters_host.get_window ()->gobj ());
-	if (!host) {
-		return true;
-	}
-	_minimeters_original_style = GetWindowLong (window, GWL_STYLE);
-	SetWindowLong (window, GWL_STYLE,
-		(_minimeters_original_style & ~(WS_POPUP | WS_CAPTION | WS_THICKFRAME)) | WS_CHILD | WS_VISIBLE);
-	SetParent (window, host);
-	if (GetParent (window) != host) {
-		SetWindowLong (window, GWL_STYLE, _minimeters_original_style);
-		return false;
-	}
-	_minimeters_window = window;
-	Gtk::Allocation allocation = _minimeters_host.get_allocation ();
-	SetWindowPos (window, nullptr, 0, 0, allocation.get_width (), allocation.get_height (),
-		SWP_NOZORDER | SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-	return false;
-}
-
-void
-ApplicationBar::resize_minimeters_window (Gtk::Allocation& allocation)
-{
-	if (_minimeters_window && IsWindow (static_cast<HWND> (_minimeters_window))) {
-		MoveWindow (static_cast<HWND> (_minimeters_window), 0, 0,
-			allocation.get_width (), allocation.get_height (), TRUE);
-	}
-}
-#endif
 
 void
 ApplicationBar::on_parent_changed (Gtk::Widget*)
@@ -359,33 +240,6 @@ ApplicationBar::on_parent_changed (Gtk::Widget*)
 	_route_latency_value.set_alignment (Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
 
 	_left_hbox.set_spacing (3);
-#ifdef _WIN32
-	wchar_t program_files[MAX_PATH] = {0};
-	DWORD program_files_len = GetEnvironmentVariableW (L"ProgramFiles", program_files, MAX_PATH);
-	if (program_files_len > 0 && program_files_len < MAX_PATH) {
-		wchar_t minimeters_exe[MAX_PATH];
-		swprintf (minimeters_exe, MAX_PATH, L"%ls\\MiniMeters\\MiniMeters.exe", program_files);
-		if (GetFileAttributesW (minimeters_exe) != INVALID_FILE_ATTRIBUTES) {
-			_minimeters_host.set_size_request (PX_SCALE (420), PX_SCALE (58));
-			_left_hbox.pack_start (_minimeters_host, false, false);
-			_minimeters_host.signal_size_allocate ().connect (
-				sigc::mem_fun (*this, &ApplicationBar::resize_minimeters_window));
-			_minimeters_poll_connection = Glib::signal_timeout ().connect (
-				sigc::mem_fun (*this, &ApplicationBar::poll_minimeters_window), 300);
-			if (!find_minimeters_main_window ()) {
-				STARTUPINFOW startup = {0};
-				PROCESS_INFORMATION process = {0};
-				startup.cb = sizeof (startup);
-				if (CreateProcessW (minimeters_exe, nullptr, nullptr, nullptr, FALSE, 0,
-					nullptr, nullptr, &startup, &process)) {
-					CloseHandle (process.hThread);
-					CloseHandle (process.hProcess);
-				}
-			}
-		}
-	}
-#endif
-
 	_table.attach (_left_hbox, TCOL, 0, 2, EXPAND|FILL, EXPAND|FILL, hpadding, 0);
 	++col;
 

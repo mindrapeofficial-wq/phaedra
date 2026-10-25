@@ -1013,14 +1013,14 @@ ARDOUR_UI::finish()
 
 		if (_session->dirty() || unnamed) {
 			vector<string> actions;
-			actions.push_back (_("Cancel"));
+			actions.push_back (_("Don't quit"));
 
 			if (_session->unnamed()) {
-				actions.push_back (_("Don't Save"));
-				actions.push_back (_("Save"));
+				actions.push_back (_("Discard session"));
+				actions.push_back (_("Name session and quit"));
 			} else {
-				actions.push_back (_("Don't Save"));
-				actions.push_back (_("Save"));
+				actions.push_back (_("Just quit"));
+				actions.push_back (_("Save and quit"));
 			}
 
 			switch (ask_about_saving_session (actions)) {

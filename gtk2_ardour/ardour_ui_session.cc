@@ -1199,7 +1199,7 @@ ARDOUR_UI::open_recent_session ()
 int
 ARDOUR_UI::ask_about_saving_session (const vector<string>& actions)
 {
-	ArdourDialog window (_main_window, _("Save changes?"));
+	ArdourDialog window (_("Unsaved Session"));
 	Gtk::HBox dhbox;  // the hbox for the image and text
 	Gtk::Label  prompt_label;
 	Gtk::Image* dimage = manage (new Gtk::Image(Stock::DIALOG_WARNING,  Gtk::ICON_SIZE_DIALOG));
@@ -1213,7 +1213,7 @@ ARDOUR_UI::ask_about_saving_session (const vector<string>& actions)
 	window.add_button (actions[2], RESPONSE_ACCEPT);
 
 	window.set_default_response (RESPONSE_ACCEPT);
-	window.set_position (Gtk::WIN_POS_CENTER_ON_PARENT);
+	window.set_keep_above (true);
 
 	Gtk::Button noquit_button (msg);
 	noquit_button.set_name ("EditorGTKButton");
@@ -1221,10 +1221,10 @@ ARDOUR_UI::ask_about_saving_session (const vector<string>& actions)
 	string prompt;
 
 	if (_session->snap_name() == _session->name()) {
-		prompt = string_compose(_("Save changes to \"%1\"?"),
+		prompt = string_compose(_("The session \"%1\"\nhas not been saved.\n\nAny changes made this time\nwill be lost unless you save it.\n\nWhat do you want to do?"),
 					_session->snap_name());
 	} else {
-		prompt = string_compose(_("Save changes to \"%1\"?"),
+		prompt = string_compose(_("The snapshot \"%1\"\nhas not been saved.\n\nAny changes made this time\nwill be lost unless you save it.\n\nWhat do you want to do?"),
 					_session->snap_name());
 	}
 

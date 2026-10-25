@@ -21,7 +21,6 @@
 #pragma once
 
 #include <ytkmm/box.h>
-#include <ytkmm/drawingarea.h>
 #include <ytkmm/label.h>
 #include <ytkmm/table.h>
 
@@ -66,10 +65,6 @@ public:
 
 private:
 	void on_parent_changed (Gtk::Widget*);
-#ifdef _WIN32
-	bool poll_minimeters_window ();
-	void resize_minimeters_window (Gtk::Allocation&);
-#endif
 
 	bool sync_button_clicked (GdkEventButton*);
 
@@ -153,12 +148,6 @@ private:
 	ArdourWidgets::ArdourButton   _cue_rec_enable;
 	ArdourWidgets::ArdourButton   _cue_play_enable;
 	Gtk::HBox                     _left_hbox;
-#ifdef _WIN32
-	Gtk::DrawingArea              _minimeters_host;
-	void*                         _minimeters_window;
-	long                          _minimeters_original_style;
-	sigc::connection              _minimeters_poll_connection;
-#endif
 	Gtk::HBox                     _transport_hbox;
 	MiniTimeline                  _mini_timeline;
 	TimeInfoBox*                  _time_info_box;
