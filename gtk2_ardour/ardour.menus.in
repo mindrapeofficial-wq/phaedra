@@ -761,12 +761,17 @@
       <menuitem action='videos'/>
       <menuitem action='forums'/>
 #else
+      <separator/>
+      <!-- Support and documentation specific to Phaedra -->
       <menuitem action='chat'/>
+      <separator/>
       <menuitem action='tutorial'/>
       <menuitem action='reference'/>
+      <separator/>
       <menuitem action='forums'/>
       <menuitem action='howto-report'/>
       <menuitem action='tracker'/>
+      <separator/>
       <menuitem action='website'/>
       <menuitem action='website-dev'/>
 #endif
