@@ -54,10 +54,11 @@ using namespace std;
  * The IRC channel is a first-party room. Hosting must be configured before opening it.
  */
 namespace {
-/* Set by the Phaedra installer after the first-party chat host is verified.
- * Do not redirect users to an unrelated third-party chat or dead address.
+/* Phaedra owns this chat application and domain. Developers can override
+ * the host with PHAEDRA_CHAT_URL for local testing.
  */
 const char* const phaedra_chat_config = "PHAEDRA_CHAT_URL";
+const char* const phaedra_chat_default_url = "https://phaedra-chat.vercel.app/";
 const char* const phaedra_website_url = "https://phaedra-daw.vercel.app/";
 const char* const phaedra_getting_started_url =
     "https://github.com/mindrapeofficial-wq/phaedra/blob/preview/live/docs/phaedra/primeros-pasos.md";
@@ -91,19 +92,20 @@ void
 ARDOUR_UI::launch_chat ()
 {
     const gchar* configured = g_getenv (phaedra_chat_config);
-    const std::string url = configured ? configured : "";
-    /* Allow a verified HTTPS service, or localhost for developers. */
+    const std::string url = (configured && *configured)
+        ? configured : phaedra_chat_default_url;
+    /* The default URL is owned by Phaedra; permit a separate HTTPS
+     * deployment or explicit localhost URL for development builds.
+     */
     if (url.rfind ("https://", 0) == 0 ||
         url.rfind ("http://localhost:", 0) == 0 ||
         url.rfind ("http://127.0.0.1:", 0) == 0) {
         open_phaedra_support_url (url.c_str());
         return;
     }
-    ArdourMessageDialog dialog (_("Phaedra Chat is not deployed yet."), true);
+    ArdourMessageDialog dialog (_("Invalid Phaedra Chat URL."), true);
     dialog.set_title (_("Phaedra Chat"));
-    dialog.set_secondary_text (
-        _("Our own chat server is being prepared. There is no IRC fallback. "
-          "Once it is published, Phaedra will open the community room directly."));
+    dialog.set_secondary_text (_("Set PHAEDRA_CHAT_URL to a valid HTTPS address or a local development URL."));
     dialog.run ();
 }
 
