@@ -1014,7 +1014,7 @@ Editor::draw_lufs_scope (GdkEventExpose*)
 	cairo_line_to (cr, cx, cy + 31);
 	cairo_stroke (cr);
 	cairo_set_source_rgba (cr, 0.70, 0.43, 1.0, 0.65);
-	for (size_t i = _lufs_preview_left.size () - 256; i < _lufs_preview_left.size (); ++i) {
+	for (size_t i = _lufs_preview_left.size () - 2048; i < _lufs_preview_left.size (); i += 8) {
 		const double mid = 0.5 * (_lufs_preview_left[i] + _lufs_preview_right[i]);
 		const double side = 0.5 * (_lufs_preview_left[i] - _lufs_preview_right[i]);
 		cairo_arc (cr, cx + side * 29.0, cy - mid * 29.0, 0.8, 0, 6.283185307179586);
