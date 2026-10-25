@@ -2923,18 +2923,35 @@ Editor::setup_toolbar ()
 	ebox_vpacker.pack_start(*spacer, false, false);
 	ebox_vpacker.show();
 
-	toolbar_hbox.pack_start (*mode_box, false, false);
-	toolbar_hbox.pack_start (*(manage (new ArdourVSpacer ())), false, false, 3);
-	toolbar_hbox.pack_start (snap_box, false, false);
-	toolbar_hbox.pack_start (*(manage (new ArdourVSpacer ())), false, false, 3);
-	toolbar_hbox.pack_start (*nudge_box, false, false);
-	toolbar_hbox.pack_start (_grid_box_spacer, false, false, 3);
-	toolbar_hbox.pack_start (grid_box, false, false);
-	toolbar_hbox.pack_start (_draw_box_spacer, false, false, 3);
-	toolbar_hbox.pack_start (draw_box, false, false);
+	HBox* toolbar_left = manage (new HBox);
+	HBox* toolbar_center = manage (new HBox);
+	HBox* toolbar_right = manage (new HBox);
+	toolbar_left->set_spacing (3);
+	toolbar_right->set_spacing (3);
+	Glib::RefPtr<SizeGroup> balanced_sides = SizeGroup::create (SIZE_GROUP_HORIZONTAL);
+	balanced_sides->add_widget (*toolbar_left);
+	balanced_sides->add_widget (*toolbar_right);
+
+	_application_bar.move_to_editor_toolbar (*toolbar_left, *toolbar_center, *toolbar_right);
+	toolbar_left->pack_start (*mode_box, false, false);
+	toolbar_left->pack_start (snap_box, false, false);
+	toolbar_left->pack_start (*nudge_box, false, false);
+	toolbar_left->pack_start (_grid_box_spacer, false, false, 3);
+	toolbar_left->pack_start (grid_box, false, false);
+	toolbar_left->pack_start (_draw_box_spacer, false, false, 3);
+	toolbar_left->pack_start (draw_box, false, false);
 	/* Phaedra: zoom and track count selectors removed */
-	toolbar_hbox.pack_end (*(manage (new ArdourVSpacer ())), false, false, 3);
-	toolbar_hbox.pack_end (*follow_mode_hbox, false, false);
+	toolbar_right->pack_start (*follow_mode_hbox, false, false);
+	content_header_hbox.remove (content_tabbables);
+	toolbar_right->pack_end (content_tabbables, false, false);
+	toolbar_hbox.pack_start (*toolbar_left, true, true);
+	toolbar_hbox.pack_start (*toolbar_center, false, false);
+	toolbar_hbox.pack_start (*toolbar_right, true, true);
+	Gtk::Widget* old_header = content_header_hbox.get_parent ();
+	if (old_header) {
+		old_header->set_no_show_all ();
+		old_header->hide ();
+	}
 
 	_draw_box_spacer.set_no_show_all ();
 	_grid_box_spacer.set_no_show_all ();

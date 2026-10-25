@@ -833,6 +833,24 @@ ApplicationBar::focus_on_clock ()
 }
 
 void
+ApplicationBar::move_to_editor_toolbar (Gtk::Box& left, Gtk::Box& center, Gtk::Box& right)
+{
+	/* Keep the existing controls and their action bindings while moving them
+	 * out of the two-row transport table. The clock gets its own center cell. */
+	_table.remove (_transport_ctrl);
+	left.pack_start (_transport_ctrl, false, false);
+	_table.remove (_transport_hbox);
+	left.pack_start (_transport_hbox, false, false);
+
+	_table.remove (_primary_clock);
+	center.pack_start (_primary_clock, false, false);
+	_table.remove (*_primary_clock.left_btn ());
+	right.pack_start (*_primary_clock.left_btn (), false, false);
+	_table.remove (*_primary_clock.right_btn ());
+	right.pack_start (*_primary_clock.right_btn (), false, false);
+}
+
+void
 ApplicationBar::update_clock_visibility ()
 {
 	if (ARDOUR::Profile->get_small_screen()) {
