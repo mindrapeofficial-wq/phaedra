@@ -290,7 +290,8 @@ TransportControlUI::set_loop_sensitivity ()
 	if (!_session || _session->config.get_external_sync()) {
 		_auto_loop_button.set_sensitive (false);
 	} else {
-		_auto_loop_button.set_sensitive (_session && _session->loop_is_possible() && _session->locations()->auto_loop_location());
+		/* The button can create a loop from the current time selection. */
+		_auto_loop_button.set_sensitive (_session->loop_is_possible());
 	}
 }
 

@@ -167,6 +167,7 @@ public:
 	virtual void transition_to_rolling (bool fwd) = 0;
 
 	virtual bool get_selection_extents (Temporal::timepos_t &start, Temporal::timepos_t &end) const = 0;
+	virtual void set_loop_from_selection (bool play) = 0;
 
 	virtual void set_selection (std::list<Selectable*>, ARDOUR::SelectionOperation) = 0;
 

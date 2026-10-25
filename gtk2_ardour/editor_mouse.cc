@@ -698,6 +698,14 @@ Editor::button_press_handler_1 (ArdourCanvas::Item* item, GdkEvent* event, ItemT
 
 	Editing::MouseMode eff = effective_mouse_mode ();
 
+	/* The blank area below the tracks is always a time-selection surface.
+	 * A plain drag there should work without first switching to Range mode. */
+	if (item_type == DropZoneItem && event->button.button == 1 &&
+	    !Keyboard::modifier_state_contains (event->button.state, Keyboard::RelevantModifierKeyMask)) {
+		_drags->set (new SelectionDrag (*this, item, SelectionDrag::CreateSelection), event);
+		return true;
+	}
+
 	/* special case: allow drag of region fade in/out in object mode with join object/range enabled */
 	if (get_smart_mode()) {
 		switch (item_type) {

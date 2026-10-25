@@ -1944,6 +1944,11 @@ ARDOUR_UI::toggle_session_auto_loop ()
 	}
 
 	Location * looploc = _session->locations()->auto_loop_location();
+	if (!_session->get_play_loop() && !editor->get_selection().time.empty()) {
+		/* Make the transport loop the range the user just dragged. */
+		editor->set_loop_from_selection (false);
+		looploc = _session->locations()->auto_loop_location();
+	}
 
 	if (!looploc) {
 		return;
