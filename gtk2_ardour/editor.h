@@ -34,6 +34,7 @@
 #pragma once
 
 #include <cmath>
+#include <array>
 #include <list>
 #include <map>
 #include <set>
@@ -586,7 +587,21 @@ private:
 
 	Gtk::VBox                 _editor_list_vbox;
 	Gtk::EventBox             _lufs_strip_background;
+	Gtk::Alignment            _lufs_strip_alignment;
 	Gtk::HBox                 _lufs_strip_box;
+	Gtk::DrawingArea          _lufs_scope;
+	Gtk::DrawingArea          _lufs_correlation;
+	Gtk::DrawingArea          _lufs_needle;
+	Gtk::DrawingArea          _lufs_bars;
+	Gtk::DrawingArea          _lufs_spectrogram;
+	std::array<float, 128>    _lufs_preview_left {};
+	std::array<float, 128>    _lufs_preview_right {};
+	std::array<std::array<float, 32>, 96> _lufs_spectrum_history {};
+	bool draw_lufs_scope (GdkEventExpose*);
+	bool draw_lufs_correlation (GdkEventExpose*);
+	bool draw_lufs_needle (GdkEventExpose*);
+	bool draw_lufs_bars (GdkEventExpose*);
+	bool draw_lufs_spectrogram (GdkEventExpose*);
 	Gtk::Label                _lufs_m_label;
 	Gtk::Label                _lufs_s_label;
 	Gtk::Label                _lufs_i_label;
@@ -602,6 +617,7 @@ private:
 	void add_notebook_page (std::string const&, std::string const&, Gtk::Widget&);
 
 	ArdourWidgets::VPane editor_summary_pane;
+	Gtk::VBox _editor_timeline_vbox;
 	ArdourWidgets::VPane _arrange_mixer_pane;
 	Gtk::ScrolledWindow _mixer_dock_scroller;
 	Gtk::VBox _mixer_dock_box;

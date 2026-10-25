@@ -22,6 +22,7 @@
 #pragma once
 
 #include <atomic>
+#include <array>
 #include <memory>
 #include <vector>
 
@@ -89,6 +90,7 @@ public:
 	float lufs_short_term () const { return _lufs_short_term.load (); }
 	float lufs_integrated () const { return _lufs_integrated.load (); }
 	float lufs_true_peak () const { return _lufs_true_peak.load (); }
+	void stereo_snapshot (float* left, float* right, size_t count) const;
 
 	void      set_meter_type (MeterType t);
 	MeterType meter_type () const { return _meter_type; }
@@ -126,6 +128,9 @@ private:
 	std::atomic<float> _lufs_short_term {-200.f};
 	std::atomic<float> _lufs_integrated {-200.f};
 	std::atomic<float> _lufs_true_peak {-200.f};
+	static constexpr size_t stereo_preview_size = 128;
+	std::array<std::atomic<float>, stereo_preview_size> _stereo_left {};
+	std::array<std::atomic<float>, stereo_preview_size> _stereo_right {};
 
 	MeterType _meter_type;
 };

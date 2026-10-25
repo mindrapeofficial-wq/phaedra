@@ -95,6 +95,16 @@ PeakMeter::reset_lufs ()
 	}
 }
 
+void
+PeakMeter::stereo_snapshot (float* left, float* right, size_t count) const
+{
+	const size_t n = std::min (count, stereo_preview_size);
+	for (size_t i = 0; i < n; ++i) {
+		left[i] = _stereo_left[i].load (std::memory_order_relaxed);
+		right[i] = _stereo_right[i].load (std::memory_order_relaxed);
+	}
+}
+
 std::string
 PeakMeter::display_name () const
 {
@@ -128,6 +138,11 @@ PeakMeter::run (BufferSet& bufs, samplepos_t /*start_sample*/, samplepos_t /*end
 			_lufs_meter->reset ();
 		}
 		float const* audio[2] = { bufs.get_audio (0).data (), bufs.get_audio (1).data () };
+		for (size_t i = 0; i < stereo_preview_size; ++i) {
+			const size_t frame = nframes ? std::min<size_t> (nframes - 1, i * nframes / stereo_preview_size) : 0;
+			_stereo_left[i].store (nframes ? audio[0][frame] : 0.f, std::memory_order_relaxed);
+			_stereo_right[i].store (nframes ? audio[1][frame] : 0.f, std::memory_order_relaxed);
+		}
 		_lufs_meter->run (audio, nframes);
 		_lufs_momentary.store (_lufs_meter->momentary (), std::memory_order_relaxed);
 		_lufs_short_term.store (_lufs_meter->short_term (), std::memory_order_relaxed);

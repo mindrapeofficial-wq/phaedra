@@ -655,19 +655,40 @@ Editor::Editor ()
 	 */
 	content_app_bar.add (_application_bar);
 	/* Phaedra: a fixed master loudness strip above the transport. */
-	_lufs_strip_background.set_size_request (-1, 108);
+	_lufs_strip_background.set_size_request (-1, 80);
 	_lufs_strip_background.modify_bg (Gtk::STATE_NORMAL, Gdk::Color ("#090813"));
-	_lufs_strip_box.set_spacing (12);
-	_lufs_strip_box.set_border_width (12);
-	_lufs_strip_box.pack_start (_lufs_m_label, true, true);
-	_lufs_strip_box.pack_start (_lufs_s_label, true, true);
-	_lufs_strip_box.pack_start (_lufs_i_label, true, true);
-	_lufs_strip_box.pack_start (_lufs_tp_label, true, true);
+	_lufs_strip_alignment.set (0.5, 0.5, 0.0, 0.0);
+	_lufs_strip_box.set_spacing (10);
+	_lufs_strip_box.set_border_width (4);
+	_lufs_scope.set_size_request (72, 68);
+	_lufs_correlation.set_size_request (32, 68);
+	_lufs_needle.set_size_request (130, 68);
+	_lufs_bars.set_size_request (100, 68);
+	_lufs_spectrogram.set_size_request (160, 68);
+	_lufs_scope.signal_expose_event ().connect (sigc::mem_fun (*this, &Editor::draw_lufs_scope));
+	_lufs_correlation.signal_expose_event ().connect (sigc::mem_fun (*this, &Editor::draw_lufs_correlation));
+	_lufs_needle.signal_expose_event ().connect (sigc::mem_fun (*this, &Editor::draw_lufs_needle));
+	_lufs_bars.signal_expose_event ().connect (sigc::mem_fun (*this, &Editor::draw_lufs_bars));
+	_lufs_spectrogram.signal_expose_event ().connect (sigc::mem_fun (*this, &Editor::draw_lufs_spectrogram));
+	_lufs_strip_box.pack_start (_lufs_scope, false, false);
+	_lufs_strip_box.pack_start (_lufs_correlation, false, false);
+	_lufs_strip_box.pack_start (_lufs_needle, false, false);
+	_lufs_strip_box.pack_start (_lufs_bars, false, false);
+	_lufs_m_label.set_size_request (100, -1);
+	_lufs_s_label.set_size_request (100, -1);
+	_lufs_i_label.set_size_request (100, -1);
+	_lufs_tp_label.set_size_request (100, -1);
+	_lufs_strip_box.pack_start (_lufs_m_label, false, false);
+	_lufs_strip_box.pack_start (_lufs_s_label, false, false);
+	_lufs_strip_box.pack_start (_lufs_i_label, false, false);
+	_lufs_strip_box.pack_start (_lufs_tp_label, false, false);
+	_lufs_strip_box.pack_start (_lufs_spectrogram, false, false);
 	_lufs_reset_button.set_label (_("Reset"));
-	_lufs_reset_button.set_size_request (72, 32);
+	_lufs_reset_button.set_size_request (64, 28);
 	_lufs_reset_button.signal_clicked ().connect (sigc::mem_fun (*this, &Editor::reset_lufs_strip));
-	_lufs_strip_box.pack_end (_lufs_reset_button, false, false);
-	_lufs_strip_background.add (_lufs_strip_box);
+	_lufs_strip_box.pack_start (_lufs_reset_button, false, false);
+	_lufs_strip_alignment.add (_lufs_strip_box);
+	_lufs_strip_background.add (_lufs_strip_alignment);
 	content_top_bar.add (_lufs_strip_background);
 	content_top_bar.show ();
 	_lufs_strip_background.show_all ();
@@ -675,14 +696,16 @@ Editor::Editor ()
 	_lufs_strip_timer = Glib::signal_timeout ().connect (sigc::mem_fun (*this, &Editor::update_lufs_strip), 100);
 	content_att_right.add (_editor_list_vbox);
 	content_att_bottom.add (_bottom_hbox);
-	content_main_top.add (global_vpacker);
-	/* One arrangement view, with the session's existing mixer below it. */
-	_arrange_mixer_pane.add (editor_summary_pane);
+	/* Keep the timeline above its compact transport and editing controls. */
+	_editor_timeline_vbox.pack_start (editor_summary_pane, true, true);
+	_editor_timeline_vbox.pack_start (global_vpacker, false, false);
+	_editor_timeline_vbox.show ();
+	_arrange_mixer_pane.add (_editor_timeline_vbox);
 	_mixer_dock_scroller.set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 	_mixer_dock_scroller.set_shadow_type (Gtk::SHADOW_NONE);
 	_mixer_dock_scroller.add (_mixer_dock_box);
 	_arrange_mixer_pane.add (_mixer_dock_scroller);
-	_arrange_mixer_pane.set_child_minsize (editor_summary_pane, 160);
+	_arrange_mixer_pane.set_child_minsize (_editor_timeline_vbox, 160);
 	_arrange_mixer_pane.set_child_minsize (_mixer_dock_scroller, 120);
 	_arrange_mixer_pane.set_divider (0, 0.65);
 	_arrange_mixer_pane.set_drag_cursor (*_cursors->expand_up_down);
@@ -880,6 +903,32 @@ Editor::update_lufs_strip ()
 		meter = _session->master_out ()->shared_peak_meter ();
 	}
 	_lufs_reset_button.set_sensitive (bool (meter));
+	if (meter && meter->lufs_momentary () > -180.f) {
+		meter->stereo_snapshot (_lufs_preview_left.data (), _lufs_preview_right.data (), _lufs_preview_left.size ());
+	} else {
+		_lufs_preview_left.fill (0.f);
+		_lufs_preview_right.fill (0.f);
+	}
+	for (size_t x = 1; x < _lufs_spectrum_history.size (); ++x) {
+		_lufs_spectrum_history[x - 1] = _lufs_spectrum_history[x];
+	}
+	for (size_t bin = 0; bin < 32; ++bin) {
+		double re = 0.0, im = 0.0;
+		for (size_t i = 0; i < 128; ++i) {
+			const double sample = 0.5 * (_lufs_preview_left[i] + _lufs_preview_right[i]);
+			const double window = 0.5 - 0.5 * std::cos (6.283185307179586 * i / 127.0);
+			const double angle = 6.283185307179586 * (bin + 1) * i / 128.0;
+			re += sample * window * std::cos (angle);
+			im -= sample * window * std::sin (angle);
+		}
+		const double db = 20.0 * std::log10 (std::sqrt (re * re + im * im) / 32.0 + 1e-7);
+		_lufs_spectrum_history.back ()[bin] = std::max (0.0, std::min (1.0, (db + 72.0) / 72.0));
+	}
+	_lufs_scope.queue_draw ();
+	_lufs_correlation.queue_draw ();
+	_lufs_needle.queue_draw ();
+	_lufs_bars.queue_draw ();
+	_lufs_spectrogram.queue_draw ();
 	const float readings[4] = {
 		meter ? meter->lufs_momentary () : -200.f,
 		meter ? meter->lufs_short_term () : -200.f,
@@ -897,9 +946,129 @@ Editor::update_lufs_strip ()
 		}
 		const char* unit = i == 3 ? "dBTP" : "LUFS";
 		char markup[256];
-		snprintf (markup, sizeof (markup), "<span foreground='#aaa4ca' size='small'>%s</span>\n<span foreground='#d8b8ff' size='xx-large'>%s</span> <span foreground='#8e87ae' size='small'>%s</span>", titles[i], value, unit);
+		snprintf (markup, sizeof (markup), "<span foreground='#aaa4ca' size='small'>%s</span>\n<span foreground='#d8b8ff' size='large'>%s</span> <span foreground='#8e87ae' size='small'>%s</span>", titles[i], value, unit);
 		labels[i]->set_markup (markup);
 	}
+	return true;
+}
+
+bool
+Editor::draw_lufs_scope (GdkEventExpose*)
+{
+	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_scope.get_window ()->gobj ()));
+	const double cx = 36.0, cy = 34.0;
+	cairo_set_source_rgb (cr, 0.35, 0.42, 0.52);
+	cairo_set_line_width (cr, 1.0);
+	for (int r = 12; r <= 30; r += 9) {
+		cairo_arc (cr, cx, cy, r, 0, 6.283185307179586);
+		cairo_stroke (cr);
+	}
+	cairo_move_to (cr, cx - 31, cy);
+	cairo_line_to (cr, cx + 31, cy);
+	cairo_move_to (cr, cx, cy - 31);
+	cairo_line_to (cr, cx, cy + 31);
+	cairo_stroke (cr);
+	cairo_set_source_rgba (cr, 0.70, 0.43, 1.0, 0.65);
+	for (size_t i = 0; i < _lufs_preview_left.size (); ++i) {
+		const double mid = 0.5 * (_lufs_preview_left[i] + _lufs_preview_right[i]);
+		const double side = 0.5 * (_lufs_preview_left[i] - _lufs_preview_right[i]);
+		cairo_arc (cr, cx + side * 29.0, cy - mid * 29.0, 0.8, 0, 6.283185307179586);
+		cairo_fill (cr);
+	}
+	cairo_destroy (cr);
+	return true;
+}
+
+bool
+Editor::draw_lufs_correlation (GdkEventExpose*)
+{
+	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_correlation.get_window ()->gobj ()));
+	double cross = 0.0, lsum = 0.0, rsum = 0.0;
+	for (size_t i = 0; i < _lufs_preview_left.size (); ++i) {
+		cross += _lufs_preview_left[i] * _lufs_preview_right[i];
+		lsum += _lufs_preview_left[i] * _lufs_preview_left[i];
+		rsum += _lufs_preview_right[i] * _lufs_preview_right[i];
+	}
+	const double correlation = lsum > 1e-12 && rsum > 1e-12 ? std::max (-1.0, std::min (1.0, cross / std::sqrt (lsum * rsum))) : 0.0;
+	cairo_set_source_rgb (cr, 0.28, 0.24, 0.36);
+	cairo_rectangle (cr, 22, 4, 5, 60);
+	cairo_fill (cr);
+	cairo_set_source_rgb (cr, correlation < 0 ? 0.95 : 0.69, correlation < 0 ? 0.29 : 0.44, correlation < 0 ? 0.30 : 0.95);
+	cairo_rectangle (cr, 21, 33 - correlation * 29, 7, 3);
+	cairo_fill (cr);
+	cairo_set_source_rgb (cr, 0.70, 0.65, 0.84);
+	cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+	cairo_set_font_size (cr, 9);
+	cairo_move_to (cr, 1, 11); cairo_show_text (cr, "+1");
+	cairo_move_to (cr, 9, 36); cairo_show_text (cr, "0");
+	cairo_move_to (cr, 1, 64); cairo_show_text (cr, "-1");
+	cairo_destroy (cr);
+	return true;
+}
+
+bool
+Editor::draw_lufs_needle (GdkEventExpose*)
+{
+	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_needle.get_window ()->gobj ()));
+	const double cx = 65.0, cy = 64.0, radius = 49.0;
+	cairo_set_line_width (cr, 2.0);
+	for (int i = 0; i <= 12; ++i) {
+		const double angle = 3.93 + i * 0.19;
+		cairo_set_source_rgb (cr, i > 9 ? 0.95 : 0.68, i > 9 ? 0.25 : 0.43, i > 9 ? 0.20 : 0.91);
+		cairo_move_to (cr, cx + (radius - 7) * std::cos (angle), cy + (radius - 7) * std::sin (angle));
+		cairo_line_to (cr, cx + radius * std::cos (angle), cy + radius * std::sin (angle));
+		cairo_stroke (cr);
+	}
+	std::shared_ptr<PeakMeter> meter;
+	if (_session && _session->master_out ()) meter = _session->master_out ()->shared_peak_meter ();
+	const double loudness = meter ? meter->lufs_momentary () : -60.0;
+	const double position = std::max (0.0, std::min (1.0, (loudness + 60.0) / 60.0));
+	const double angle = 3.93 + position * 2.28;
+	cairo_set_source_rgb (cr, 1.0, 0.53, 0.12);
+	cairo_move_to (cr, cx, cy);
+	cairo_line_to (cr, cx + (radius - 11) * std::cos (angle), cy + (radius - 11) * std::sin (angle));
+	cairo_stroke (cr);
+	cairo_destroy (cr);
+	return true;
+}
+
+bool
+Editor::draw_lufs_bars (GdkEventExpose*)
+{
+	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_bars.get_window ()->gobj ()));
+	std::shared_ptr<PeakMeter> meter;
+	if (_session && _session->master_out ()) meter = _session->master_out ()->shared_peak_meter ();
+	const double values[3] = { meter ? meter->lufs_momentary () : -60.0, meter ? meter->lufs_short_term () : -60.0, meter ? meter->lufs_integrated () : -60.0 };
+	cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+	cairo_set_font_size (cr, 9);
+	for (int i = 0; i < 3; ++i) {
+		const double height = std::max (0.0, std::min (52.0, (values[i] + 60.0) * 52.0 / 60.0));
+		const double x = 12.0 + i * 29.0;
+		cairo_set_source_rgb (cr, 0.20, 0.18, 0.30);
+		cairo_rectangle (cr, x, 3, 13, 52); cairo_fill (cr);
+		cairo_set_source_rgb (cr, 0.72, 0.46, 0.98);
+		cairo_rectangle (cr, x, 55 - height, 13, height); cairo_fill (cr);
+		cairo_set_source_rgb (cr, 0.75, 0.70, 0.86);
+		cairo_move_to (cr, x + 3, 66);
+		cairo_show_text (cr, i == 0 ? "M" : i == 1 ? "S" : "I");
+	}
+	cairo_destroy (cr);
+	return true;
+}
+
+bool
+Editor::draw_lufs_spectrogram (GdkEventExpose*)
+{
+	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_spectrogram.get_window ()->gobj ()));
+	for (size_t x = 0; x < _lufs_spectrum_history.size (); ++x) {
+		for (size_t bin = 0; bin < 32; ++bin) {
+			const double v = _lufs_spectrum_history[x][bin];
+			cairo_set_source_rgb (cr, std::min (1.0, v * 1.8), v * v * 0.72, std::min (1.0, v * 2.3));
+			cairo_rectangle (cr, x * 160.0 / 96.0, 66.0 - (bin + 1) * 2.0, 2.0, 2.0);
+			cairo_fill (cr);
+		}
+	}
+	cairo_destroy (cr);
 	return true;
 }
 
@@ -2862,14 +3031,9 @@ Editor::setup_toolbar ()
 	mouse_mode_hbox->set_spacing (spc);
 	mouse_mode_hbox->pack_start (smart_mode_button, false, false);
 
-	mouse_mode_hbox->pack_start (mouse_move_button, false, false);
 	mouse_mode_hbox->pack_start (mouse_select_button, false, false);
 
-	mouse_mode_hbox->pack_start (mouse_cut_button, false, false);
-
-	mouse_mode_hbox->pack_start (mouse_timefx_button, false, false);
 	mouse_mode_hbox->pack_start (mouse_grid_button, false, false);
-	mouse_mode_hbox->pack_start (mouse_draw_button, false, false);
 	mouse_mode_hbox->pack_start (mouse_content_button, false, false);
 
 	mouse_mode_vbox->pack_start (*mouse_mode_hbox);
@@ -3021,6 +3185,11 @@ Editor::setup_toolbar ()
 
 	_application_bar.move_to_editor_toolbar (*toolbar_left, *toolbar_center, *toolbar_right);
 	toolbar_left->pack_start (tool_selector, false, false);
+	/* Keep the essential tools visible without opening the Advanced section. */
+	toolbar_left->pack_start (mouse_move_button, false, false);
+	toolbar_left->pack_start (mouse_cut_button, false, false);
+	toolbar_left->pack_start (mouse_timefx_button, false, false);
+	toolbar_left->pack_start (mouse_draw_button, false, false);
 	toolbar_left->pack_start (snap_box, false, false);
 	toolbar_right->pack_start (*advanced_button, false, false);
 	content_header_hbox.remove (content_tabbables);
