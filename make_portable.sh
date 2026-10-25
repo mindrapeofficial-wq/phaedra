@@ -101,8 +101,8 @@ cp build/gtk2_ardour/clearlooks.ardoursans.rc "$DESTDIR/share/ardour8/" 2>/dev/n
 cp build/gtk2_ardour/default_ui_config "$DESTDIR/share/ardour8/" 2>/dev/null || true
 cp build/gtk2_ardour/ardour.menus "$DESTDIR/share/ardour8/"
 cp build/gtk2_ardour/*.keys "$DESTDIR/share/ardour8/" 2>/dev/null || true
-cp build/gtk2_ardour/ArdourMono.ttf "$DESTDIR/share/ardour8/" 2>/dev/null || true
-cp build/gtk2_ardour/ArdourSans.ttf "$DESTDIR/share/ardour8/" 2>/dev/null || true
+cp gtk2_ardour/ArdourMono.ttf "$DESTDIR/share/ardour8/"
+cp gtk2_ardour/ArdourSans.ttf "$DESTDIR/share/ardour8/"
 cp system_config "$DESTDIR/share/ardour8/" 2>/dev/null || true
 
 # Themes
