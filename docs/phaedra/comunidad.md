@@ -1,36 +1,31 @@
-# Phaedra · Comunidad y chat
+# Phaedra Chat · Comunidad propia
 
-**Sala de chat:** [#phaedra-daw en Libera.Chat](https://web.libera.chat/?nick=PhaedraGuest?#phaedra-daw).
+Phaedra Chat es un sistema de mensajería desarrollado para Phaedra. **No utiliza IRC ni Discord.**
 
-El menú **Ayuda → Live Community Chat** abre directamente el cliente IRC web de Libera con la sala y un apodo provisional. Pulsa **Start/Connect** para conectarte. No exige registro para entrar, siempre que la sala no tenga restricciones de acceso.
+## Salas
 
-## Qué puedes hacer
+- **#general**: músicos y usuarios.
+- **#produccion**: audio, mezcla, instrumentos, plugins y MIDI.
+- **#ayuda**: preguntas y respuestas.
+- **#desarrollo**: propuestas, errores y novedades del DAW.
 
-- Pedir ayuda con la configuración de audio, las sesiones y el flujo de trabajo.
-- Conversar con otros usuarios de Phaedra.
-- Compartir sugerencias sin adjuntar proyectos privados.
-- Encontrar colaboradores para probar funciones nuevas.
+## Funcionamiento
 
-**No es soporte 24/7.** Si la sala está vacía o no responde nadie, usa [GitHub Issues](https://github.com/mindrapeofficial-wq/phaedra/issues).
+La web tiene interfaz propia, lista de participantes, historial y mensajes. Cada participante entra con un **apodo de invitado temporal**. En la beta se consulta el historial a intervalos cortos, sin WebSocket. Los apodos todavía no están verificados.
 
-## Importante para el propietario del proyecto
+El código está disponible en [chat/](../../chat/) y su explicación técnica en [README de Phaedra Chat](../../chat/README.md). La base de datos Phaedra Chat está separada de los demás proyectos.
 
-La URL sirve para entrar en un canal IRC en tiempo real, **pero no acredita que ese canal esté registrado, reservado ni moderado por Phaedra**. Para controlarlo y poder nombrar moderadores, el responsable del proyecto debe:
+## Acceso desde el programa
 
-1. Registrar un nick e identificarse con **NickServ** en Libera.Chat.
-2. Comprobar la disponibilidad del canal con `/msg ChanServ INFO #phaedra-daw`.
-3. Entrar con `/join #phaedra-daw` y, si corresponde y tiene privilegios, registrarlo con `/msg ChanServ REGISTER #phaedra-daw`.
-4. Designar moderadores, establecer normas y revisar privacidad y retención del servicio.
+El menú **Ayuda → Live Community Chat** se está cambiando para acceder únicamente al servicio propio. Hasta que se verifique el despliegue no abrirá salas de terceros ni enlaces que no existan. Para pruebas locales, los desarrolladores pueden establecer `PHAEDRA_CHAT_URL=http://127.0.0.1:3000` o la URL segura de una implementación verificada.
 
-Guía oficial: [Crear y registrar canales en Libera](https://libera.chat/guides/creatingchannels).
+## Estado de beta
 
-## Reglas básicas
+Todavía faltan verificación de cuentas, herramientas avanzadas de moderación, política de conservación y documentación legal antes de abrir el acceso indiscriminadamente. No compartas contraseñas, claves ni mensajes privados. El chat no reemplaza [GitHub Issues](https://github.com/mindrapeofficial-wq/phaedra/issues) para informar fallos.
 
-Respeto, nada de spam, no compartir credenciales ni datos personales de terceros, y utiliza los informes de GitHub para los errores reproducibles. IRC es una red de terceros; los administradores de Phaedra no controlan toda su infraestructura y no se promete almacenamiento histórico de mensajes.
+## Enlaces
 
-## Más recursos
-
-- [Primeros pasos](./primeros-pasos.md)
 - [Manual](./manual.md)
-- [Cómo reportar un error](./reportar-error.md)
-- [Sitio oficial](https://phaedra-daw.vercel.app/)
+- [Primeros pasos](./primeros-pasos.md)
+- [Chat propio: código](../../chat/)
+- [Repositorio Phaedra](https://github.com/mindrapeofficial-wq/phaedra)
