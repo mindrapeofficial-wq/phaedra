@@ -48,68 +48,101 @@ using namespace PBD;
 using namespace Gtk;
 using namespace std;
 
+/* Phaedra support destinations. Keep these centralized so the application
+ * does not accidentally send Phaedra users to Ardour's project channels.
+ *
+ * The IRC channel is a live third-party community room, not a server
+ * operated by Phaedra. It still needs ChanServ registration by the owner.
+ */
+namespace {
+const char* const phaedra_chat_url =
+    "https://web.libera.chat/?nick=PhaedraGuest?#phaedra-daw";
+const char* const phaedra_website_url = "https://phaedra-daw.vercel.app/";
+const char* const phaedra_getting_started_url =
+    "https://github.com/mindrapeofficial-wq/phaedra/blob/preview/live/docs/phaedra/primeros-pasos.md";
+const char* const phaedra_manual_url =
+    "https://github.com/mindrapeofficial-wq/phaedra/blob/preview/live/docs/phaedra/manual.md";
+const char* const phaedra_reporting_url =
+    "https://github.com/mindrapeofficial-wq/phaedra/blob/preview/live/docs/phaedra/reportar-error.md";
+const char* const phaedra_issues_url =
+    "https://github.com/mindrapeofficial-wq/phaedra/issues";
+const char* const phaedra_new_issue_url =
+    "https://github.com/mindrapeofficial-wq/phaedra/issues/new";
+const char* const phaedra_source_url =
+    "https://github.com/mindrapeofficial-wq/phaedra";
+
+/* PBD::open_uri uses the OS default browser on Windows and other hosts.
+ * Report errors instead of showing a blank success message on failure.
+ */
+void open_phaedra_support_url (const char* url)
+{
+    if (!PBD::open_uri (url)) {
+        ArdourMessageDialog dialog (_("Unable to open the browser."), true);
+        dialog.set_title (_("Phaedra Help"));
+        dialog.set_secondary_text (
+            std::string (_("Open this address manually:\\n")) + url);
+        dialog.run ();
+    }
+}
+}
+
 void
 ARDOUR_UI::launch_chat ()
 {
-	ArdourMessageDialog dialog(_("<b>Just ask and wait for an answer.\nIt may take from minutes to hours.</b>"), true);
-
-	dialog.set_title (_("About the Chat"));
-	dialog.set_secondary_text (_("When you're inside the chat just ask your question and wait for an answer. The chat is occupied by real people with real lives so many of them are passively online and might not read your question before minutes or hours later.\nSo please be patient and wait for an answer.\n\nYou should just leave the chat window open and check back regularly until someone has answered your question."));
-
-	switch (dialog.run()) {
-	case RESPONSE_OK:
-		open_uri("https://ardour.org/chat");
-		break;
-	default:
-		break;
-	}
+    /* One click goes straight to the room with a suggested guest nickname.
+     * The web client asks the user to connect, no sign-up is required.
+     */
+    open_phaedra_support_url (phaedra_chat_url);
 }
 
 void
 ARDOUR_UI::launch_tutorial ()
 {
-	PBD::open_uri (Config->get_tutorial_manual_url());
+    open_phaedra_support_url (phaedra_getting_started_url);
 }
 
 void
 ARDOUR_UI::launch_reference ()
 {
-	PBD::open_uri (Config->get_reference_manual_url());
+    open_phaedra_support_url (phaedra_manual_url);
 }
 
 void
 ARDOUR_UI::launch_tracker ()
 {
-	PBD::open_uri ("https://tracker.ardour.org");
+    open_phaedra_support_url (phaedra_new_issue_url);
 }
 
 void
 ARDOUR_UI::launch_subscribe ()
 {
-	PBD::open_uri ("https://community.ardour.org/subscribe");
+    /* Phaedra is currently free; there is no subscriptions destination. */
+    open_phaedra_support_url (phaedra_website_url);
 }
 
 void
 ARDOUR_UI::launch_website ()
 {
-	PBD::open_uri ("https://ardour.org");
+    open_phaedra_support_url (phaedra_website_url);
 }
 
 void
 ARDOUR_UI::launch_website_dev ()
 {
-	PBD::open_uri ("https://ardour.org/development.html");
+    open_phaedra_support_url (phaedra_source_url);
 }
 
 void
 ARDOUR_UI::launch_forums ()
 {
-	PBD::open_uri ("https://community.ardour.org/forums");
+    /* GitHub Discussions is not enabled. Label this option as support,
+     * and use GitHub Issues rather than a nonexistent forum.
+     */
+    open_phaedra_support_url (phaedra_issues_url);
 }
 
 void
 ARDOUR_UI::launch_howto_report ()
 {
-	PBD::open_uri ("https://ardour.org/reporting_bugs");
+    open_phaedra_support_url (phaedra_reporting_url);
 }
-
