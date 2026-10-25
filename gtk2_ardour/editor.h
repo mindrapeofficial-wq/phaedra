@@ -108,6 +108,7 @@ namespace ARDOUR {
 
 class AnalysisWindow;
 namespace GTKArdour { class FFT; }
+namespace Gtk { class Dialog; }
 class AudioClock;
 class AudioRegionView;
 class AudioStreamView;
@@ -605,6 +606,15 @@ private:
 	GTKArdour::FFT*           _lufs_fft = nullptr;
 	float                     _lufs_pitch_hz = 0.f;
 	float                     _lufs_vu_db = -40.f;
+	Gtk::Dialog*              _lufs_detail_dialog = nullptr;
+	Gtk::DrawingArea*         _lufs_detail_canvas = nullptr;
+	Gtk::Label*               _lufs_detail_text = nullptr;
+	int                       _lufs_detail_mode = -1;
+	bool show_lufs_detail (GdkEventButton*, int);
+	bool hide_lufs_detail (GdkEventAny*);
+	void close_lufs_detail (int);
+	bool draw_lufs_detail (GdkEventExpose*);
+	void update_lufs_detail_text ();
 	bool draw_lufs_scope (GdkEventExpose*);
 	bool draw_lufs_correlation (GdkEventExpose*);
 	bool draw_lufs_needle (GdkEventExpose*);
