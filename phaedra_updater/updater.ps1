@@ -1,147 +1,66 @@
-param(
-    [string]$PhaedraDir = (Split-Path -Parent $PSScriptRoot)
-)
-
+param([string]$PhaedraDir, [int]$LauncherPid)
 $ErrorActionPreference = 'Stop'
-
-$configFile = Join-Path $PhaedraDir 'update_config.ini'
 $versionFile = Join-Path $PhaedraDir 'version.txt'
-
-if (-not (Test-Path $configFile)) { exit 0 }
-if (-not (Test-Path $versionFile)) { exit 0 }
-
-$config = @{}
-Get-Content $configFile | ForEach-Object {
-    if ($_ -match '^(\w+)=(.+)$') {
-        $config[$Matches[1]] = $Matches[2].Trim()
-    }
-}
-
-if ($config['check_updates'] -ne 'true') { exit 0 }
-
-$repo = $config['github_repo']
-if (-not $repo) { exit 0 }
-
-$localVersion = (Get-Content $versionFile -TotalCount 1).Trim()
-
+if (-not (Test-Path -LiteralPath $versionFile)) { exit 0 }
+try {
+    $local = [version]((Get-Content -LiteralPath $versionFile -TotalCount 1).Trim().TrimStart('v'))
+    $headers = @{ 'User-Agent' = 'Phaedra-Updater'; 'Accept' = 'application/vnd.github+json' }
+    $release = Invoke-RestMethod -Uri 'https://api.github.com/repos/mindrapeofficial-wq/phaedra/releases/latest' -Headers $headers -TimeoutSec 10
+    $remote = [version]([string]$release.tag_name).TrimStart('v')
+    if ($remote -le $local) { exit 0 }
+    $asset = @($release.assets | Where-Object { $_.name -eq 'Phaedra-Instalador-Windows-x64.exe' }) | Select-Object -First 1
+    if (-not $asset -or $asset.digest -notmatch '^sha256:[a-fA-F0-9]{64}$') { exit 0 }
+} catch { exit 0 }
 Add-Type -AssemblyName System.Windows.Forms
-Add-Type -AssemblyName PresentationFramework
-
-function Show-Toast($msg) {
-    [System.Windows.MessageBox]::Show($msg, 'Phaedra Updater', 'OK', 'Information') | Out-Null
-}
-
-try {
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    $apiUrl = "https://api.github.com/repos/$repo/releases/latest"
-    $headers = @{ 'User-Agent' = 'Phaedra-Updater/1.0' }
-    $response = Invoke-RestMethod -Uri $apiUrl -Headers $headers -TimeoutSec 10
-} catch {
-    exit 0
-}
-
-$remoteVersion = $response.tag_name -replace '^v', ''
-
-function Compare-Versions($local, $remote) {
-    $lParts = $local.Split('.') | ForEach-Object { [int]$_ }
-    $rParts = $remote.Split('.') | ForEach-Object { [int]$_ }
-    for ($i = 0; $i -lt [Math]::Max($lParts.Count, $rParts.Count); $i++) {
-        $l = if ($i -lt $lParts.Count) { $lParts[$i] } else { 0 }
-        $r = if ($i -lt $rParts.Count) { $rParts[$i] } else { 0 }
-        if ($r -gt $l) { return $true }
-        if ($r -lt $l) { return $false }
-    }
-    return $false
-}
-
-if (-not (Compare-Versions $localVersion $remoteVersion)) {
-    exit 0
-}
-
-$result = [System.Windows.MessageBox]::Show(
-    "Hay una nueva version de Phaedra disponible: v$remoteVersion (actual: v$localVersion).`n`nDeseas actualizar ahora?",
+Add-Type -AssemblyName System.Drawing
+$answer = [System.Windows.Forms.MessageBox]::Show(
+    "Phaedra $remote esta disponible (tienes $local).`n`nQuieres descargarla e instalarla ahora?",
     'Phaedra - Actualizacion disponible',
-    'YesNo',
-    'Question'
-)
-
-if ($result -ne 'Yes') { exit 0 }
-
-$asset = $response.assets | Where-Object { $_.name -match '\.zip$' } | Select-Object -First 1
-if (-not $asset) {
-    Show-Toast "No se encontro el archivo de actualizacion en la release."
-    exit 1
-}
-
-$downloadUrl = $asset.browser_download_url
-$tempZip = Join-Path $env:TEMP "phaedra_update_$remoteVersion.zip"
-$tempExtract = Join-Path $env:TEMP "phaedra_update_$remoteVersion"
-
-$progressForm = New-Object System.Windows.Forms.Form
-$progressForm.Text = 'Phaedra - Actualizando...'
-$progressForm.Size = New-Object System.Drawing.Size(420, 150)
-$progressForm.StartPosition = 'CenterScreen'
-$progressForm.FormBorderStyle = 'FixedDialog'
-$progressForm.MaximizeBox = $false
-$progressForm.MinimizeBox = $false
-
+    [System.Windows.Forms.MessageBoxButtons]::YesNo,
+    [System.Windows.Forms.MessageBoxIcon]::Question)
+if ($answer -ne [System.Windows.Forms.DialogResult]::Yes) { exit 0 }
+$stage = Join-Path $env:LOCALAPPDATA 'PhaedraUpdater'
+New-Item -ItemType Directory -Force -Path $stage | Out-Null
+$installer = Join-Path $stage ("Phaedra-$remote-Instalador.exe")
+$form = New-Object System.Windows.Forms.Form
+$form.Text = 'Actualizando Phaedra'
+$form.Size = New-Object System.Drawing.Size(440, 130)
+$form.StartPosition = 'CenterScreen'
+$form.FormBorderStyle = 'FixedDialog'
+$form.MaximizeBox = $false
+$form.MinimizeBox = $false
 $label = New-Object System.Windows.Forms.Label
-$label.Text = "Descargando v$remoteVersion..."
-$label.Location = New-Object System.Drawing.Point(20, 20)
-$label.Size = New-Object System.Drawing.Size(360, 25)
-$progressForm.Controls.Add($label)
-
-$progressBar = New-Object System.Windows.Forms.ProgressBar
-$progressBar.Location = New-Object System.Drawing.Point(20, 55)
-$progressBar.Size = New-Object System.Drawing.Size(360, 30)
-$progressBar.Style = 'Marquee'
-$progressForm.Controls.Add($progressBar)
-
-$progressForm.Show()
-$progressForm.Refresh()
-
+$label.Text = "Descargando Phaedra $remote..."
+$label.AutoSize = $true
+$label.Location = New-Object System.Drawing.Point(18, 16)
+$form.Controls.Add($label)
+$bar = New-Object System.Windows.Forms.ProgressBar
+$bar.Location = New-Object System.Drawing.Point(18, 44)
+$bar.Size = New-Object System.Drawing.Size(390, 22)
+$bar.Style = 'Marquee'
+$form.Controls.Add($bar)
+$form.Show()
+$client = New-Object System.Net.WebClient
+$client.Headers.Add('User-Agent', 'Phaedra-Updater')
 try {
-    Invoke-WebRequest -Uri $downloadUrl -OutFile $tempZip -Headers $headers
-
-    $label.Text = 'Instalando actualizacion...'
-    $progressForm.Refresh()
-
-    if (Test-Path $tempExtract) { Remove-Item $tempExtract -Recurse -Force }
-    Expand-Archive -Path $tempZip -DestinationPath $tempExtract -Force
-
-    $extractedItems = Get-ChildItem $tempExtract
-    $sourceDir = $tempExtract
-    if ($extractedItems.Count -eq 1 -and $extractedItems[0].PSIsContainer) {
-        $sourceDir = $extractedItems[0].FullName
+    $client.DownloadFileAsync([uri]$asset.browser_download_url, $installer)
+    while ($client.IsBusy) {
+        [System.Windows.Forms.Application]::DoEvents()
+        Start-Sleep -Milliseconds 80
     }
-
-    $label.Text = 'Copiando archivos...'
-    $progressForm.Refresh()
-
-    Get-ChildItem $sourceDir | ForEach-Object {
-        $dest = Join-Path $PhaedraDir $_.Name
-        if ($_.PSIsContainer) {
-            Copy-Item $_.FullName $dest -Recurse -Force
-        } else {
-            Copy-Item $_.FullName $dest -Force
-        }
-    }
-
-    Set-Content -Path $versionFile -Value $remoteVersion -Encoding utf8
-
-    $progressForm.Close()
-
-    Remove-Item $tempZip -Force -ErrorAction SilentlyContinue
-    Remove-Item $tempExtract -Recurse -Force -ErrorAction SilentlyContinue
-
-    Show-Toast "Phaedra actualizado a v$remoteVersion. Se reiniciara ahora."
-
-    $bat = Join-Path $PhaedraDir 'Phaedra.bat'
-    Start-Process -FilePath 'cmd.exe' -ArgumentList "/c `"$bat`"" -WorkingDirectory $PhaedraDir
-    exit 0
-
+    if (-not (Test-Path -LiteralPath $installer)) { throw 'La descarga no se completo.' }
+    $expected = ([string]$asset.digest).Substring(7).ToLowerInvariant()
+    $actual = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($actual -ne $expected) { throw 'La verificacion del archivo no coincide.' }
+    $form.Close()
+    $helper = Join-Path $PhaedraDir 'updater\install-update.ps1'
+    $arguments = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "{0}" -Installer "{1}" -PhaedraDir "{2}" -LauncherPid {3}' -f $helper,$installer,$PhaedraDir,$LauncherPid
+    Start-Process -FilePath 'powershell.exe' -ArgumentList $arguments -WindowStyle Hidden | Out-Null
+    exit 2
 } catch {
-    $progressForm.Close()
-    Show-Toast "Error al actualizar: $($_.Exception.Message)"
-    exit 1
+    $form.Close()
+    [System.Windows.Forms.MessageBox]::Show("No se pudo actualizar Phaedra: $($_.Exception.Message)", 'Phaedra', 'OK', 'Error') | Out-Null
+    exit 0
+} finally {
+    $client.Dispose()
 }

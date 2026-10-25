@@ -9,6 +9,7 @@ static int fail(const wchar_t *message) {
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previous, PWSTR args, int show) {
     wchar_t root[MAX_PATH], bin[MAX_PATH], exe[MAX_PATH], data[MAX_PATH];
     wchar_t dlls[MAX_PATH], gtk[MAX_PATH], fonts[MAX_PATH], config[MAX_PATH];
+    wchar_t updater[MAX_PATH], command[MAX_PATH * 3];
     wchar_t *slash, *appdata = NULL, *path = NULL, *oldpath = NULL;
     DWORD appdata_len, path_len;
     STARTUPINFOW startup = {0};
@@ -18,6 +19,24 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previous, PWSTR args, int show
     slash = wcsrchr(root, L'\\');
     if (!slash) return fail(L"No se pudo localizar la carpeta portable.");
     *slash = L'\0';
+    swprintf(updater, MAX_PATH, L"%ls\\updater\\updater.ps1", root);
+    if (GetFileAttributesW(updater) != INVALID_FILE_ATTRIBUTES) {
+        STARTUPINFOW updater_startup = {0};
+        PROCESS_INFORMATION updater_process = {0};
+        DWORD updater_exit = 0;
+        updater_startup.cb = sizeof(updater_startup);
+        swprintf(command, MAX_PATH * 3,
+                 L"powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File \"%ls\" -PhaedraDir \"%ls\" -LauncherPid %lu",
+                 updater, root, (unsigned long)GetCurrentProcessId());
+        if (CreateProcessW(NULL, command, NULL, NULL, FALSE, CREATE_NO_WINDOW,
+                           NULL, root, &updater_startup, &updater_process)) {
+            WaitForSingleObject(updater_process.hProcess, INFINITE);
+            GetExitCodeProcess(updater_process.hProcess, &updater_exit);
+            CloseHandle(updater_process.hThread);
+            CloseHandle(updater_process.hProcess);
+            if (updater_exit == 2) return 0;
+        }
+    }
     swprintf(bin, MAX_PATH, L"%ls\\bin", root);
     swprintf(exe, MAX_PATH, L"%ls\\Phaedra.exe", bin);
     swprintf(data, MAX_PATH, L"%ls\\share\\ardour8", root);

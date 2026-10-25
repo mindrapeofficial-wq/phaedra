@@ -82,10 +82,22 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           cd Phaedra-Portable && zip -r "../Phaedra-v${VERSION}.zip" . && cd ..
 
+      - name: Build Windows installer
+        shell: pwsh
+        run: |
+          choco install innosetup --version=6.7.1 --no-progress -y
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $version = '${{ github.ref_name }}'.TrimStart('v')
+          $iscc = Get-ChildItem -Path ${env:ProgramFiles(x86)} -Filter ISCC.exe -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
+          if (-not $iscc) { throw 'ISCC.exe not found' }
+          & $iscc "/DAppVersion=$version" Phaedra.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Upload Release
         uses: softprops/action-gh-release@v2
         with:
-          files: Phaedra-v*.zip
+          files: |
+            Phaedra-v*.zip
+            Phaedra-Instalador-Windows-x64.exe
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

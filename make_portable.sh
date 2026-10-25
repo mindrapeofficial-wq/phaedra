@@ -134,9 +134,10 @@ gcc -municode -mwindows tools/phaedra_launcher.c build/phaedra_launcher.res -o "
 
 echo "--- Setting up auto-updater..."
 mkdir -p "$DESTDIR/updater"
-cp phaedra_updater/updater.ps1 "$DESTDIR/updater/"
+cp phaedra_updater/updater.ps1 phaedra_updater/install-update.ps1 "$DESTDIR/updater/"
 cp phaedra_updater/version.txt "$DESTDIR/"
 cp phaedra_updater/update_config.ini "$DESTDIR/"
+cp COPYING "$DESTDIR/"
 
 cat > "$DESTDIR/Phaedra.bat" << 'ENDOFBAT'
 @echo off
@@ -148,11 +149,7 @@ set ARDOUR_DLL_PATH=%PHAEDRA_DIR%lib\ardour8
 set GTK_PATH=%PHAEDRA_DIR%lib
 set FONTCONFIG_FILE=%PHAEDRA_DIR%etc\fonts\fonts.conf
 
-if exist "%PHAEDRA_DIR%updater\updater.ps1" (
-    powershell -ExecutionPolicy Bypass -NoProfile -File "%PHAEDRA_DIR%updater\updater.ps1" -PhaedraDir "%PHAEDRA_DIR%"
-)
-
-start "" "%PHAEDRA_DIR%bin\Phaedra.exe"
+start "" "%PHAEDRA_DIR%Phaedra.exe"
 ENDOFBAT
 
 echo ""
