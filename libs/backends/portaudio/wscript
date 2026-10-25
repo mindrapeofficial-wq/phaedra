@@ -29,7 +29,9 @@ def build_portaudio (bld, name, defines):
     obj.uselib   = 'PORTAUDIO GLIBMM XML'
     if bld.env['build_target'] == 'mingw' and sys.platform == "win32":
         obj.stlib = ['portaudio']
-        obj.lib = ['ole32', 'setupapi', 'uuid', 'winmm', 'ksuser', 'jack64']
+        # JACK is optional and not part of the Windows PortAudio runtime contract.
+        # MSYS2 UCRT64 PortAudio does not provide libjack64.a by default.
+        obj.lib = ['ole32', 'setupapi', 'uuid', 'winmm', 'ksuser']
     obj.install_path  = os.path.join(bld.env['LIBDIR'], 'backends')
     obj.defines = ['PACKAGE="' + I18N_PACKAGE + '"',
                    'ARDOURBACKEND_DLL_EXPORTS',
