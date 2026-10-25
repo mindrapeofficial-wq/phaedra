@@ -13,7 +13,7 @@ newer-looking UI. No auto-migration of existing session plugin IDs.
 | Current script / name | Role | Equivalent or stronger free approach | Migration |
 | --- | --- | --- | --- |
 | `HiAndLowPass.lua` / ACE High/Low Pass Filter | HP/LP audio filters | ZamEQ2 (EQ), or a purpose-built HP/LP with same frequencies and slopes | Manual test needed |
-| `a-noise.lua` / ACE Noise | white/pink noise generator | ZamNoise (part of verified ZamAudio 4.5) | New-project candidate |
+| `a-noise.lua` / ACE Noise | white/pink noise generator | Keep ACE Noise or add a genuinely equivalent white/pink noise generator; ZamNoise is a **noise reduction** processor, not a generator | Preserve |
 | `a_dtmf_phone.lua` / ACE DTMF Phone | DTMF telephone tone generator | Keep until a tested, functionally equivalent DTMF generator is found | Preserve |
 | `a_mute.lua` / ACE Mute | automatable audio mute | Native Phaedra track mute/automation | Keep for historical plugin automation |
 | `a_slow_mute.lua` / ACE Slow-Mute | audio fade mute | Native gain automation; dedicated smoother preferable | Preserve |
@@ -44,7 +44,7 @@ deletion. Other Lua file types are editor actions/hooks, not DSP plugins.
 ## Actual scope of PR #8
 
 - The seven **active LV2 modules** have modern free candidates in a verified
-  installer. ZamAudio's ZamNoise also provides a direct option for ACE Noise.
+  installer. ZamAudio's ZamNoise performs **noise reduction**; it is **not** a functional replacement for ACE Noise. The generator must remain until a suitable alternative is verified.
 - Existing ACE LV2 IDs remain available so old tracks and automation load.
 - The other Lua processors in the table are **not automatically swapped**, due
   to differences in parameter semantics, realtime events, inline visualization,
