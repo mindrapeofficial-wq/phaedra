@@ -1,6 +1,6 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { neon } from '@neondatabase/serverless';
-import { validToken } from '../lib/validation.mjs';
+import { validToken } from './validation.mjs';
 
 export function sqlClient() {
   if (!process.env.DATABASE_URL) throw new Error('CHAT_DATABASE_UNCONFIGURED');
