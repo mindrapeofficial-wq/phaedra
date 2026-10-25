@@ -90,6 +90,8 @@ PeakMeter::enable_lufs ()
 {
 	/* Called while the route is being constructed, before realtime processing. */
 	_lufs_meter.reset (new LUFSMeter (_session.nominal_sample_rate (), 2));
+	_lufs_vu_left.reset (new Vumeterdsp);
+	_lufs_vu_right.reset (new Vumeterdsp);
 	_stereo_preview.reset (new StereoMeterPreview);
 }
 
@@ -159,6 +161,10 @@ PeakMeter::run (BufferSet& bufs, samplepos_t /*start_sample*/, samplepos_t /*end
 		}
 		_stereo_preview->written.store (start + nframes, std::memory_order_release);
 		_lufs_meter->run (audio, nframes);
+		_lufs_vu_left->process (audio[0], nframes);
+		_lufs_vu_right->process (audio[1], nframes);
+		const float vu_amplitude = 0.5f * (_lufs_vu_left->read () + _lufs_vu_right->read ());
+		_lufs_vu.store (accurate_coefficient_to_dB (std::max (vu_amplitude, 1e-9f)) + 18.f, std::memory_order_relaxed);
 		_lufs_momentary.store (_lufs_meter->momentary (), std::memory_order_relaxed);
 		_lufs_short_term.store (_lufs_meter->short_term (), std::memory_order_relaxed);
 		_lufs_integrated.store (_lufs_meter->integrated_loudness (), std::memory_order_relaxed);

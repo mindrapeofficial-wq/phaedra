@@ -663,7 +663,7 @@ Editor::Editor ()
 	_lufs_strip_box.set_spacing (6);
 	_lufs_strip_box.set_border_width (4);
 	_lufs_scope.set_size_request (72, 68);
-	_lufs_correlation.set_size_request (32, 68);
+	_lufs_correlation.set_size_request (56, 68);
 	_lufs_needle.set_size_request (130, 68);
 	_lufs_bars.set_size_request (60, 68);
 	_lufs_spectrogram.set_size_request (360, 68);
@@ -923,12 +923,7 @@ Editor::update_lufs_strip ()
 		_lufs_preview_left.fill (0.f);
 		_lufs_preview_right.fill (0.f);
 	}
-	double squared = 0.0;
-	for (size_t i = 0; i < _lufs_preview_left.size (); ++i) {
-		squared += 0.5 * (_lufs_preview_left[i] * _lufs_preview_left[i] + _lufs_preview_right[i] * _lufs_preview_right[i]);
-	}
-	const float vu_target = 20.f * std::log10 (std::sqrt (squared / _lufs_preview_left.size ()) + 1e-9) + 18.f;
-	_lufs_vu_db += 0.28f * (vu_target - _lufs_vu_db);
+	_lufs_vu_db = meter ? meter->lufs_vu () : -40.f;
 	for (size_t x = 1; x < _lufs_spectrum_history.size (); ++x) {
 		_lufs_spectrum_history[x - 1] = _lufs_spectrum_history[x];
 	}
@@ -1041,6 +1036,11 @@ Editor::draw_lufs_correlation (GdkEventExpose*)
 	cairo_move_to (cr, 1, 11); cairo_show_text (cr, "+1");
 	cairo_move_to (cr, 9, 36); cairo_show_text (cr, "0");
 	cairo_move_to (cr, 1, 64); cairo_show_text (cr, "-1");
+	char correlation_text[16];
+	snprintf (correlation_text, sizeof (correlation_text), "%+.1f", correlation);
+	cairo_set_source_rgb (cr, 0.88, 0.72, 1.0);
+	cairo_set_font_size (cr, 8);
+	cairo_move_to (cr, 30, 36); cairo_show_text (cr, correlation_text);
 	cairo_destroy (cr);
 	return true;
 }
@@ -1071,6 +1071,10 @@ Editor::draw_lufs_needle (GdkEventExpose*)
 	cairo_move_to (cr, 4, 19); cairo_show_text (cr, "-20");
 	cairo_move_to (cr, 52, 8); cairo_show_text (cr, "VU");
 	cairo_move_to (cr, 106, 19); cairo_show_text (cr, "+3");
+	char vu_text[16];
+	snprintf (vu_text, sizeof (vu_text), "%+.1f", _lufs_vu_db);
+	cairo_set_source_rgb (cr, 0.95, 0.75, 0.53);
+	cairo_move_to (cr, 95, 63); cairo_show_text (cr, vu_text);
 	cairo_destroy (cr);
 	return true;
 }

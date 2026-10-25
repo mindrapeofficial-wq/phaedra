@@ -91,6 +91,7 @@ public:
 	float lufs_short_term () const { return _lufs_short_term.load (); }
 	float lufs_integrated () const { return _lufs_integrated.load (); }
 	float lufs_true_peak () const { return _lufs_true_peak.load (); }
+	float lufs_vu () const { return _lufs_vu.load (); }
 	void stereo_snapshot (float* left, float* right, size_t count) const;
 
 	void      set_meter_type (MeterType t);
@@ -129,6 +130,9 @@ private:
 	std::atomic<float> _lufs_short_term {-200.f};
 	std::atomic<float> _lufs_integrated {-200.f};
 	std::atomic<float> _lufs_true_peak {-200.f};
+	std::unique_ptr<Vumeterdsp> _lufs_vu_left;
+	std::unique_ptr<Vumeterdsp> _lufs_vu_right;
+	std::atomic<float> _lufs_vu {-40.f};
 	std::unique_ptr<StereoMeterPreview> _stereo_preview;
 
 	MeterType _meter_type;
