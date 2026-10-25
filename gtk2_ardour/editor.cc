@@ -952,7 +952,7 @@ Editor::update_lufs_strip ()
 	for (size_t band = 0; band < _lufs_spectrum_levels.size (); ++band) {
 		const double low = 30.0 * std::pow (20000.0 / 30.0, double (band) / 64.0);
 		const double high = 30.0 * std::pow (20000.0 / 30.0, double (band + 1) / 64.0);
-		const size_t first = std::max<size_t> (1, size_t (low * 4096.0 / sample_rate));
+		const size_t first = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (1, size_t (low * 4096.0 / sample_rate)));
 		const size_t last = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (first, size_t (high * 4096.0 / sample_rate)));
 		float power = 0.f;
 		for (size_t b = first; b <= last; ++b) power = std::max (power, _lufs_fft->power_at_bin (b));
