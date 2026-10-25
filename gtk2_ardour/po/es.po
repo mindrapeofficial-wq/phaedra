@@ -3747,7 +3747,7 @@ msgstr "añadir punto de control ganancia"
 
 #: audio_trigger_properties_box.cc:74
 msgid "Stretch"
-msgstr ""
+msgstr "Estirar"
 
 #: audio_trigger_properties_box.cc:78
 msgid "BPM:"
@@ -26032,3 +26032,18 @@ msgstr "Introduce un valor de BPM entre 1 y 999."
 #: main_clock.cc
 msgid "Enter a time signature such as 4/4."
 msgstr "Introduce un compás como 4/4."
+
+msgid "Check for Updates"
+msgstr "Buscar actualizaciones"
+
+msgid "Smart / Select"
+msgstr "Inteligente / Seleccionar"
+
+msgid "Draw"
+msgstr "Dibujar"
+
+msgid "The Phaedra updater is not installed."
+msgstr "El actualizador de Phaedra no está instalado."
+
+msgid "Content"
+msgstr "Contenido"

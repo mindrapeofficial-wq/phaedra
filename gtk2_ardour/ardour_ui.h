@@ -202,6 +202,7 @@ public:
 
 	void launch_chat ();
 	void launch_tutorial ();
+	void check_for_updates ();
 	void launch_reference ();
 	void launch_tracker ();
 	void launch_subscribe ();

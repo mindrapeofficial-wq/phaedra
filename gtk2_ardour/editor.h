@@ -1762,10 +1762,12 @@ private:
 	Gtk::Table               toolbar_selection_clock_table;
 	Gtk::Label               toolbar_selection_cursor_label;
 
+	ArdourWidgets::ArdourDropdown tool_selector;
 	ArdourWidgets::ArdourButton smart_mode_button;
 	Glib::RefPtr<Gtk::ToggleAction> smart_mode_action;
 
 	void                     mouse_mode_chosen (Editing::MouseMode m);
+	void                     select_tool (int mode);
 	void			 mouse_mode_object_range_toggled ();
 	bool                     ignore_mouse_mode_toggle;
 
