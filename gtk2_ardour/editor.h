@@ -624,13 +624,9 @@ private:
 	bool draw_lufs_oscilloscope (GdkEventExpose*);
 	bool draw_lufs_spectrum (GdkEventExpose*);
 	Gtk::Label                _lufs_m_label;
-	Gtk::Label                _lufs_s_label;
-	Gtk::Label                _lufs_i_label;
-	Gtk::Label                _lufs_tp_label;
-	Gtk::Button               _lufs_reset_button;
+	Gtk::EventBox             _lufs_number_click;
 	sigc::connection          _lufs_strip_timer;
 	bool                      update_lufs_strip ();
-	void                      reset_lufs_strip ();
 	Gtk::Notebook             _the_notebook;
 	ArdourWidgets::MetaButton _notebook_tab1;
 	ArdourWidgets::MetaButton _notebook_tab2;

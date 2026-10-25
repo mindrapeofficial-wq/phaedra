@@ -837,6 +837,12 @@ ApplicationBar::move_to_editor_toolbar (Gtk::Box& left, Gtk::Box& center, Gtk::B
 {
 	/* Keep the existing controls and their action bindings while moving them
 	 * out of the two-row transport table. The clock gets its own center cell. */
+	/* The old global size group was sized for the tall two-row transport.
+	 * Let the editor's single-row controls use their compact natural height. */
+	Glib::RefPtr<SizeGroup> button_heights = ARDOUR_UI::instance()->button_height_size_group;
+	button_heights->remove_widget (_transport_ctrl.size_button ());
+	button_heights->remove_widget (*_primary_clock.left_btn ());
+	button_heights->remove_widget (*_primary_clock.right_btn ());
 	_table.remove (_transport_ctrl);
 	left.pack_start (_transport_ctrl, false, false);
 	_table.remove (_transport_hbox);

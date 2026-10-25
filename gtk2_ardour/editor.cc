@@ -665,7 +665,7 @@ Editor::Editor ()
 	_lufs_scope.set_size_request (72, 68);
 	_lufs_correlation.set_size_request (32, 68);
 	_lufs_needle.set_size_request (130, 68);
-	_lufs_bars.set_size_request (100, 68);
+	_lufs_bars.set_size_request (60, 68);
 	_lufs_spectrogram.set_size_request (360, 68);
 	_lufs_waveform.set_size_request (190, 68);
 	_lufs_oscilloscope.set_size_request (190, 68);
@@ -679,7 +679,7 @@ Editor::Editor ()
 	_lufs_oscilloscope.signal_expose_event ().connect (sigc::mem_fun (*this, &Editor::draw_lufs_oscilloscope));
 	_lufs_spectrum.signal_expose_event ().connect (sigc::mem_fun (*this, &Editor::draw_lufs_spectrum));
 	Gtk::DrawingArea* detail_sources[8] = { &_lufs_spectrogram, &_lufs_waveform, &_lufs_scope, &_lufs_correlation, &_lufs_needle, &_lufs_oscilloscope, &_lufs_spectrum, &_lufs_bars };
-	const char* detail_tips[8] = { "Spectrogram", "Stereo waveform", "Stereo vectorscope", "Phase correlation", "VU meter", "Oscilloscope", "Frequency spectrum", "Loudness and true peak" };
+	const char* detail_tips[8] = { "Espectrograma", "Forma de onda estéreo", "Vectorscopio estéreo", "Correlación de fase", "Medidor VU", "Osciloscopio", "Espectro de frecuencias", "Sonoridad y pico real" };
 	for (int i = 0; i < 8; ++i) {
 		detail_sources[i]->add_events (Gdk::BUTTON_PRESS_MASK);
 		detail_sources[i]->set_tooltip_text (_(detail_tips[i]));
@@ -694,11 +694,11 @@ Editor::Editor ()
 	_lufs_strip_box.pack_start (_lufs_spectrum, false, false);
 	_lufs_strip_box.pack_start (_lufs_bars, false, false);
 	_lufs_m_label.set_size_request (90, -1);
-	_lufs_m_label.set_tooltip_text (_("Momentary loudness (400 ms)"));
-	_lufs_strip_box.pack_start (_lufs_m_label, false, false);
-	_lufs_reset_button.set_label (_("Reset"));
-	_lufs_reset_button.set_size_request (64, 28);
-	_lufs_reset_button.signal_clicked ().connect (sigc::mem_fun (*this, &Editor::reset_lufs_strip));
+	_lufs_m_label.set_tooltip_text (_("Sonoridad momentánea (400 ms)"));
+	_lufs_number_click.add (_lufs_m_label);
+	_lufs_number_click.add_events (Gdk::BUTTON_PRESS_MASK);
+	_lufs_number_click.signal_button_press_event ().connect (sigc::bind (sigc::mem_fun (*this, &Editor::show_lufs_detail), 7));
+	_lufs_strip_box.pack_start (_lufs_number_click, false, false);
 	_lufs_strip_alignment.add (_lufs_strip_box);
 	_lufs_strip_background.add (_lufs_strip_alignment);
 	content_top_bar.add (_lufs_strip_background);
@@ -917,7 +917,6 @@ Editor::update_lufs_strip ()
 	if (_session && _session->master_out ()) {
 		meter = _session->master_out ()->shared_peak_meter ();
 	}
-	_lufs_reset_button.set_sensitive (bool (meter));
 	if (meter && meter->lufs_momentary () > -180.f) {
 		meter->stereo_snapshot (_lufs_preview_left.data (), _lufs_preview_right.data (), _lufs_preview_left.size ());
 	} else {
@@ -1083,20 +1082,17 @@ Editor::draw_lufs_bars (GdkEventExpose*)
 	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
 	std::shared_ptr<PeakMeter> meter;
 	if (_session && _session->master_out ()) meter = _session->master_out ()->shared_peak_meter ();
-	const double values[3] = { meter ? meter->lufs_momentary () : -60.0, meter ? meter->lufs_short_term () : -60.0, meter ? meter->lufs_integrated () : -60.0 };
+	const double value = meter ? meter->lufs_momentary () : -60.0;
 	cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_set_font_size (cr, 9);
-	for (int i = 0; i < 3; ++i) {
-		const double height = std::max (0.0, std::min (52.0, (values[i] + 60.0) * 52.0 / 60.0));
-		const double x = 12.0 + i * 29.0;
-		cairo_set_source_rgb (cr, 0.20, 0.18, 0.30);
-		cairo_rectangle (cr, x, 3, 13, 52); cairo_fill (cr);
-		cairo_set_source_rgb (cr, 0.72, 0.46, 0.98);
-		cairo_rectangle (cr, x, 55 - height, 13, height); cairo_fill (cr);
-		cairo_set_source_rgb (cr, 0.75, 0.70, 0.86);
-		cairo_move_to (cr, x + 3, 66);
-		cairo_show_text (cr, i == 0 ? "M" : i == 1 ? "S" : "I");
-	}
+	const double height = std::max (0.0, std::min (52.0, (value + 60.0) * 52.0 / 60.0));
+	cairo_set_source_rgb (cr, 0.20, 0.18, 0.30);
+	cairo_rectangle (cr, 23, 3, 14, 52); cairo_fill (cr);
+	cairo_set_source_rgb (cr, 0.72, 0.46, 0.98);
+	cairo_rectangle (cr, 23, 55 - height, 14, height); cairo_fill (cr);
+	cairo_set_source_rgb (cr, 0.75, 0.70, 0.86);
+	cairo_move_to (cr, 26, 66);
+	cairo_show_text (cr, "M");
 	cairo_destroy (cr);
 	return true;
 }
@@ -1234,16 +1230,12 @@ Editor::show_lufs_detail (GdkEventButton* event, int mode)
 		_lufs_detail_dialog->get_vbox ()->set_border_width (12);
 		_lufs_detail_dialog->get_vbox ()->pack_start (*_lufs_detail_canvas, true, true);
 		_lufs_detail_dialog->get_vbox ()->pack_start (*_lufs_detail_text, false, false);
-		_lufs_reset_button.set_no_show_all (true);
-		_lufs_detail_dialog->get_vbox ()->pack_start (_lufs_reset_button, false, false);
-		_lufs_detail_dialog->add_button (_("Close"), Gtk::RESPONSE_CLOSE);
+		_lufs_detail_dialog->add_button (_("Cerrar"), Gtk::RESPONSE_CLOSE);
 	}
-	const char* names[8] = { "Spectrogram", "Stereo waveform", "Stereo vectorscope", "Phase correlation", "VU meter", "Oscilloscope", "Frequency spectrum", "LUFS" };
+	const char* names[8] = { "Espectrograma", "Forma de onda estéreo", "Vectorscopio", "Correlación", "VU", "Osciloscopio", "Espectro", "LUFS" };
 	_lufs_detail_dialog->set_title (std::string ("Phaedra — ") + names[mode]);
 	update_lufs_detail_text ();
 	_lufs_detail_dialog->show_all ();
-	if (mode != 7) _lufs_reset_button.hide ();
-	else _lufs_reset_button.show ();
 	_lufs_detail_dialog->present ();
 	_lufs_detail_canvas->queue_draw ();
 	return true;
@@ -1289,7 +1281,12 @@ Editor::update_lufs_detail_text ()
 	case 4: snprintf (detail, sizeof (detail), "Nivel VU %+.1f · calibración: −18 dBFS RMS = 0 VU", _lufs_vu_db); break;
 	case 5: snprintf (detail, sizeof (detail), "Osciloscopio L/R · pico L %.1f dBFS · pico R %.1f dBFS", 20.0 * std::log10 (peak_left + 1e-9), 20.0 * std::log10 (peak_right + 1e-9)); break;
 	case 6: snprintf (detail, sizeof (detail), "Espectro · FFT 4096 · frecuencia dominante %.0f Hz", _lufs_pitch_hz); break;
-	default: snprintf (detail, sizeof (detail), "LUFS M %.1f · S %.1f · I %.1f · True Peak %.1f dBTP", meter ? meter->lufs_momentary () : -200.f, meter ? meter->lufs_short_term () : -200.f, meter ? meter->lufs_integrated () : -200.f, meter ? meter->lufs_true_peak () : -200.f); break;
+	default: {
+		const float value = meter ? meter->lufs_momentary () : -200.f;
+		if (std::isfinite (value) && value > -180.f) snprintf (detail, sizeof (detail), "LUFS momentáneo (M): %.1f · ventana de 400 ms", value);
+		else snprintf (detail, sizeof (detail), "LUFS momentáneo (M): --.- · ventana de 400 ms");
+		break;
+	}
 	}
 	_lufs_detail_text->set_text (detail);
 }
@@ -1387,29 +1384,22 @@ Editor::draw_lufs_detail (GdkEventExpose*)
 	} else if (_lufs_detail_mode == 7) {
 		std::shared_ptr<PeakMeter> meter;
 		if (_session && _session->master_out ()) meter = _session->master_out ()->shared_peak_meter ();
-		const float values[4] = { meter ? meter->lufs_momentary () : -200.f, meter ? meter->lufs_short_term () : -200.f, meter ? meter->lufs_integrated () : -200.f, meter ? meter->lufs_true_peak () : -200.f };
-		const char* names[4] = { "Momentary", "Short Term", "Integrated", "True Peak" };
-		for (int i = 0; i < 4; ++i) {
-			const double level = std::max (0.0, std::min (1.0, (values[i] + (i == 3 ? 20.0 : 60.0)) / (i == 3 ? 24.0 : 60.0)));
-			const double x = 70 + i * (w - 140) / 4.0;
-			cairo_set_source_rgb (cr, 0.19, 0.16, 0.29); cairo_rectangle (cr, x, 20, 66, h - 70); cairo_fill (cr);
-			cairo_set_source_rgb (cr, i == 3 ? 0.97 : 0.72, i == 3 ? 0.44 : 0.46, i == 3 ? 0.33 : 0.98);
-			cairo_rectangle (cr, x, h - 50 - level * (h - 70), 66, level * (h - 70)); cairo_fill (cr);
-			cairo_set_source_rgb (cr, 0.78, 0.73, 0.88); cairo_set_font_size (cr, 13);
-			cairo_move_to (cr, x - 7, h - 26); cairo_show_text (cr, names[i]);
+		const float value = meter ? meter->lufs_momentary () : -200.f;
+		const double level = std::max (0.0, std::min (1.0, (value + 60.0) / 60.0));
+		const double x = w * 0.46, width = w * 0.08;
+		cairo_set_source_rgb (cr, 0.19, 0.16, 0.29); cairo_rectangle (cr, x, 20, width, h - 55); cairo_fill (cr);
+		cairo_set_source_rgb (cr, 0.72, 0.46, 0.98);
+		cairo_rectangle (cr, x, h - 35 - level * (h - 55), width, level * (h - 55)); cairo_fill (cr);
+		cairo_set_source_rgb (cr, 0.78, 0.73, 0.88); cairo_set_font_size (cr, 13);
+		for (int i = 0; i <= 5; ++i) {
+			const double y = h - 35 - i * (h - 55) / 5.0;
+			char tick[16]; snprintf (tick, sizeof (tick), "%d", -60 + i * 12);
+			cairo_move_to (cr, x - 43, y + 4); cairo_show_text (cr, tick);
+			cairo_move_to (cr, x - 7, y); cairo_line_to (cr, x + width + 7, y); cairo_stroke (cr);
 		}
 	}
 	cairo_destroy (cr);
 	return true;
-}
-
-void
-Editor::reset_lufs_strip ()
-{
-	if (_session && _session->master_out ()) {
-		_session->master_out ()->shared_peak_meter ()->reset_lufs ();
-		update_lufs_strip ();
-	}
 }
 
 Gtk::Table*
