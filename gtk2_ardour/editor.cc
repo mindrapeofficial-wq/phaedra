@@ -682,7 +682,7 @@ Editor::Editor ()
 	const char* detail_tips[8] = { "Espectrograma", "Forma de onda estéreo", "Vectorscopio estéreo", "Correlación de fase", "Medidor VU", "Osciloscopio", "Espectro de frecuencias", "Sonoridad y pico real" };
 	for (int i = 0; i < 8; ++i) {
 		detail_sources[i]->add_events (Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
-		detail_sources[i]->set_tooltip_text (_(detail_tips[i]));
+		detail_sources[i]->set_tooltip_text (std::string (_(detail_tips[i])) + _(" · mantener pulsado para ampliar"));
 		detail_sources[i]->signal_button_press_event ().connect (sigc::bind (sigc::mem_fun (*this, &Editor::show_lufs_detail), i));
 		detail_sources[i]->signal_button_release_event ().connect ([this] (GdkEventButton*) { return hide_lufs_detail (nullptr); });
 	}
@@ -699,6 +699,8 @@ Editor::Editor ()
 	telemetry_body->pack_start (_lufs_strip_alignment, false, false);
 	_lufs_detail_canvas = manage (new Gtk::DrawingArea);
 	_lufs_detail_canvas->set_size_request (-1, 230);
+	_lufs_detail_canvas->add_events (Gdk::BUTTON_RELEASE_MASK);
+	_lufs_detail_canvas->signal_button_release_event ().connect ([this] (GdkEventButton*) { return hide_lufs_detail (nullptr); });
 	_lufs_detail_canvas->signal_expose_event ().connect (sigc::mem_fun (*this, &Editor::draw_lufs_detail));
 	_lufs_detail_text = manage (new Gtk::Label);
 	_lufs_detail_text->set_alignment (0.5, 0.5);
@@ -707,6 +709,8 @@ Editor::Editor ()
 	telemetry_body->pack_start (*_lufs_detail_canvas, false, false);
 	telemetry_body->pack_start (*_lufs_detail_text, false, false);
 	_lufs_strip_background.add (*telemetry_body);
+	_lufs_strip_background.add_events (Gdk::BUTTON_RELEASE_MASK);
+	_lufs_strip_background.signal_button_release_event ().connect ([this] (GdkEventButton*) { return hide_lufs_detail (nullptr); });
 	content_top_bar.add (_lufs_strip_background);
 	content_top_bar.show ();
 	_lufs_strip_background.show_all ();
