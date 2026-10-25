@@ -59,6 +59,11 @@ class PhaedraHelpMenuTests(unittest.TestCase):
         self.assertIn('Paul Davis and contributors', self.about)
         self.assertIn('set_license (gpl)', self.about)
 
+    def test_windows_link_opening_reports_real_failure(self):
+        source = (ROOT / "libs/pbd/openuri.cc").read_text(encoding="utf-8")
+        self.assertIn('HINSTANCE result = ShellExecuteW', source)
+        self.assertIn('return reinterpret_cast<INT_PTR> (result) > 32;', source)
+
 
 if __name__ == "__main__":
     unittest.main()
