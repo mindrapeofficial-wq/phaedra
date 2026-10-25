@@ -26,7 +26,6 @@ WizardSmallImageBackColor=#1D1930
 WizardSmallImageFile={#PortableRoot}\share\ardour8\resources\Phaedra-icon_256px.png
 SetupIconFile={#PortableRoot}\share\ardour8\icons\Phaedra.ico
 UninstallDisplayIcon={app}\Phaedra.exe
-LicenseFile={#PortableRoot}\COPYING
 OutputDir=.
 OutputBaseFilename=Phaedra-Instalador-Windows-x64
 Compression=lzma2
