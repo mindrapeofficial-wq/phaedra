@@ -5292,7 +5292,7 @@ msgstr "Tempo"
 
 #: editor.cc:422 editor_actions.cc:594
 msgid "Time Signature"
-msgstr ""
+msgstr "Compás"
 
 #: editor.cc:425 editor_actions.cc:596
 msgid "Range Markers"
@@ -26020,3 +26020,15 @@ msgstr ""
 "¿Guardar la sesión temporal \"%1\" antes de salir?\n"
 "\n"
 "Si no guardas, esta sesión temporal se eliminará."
+
+#: main_clock.cc
+msgid "Tempo (BPM)"
+msgstr "Tempo (BPM)"
+
+#: main_clock.cc
+msgid "Enter a BPM value between 1 and 999."
+msgstr "Introduce un valor de BPM entre 1 y 999."
+
+#: main_clock.cc
+msgid "Enter a time signature such as 4/4."
+msgstr "Introduce un compás como 4/4."

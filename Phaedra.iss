@@ -1,6 +1,6 @@
 #define AppName "Phaedra"
 #ifndef AppVersion
-#define AppVersion "1.0.4"
+#define AppVersion "1.0.5"
 #endif
 #ifndef PortableRoot
 #define PortableRoot "Phaedra-Portable"

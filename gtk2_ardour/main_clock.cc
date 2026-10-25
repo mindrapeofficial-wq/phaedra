@@ -35,7 +35,12 @@
 #include "ardour_ui.h"
 
 #include <ytkmm/entry.h>
+#include <ytkmm/dialog.h>
+#include <ytkmm/label.h>
+#include <ytkmm/stock.h>
 #include <ytkmm/window.h>
+
+#include <algorithm>
 
 #include "pbd/i18n.h"
 
@@ -72,6 +77,14 @@ MainClock::set_session (ARDOUR::Session *s)
 	AudioClock::set_session (s);
 	_left_btn.signal_button_press_event().connect (sigc::mem_fun (*this, &MainClock::on_tempo_btn_press), false);
 	_right_btn.signal_button_press_event().connect (sigc::mem_fun (*this, &MainClock::on_meter_btn_press), false);
+	if (s && mode () == BBT) {
+		_left_btn.set_sensitive (true);
+		_right_btn.set_sensitive (true);
+		_left_btn.set_elements (ArdourWidgets::ArdourButton::Element (ArdourWidgets::ArdourButton::Edge | ArdourWidgets::ArdourButton::Body | ArdourWidgets::ArdourButton::Text));
+		_right_btn.set_elements (ArdourWidgets::ArdourButton::Element (ArdourWidgets::ArdourButton::Edge | ArdourWidgets::ArdourButton::Body | ArdourWidgets::ArdourButton::Text));
+		_left_btn.set_alignment (.5, .5);
+		_right_btn.set_alignment (.5, .5);
+	}
 }
 
 void
@@ -251,7 +264,7 @@ MainClock::on_meter_btn_press (GdkEventButton* ev)
 }
 
 void
-MainClock::show_inline_edit (ArdourWidgets::ArdourButton& btn, bool is_tempo)
+MainClock::show_inline_edit (ArdourWidgets::ArdourButton&, bool is_tempo)
 {
 	Gtk::Window* toplevel = dynamic_cast<Gtk::Window*> (get_toplevel ());
 	if (!toplevel) return;
@@ -260,8 +273,9 @@ MainClock::show_inline_edit (ArdourWidgets::ArdourButton& btn, bool is_tempo)
 	timepos_t pos (timepos_t (_session->transport_sample ()));
 	Temporal::TempoMetric m (tmap->metric_at (pos));
 
-	Gtk::Window popup (Gtk::WINDOW_POPUP);
+	Gtk::Dialog dialog (is_tempo ? _("Tempo (BPM)") : _("Time Signature"), *toplevel, true);
 	Gtk::Entry entry;
+	Gtk::Label error;
 
 	if (is_tempo) {
 		char buf[32];
@@ -274,47 +288,43 @@ MainClock::show_inline_edit (ArdourWidgets::ArdourButton& btn, bool is_tempo)
 	}
 
 	entry.set_width_chars (8);
+	entry.set_activates_default (true);
 	entry.select_region (0, -1);
-	popup.add (entry);
-	popup.set_decorated (false);
-	popup.set_transient_for (*toplevel);
-
-	int x, y;
-	btn.get_window()->get_origin (x, y);
-	popup.move (x, y);
-	popup.set_size_request (btn.get_width(), btn.get_height());
-	popup.show_all ();
+	dialog.get_vbox()->pack_start (entry, false, false, 8);
+	dialog.get_vbox()->pack_start (error, false, false, 8);
+	dialog.add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+	dialog.add_button (Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
+	dialog.set_default_response (Gtk::RESPONSE_OK);
+	dialog.set_position (Gtk::WIN_POS_CENTER_ON_PARENT);
+	dialog.show_all ();
 	entry.grab_focus ();
 
-	bool done = false;
-	bool accepted = false;
-
-	entry.signal_activate().connect ([&]() { accepted = true; done = true; Gtk::Main::quit(); });
-	entry.signal_key_press_event().connect ([&](GdkEventKey* ev) -> bool {
-		if (ev->keyval == GDK_Escape) { done = true; Gtk::Main::quit(); return true; }
-		return false;
-	}, false);
-	entry.signal_focus_out_event().connect ([&](GdkEventFocus*) -> bool { done = true; Gtk::Main::quit(); return false; });
-
-	Gtk::Main::run ();
-
-	if (accepted) {
+	while (dialog.run () == Gtk::RESPONSE_OK) {
 		std::string txt = entry.get_text ();
 		if (is_tempo) {
-			double bpm = atof (txt.c_str());
-			if (bpm > 0 && bpm < 1000) {
+			std::replace (txt.begin (), txt.end (), ',', '.');
+			double bpm = 0;
+			char extra = 0;
+			if (sscanf (txt.c_str (), "%lf %c", &bpm, &extra) == 1 && bpm > 0 && bpm < 1000) {
 				Temporal::Tempo new_tempo (bpm, m.tempo().note_type());
 				TempoMapChange edit (PublicEditor::instance (), _("edit tempo"));
 				edit.map ().change_tempo (edit.map ().metric_at (pos).get_editable_tempo (), new_tempo);
+				break;
 			}
 		} else {
 			int num = 0, den = 0;
-			if (sscanf (txt.c_str(), "%d/%d", &num, &den) == 2 && num > 0 && den > 0) {
+			char extra = 0;
+			if (sscanf (txt.c_str(), "%d/%d %c", &num, &den, &extra) == 2 && num > 0 && den > 0 && (den & (den - 1)) == 0) {
 				Temporal::Meter new_meter (num, den);
 				TempoMapChange edit (PublicEditor::instance (), _("edit time signature"));
 				edit.map ().set_meter (new_meter, pos);
+				break;
 			}
 		}
+		error.set_text (is_tempo ? _("Enter a BPM value between 1 and 999.") : _("Enter a time signature such as 4/4."));
+		error.show ();
+		entry.grab_focus ();
+		entry.select_region (0, -1);
 	}
 }
 
