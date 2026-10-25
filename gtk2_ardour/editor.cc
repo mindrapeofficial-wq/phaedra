@@ -665,7 +665,7 @@ Editor::Editor ()
 	_lufs_scope.set_size_request (72, 68);
 	_lufs_correlation.set_size_request (56, 68);
 	_lufs_needle.set_size_request (130, 68);
-	_lufs_bars.set_size_request (60, 68);
+	_lufs_bars.set_size_request (82, 68);
 	_lufs_spectrogram.set_size_request (230, 68);
 	_lufs_waveform.set_size_request (150, 68);
 	_lufs_oscilloscope.set_size_request (150, 68);
@@ -681,9 +681,10 @@ Editor::Editor ()
 	Gtk::DrawingArea* detail_sources[8] = { &_lufs_spectrogram, &_lufs_waveform, &_lufs_scope, &_lufs_correlation, &_lufs_needle, &_lufs_oscilloscope, &_lufs_spectrum, &_lufs_bars };
 	const char* detail_tips[8] = { "Espectrograma", "Forma de onda estéreo", "Vectorscopio estéreo", "Correlación de fase", "Medidor VU", "Osciloscopio", "Espectro de frecuencias", "Sonoridad y pico real" };
 	for (int i = 0; i < 8; ++i) {
-		detail_sources[i]->add_events (Gdk::BUTTON_PRESS_MASK);
+		detail_sources[i]->add_events (Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 		detail_sources[i]->set_tooltip_text (_(detail_tips[i]));
 		detail_sources[i]->signal_button_press_event ().connect (sigc::bind (sigc::mem_fun (*this, &Editor::show_lufs_detail), i));
+		detail_sources[i]->signal_button_release_event ().connect ([this] (GdkEventButton*) { return hide_lufs_detail (nullptr); });
 	}
 	_lufs_strip_box.pack_start (_lufs_spectrogram, true, true);
 	_lufs_strip_box.pack_start (_lufs_waveform, true, true);
@@ -693,17 +694,24 @@ Editor::Editor ()
 	_lufs_strip_box.pack_start (_lufs_oscilloscope, true, true);
 	_lufs_strip_box.pack_start (_lufs_spectrum, true, true);
 	_lufs_strip_box.pack_start (_lufs_bars, false, false);
-	_lufs_m_label.set_size_request (90, -1);
-	_lufs_m_label.set_tooltip_text (_("Sonoridad momentánea (400 ms)"));
-	_lufs_number_click.add (_lufs_m_label);
-	_lufs_number_click.add_events (Gdk::BUTTON_PRESS_MASK);
-	_lufs_number_click.signal_button_press_event ().connect (sigc::bind (sigc::mem_fun (*this, &Editor::show_lufs_detail), 7));
-	_lufs_strip_box.pack_start (_lufs_number_click, false, false);
 	_lufs_strip_alignment.add (_lufs_strip_box);
-	_lufs_strip_background.add (_lufs_strip_alignment);
+	Gtk::VBox* telemetry_body = manage (new Gtk::VBox);
+	telemetry_body->pack_start (_lufs_strip_alignment, false, false);
+	_lufs_detail_canvas = manage (new Gtk::DrawingArea);
+	_lufs_detail_canvas->set_size_request (-1, 230);
+	_lufs_detail_canvas->signal_expose_event ().connect (sigc::mem_fun (*this, &Editor::draw_lufs_detail));
+	_lufs_detail_text = manage (new Gtk::Label);
+	_lufs_detail_text->set_alignment (0.5, 0.5);
+	_lufs_detail_canvas->set_no_show_all ();
+	_lufs_detail_text->set_no_show_all ();
+	telemetry_body->pack_start (*_lufs_detail_canvas, false, false);
+	telemetry_body->pack_start (*_lufs_detail_text, false, false);
+	_lufs_strip_background.add (*telemetry_body);
 	content_top_bar.add (_lufs_strip_background);
 	content_top_bar.show ();
 	_lufs_strip_background.show_all ();
+	_lufs_detail_canvas->hide ();
+	_lufs_detail_text->hide ();
 	_lufs_fft = new GTKArdour::FFT (4096);
 	update_lufs_strip ();
 	_lufs_strip_timer = Glib::signal_timeout ().connect (sigc::mem_fun (*this, &Editor::update_lufs_strip), 100);
@@ -970,14 +978,7 @@ Editor::update_lufs_strip ()
 	_lufs_waveform.queue_draw ();
 	_lufs_oscilloscope.queue_draw ();
 	_lufs_spectrum.queue_draw ();
-	const float reading = meter ? meter->lufs_momentary () : -200.f;
-	char value[32];
-	if (std::isfinite (reading) && reading > -180.f) snprintf (value, sizeof (value), "%.1f", reading);
-	else snprintf (value, sizeof (value), "--.-");
-	char markup[256];
-	snprintf (markup, sizeof (markup), "<span foreground='#aaa4ca' size='small'>LUFS</span>\n<span foreground='#d8b8ff' size='large'>%s</span>", value);
-	_lufs_m_label.set_markup (markup);
-	if (_lufs_detail_dialog && _lufs_detail_dialog->is_visible ()) {
+	if (_lufs_detail_canvas && _lufs_detail_canvas->is_visible ()) {
 		update_lufs_detail_text ();
 		_lufs_detail_canvas->queue_draw ();
 	}
@@ -1086,17 +1087,27 @@ Editor::draw_lufs_bars (GdkEventExpose*)
 	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
 	std::shared_ptr<PeakMeter> meter;
 	if (_session && _session->master_out ()) meter = _session->master_out ()->shared_peak_meter ();
-	const double value = meter ? meter->lufs_momentary () : -60.0;
+	const double value = meter ? meter->lufs_momentary () : -200.0;
 	cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-	cairo_set_font_size (cr, 9);
-	const double height = std::max (0.0, std::min (52.0, (value + 60.0) * 52.0 / 60.0));
+	cairo_set_font_size (cr, 16);
+	const double height = std::max (0.0, std::min (64.0, (value + 60.0) * 64.0 / 60.0));
 	cairo_set_source_rgb (cr, 0.20, 0.18, 0.30);
-	cairo_rectangle (cr, 23, 3, 14, 52); cairo_fill (cr);
+	cairo_rectangle (cr, 2, 2, 78, 64); cairo_fill (cr);
 	cairo_set_source_rgb (cr, 0.72, 0.46, 0.98);
-	cairo_rectangle (cr, 23, 55 - height, 14, height); cairo_fill (cr);
-	cairo_set_source_rgb (cr, 0.75, 0.70, 0.86);
-	cairo_move_to (cr, 26, 66);
-	cairo_show_text (cr, "M");
+	cairo_rectangle (cr, 2, 66 - height, 78, height); cairo_fill (cr);
+	char reading[24];
+	if (value > -180.0) snprintf (reading, sizeof (reading), "%.1f", value);
+	else snprintf (reading, sizeof (reading), "--.-");
+	cairo_text_extents_t extents;
+	cairo_text_extents (cr, reading, &extents);
+	cairo_set_source_rgb (cr, 0.04, 0.02, 0.10);
+	cairo_move_to (cr, 41 - extents.width * 0.5 + 1, 39);
+	cairo_show_text (cr, reading);
+	cairo_set_source_rgb (cr, 0.98, 0.91, 1.0);
+	cairo_move_to (cr, 41 - extents.width * 0.5, 38);
+	cairo_show_text (cr, reading);
+	cairo_set_font_size (cr, 8);
+	cairo_move_to (cr, 29, 63); cairo_show_text (cr, "LUFS");
 	cairo_destroy (cr);
 	return true;
 }
@@ -1223,28 +1234,11 @@ Editor::show_lufs_detail (GdkEventButton* event, int mode)
 {
 	if (event->button != 1) return false;
 	_lufs_detail_mode = mode;
-	if (!_lufs_detail_dialog) {
-		_lufs_detail_dialog = new Gtk::Dialog;
-		_lufs_detail_dialog->set_default_size (800, 410);
-		_lufs_detail_dialog->set_modal (false);
-		_lufs_detail_dialog->signal_delete_event ().connect (sigc::mem_fun (*this, &Editor::hide_lufs_detail));
-		_lufs_detail_dialog->signal_response ().connect (sigc::mem_fun (*this, &Editor::close_lufs_detail));
-		_lufs_detail_canvas = Gtk::manage (new Gtk::DrawingArea);
-		_lufs_detail_canvas->set_size_request (780, 310);
-		_lufs_detail_canvas->signal_expose_event ().connect (sigc::mem_fun (*this, &Editor::draw_lufs_detail));
-		_lufs_detail_text = Gtk::manage (new Gtk::Label);
-		_lufs_detail_text->set_alignment (0.5, 0.5);
-		_lufs_detail_dialog->get_vbox ()->set_spacing (8);
-		_lufs_detail_dialog->get_vbox ()->set_border_width (12);
-		_lufs_detail_dialog->get_vbox ()->pack_start (*_lufs_detail_canvas, true, true);
-		_lufs_detail_dialog->get_vbox ()->pack_start (*_lufs_detail_text, false, false);
-		_lufs_detail_dialog->add_button (_("Cerrar"), Gtk::RESPONSE_CLOSE);
-	}
-	const char* names[8] = { "Espectrograma", "Forma de onda estéreo", "Vectorscopio", "Correlación", "VU", "Osciloscopio", "Espectro", "LUFS" };
-	_lufs_detail_dialog->set_title (std::string ("Phaedra — ") + names[mode]);
 	update_lufs_detail_text ();
-	_lufs_detail_dialog->show_all ();
-	_lufs_detail_dialog->present ();
+	_lufs_detail_canvas->set_no_show_all (false);
+	_lufs_detail_text->set_no_show_all (false);
+	_lufs_detail_canvas->show ();
+	_lufs_detail_text->show ();
 	_lufs_detail_canvas->queue_draw ();
 	return true;
 }
@@ -1252,14 +1246,17 @@ Editor::show_lufs_detail (GdkEventButton* event, int mode)
 bool
 Editor::hide_lufs_detail (GdkEventAny*)
 {
-	_lufs_detail_dialog->hide ();
+	_lufs_detail_canvas->hide ();
+	_lufs_detail_text->hide ();
+	_lufs_detail_canvas->set_no_show_all ();
+	_lufs_detail_text->set_no_show_all ();
 	return true;
 }
 
 void
 Editor::close_lufs_detail (int)
 {
-	_lufs_detail_dialog->hide ();
+	hide_lufs_detail (nullptr);
 }
 
 void
@@ -3508,9 +3505,6 @@ Editor::setup_toolbar ()
 	HBox* toolbar_right = manage (new HBox);
 	toolbar_left->set_spacing (3);
 	toolbar_right->set_spacing (3);
-	Glib::RefPtr<SizeGroup> balanced_sides = SizeGroup::create (SIZE_GROUP_HORIZONTAL);
-	balanced_sides->add_widget (*toolbar_left);
-	balanced_sides->add_widget (*toolbar_right);
 
 	_application_bar.move_to_editor_toolbar (*toolbar_left, *toolbar_center, *toolbar_right);
 	toolbar_left->pack_start (tool_selector, false, false);
@@ -3523,9 +3517,9 @@ Editor::setup_toolbar ()
 	toolbar_right->pack_start (*advanced_button, false, false);
 	content_header_hbox.remove (content_tabbables);
 	toolbar_right->pack_end (content_tabbables, false, false);
-	toolbar_hbox.pack_start (*toolbar_left, true, true);
+	toolbar_hbox.pack_start (*toolbar_left, false, false);
 	toolbar_hbox.pack_start (*toolbar_center, false, false);
-	toolbar_hbox.pack_start (*toolbar_right, true, true);
+	toolbar_hbox.pack_start (*toolbar_right, false, false);
 	Gtk::Widget* old_header = content_header_hbox.get_parent ();
 	if (old_header) {
 		old_header->set_no_show_all ();
