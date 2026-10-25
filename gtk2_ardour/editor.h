@@ -107,6 +107,7 @@ namespace ARDOUR {
 }
 
 class AnalysisWindow;
+namespace GTKArdour { class FFT; }
 class AudioClock;
 class AudioRegionView;
 class AudioStreamView;
@@ -594,14 +595,24 @@ private:
 	Gtk::DrawingArea          _lufs_needle;
 	Gtk::DrawingArea          _lufs_bars;
 	Gtk::DrawingArea          _lufs_spectrogram;
-	std::array<float, 128>    _lufs_preview_left {};
-	std::array<float, 128>    _lufs_preview_right {};
-	std::array<std::array<float, 32>, 96> _lufs_spectrum_history {};
+	Gtk::DrawingArea          _lufs_waveform;
+	Gtk::DrawingArea          _lufs_oscilloscope;
+	Gtk::DrawingArea          _lufs_spectrum;
+	std::array<float, 8192>   _lufs_preview_left {};
+	std::array<float, 8192>   _lufs_preview_right {};
+	std::array<std::array<float, 64>, 96> _lufs_spectrum_history {};
+	std::array<float, 64>     _lufs_spectrum_levels {};
+	GTKArdour::FFT*           _lufs_fft = nullptr;
+	float                     _lufs_pitch_hz = 0.f;
+	float                     _lufs_vu_db = -40.f;
 	bool draw_lufs_scope (GdkEventExpose*);
 	bool draw_lufs_correlation (GdkEventExpose*);
 	bool draw_lufs_needle (GdkEventExpose*);
 	bool draw_lufs_bars (GdkEventExpose*);
 	bool draw_lufs_spectrogram (GdkEventExpose*);
+	bool draw_lufs_waveform (GdkEventExpose*);
+	bool draw_lufs_oscilloscope (GdkEventExpose*);
+	bool draw_lufs_spectrum (GdkEventExpose*);
 	Gtk::Label                _lufs_m_label;
 	Gtk::Label                _lufs_s_label;
 	Gtk::Label                _lufs_i_label;

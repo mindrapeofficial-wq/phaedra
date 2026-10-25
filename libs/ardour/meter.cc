@@ -41,6 +41,15 @@ using namespace std;
 
 using namespace ARDOUR;
 
+namespace ARDOUR {
+struct StereoMeterPreview {
+	static constexpr size_t capacity = 8192;
+	std::array<std::atomic<float>, capacity> left {};
+	std::array<std::atomic<float>, capacity> right {};
+	std::atomic<uint64_t> written {0};
+};
+}
+
 PeakMeter::PeakMeter (Session& s, const std::string& name)
 	: Processor (s, string_compose ("meter-%1", name), Temporal::TimeDomainProvider (Temporal::AudioTime))
 {
@@ -81,6 +90,7 @@ PeakMeter::enable_lufs ()
 {
 	/* Called while the route is being constructed, before realtime processing. */
 	_lufs_meter.reset (new LUFSMeter (_session.nominal_sample_rate (), 2));
+	_stereo_preview.reset (new StereoMeterPreview);
 }
 
 void
@@ -98,10 +108,13 @@ PeakMeter::reset_lufs ()
 void
 PeakMeter::stereo_snapshot (float* left, float* right, size_t count) const
 {
-	const size_t n = std::min (count, stereo_preview_size);
+	if (!_stereo_preview) return;
+	const size_t n = std::min (count, StereoMeterPreview::capacity);
+	const uint64_t end = _stereo_preview->written.load (std::memory_order_acquire);
 	for (size_t i = 0; i < n; ++i) {
-		left[i] = _stereo_left[i].load (std::memory_order_relaxed);
-		right[i] = _stereo_right[i].load (std::memory_order_relaxed);
+		const uint64_t sample = end >= n ? end - n + i : (i >= n - end ? i - (n - end) : end);
+		left[i] = sample < end ? _stereo_preview->left[sample % StereoMeterPreview::capacity].load (std::memory_order_relaxed) : 0.f;
+		right[i] = sample < end ? _stereo_preview->right[sample % StereoMeterPreview::capacity].load (std::memory_order_relaxed) : 0.f;
 	}
 }
 
@@ -138,11 +151,13 @@ PeakMeter::run (BufferSet& bufs, samplepos_t /*start_sample*/, samplepos_t /*end
 			_lufs_meter->reset ();
 		}
 		float const* audio[2] = { bufs.get_audio (0).data (), bufs.get_audio (1).data () };
-		for (size_t i = 0; i < stereo_preview_size; ++i) {
-			const size_t frame = nframes ? std::min<size_t> (nframes - 1, i * nframes / stereo_preview_size) : 0;
-			_stereo_left[i].store (nframes ? audio[0][frame] : 0.f, std::memory_order_relaxed);
-			_stereo_right[i].store (nframes ? audio[1][frame] : 0.f, std::memory_order_relaxed);
+		const uint64_t start = _stereo_preview->written.load (std::memory_order_relaxed);
+		for (size_t i = 0; i < nframes; ++i) {
+			const size_t slot = (start + i) % StereoMeterPreview::capacity;
+			_stereo_preview->left[slot].store (audio[0][i], std::memory_order_relaxed);
+			_stereo_preview->right[slot].store (audio[1][i], std::memory_order_relaxed);
 		}
+		_stereo_preview->written.store (start + nframes, std::memory_order_release);
 		_lufs_meter->run (audio, nframes);
 		_lufs_momentary.store (_lufs_meter->momentary (), std::memory_order_relaxed);
 		_lufs_short_term.store (_lufs_meter->short_term (), std::memory_order_relaxed);

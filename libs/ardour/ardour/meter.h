@@ -43,6 +43,7 @@ namespace ARDOUR {
 class BufferSet;
 class ChanCount;
 class Session;
+struct StereoMeterPreview;
 
 /** Meters peaks on the input and stores them for access.
  */
@@ -128,9 +129,7 @@ private:
 	std::atomic<float> _lufs_short_term {-200.f};
 	std::atomic<float> _lufs_integrated {-200.f};
 	std::atomic<float> _lufs_true_peak {-200.f};
-	static constexpr size_t stereo_preview_size = 128;
-	std::array<std::atomic<float>, stereo_preview_size> _stereo_left {};
-	std::array<std::atomic<float>, stereo_preview_size> _stereo_right {};
+	std::unique_ptr<StereoMeterPreview> _stereo_preview;
 
 	MeterType _meter_type;
 };
