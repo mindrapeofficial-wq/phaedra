@@ -13,11 +13,52 @@ try {
 } catch { exit 0 }
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
-$answer = [System.Windows.Forms.MessageBox]::Show(
-    "Phaedra $remote esta disponible (tienes $local).`n`nQuieres descargarla e instalarla ahora?",
-    'Phaedra - Actualizacion disponible',
-    [System.Windows.Forms.MessageBoxButtons]::YesNo,
-    [System.Windows.Forms.MessageBoxIcon]::Question)
+$notes = ([string]$release.body).Trim()
+if ([string]::IsNullOrWhiteSpace($notes)) { $notes = 'Esta version no incluye una lista de cambios.' }
+$dialog = New-Object System.Windows.Forms.Form
+$dialog.Text = 'Actualizacion de Phaedra'
+$dialog.Size = New-Object System.Drawing.Size(560, 410)
+$dialog.MinimumSize = New-Object System.Drawing.Size(460, 330)
+$dialog.StartPosition = 'CenterScreen'
+$dialog.Font = New-Object System.Drawing.Font('Segoe UI', 9)
+$heading = New-Object System.Windows.Forms.Label
+$heading.Text = "Phaedra $remote esta disponible (version instalada: $local)"
+$heading.AutoSize = $true
+$heading.Location = New-Object System.Drawing.Point(18, 17)
+$dialog.Controls.Add($heading)
+$notesLabel = New-Object System.Windows.Forms.Label
+$notesLabel.Text = 'Novedades de esta version:'
+$notesLabel.AutoSize = $true
+$notesLabel.Location = New-Object System.Drawing.Point(18, 47)
+$dialog.Controls.Add($notesLabel)
+$notesBox = New-Object System.Windows.Forms.TextBox
+$notesBox.Multiline = $true
+$notesBox.ReadOnly = $true
+$notesBox.ScrollBars = 'Vertical'
+$notesBox.WordWrap = $true
+$notesBox.Text = $notes
+$notesBox.Location = New-Object System.Drawing.Point(18, 72)
+$notesBox.Size = New-Object System.Drawing.Size(508, 246)
+$notesBox.Anchor = 'Top, Bottom, Left, Right'
+$dialog.Controls.Add($notesBox)
+$installButton = New-Object System.Windows.Forms.Button
+$installButton.Text = 'Descargar e instalar'
+$installButton.Size = New-Object System.Drawing.Size(145, 30)
+$installButton.Location = New-Object System.Drawing.Point(381, 330)
+$installButton.Anchor = 'Bottom, Right'
+$installButton.DialogResult = [System.Windows.Forms.DialogResult]::Yes
+$dialog.Controls.Add($installButton)
+$laterButton = New-Object System.Windows.Forms.Button
+$laterButton.Text = 'Mas tarde'
+$laterButton.Size = New-Object System.Drawing.Size(100, 30)
+$laterButton.Location = New-Object System.Drawing.Point(270, 330)
+$laterButton.Anchor = 'Bottom, Right'
+$laterButton.DialogResult = [System.Windows.Forms.DialogResult]::No
+$dialog.Controls.Add($laterButton)
+$dialog.AcceptButton = $installButton
+$dialog.CancelButton = $laterButton
+$answer = $dialog.ShowDialog()
+$dialog.Dispose()
 if ($answer -ne [System.Windows.Forms.DialogResult]::Yes) { exit 0 }
 $stage = Join-Path $env:LOCALAPPDATA 'PhaedraUpdater'
 New-Item -ItemType Directory -Force -Path $stage | Out-Null
