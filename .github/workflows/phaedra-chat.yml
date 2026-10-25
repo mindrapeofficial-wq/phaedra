@@ -40,6 +40,6 @@ jobs:
         working-directory: chat
         run: |
           node --check app.js
-          node --check api/_common.mjs
+          node --check lib/server.mjs
           node --check api/chat.mjs
           node --check lib/validation.mjs
