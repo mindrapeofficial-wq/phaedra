@@ -64,8 +64,8 @@ const char* const phaedra_manual_url =
     "https://github.com/mindrapeofficial-wq/phaedra/blob/preview/live/docs/phaedra/manual.md";
 const char* const phaedra_reporting_url =
     "https://github.com/mindrapeofficial-wq/phaedra/blob/preview/live/docs/phaedra/reportar-error.md";
-const char* const phaedra_issues_url =
-    "https://github.com/mindrapeofficial-wq/phaedra/issues";
+const char* const phaedra_community_url =
+    "https://github.com/mindrapeofficial-wq/phaedra/blob/preview/live/docs/phaedra/comunidad.md";
 const char* const phaedra_new_issue_url =
     "https://github.com/mindrapeofficial-wq/phaedra/issues/new";
 const char* const phaedra_source_url =
@@ -135,10 +135,10 @@ ARDOUR_UI::launch_website_dev ()
 void
 ARDOUR_UI::launch_forums ()
 {
-    /* GitHub Discussions is not enabled. Label this option as support,
-     * and use GitHub Issues rather than a nonexistent forum.
+    /* GitHub Discussions is not enabled. Link to Phaedra's community
+     * guide, with both IRC live chat and the support issues tracker.
      */
-    open_phaedra_support_url (phaedra_issues_url);
+    open_phaedra_support_url (phaedra_community_url);
 }
 
 void
