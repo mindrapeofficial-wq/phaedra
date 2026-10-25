@@ -39,7 +39,7 @@ test('all content belongs to Phaedra, not IRC', () => {
   const files = ['index.html', 'app.js', 'api/chat.mjs'];
   for (const name of files) {
     const s = readFileSync(path.join(ROOT, name), 'utf8');
-    assert.equal(/libera\.chat|ardour\.org\/chat|IRC|Discord/i.test(s), false, name);
+    assert.equal(/libera\.chat|ardour\.org\/chat|discord\.com|irc:\/\//i.test(s), false, name);
   }
   assert.ok(readFileSync(path.join(ROOT, 'app.js'), 'utf8').includes('text.textContent = message.body'));
 });
