@@ -44,6 +44,7 @@
 #include "canvas/text.h"
 #include "canvas/scroll_group.h"
 
+#include "ardour_ui.h"
 #include "editor.h"
 #include "editor_sections.h"
 #include "keyboard.h"
@@ -1132,6 +1133,15 @@ Editor::canvas_drop_zone_event (GdkEvent* event)
 	ArdourCanvas::Duple winpos;
 
 	switch (event->type) {
+	case GDK_2BUTTON_PRESS:
+		/* Make adding the first track discoverable in the empty editor. */
+		if (_session && event->button.button == 1 &&
+		    !(event->button.state & Keyboard::RelevantModifierKeyMask)) {
+			_drags->abort ();
+			ARDOUR_UI::instance()->add_route ();
+			return true;
+		}
+		break;
 	case GDK_BUTTON_PRESS:
 	case GDK_BUTTON_RELEASE:
 		/* Allow starting a selection from the dropzone */

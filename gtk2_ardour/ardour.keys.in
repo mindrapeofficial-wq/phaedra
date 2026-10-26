@@ -176,7 +176,7 @@ This mode provides many different operations on both regions and control points,
 @edit|Editor/add-range-marker-from-selection| <@SECONDARY@><@TERTIARY@>r|Add single Range marker from selection
 @trans|Transport/Record|                                   <@TERTIARY@>r|engage record
 @mmode|Editing/set-mouse-mode-timefx|                                   t|timefx mode
-@gselect|Common/select-all-visible-lanes|                   <@PRIMARY@>t|select all visible lanes
+@gselect|Common/select-all-visible-lanes|       <@PRIMARY@><@TERTIARY@>t|select all visible lanes
 @mmode|Editing/set-mouse-mode-grid|                                     y|grid mode
 @editing|Editing/alternate-redo|                             <@PRIMARY@>y|redo
 @select|Editor/select-all-between-cursors|                  <@PRIMARY@>u|select all regions enclosed by Range
@@ -254,7 +254,7 @@ This mode provides many different operations on both regions and control points,
 @edit|Editor/ToggleVerticalSummary|                        <@TERTIARY@>v|toggle vertical summary
 @wvis|Common/toggle-meterbridge|                          <@SECONDARY@>b|show meter bridge
 @edtrk|Editor/track-record-enable-toggle|                  <@TERTIARY@>b|toggle track rec-enable 
-@sess|Main/AddTrackBus|                         <@PRIMARY@><@TERTIARY@>n|add track(s) or bus(ses)
+@sess|Main/AddTrackBus|                                     <@PRIMARY@>t|add track(s) or bus(ses)
 @sess|Main/New|                                             <@PRIMARY@>n|open a new session
 @rop|Region/add-region-cue-marker|                                     m|add a region/cue marker
 @wvis|Window/toggle-midi-connection-manager|  <@SECONDARY@><@TERTIARY@>m|toggle midi patchbay
