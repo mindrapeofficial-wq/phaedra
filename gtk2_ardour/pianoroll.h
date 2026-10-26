@@ -124,6 +124,7 @@ class Pianoroll : public CueEditor, public SlipDraggable
 	void clear_regions ();
 	void remove_region (std::shared_ptr<ARDOUR::Region>);
 	void set_region (std::shared_ptr<ARDOUR::Region>);
+	void set_target_track (std::shared_ptr<ARDOUR::MidiTrack>);
 
 	void drag_start() {}
 	void drag_end() {}

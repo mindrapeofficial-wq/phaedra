@@ -3303,6 +3303,9 @@ Mixer_UI::refiller (PluginInfoList& result, const PluginInfoList& plugs)
 	setup_search_string (searchstr);
 
 	for (PluginInfoList::const_iterator i = plugs.begin(); i != plugs.end(); ++i) {
+		if ((*i)->creator.find ("Ardour") != std::string::npos || (*i)->unique_id.find ("ardour.org") != std::string::npos) {
+			continue;
+		}
 		bool maybe_show = true;
 
 		if (plm == PLM_Favorite) {

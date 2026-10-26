@@ -1524,14 +1524,20 @@ bool
 Pianoroll::key_press_handler (ArdourCanvas::Item*, GdkEvent* ev, ItemType)
 {
 	EC_LOCAL_TEMPO_SCOPE;
+	if (ev->key.keyval == GDK_Control_L || ev->key.keyval == GDK_Control_R) {
+		set_canvas_cursor (_cursors->midi_pencil);
+	}
 
 	return true;
 }
 
 bool
-Pianoroll::key_release_handler (ArdourCanvas::Item*, GdkEvent*, ItemType)
+Pianoroll::key_release_handler (ArdourCanvas::Item*, GdkEvent* ev, ItemType)
 {
 	EC_LOCAL_TEMPO_SCOPE;
+	if (ev->key.keyval == GDK_Control_L || ev->key.keyval == GDK_Control_R) {
+		set_canvas_cursor (current_mouse_mode () == Editing::MouseDraw ? _cursors->midi_pencil : _cursors->grabber);
+	}
 
 	return true;
 }
@@ -1598,6 +1604,9 @@ Gdk::Cursor*
 Pianoroll::which_mode_cursor () const
 {
 	EC_LOCAL_TEMPO_SCOPE;
+	if (Keyboard::the_keyboard ().key_is_down (GDK_Control_L) || Keyboard::the_keyboard ().key_is_down (GDK_Control_R)) {
+		return _cursors->midi_pencil;
+	}
 
 	Gdk::Cursor* mode_cursor = MouseCursors::invalid_cursor ();
 
@@ -1806,6 +1815,23 @@ void
 Pianoroll::make_a_region ()
 {
 	EC_LOCAL_TEMPO_SCOPE;
+	if (!_session) {
+		return;
+	}
+
+	/* A first pencil stroke in the dock creates a silent MIDI track if the
+	 * project has none. An instrument can be added later. */
+	if (!_track) {
+		ChanCount one_midi_port (DataType::MIDI, 1);
+		auto tracks = _session->new_midi_track (one_midi_port, one_midi_port,
+			Config->get_strict_io (), std::shared_ptr<PluginInfo> (),
+			(Plugin::PresetRecord*) 0, nullptr, 1, "MIDI",
+			PresentationInfo::max_order, Normal, true);
+		if (tracks.empty ()) {
+			return;
+		}
+		CueEditor::set_track (tracks.front ());
+	}
 
 	std::shared_ptr<MidiSource> new_source = _session->create_midi_source_for_session (_track->name());
 	SourceList sources;
@@ -1824,6 +1850,8 @@ Pianoroll::make_a_region ()
 
 	if (ref.trigger()) {
 		ref.trigger()->set_region (mr);
+	} else if (_track->playlist ()) {
+		_track->playlist ()->add_region (mr, timepos_t (Temporal::Beats ()), 1.0);
 	}
 
 	add_region (mr, _track);
@@ -1865,6 +1893,19 @@ Pianoroll::replace_region (std::shared_ptr<ARDOUR::Region> region, std::shared_p
 }
 
 void
+Pianoroll::set_target_track (std::shared_ptr<ARDOUR::MidiTrack> track)
+{
+	if (!track || _active_view) {
+		return;
+	}
+	CueEditor::set_track (track);
+	if (empty_view) {
+		empty_view->set_track (track);
+	}
+	prh->instrument_info_change ();
+}
+
+void
 Pianoroll::set_region (std::shared_ptr<ARDOUR::Region> region)
 {
 	/* no local tempo map scope, since it depends on the the region */
@@ -1893,6 +1934,7 @@ Pianoroll::set_region (std::shared_ptr<ARDOUR::Region> region)
 
 		std::shared_ptr<ARDOUR::MidiTrack> track (std::dynamic_pointer_cast<ARDOUR::MidiTrack> (_track));
 		empty_view = new PianorollMidiView (track, *data_group, *no_scroll_group, *this, *bg);
+		/* The first note creates a MIDI region on release. */
 		set_inspector_visibility (false);
 
 		/* make sure note names can be used */
@@ -2003,6 +2045,10 @@ Pianoroll::add_region (std::shared_ptr<ARDOUR::Region> region, std::shared_ptr<A
 		/* Take over the empty view - CueEditor case */
 		new_view = empty_view;
 		empty_view = nullptr;
+		/* The dock can show this view before any MIDI track exists. Attach
+		 * the selected track before set_region() connects its MIDI model. */
+		new_view->set_track (track);
+		new_view->set_sensitive (true);
 	} else {
 		/* need a new MidiView - editor bottom pane/pianoroll window cases */
 		new_view = new PianorollMidiView (track, *data_group, *no_scroll_group, *this, *bg);

@@ -73,6 +73,14 @@ using namespace ARDOUR_PLUGIN_UTILS;
 
 static const uint32_t MAX_CREATOR_LEN = 24;
 
+static bool
+is_ardour_bundled_plugin (PluginInfoPtr const& info)
+{
+	return info->creator.find ("Ardour") != std::string::npos ||
+	       info->unique_id.find ("urn:ardour:") == 0 ||
+	       info->unique_id.find ("ardour.org") != std::string::npos;
+}
+
 PluginSelector::PluginSelector (PluginManager& mgr)
 	: ArdourDialog (_("Plugin Selector"), true, false)
 	, search_clear_button (Stock::CLEAR)
@@ -383,7 +391,7 @@ PluginSelector::show_this_plugin (const PluginInfoPtr& info, const std::string& 
 	bool maybe_show = false;
 	PluginManager::PluginStatusType status = manager.get_status (info);
 
-	if (info->is_internal ()) {
+	if (info->is_internal () || is_ardour_bundled_plugin (info)) {
 		return false;
 	}
 
@@ -993,6 +1001,7 @@ PluginSelector::build_plugin_menu ()
 #ifdef AUDIOUNIT_SUPPORT
 	all_plugs.insert (all_plugs.end(), manager.au_plugin_info().begin(), manager.au_plugin_info().end());
 #endif
+	all_plugs.remove_if (is_ardour_bundled_plugin);
 
 	using namespace Menu_Helpers;
 

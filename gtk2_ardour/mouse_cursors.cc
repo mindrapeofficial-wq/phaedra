@@ -206,8 +206,7 @@ MouseCursors::set_cursor_set (const std::string& name)
 	cursors.push_back (cross_hair);
 	trimmer =  new Cursor (SB_H_DOUBLE_ARROW);
 	cursors.push_back (trimmer);
-	time_fx = new Cursor (SIZING);
-	cursors.push_back (time_fx);
+	time_fx = make_cursor ("time_exp", 8, 8);
 	wait = new Cursor (WATCH);
 	cursors.push_back (wait);
 	timebar = new Cursor(LEFT_PTR);

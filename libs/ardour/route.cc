@@ -1137,9 +1137,8 @@ Route::add_processors (const ProcessorList& others, std::shared_ptr<Processor> b
 		if (Config->get_ask_replace_instrument ()) {
 			mask |= CanReplace;
 		}
-		if (Config->get_ask_setup_instrument ()) {
-			mask |= MultiOut;
-		}
+		/* Use automatic output routing on insert. The pin matrix remains
+		 * available afterwards for explicit multichannel configuration. */
 
 		flags &= mask;
 

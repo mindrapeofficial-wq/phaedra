@@ -411,6 +411,10 @@ PluginManagerUI::show_this_plugin (std::shared_ptr<PluginScanLogEntry> psle, Plu
 {
 	using PBD::match_search_strings;
 
+	if (pip && PluginManager::instance ().get_status (pip) == PluginManager::Concealed) {
+		return false;
+	}
+
 	if (searchstr.empty ()) {
 		return true;
 	}

@@ -578,6 +578,26 @@ Editor::button_press_handler_1 (ArdourCanvas::Item* item, GdkEvent* event, ItemT
 
 	NoteBase* note = NULL;
 
+	/* The empty timeline has no track selection handles. Dragging inside an
+	 * existing range therefore trims the nearer edge instead of replacing the
+	 * whole range with a new selection. */
+	auto trim_range_at_pointer = [this, item, event] () -> bool {
+		const samplepos_t at = canvas_event_sample (event);
+		for (auto const& range : selection->time) {
+			const samplepos_t start = range.start ().samples ();
+			const samplepos_t end = range.end ().samples ();
+			if (at < start || at > end) {
+				continue;
+			}
+			clicked_selection = range.id;
+			SelectionDrag::Operation const operation =
+				(at - start <= end - at) ? SelectionDrag::SelectionStartTrim : SelectionDrag::SelectionEndTrim;
+			_drags->set (new SelectionDrag (*this, item, operation), event);
+			return true;
+		}
+		return false;
+	};
+
 	switch (item_type) {
 	case PlayheadCursorItem:
 		_drags->set (new CursorDrag (*this, *_playhead_cursor, true), event);
@@ -652,7 +672,9 @@ Editor::button_press_handler_1 (ArdourCanvas::Item* item, GdkEvent* event, ItemT
 	case BBTRulerItem:
 		if (!Keyboard::modifier_state_equals (event->button.state, Keyboard::PrimaryModifier)
 		    && !ArdourKeyboard::indicates_constraint (event->button.state)) {
-			_drags->set (new SelectionDrag (*this, item, SelectionDrag::CreateSelection), event);
+			if (!trim_range_at_pointer ()) {
+				_drags->set (new SelectionDrag (*this, item, SelectionDrag::CreateSelection), event);
+			}
 		}
 		return true;
 
@@ -702,7 +724,9 @@ Editor::button_press_handler_1 (ArdourCanvas::Item* item, GdkEvent* event, ItemT
 	 * A plain drag there should work without first switching to Range mode. */
 	if (item_type == DropZoneItem && event->button.button == 1 &&
 	    !Keyboard::modifier_state_contains (event->button.state, Keyboard::RelevantModifierKeyMask)) {
-		_drags->set (new SelectionDrag (*this, item, SelectionDrag::CreateSelection), event);
+		if (!trim_range_at_pointer ()) {
+			_drags->set (new SelectionDrag (*this, item, SelectionDrag::CreateSelection), event);
+		}
 		return true;
 	}
 

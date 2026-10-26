@@ -82,6 +82,7 @@
 #include "ardour/location.h"
 #include "ardour/meter.h"
 #include "ardour/midi_track.h"
+#include "ardour/midi_region.h"
 #include "ardour/profile.h"
 #include "ardour/route.h"
 #include "ardour/route_group.h"
@@ -761,13 +762,31 @@ Editor::Editor ()
 	_mixer_dock_scroller.set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 	_mixer_dock_scroller.set_shadow_type (Gtk::SHADOW_NONE);
 	_mixer_dock_scroller.add (_mixer_dock_box);
-	_arrange_mixer_pane.add (_mixer_dock_scroller);
+	_lower_notebook.append_page (_mixer_dock_scroller, _("Mixer"));
+	_piano_create_region_button.set_label (_("Create MIDI Region"));
+	_piano_create_region_button.set_tooltip_text (_("Create an editable MIDI region on the selected MIDI track"));
+	_piano_create_region_button.set_sensitive (false);
+	_piano_create_region_button.signal_clicked ().connect (sigc::mem_fun (*this, &Editor::create_piano_roll_region));
+	_piano_dock_toolbar.pack_start (_piano_create_region_button, false, false);
+	_piano_detach_button.set_label (_("Open in Window"));
+	_piano_detach_button.set_tooltip_text (_("Open the Piano Roll in a separate window"));
+	_piano_detach_button.signal_clicked ().connect ([this] () {
+		pianoroll_edit ();
+		_lower_notebook.set_current_page (0);
+	});
+	_piano_dock_toolbar.pack_end (_piano_detach_button, false, false);
+	_piano_dock_box.pack_start (_piano_dock_toolbar, false, false);
+	_piano_dock_hint.set_text (_("Select a MIDI region in the timeline, or select a MIDI track and create one here."));
+	_piano_dock_box.pack_start (_piano_dock_hint, false, false);
+	_lower_notebook.append_page (_piano_dock_box, _("Piano Roll"));
+	_arrange_mixer_pane.add (_lower_notebook);
 	_arrange_mixer_pane.set_child_minsize (_editor_timeline_vbox, 160);
-	_arrange_mixer_pane.set_child_minsize (_mixer_dock_scroller, 120);
+	_arrange_mixer_pane.set_child_minsize (_lower_notebook, 120);
 	_arrange_mixer_pane.set_divider (0, 0.65);
 	_arrange_mixer_pane.set_drag_cursor (*_cursors->expand_up_down);
 	_arrange_mixer_pane.show ();
 	_mixer_dock_box.show ();
+	_lower_notebook.show_all ();
 	content_main.add (_arrange_mixer_pane);
 	_mixer_dock_button.set_text (_("Channels"));
 	_mixer_dock_button.set_no_show_all (true);
@@ -909,6 +928,7 @@ Editor::Editor ()
 
 Editor::~Editor()
 {
+	delete _dock_pianoroll;
 	_lufs_strip_timer.disconnect ();
 	delete _lufs_detail_dialog;
 	delete _lufs_fft;
@@ -2032,6 +2052,16 @@ void
 Editor::set_session (Session *t)
 {
 	EditingContext::set_session (t);
+	if (_dock_pianoroll) {
+		_dock_pianoroll->set_session (t);
+	} else if (t) {
+		_dock_pianoroll = new Pianoroll (_("Piano Roll"), false);
+		_dock_pianoroll->set_session (t);
+		_piano_dock_box.pack_start (_dock_pianoroll->contents (), true, true);
+		_dock_pianoroll->contents ().show_all ();
+		_dock_pianoroll->set_region (std::shared_ptr<ARDOUR::Region> ());
+		_piano_dock_hint.hide ();
+	}
 
 	section_marker_bar->clear (true);
 
@@ -3007,12 +3037,42 @@ Editor::set_mixer_dock_available (bool available)
 }
 
 void
+Editor::create_piano_roll_region ()
+{
+	if (!_session || !_dock_pianoroll) {
+		return;
+	}
+
+	MidiTimeAxisView* midi_view = nullptr;
+	for (TimeAxisView* view : selection->tracks) {
+		if ((midi_view = dynamic_cast<MidiTimeAxisView*> (view))) {
+			break;
+		}
+	}
+	if (!midi_view) {
+		return;
+	}
+
+	timepos_t pos (get_preferred_edit_position ().beats ());
+	timecnt_t length = pos.distance (timepos_t (pos.beats () + Beats (16, 0)));
+	std::shared_ptr<MidiRegion> region = midi_view->add_region (pos, length, true);
+	if (region) {
+		_dock_pianoroll->replace_region (region, midi_view->midi_track ());
+		if (RegionView* view = regionview_from_region (region)) {
+			selection->set (view);
+		}
+		_piano_dock_hint.hide ();
+		_lower_notebook.set_current_page (1);
+	}
+}
+
+void
 Editor::toggle_mixer_dock ()
 {
 	if (_mixer_dock_available && _show_mixer_dock_action && _show_mixer_dock_action->get_active ()) {
-		_mixer_dock_scroller.show ();
+		_lower_notebook.show ();
 	} else {
-		_mixer_dock_scroller.hide ();
+		_lower_notebook.hide ();
 	}
 }
 

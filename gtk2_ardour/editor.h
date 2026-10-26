@@ -111,6 +111,7 @@ namespace GTKArdour { class FFT; }
 namespace Gtk { class Dialog; }
 class AudioClock;
 class AudioRegionView;
+class Pianoroll;
 class AudioStreamView;
 class AudioTimeAxisView;
 class EditorAutomationLine;
@@ -638,6 +639,14 @@ private:
 	ArdourWidgets::VPane _arrange_mixer_pane;
 	Gtk::ScrolledWindow _mixer_dock_scroller;
 	Gtk::VBox _mixer_dock_box;
+	Gtk::Notebook _lower_notebook;
+	Gtk::VBox _piano_dock_box;
+	Gtk::HBox _piano_dock_toolbar;
+	Gtk::Label _piano_dock_hint;
+	Gtk::Button _piano_create_region_button;
+	Gtk::Button _piano_detach_button;
+	Pianoroll* _dock_pianoroll = nullptr;
+	void create_piano_roll_region ();
 	ArdourWidgets::ArdourButton _mixer_dock_button;
 	Glib::RefPtr<Gtk::ToggleAction> _show_mixer_dock_action;
 	bool _mixer_dock_available = false;
@@ -2256,7 +2265,7 @@ private:
 	void toggle_show_touched_automation ();
 	void set_show_touched_automation (bool);
 
-	int time_fx (ARDOUR::RegionList&, Temporal::ratio_t ratio, bool pitching, bool fixed_end);
+	int time_fx (ARDOUR::RegionList&, Temporal::ratio_t ratio, bool pitching, bool fixed_end, bool direct_stretch = false);
 	void toggle_sound_midi_notes ();
 
 	/** Flag for a bit of a hack wrt control point selection; see set_selected_control_point_from_click */

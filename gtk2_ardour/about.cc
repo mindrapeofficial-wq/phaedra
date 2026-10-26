@@ -651,7 +651,7 @@ About::About ()
 	set_name (X_("Phaedra"));
 	set_website (X_("https://phaedra-daw.vercel.app/"));
 	set_website_label (_("phaedra-daw.vercel.app"));
-	set_version ((string_compose(_("Phaedra 1.0.11\nMotor %1%2\n(rev %3)\n%4%5"),
+	set_version ((string_compose(_("1.0.12\nMotor %1%2\n(rev %3)\n%4%5"),
 				     VERSIONSTRING,
 				     codename,
 				     revision, cpu_arch, suffix)));

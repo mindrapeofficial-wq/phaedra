@@ -192,8 +192,9 @@ MidiViewBackground::setup_note_lines()
 	double h = note_height();
 	double y;
 	std::shared_ptr<ARDOUR::MidiTrack> mt (midi_track());
-	bool show_key = mt->key_enforcement_policy() & ARDOUR::ShowKey;
-	ARDOUR::MusicalKey const * key = mt->key();
+	/* The docked piano roll is also visible before a MIDI track exists. */
+	bool show_key = mt && (mt->key_enforcement_policy() & ARDOUR::ShowKey);
+	ARDOUR::MusicalKey const * key = mt ? mt->key() : nullptr;
 
 	for (int i = highest_note(); i >= lowest_note(); i--) {
 

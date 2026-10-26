@@ -85,6 +85,7 @@ public:
 
 	void set_height (double);
 	void set_samples_per_pixel (double);
+	void set_stretch_preview (double ratio);
 
 	void set_amplitude_above_axis (gdouble spp);
 

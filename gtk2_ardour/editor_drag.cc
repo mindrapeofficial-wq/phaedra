@@ -5431,24 +5431,35 @@ TimeFXDrag::motion (GdkEvent* event, bool)
 	if (_dragging_start) {
 		if (pf < rv->region ()->end_position ()) {
 			rv->get_time_axis_view ().show_timestretch (pf, rv->region ()->end_position (), layers, layer);
+			if (auto* audio = dynamic_cast<AudioRegionView*> (rv)) {
+				double ratio = (double) rv->region ()->end_position ().distance (pf).samples () / rv->region ()->length_samples ();
+				audio->set_stretch_preview (ratio);
+				audio->set_position (pf, nullptr);
+			}
 
 		}
 	} else {
 		if (pf > rv->region ()->position ()) {
 			rv->get_time_axis_view ().show_timestretch (rv->region ()->position (), pf, layers, layer);
+			if (auto* audio = dynamic_cast<AudioRegionView*> (rv)) {
+				double ratio = (double) rv->region ()->position ().distance (pf).samples () / rv->region ()->length_samples ();
+				audio->set_stretch_preview (ratio);
+			}
 		}
 	}
 
-	show_verbose_cursor_duration (_primary->region ()->position (), pf);
+	double ratio = _dragging_start
+		? (double) rv->region ()->end_position ().distance (pf).samples () / rv->region ()->length_samples ()
+		: (double) rv->region ()->position ().distance (pf).samples () / rv->region ()->length_samples ();
+	if (ratio > 0.0) {
+		show_verbose_cursor_text (string_compose (std::string (_("Stretch")) + " %1%", (int) round (ratio * 100.0)));
+	}
 }
 
 void
 TimeFXDrag::finished (GdkEvent* event, bool movement_occurred)
 {
-	/* this may have been a single click, no drag. We still want the dialog
-	   to show up in that case, so that the user can manually edit the
-	   parameters for the timestretch.
-	*/
+	/* A click without dragging is not a stretch gesture. */
 
 	if (editing_context.get_selection ().regions.empty ()) {
 		_primary->get_time_axis_view ().hide_timestretch ();
@@ -5457,9 +5468,9 @@ TimeFXDrag::finished (GdkEvent* event, bool movement_occurred)
 
 	if (!movement_occurred) {
 		_primary->get_time_axis_view ().hide_timestretch ();
-
-		if (_editor.time_stretch (editing_context.get_selection ().regions, ratio_t (1, 1), false) == -1) {
-			error << _("An error occurred while executing time stretch operation") << endmsg;
+		if (auto* audio = dynamic_cast<AudioRegionView*> (_primary)) {
+			audio->set_stretch_preview (1.0);
+			audio->set_position (audio->region ()->position (), nullptr);
 		}
 		return;
 	}
@@ -5476,12 +5487,19 @@ TimeFXDrag::finished (GdkEvent* event, bool movement_occurred)
 	if (_dragging_start) {
 		if (adjusted_pos > _primary->region ()->end_position ()) {
 			/* forwards drag of the right edge - not usable */
+			if (auto* audio = dynamic_cast<AudioRegionView*> (_primary)) {
+				audio->set_stretch_preview (1.0);
+				audio->set_position (audio->region ()->position (), nullptr);
+			}
 			return;
 		}
 		newlen = _primary->region ()->end_position ().distance (adjusted_pos);
 	} else {
 		if (adjusted_pos < _primary->region ()->position ()) {
 			/* backwards drag of the left edge - not usable */
+			if (auto* audio = dynamic_cast<AudioRegionView*> (_primary)) {
+				audio->set_stretch_preview (1.0);
+			}
 			return;
 		}
 		newlen = _primary->region ()->position ().distance (adjusted_pos);
@@ -5500,15 +5518,34 @@ TimeFXDrag::finished (GdkEvent* event, bool movement_occurred)
 	   selection.
 	*/
 
-	if (_editor.time_stretch (editing_context.get_selection ().regions, ratio, _dragging_start) == -1) {
-		error << _("An error occurred while executing time stretch operation") << endmsg;
-	}
+	/* Audio stretching iterates GTK while the worker runs. Starting it here
+	 * re-enters DragManager::end_grab before the drag has been released. */
+	Editor* editor = &_editor;
+	RegionSelection selected (editing_context.get_selection ().regions);
+	bool fixed_end = _dragging_start;
+	std::shared_ptr<ARDOUR::Region> original = _primary->region ();
+	Glib::signal_idle ().connect ([editor, selected, ratio, fixed_end, original] () mutable {
+		if (editor->time_stretch (selected, ratio, fixed_end) == -1) {
+			error << _("An error occurred while executing time stretch operation") << endmsg;
+		}
+		if (RegionView* remaining = editor->regionview_from_region (original)) {
+			if (auto* audio = dynamic_cast<AudioRegionView*> (remaining)) {
+				audio->set_stretch_preview (1.0);
+				audio->set_position (original->position (), nullptr);
+			}
+		}
+		return false;
+	});
 }
 
 void
 TimeFXDrag::aborted (bool)
 {
 	_primary->get_time_axis_view ().hide_timestretch ();
+	if (auto* audio = dynamic_cast<AudioRegionView*> (_primary)) {
+		audio->set_stretch_preview (1.0);
+		audio->set_position (audio->region ()->position (), nullptr);
+	}
 }
 
 SelectionDrag::SelectionDrag (Editor& e, ArdourCanvas::Item* i, Operation o)
@@ -6983,7 +7020,9 @@ NoteCreateDrag::finished (GdkEvent* ev, bool had_movement)
 
 	if (!_midi_view->midi_region()) {
 		editing_context.make_a_region ();
-		assert (_midi_view->midi_region());
+		if (!_midi_view->midi_region()) {
+			return;
+		}
 	}
 
 	if (!_midi_view->on_timeline()) {

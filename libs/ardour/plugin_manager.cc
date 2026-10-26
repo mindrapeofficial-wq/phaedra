@@ -2344,7 +2344,11 @@ PluginManager::run_vst3_scanner_app (std::string bundle_path, PSLEPtr psle) cons
 PluginManager::PluginStatusType
 PluginManager::get_status (const PluginInfoPtr& pi) const
 {
-	if (pi && pi->type == LV2 && (pi->creator == "Ardour Community" || pi->unique_id.find ("http://ardour.org/") == 0)) {
+	if (pi && pi->type == LV2 &&
+        (pi->creator == "Ardour Community" ||
+         pi->unique_id.find ("urn:ardour:") == 0 ||
+         pi->unique_id.find ("http://ardour.org/") == 0 ||
+         pi->unique_id.find ("https://community.ardour.org/") == 0)) {
 		return Concealed;
 	}
 	PluginStatus ps (pi->type, pi->unique_id);

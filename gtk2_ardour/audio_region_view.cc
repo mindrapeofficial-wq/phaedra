@@ -1053,6 +1053,19 @@ AudioRegionView::set_samples_per_pixel (gdouble fpp)
 }
 
 void
+AudioRegionView::set_stretch_preview (double ratio)
+{
+	if (ratio <= 0.0) {
+		return;
+	}
+	/* Only change the drawing scale. The audio region itself is replaced
+	 * after the drag, leaving the edit reversible. */
+	for (auto* wave : waves) {
+		wave->set_samples_per_pixel (samples_per_pixel / ratio);
+	}
+}
+
+void
 AudioRegionView::set_amplitude_above_axis (gdouble a)
 {
 	for (uint32_t n=0; n < waves.size(); ++n) {

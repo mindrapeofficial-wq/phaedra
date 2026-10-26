@@ -104,7 +104,10 @@ pluginsort (const PluginInfoPtr& a, const PluginInfoPtr& b)
 static bool
 invalid_instrument (PluginInfoPtr p) {
 	const PluginManager& manager = PluginManager::instance();
-	if (manager.get_status(p) == PluginManager::Hidden) {
+	if (p->creator.find ("Ardour") != std::string::npos || p->unique_id.find ("ardour.org") != std::string::npos) {
+		return true;
+	}
+	if (manager.get_status(p) == PluginManager::Hidden || manager.get_status(p) == PluginManager::Concealed) {
 		return true;
 	}
 	if (manager.get_status(p) == PluginManager::Concealed) {

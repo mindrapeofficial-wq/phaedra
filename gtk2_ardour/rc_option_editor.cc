@@ -4558,16 +4558,6 @@ These settings will only take effect after %1 is restarted.\n\
 			);
 	add_option (_("Plugins"), bo);
 
-	bo = new BoolOption (
-			"ask-setup_instrument",
-			_("Interactively configure instrument plugins on insert"),
-			sigc::mem_fun (*_rc_config, &RCConfiguration::get_ask_setup_instrument),
-			sigc::mem_fun (*_rc_config, &RCConfiguration::set_ask_setup_instrument)
-			);
-	add_option (_("Plugins"), bo);
-	Gtkmm2ext::UI::instance()->set_tip (bo->tip_widget(),
-			_("<b>When enabled</b> show a dialog to select instrument channel configuration before adding a multichannel plugin."));
-
 	add_option (_("Plugins"), new OptionEditorHeading (_("Statistics")));
 
 	add_option (_("Plugins"),

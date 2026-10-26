@@ -445,6 +445,8 @@ PianoRollHeaderBase::get_note_name (int note)
 	using namespace MIDI::Name;
 	std::string name;
 	NoteName rtn;
+	rtn.name = ARDOUR::ParameterDescriptor::midi_note_name (note);
+	rtn.from_midnam = false;
 
 	ARDOUR::InstrumentInfo* ii = _midi_context.instrument_info();
 

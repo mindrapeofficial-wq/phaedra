@@ -136,7 +136,7 @@ This mode provides many different operations on both regions and control points,
 ;;@rop|Region/toggle-region-fade-out|                    <@PRIMARY@>backslash|toggle fade out active
 
 @rop|Region/trim-to-previous-region|                       <@PRIMARY@>j|trim region to end of prev region
-@rop|Region/trim-to-next-region|                           <@PRIMARY@>k|trim region to start of next region
+@rop|Region/trim-to-next-region|               <@PRIMARY@><@TERTIARY@>k|trim region to start of next region
 
 @ranges|Editor/set-loop-from-edit-range|                   bracketright|set loop range from edit range
 @ranges|Editor/set-punch-from-edit-range|                   bracketleft|set punch range from edit range
@@ -221,8 +221,8 @@ This mode provides many different operations on both regions and control points,
 @edit|Editor/ungroup-selected-regions|          <@PRIMARY@><@TERTIARY@>g|ungroup selected regions
 @edit|Region/play-selected-regions|                                    h|play selected region(s)
 @eep|Region/trim-front|                                                j|trim front
-@eep|Region/trim-back|                                                 k|trim back
-@wvis|Window/toggle-virtual-keyboard|                     <@SECONDARY@>k|show Virtual MIDI keyboard
+@eep|Region/trim-back|                                    <@TERTIARY@>k|trim back
+@wvis|Window/toggle-virtual-keyboard|                                   k|show Virtual MIDI keyboard
 @wvis|Window/toggle-rtawindow|                <@SECONDARY@><@TERTIARY@>s|show Realtime Analyzer
 @trans|Transport/Loop|                                                 l|loop play (the loop range)
 @select|Editor/select-all-in-loop-range|                    <@PRIMARY@>l|select all in loop range

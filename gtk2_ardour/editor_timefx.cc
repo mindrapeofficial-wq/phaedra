@@ -79,7 +79,7 @@ Editor::time_stretch (RegionSelection& regions, Temporal::ratio_t const & ratio,
 		}
 	}
 
-	int aret = time_fx (audio, ratio, false, fixed_end);
+	int aret = time_fx (audio, ratio, false, fixed_end, true);
 	if (aret < 0) {
 		abort_reversible_command ();
 		return aret;
@@ -163,7 +163,7 @@ Editor::pitch_shift (RegionSelection& regions, float fraction)
  *  @param pitching true to pitch shift, false to time stretch.
  *  @return -1 in case of error, otherwise number of regions processed */
 int
-Editor::time_fx (RegionList& regions, Temporal::ratio_t ratio, bool pitching, bool fixed_end)
+Editor::time_fx (RegionList& regions, Temporal::ratio_t ratio, bool pitching, bool fixed_end, bool direct_stretch)
 {
 	delete current_timefx;
 
@@ -179,16 +179,21 @@ Editor::time_fx (RegionList& regions, Temporal::ratio_t ratio, bool pitching, bo
 	current_timefx = new TimeFXDialog (*this, pitching, oldlen, newlen, ratio, pos, fixed_end);
 	current_timefx->regions = regions;
 
-	switch (current_timefx->run ()) {
-	case RESPONSE_ACCEPT:
-		break;
-	default:
-		current_timefx->hide ();
-		return -1;
+	/* Edge dragging already supplies the duration. Apply it on release without
+	 * interrupting the edit with the options dialog. Pitch shifting keeps the
+	 * dialog because its amount is entered there. */
+	if (!direct_stretch) {
+		switch (current_timefx->run ()) {
+		case RESPONSE_ACCEPT:
+			break;
+		default:
+			current_timefx->hide ();
+			return -1;
+		}
 	}
 
 	current_timefx->status = 0;
-	current_timefx->request.time_fraction = current_timefx->get_time_fraction ();
+	current_timefx->request.time_fraction = direct_stretch ? ratio : current_timefx->get_time_fraction ();
 	current_timefx->request.pitch_fraction = current_timefx->get_pitch_fraction ();
 
 	if (current_timefx->request.time_fraction.to_double() == 1.0 &&

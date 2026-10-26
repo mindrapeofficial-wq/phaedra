@@ -1267,6 +1267,18 @@ Editor::update_section_box ()
 void
 Editor::track_selection_changed ()
 {
+	bool midi_track_selected = false;
+	for (TimeAxisView* view : selection->tracks) {
+		if (auto* midi_view = dynamic_cast<MidiTimeAxisView*> (view)) {
+			midi_track_selected = true;
+			if (_dock_pianoroll) {
+				_dock_pianoroll->set_target_track (midi_view->midi_track ());
+			}
+			break;
+		}
+	}
+	_piano_create_region_button.set_sensitive (midi_track_selected);
+
 	/* reset paste count, so the plaste location doesn't get incremented
 	 * if we want to paste in the same place, but different track. */
 	paste_count = 0;
@@ -1744,8 +1756,21 @@ Editor::region_selection_changed ()
 }
 
 void
-Editor::maybe_edit_region_in_bottom_pane (RegionView&)
+Editor::maybe_edit_region_in_bottom_pane (RegionView& rv)
 {
+	std::shared_ptr<MidiRegion> midi_region = std::dynamic_pointer_cast<MidiRegion> (rv.region ());
+	RouteTimeAxisView* route_view = dynamic_cast<RouteTimeAxisView*> (&rv.get_time_axis_view ());
+	std::shared_ptr<MidiTrack> midi_track = route_view ? std::dynamic_pointer_cast<MidiTrack> (route_view->stripable ()) : std::shared_ptr<MidiTrack> ();
+	if (midi_region && midi_track && _dock_pianoroll) {
+		_dock_pianoroll->replace_region (midi_region, midi_track);
+		_piano_dock_hint.hide ();
+		_lower_notebook.set_current_page (1);
+		if (_show_mixer_dock_action && !_show_mixer_dock_action->get_active ()) {
+			_show_mixer_dock_action->set_active (true);
+		}
+		return;
+	}
+
 	switch (UIConfiguration::instance().get_region_edit_disposition()) {
 	case OpenBottomPane:
 		show_att_bottom (true);

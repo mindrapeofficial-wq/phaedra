@@ -1163,14 +1163,23 @@ Editor::get_canvas() const
 }
 
 bool
-Editor::track_canvas_key_press (GdkEventKey*)
+Editor::track_canvas_key_press (GdkEventKey* event)
 {
+	if (event->keyval == GDK_Control_L || event->keyval == GDK_Control_R) {
+		set_canvas_cursor (_cursors->midi_pencil);
+	} else if (event->keyval == GDK_Alt_L || event->keyval == GDK_Alt_R) {
+		set_canvas_cursor (_cursors->time_fx);
+	}
 	return false;
 }
 
 bool
-Editor::track_canvas_key_release (GdkEventKey*)
+Editor::track_canvas_key_release (GdkEventKey* event)
 {
+	if (event->keyval == GDK_Control_L || event->keyval == GDK_Control_R ||
+	    event->keyval == GDK_Alt_L || event->keyval == GDK_Alt_R) {
+		_track_canvas->re_enter ();
+	}
 	return false;
 }
 
@@ -1222,7 +1231,8 @@ Editor::which_mode_cursor () const
 {
 	Gdk::Cursor* mode_cursor = MouseCursors::invalid_cursor ();
 
-	switch (current_mouse_mode()) {
+	const Editing::MouseMode mouse_mode = effective_mouse_mode ();
+	switch (mouse_mode) {
 	case MouseRange:
 		mode_cursor = _cursors->selector;
 		break;
@@ -1247,7 +1257,7 @@ Editor::which_mode_cursor () const
 	}
 
 	/* up-down cursor as a cue that automation can be dragged up and down when in join object/range mode */
-	if (get_smart_mode()) {
+	if (get_smart_mode() && mouse_mode != MouseDraw && mouse_mode != MouseTimeFX) {
 
 		double x, y;
 		get_pointer_position (x, y);
@@ -1312,7 +1322,7 @@ Gdk::Cursor*
 Editor::which_canvas_cursor(ItemType type) const
 {
 	Gdk::Cursor* cursor = which_mode_cursor ();
-	auto mouse_mode = current_mouse_mode();
+	auto mouse_mode = effective_mouse_mode();
 
 	if (mouse_mode == MouseRange) {
 		switch (type) {
@@ -1327,7 +1337,7 @@ Editor::which_canvas_cursor(ItemType type) const
 		}
 	}
 
-	if ((mouse_mode == MouseObject || get_smart_mode ()) ||
+	if ((mouse_mode == MouseObject || (get_smart_mode () && mouse_mode != MouseDraw && mouse_mode != MouseTimeFX)) ||
 	    mouse_mode == MouseContent) {
 
 		/* find correct cursor to use in object/smart mode */
