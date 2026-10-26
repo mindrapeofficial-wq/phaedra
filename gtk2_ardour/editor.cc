@@ -665,7 +665,7 @@ Editor::Editor ()
 	_lufs_scope.set_size_request (72, 68);
 	_lufs_correlation.set_size_request (56, 68);
 	_lufs_needle.set_size_request (130, 68);
-	_lufs_bars.set_size_request (82, 68);
+	_lufs_bars.set_size_request (150, 68);
 	_lufs_spectrogram.set_size_request (230, 68);
 	_lufs_waveform.set_size_request (150, 68);
 	_lufs_oscilloscope.set_size_request (150, 68);
@@ -679,21 +679,26 @@ Editor::Editor ()
 	_lufs_oscilloscope.signal_expose_event ().connect (sigc::mem_fun (*this, &Editor::draw_lufs_oscilloscope));
 	_lufs_spectrum.signal_expose_event ().connect (sigc::mem_fun (*this, &Editor::draw_lufs_spectrum));
 	Gtk::DrawingArea* detail_sources[8] = { &_lufs_spectrogram, &_lufs_waveform, &_lufs_scope, &_lufs_correlation, &_lufs_needle, &_lufs_oscilloscope, &_lufs_spectrum, &_lufs_bars };
-	const char* detail_tips[8] = { "Espectrograma", "Forma de onda estéreo", "Vectorscopio estéreo", "Correlación de fase", "Medidor VU", "Osciloscopio", "Espectro de frecuencias", "Sonoridad y pico real" };
+	Gtk::EventBox* detail_targets[8];
+	const char* detail_tips[8] = { "Espectrograma", "Onda DJ estéreo", "Vectorscopio estéreo", "Correlación de fase", "Medidor VU (0 VU = -9 dBFS)", "Osciloscopio", "Espectro de frecuencias", "Sonoridad y pico real" };
 	for (int i = 0; i < 8; ++i) {
-		detail_sources[i]->add_events (Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
-		detail_sources[i]->set_tooltip_text (std::string (_(detail_tips[i])) + _(" · mantener pulsado para ampliar"));
-		detail_sources[i]->signal_button_press_event ().connect (sigc::bind (sigc::mem_fun (*this, &Editor::show_lufs_detail), i));
-		detail_sources[i]->signal_button_release_event ().connect ([this] (GdkEventButton*) { return hide_lufs_detail (nullptr); });
+		detail_targets[i] = manage (new Gtk::EventBox);
+		detail_targets[i]->set_visible_window (false);
+		detail_targets[i]->set_above_child (true);
+		detail_targets[i]->add_events (Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
+		detail_targets[i]->add (*detail_sources[i]);
+		detail_targets[i]->set_tooltip_text (std::string (_(detail_tips[i])) + _(" · mantener pulsado para ampliar"));
+		detail_targets[i]->signal_button_press_event ().connect (sigc::bind (sigc::mem_fun (*this, &Editor::show_lufs_detail), i));
+		detail_targets[i]->signal_button_release_event ().connect ([this] (GdkEventButton*) { return hide_lufs_detail (nullptr); });
 	}
-	_lufs_strip_box.pack_start (_lufs_spectrogram, true, true);
-	_lufs_strip_box.pack_start (_lufs_waveform, true, true);
-	_lufs_strip_box.pack_start (_lufs_scope, false, false);
-	_lufs_strip_box.pack_start (_lufs_correlation, false, false);
-	_lufs_strip_box.pack_start (_lufs_needle, false, false);
-	_lufs_strip_box.pack_start (_lufs_oscilloscope, true, true);
-	_lufs_strip_box.pack_start (_lufs_spectrum, true, true);
-	_lufs_strip_box.pack_start (_lufs_bars, false, false);
+	_lufs_strip_box.pack_start (*detail_targets[0], true, true);
+	_lufs_strip_box.pack_start (*detail_targets[1], true, true);
+	_lufs_strip_box.pack_start (*detail_targets[2], false, false);
+	_lufs_strip_box.pack_start (*detail_targets[3], false, false);
+	_lufs_strip_box.pack_start (*detail_targets[4], false, false);
+	_lufs_strip_box.pack_start (*detail_targets[5], true, true);
+	_lufs_strip_box.pack_start (*detail_targets[6], true, true);
+	_lufs_strip_box.pack_start (*detail_targets[7], false, false);
 	_lufs_strip_alignment.add (_lufs_strip_box);
 	Gtk::VBox* telemetry_body = manage (new Gtk::VBox);
 	telemetry_body->pack_start (_lufs_strip_alignment, false, false);
@@ -922,9 +927,32 @@ Editor::~Editor()
 	}
 }
 
+struct DJWaveformHistory {
+	Editor* owner = nullptr;
+	std::array<float, 96> left {};
+	std::array<float, 96> right {};
+};
+
+static DJWaveformHistory dj_waveform_history;
+
+struct SpectrogramHistory {
+	Editor* owner = nullptr;
+	std::array<std::array<float, 512>, 256> levels {};
+};
+
+static SpectrogramHistory spectrogram_history;
+
 bool
 Editor::update_lufs_strip ()
 {
+	if (dj_waveform_history.owner != this) {
+		dj_waveform_history = DJWaveformHistory ();
+		dj_waveform_history.owner = this;
+	}
+	if (spectrogram_history.owner != this) {
+		spectrogram_history = SpectrogramHistory ();
+		spectrogram_history.owner = this;
+	}
 	std::shared_ptr<PeakMeter> meter;
 	if (_session && _session->master_out ()) {
 		meter = _session->master_out ()->shared_peak_meter ();
@@ -935,10 +963,26 @@ Editor::update_lufs_strip ()
 		_lufs_preview_left.fill (0.f);
 		_lufs_preview_right.fill (0.f);
 	}
-	_lufs_vu_db = meter ? meter->lufs_vu () : -40.f;
+	double squared = 0.0;
+	float left_peak = 0.f, right_peak = 0.f;
+	for (size_t i = 0; i < _lufs_preview_left.size (); ++i) {
+		squared += 0.5 * (_lufs_preview_left[i] * _lufs_preview_left[i] + _lufs_preview_right[i] * _lufs_preview_right[i]);
+		if (i >= 4096) {
+			left_peak = std::max (left_peak, std::abs (_lufs_preview_left[i]));
+			right_peak = std::max (right_peak, std::abs (_lufs_preview_right[i]));
+		}
+	}
+	/* A mastering scale keeps a loud finished mix inside the visible -20..+3
+	 * sweep.  0 VU corresponds to -9 dBFS RMS on this display. */
+	const float vu_target = 20.f * std::log10 (std::sqrt (squared / _lufs_preview_left.size ()) + 1e-9) + 9.f;
+	_lufs_vu_db += (vu_target > _lufs_vu_db ? 0.35f : 0.12f) * (vu_target - _lufs_vu_db);
 	for (size_t x = 1; x < _lufs_spectrum_history.size (); ++x) {
 		_lufs_spectrum_history[x - 1] = _lufs_spectrum_history[x];
+		dj_waveform_history.left[x - 1] = dj_waveform_history.left[x];
+		dj_waveform_history.right[x - 1] = dj_waveform_history.right[x];
 	}
+	dj_waveform_history.left.back () = left_peak;
+	dj_waveform_history.right.back () = right_peak;
 	std::array<float, 4096> fft_input;
 	for (size_t i = 0; i < fft_input.size (); ++i) {
 		const size_t sample = _lufs_preview_left.size () - fft_input.size () + i;
@@ -973,6 +1017,19 @@ Editor::update_lufs_strip ()
 		const double db = 10.0 * std::log10 (power + 1e-12);
 		_lufs_spectrum_levels[band] = std::max (0.0, std::min (1.0, (db + 80.0) / 80.0));
 		_lufs_spectrum_history.back ()[band] = _lufs_spectrum_levels[band];
+	}
+	for (size_t row = 1; row < spectrogram_history.levels.size (); ++row) {
+		spectrogram_history.levels[row - 1] = spectrogram_history.levels[row];
+	}
+	for (size_t band = 0; band < 512; ++band) {
+		const double low = 30.0 * std::pow (20000.0 / 30.0, double (band) / 512.0);
+		const double high = 30.0 * std::pow (20000.0 / 30.0, double (band + 1) / 512.0);
+		const size_t first = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (1, size_t (low * 4096.0 / sample_rate)));
+		const size_t last = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (first, size_t (high * 4096.0 / sample_rate)));
+		float power = 0.f;
+		for (size_t bin = first; bin <= last; ++bin) power = std::max (power, _lufs_fft->power_at_bin (bin));
+		const double db = 10.0 * std::log10 (power + 1e-12);
+		spectrogram_history.levels.back ()[band] = std::max (0.0, std::min (1.0, (db + 80.0) / 80.0));
 	}
 	_lufs_scope.queue_draw ();
 	_lufs_correlation.queue_draw ();
@@ -1021,7 +1078,7 @@ bool
 Editor::draw_lufs_correlation (GdkEventExpose*)
 {
 	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_correlation.get_window ()->gobj ()));
-	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
+	cairo_set_source_rgb (cr, 0.0, 0.0, 0.0); cairo_paint (cr);
 	double cross = 0.0, lsum = 0.0, rsum = 0.0;
 	for (size_t i = 0; i < _lufs_preview_left.size (); ++i) {
 		cross += _lufs_preview_left[i] * _lufs_preview_right[i];
@@ -1029,23 +1086,28 @@ Editor::draw_lufs_correlation (GdkEventExpose*)
 		rsum += _lufs_preview_right[i] * _lufs_preview_right[i];
 	}
 	const double correlation = lsum > 1e-12 && rsum > 1e-12 ? std::max (-1.0, std::min (1.0, cross / std::sqrt (lsum * rsum))) : 0.0;
-	cairo_set_source_rgb (cr, 0.28, 0.24, 0.36);
-	cairo_rectangle (cr, 22, 4, 5, 60);
+	cairo_set_source_rgb (cr, 0.19, 0.05, 0.16);
+	cairo_rectangle (cr, 22, 4, 8, 60);
 	cairo_fill (cr);
-	cairo_set_source_rgb (cr, correlation < 0 ? 0.95 : 0.69, correlation < 0 ? 0.29 : 0.44, correlation < 0 ? 0.30 : 0.95);
-	cairo_rectangle (cr, 21, 33 - correlation * 29, 7, 3);
+	cairo_set_source_rgb (cr, 0.65, 0.0, 0.24);
+	for (int mark = 0; mark < 3; ++mark) {
+		const double y = mark == 0 ? 4.0 : mark == 1 ? 34.0 : 64.0;
+		cairo_move_to (cr, 17, y); cairo_line_to (cr, 44, y); cairo_stroke (cr);
+	}
+	cairo_set_source_rgb (cr, correlation < 0 ? 1.0 : 0.15, correlation < 0 ? 0.10 : 0.96, correlation < 0 ? 0.30 : 0.93);
+	cairo_rectangle (cr, 20, 33 - correlation * 29, 12, 4);
 	cairo_fill (cr);
-	cairo_set_source_rgb (cr, 0.70, 0.65, 0.84);
+	cairo_set_source_rgb (cr, 1.0, 0.05, 0.34);
 	cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_set_font_size (cr, 9);
 	cairo_move_to (cr, 1, 11); cairo_show_text (cr, "+1");
 	cairo_move_to (cr, 9, 36); cairo_show_text (cr, "0");
 	cairo_move_to (cr, 1, 64); cairo_show_text (cr, "-1");
-	char correlation_text[16];
-	snprintf (correlation_text, sizeof (correlation_text), "%+.1f", correlation);
-	cairo_set_source_rgb (cr, 0.88, 0.72, 1.0);
+	char reading[16];
+	snprintf (reading, sizeof (reading), "%+.1f", correlation);
+	cairo_set_source_rgb (cr, 0.89, 0.82, 0.95);
 	cairo_set_font_size (cr, 8);
-	cairo_move_to (cr, 30, 36); cairo_show_text (cr, correlation_text);
+	cairo_move_to (cr, 32, 33 - correlation * 29); cairo_show_text (cr, reading);
 	cairo_destroy (cr);
 	return true;
 }
@@ -1076,10 +1138,10 @@ Editor::draw_lufs_needle (GdkEventExpose*)
 	cairo_move_to (cr, 4, 19); cairo_show_text (cr, "-20");
 	cairo_move_to (cr, 52, 8); cairo_show_text (cr, "VU");
 	cairo_move_to (cr, 106, 19); cairo_show_text (cr, "+3");
-	char vu_text[16];
-	snprintf (vu_text, sizeof (vu_text), "%+.1f", _lufs_vu_db);
-	cairo_set_source_rgb (cr, 0.95, 0.75, 0.53);
-	cairo_move_to (cr, 95, 63); cairo_show_text (cr, vu_text);
+	char vu_reading[16];
+	snprintf (vu_reading, sizeof (vu_reading), "%+.1f", _lufs_vu_db);
+	cairo_set_source_rgb (cr, 1.0, 0.57, 0.19);
+	cairo_move_to (cr, 100, 62); cairo_show_text (cr, vu_reading);
 	cairo_destroy (cr);
 	return true;
 }
@@ -1088,70 +1150,92 @@ bool
 Editor::draw_lufs_bars (GdkEventExpose*)
 {
 	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_bars.get_window ()->gobj ()));
-	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
+	cairo_set_source_rgb (cr, 0.0, 0.0, 0.0); cairo_paint (cr);
 	std::shared_ptr<PeakMeter> meter;
 	if (_session && _session->master_out ()) meter = _session->master_out ()->shared_peak_meter ();
 	const double value = meter ? meter->lufs_momentary () : -200.0;
-	cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-	cairo_set_font_size (cr, 16);
-	const double height = std::max (0.0, std::min (64.0, (value + 60.0) * 64.0 / 60.0));
-	cairo_set_source_rgb (cr, 0.20, 0.18, 0.30);
-	cairo_rectangle (cr, 2, 2, 78, 64); cairo_fill (cr);
-	cairo_set_source_rgb (cr, 0.72, 0.46, 0.98);
-	cairo_rectangle (cr, 2, 66 - height, 78, height); cairo_fill (cr);
-	char reading[24];
-	if (value > -180.0) snprintf (reading, sizeof (reading), "%.1f", value);
-	else snprintf (reading, sizeof (reading), "--.-");
-	cairo_text_extents_t extents;
-	cairo_text_extents (cr, reading, &extents);
-	cairo_set_source_rgb (cr, 0.04, 0.02, 0.10);
-	cairo_move_to (cr, 41 - extents.width * 0.5 + 1, 39);
-	cairo_show_text (cr, reading);
-	cairo_set_source_rgb (cr, 0.98, 0.91, 1.0);
-	cairo_move_to (cr, 41 - extents.width * 0.5, 38);
-	cairo_show_text (cr, reading);
-	cairo_set_font_size (cr, 8);
-	cairo_move_to (cr, 29, 63); cairo_show_text (cr, "LUFS");
+	cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+	cairo_set_font_size (cr, 9);
+	const int marks[6] = { 0, 6, 12, 24, 36, 50 };
+	for (int mark : marks) {
+		const double y = 10.0 + mark * 55.0 / 50.0;
+		cairo_set_source_rgb (cr, 0.96, 0.02, 0.35);
+		char label[8]; snprintf (label, sizeof (label), "%d", mark);
+		cairo_move_to (cr, mark < 10 ? 18 : 13, y + 3); cairo_show_text (cr, label);
+		cairo_set_source_rgb (cr, 0.18, 0.04, 0.12);
+		cairo_move_to (cr, 27, y); cairo_line_to (cr, 69, y); cairo_stroke (cr);
+	}
+	const double top = 10.0 + std::max (0.0, std::min (50.0, -value)) * 55.0 / 50.0;
+	for (int x = 0; x < 3; ++x) {
+		const double left = 36.0 + x * 12.0;
+		cairo_set_source_rgb (cr, 0.22, 0.02, 0.14);
+		cairo_rectangle (cr, left, 9, 9, 56); cairo_fill (cr);
+		if (value > -180.0) {
+			cairo_set_source_rgb (cr, 0.99, 0.01, x == 1 ? 0.40 : 0.29);
+			cairo_rectangle (cr, left, top, 9, 65.0 - top); cairo_fill (cr);
+		}
+	}
+	char reading[32];
+	if (value > -180.0) snprintf (reading, sizeof (reading), "%.2fLUFS", value);
+	else snprintf (reading, sizeof (reading), "--.-LUFS");
+	cairo_set_source_rgb (cr, 1.0, 0.0, 0.42);
+	cairo_rectangle (cr, 73, 20, std::max (0, _lufs_bars.get_allocation ().get_width () - 74), 21); cairo_fill (cr);
+	cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
+	cairo_set_font_size (cr, 12);
+	cairo_move_to (cr, 77, 35); cairo_show_text (cr, reading);
 	cairo_destroy (cr);
 	return true;
 }
 
-static void
-set_frequency_color (cairo_t* cr, double band, double level)
+static uint32_t
+spectrogram_pixel (double level)
 {
-	/* Each log-frequency band keeps the same hue as its sound changes in level. */
-	const double hue = std::max (0.0, std::min (4.0, band * 4.0));
-	const int sector = std::min (3, int (hue));
-	const double part = hue - sector;
-	double red = 0.0, green = 0.0, blue = 0.0;
-	switch (sector) {
-	case 0: red = 1.0; green = part; break;
-	case 1: red = 1.0 - part; green = 1.0; break;
-	case 2: green = 1.0; blue = part; break;
-	default: green = 1.0 - part; blue = 1.0; break;
+	/* MiniMeters inspired heat scale, sampled from the supplied reference. */
+	const double v = std::max (0.0, std::min (1.0, (level - 0.20) * 1.45));
+	const double stops[6][3] = {
+		{ 0.0, 0.0, 0.0 }, { 0.18, 0.0, 0.32 }, { 0.60, 0.0, 0.65 },
+		{ 0.90, 0.0, 0.56 }, { 0.96, 0.20, 0.03 }, { 1.0, 0.68, 0.03 }
+	};
+	const double position = v * 5.0;
+	const int first = std::min (4, int (position));
+	const double blend = position - first;
+	const uint32_t red = uint32_t (255.0 * (stops[first][0] * (1.0 - blend) + stops[first + 1][0] * blend));
+	const uint32_t green = uint32_t (255.0 * (stops[first][1] * (1.0 - blend) + stops[first + 1][1] * blend));
+	const uint32_t blue = uint32_t (255.0 * (stops[first][2] * (1.0 - blend) + stops[first + 1][2] * blend));
+	return (red << 16) | (green << 8) | blue;
+}
+
+static void
+paint_spectrogram (cairo_t* cr, double x, double y, double width, double height)
+{
+	std::vector<uint32_t> pixels (512 * 256);
+	for (size_t row = 0; row < 256; ++row) {
+		for (size_t band = 0; band < 512; ++band) {
+			pixels[row * 512 + band] = spectrogram_pixel (spectrogram_history.levels[row][band]);
+		}
 	}
-	const double brightness = std::pow (std::max (0.0, std::min (1.0, level)), 0.75);
-	cairo_set_source_rgb (cr, red * brightness, green * brightness, blue * brightness);
+	cairo_surface_t* surface = cairo_image_surface_create_for_data (
+		reinterpret_cast<unsigned char*> (pixels.data ()), CAIRO_FORMAT_RGB24, 512, 256, 512 * 4);
+	cairo_surface_mark_dirty (surface);
+	cairo_save (cr);
+	cairo_translate (cr, x, y);
+	cairo_scale (cr, width / 512.0, height / 256.0);
+	cairo_set_source_surface (cr, surface, 0, 0);
+	cairo_pattern_set_filter (cairo_get_source (cr), CAIRO_FILTER_BILINEAR);
+	cairo_paint (cr);
+	cairo_restore (cr);
+	cairo_surface_destroy (surface);
 }
 
 bool
 Editor::draw_lufs_spectrogram (GdkEventExpose*)
 {
 	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_spectrogram.get_window ()->gobj ()));
-	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
+	cairo_set_source_rgb (cr, 0.0, 0.0, 0.0); cairo_paint (cr);
 	const int width = std::max (1, _lufs_spectrogram.get_allocation ().get_width ());
-	for (int x = 0; x < width; x += 2) {
-		const double source = x * 95.0 / std::max (1, width - 1);
-		const size_t first = size_t (source);
-		const size_t next = std::min<size_t> (95, first + 1);
-		const double blend = source - first;
-		for (size_t bin = 0; bin < 64; ++bin) {
-			const double v = std::min (1.0, (1.0 - blend) * _lufs_spectrum_history[first][bin] * 1.6 + blend * _lufs_spectrum_history[next][bin] * 1.6);
-			set_frequency_color (cr, bin / 63.0, v);
-			cairo_rectangle (cr, x, 65.0 - bin, 2.0, 1.0);
-			cairo_fill (cr);
-		}
-	}
+	const int height = std::max (1, _lufs_spectrogram.get_allocation ().get_height ());
+	/* Frequency runs left to right; new audio enters at the bottom. */
+	paint_spectrogram (cr, 0, 0, width, height);
 	cairo_destroy (cr);
 	return true;
 }
@@ -1162,25 +1246,30 @@ Editor::draw_lufs_waveform (GdkEventExpose*)
 	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_waveform.get_window ()->gobj ()));
 	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
 	const size_t width = std::max (1, _lufs_waveform.get_allocation ().get_width ());
-	cairo_set_source_rgb (cr, 0.35, 0.30, 0.49);
 	for (int channel = 0; channel < 2; ++channel) {
 		const double center = channel ? 51.0 : 17.0;
-		cairo_set_source_rgb (cr, 0.35, 0.30, 0.49);
+		cairo_set_source_rgb (cr, 0.20, 0.18, 0.30);
 		cairo_move_to (cr, 0, center); cairo_line_to (cr, width, center); cairo_stroke (cr);
-		cairo_set_source_rgb (cr, channel ? 0.92 : 0.68, channel ? 0.43 : 0.43, channel ? 0.78 : 0.98);
+		const std::array<float, 96>& peaks = channel ? dj_waveform_history.right : dj_waveform_history.left;
 		for (size_t x = 0; x < width; ++x) {
-			float low = 1.f, high = -1.f;
-			const size_t first = 4096 + x * 4096 / width;
-			const size_t last = 4096 + (x + 1) * 4096 / width;
-			for (size_t i = first; i < last; ++i) {
-				const float value = channel ? _lufs_preview_right[i] : _lufs_preview_left[i];
-				low = std::min (low, value);
-				high = std::max (high, value);
+			const size_t history_index = std::min<size_t> (95, x * 96 / width);
+			const double peak = std::min (1.0, double (peaks[history_index]));
+			if (peak < 0.001) continue;
+			double power[3] = { 0.0, 0.0, 0.0 };
+			for (size_t band = 0; band < 64; ++band) {
+				const int group = band < 20 ? 0 : band < 44 ? 1 : 2;
+				power[group] = std::max (power[group], std::pow (_lufs_spectrum_history[history_index][band], 6.0));
 			}
-			cairo_move_to (cr, x, center - high * 15);
-			cairo_line_to (cr, x, center - low * 15);
+			const double total = power[0] + power[1] + power[2] + 1e-9;
+			const double brightness = 0.40 + 0.60 * std::sqrt (peak);
+			cairo_set_source_rgb (cr, brightness * (power[0] + 0.65 * power[1]) / total,
+			                       brightness * (0.18 * power[0] + power[1] + 0.65 * power[2]) / total,
+			                       brightness * (power[2] + 0.1 * power[1]) / total);
+			const double height = std::min (15.0, 20.0 * std::sqrt (peak));
+			cairo_move_to (cr, x, center - height);
+			cairo_line_to (cr, x, center + height);
+			cairo_stroke (cr);
 		}
-		cairo_stroke (cr);
 	}
 	cairo_destroy (cr);
 	return true;
@@ -1213,40 +1302,64 @@ bool
 Editor::draw_lufs_spectrum (GdkEventExpose*)
 {
 	cairo_t* cr = gdk_cairo_create (GDK_DRAWABLE (_lufs_spectrum.get_window ()->gobj ()));
-	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
-	const double width = std::max (1, _lufs_spectrum.get_allocation ().get_width ());
-	cairo_pattern_t* fill = cairo_pattern_create_linear (0, 0, width, 0);
-	cairo_pattern_add_color_stop_rgba (fill, 0.0, 1.0, 0.12, 0.04, 0.75);
-	cairo_pattern_add_color_stop_rgba (fill, 0.25, 1.0, 0.73, 0.06, 0.75);
-	cairo_pattern_add_color_stop_rgba (fill, 0.5, 0.13, 0.96, 0.18, 0.75);
-	cairo_pattern_add_color_stop_rgba (fill, 0.75, 0.04, 0.86, 0.98, 0.75);
-	cairo_pattern_add_color_stop_rgba (fill, 1.0, 0.06, 0.22, 1.0, 0.75);
-	cairo_move_to (cr, 0, 67);
-	for (size_t bin = 0; bin < _lufs_spectrum_levels.size (); ++bin) {
-		const double x = bin * width / 63.0;
-		const double y = 67.0 - _lufs_spectrum_levels[bin] * 57.0;
-		cairo_line_to (cr, x, y);
+	cairo_set_source_rgb (cr, 0.0, 0.0, 0.0); cairo_paint (cr);
+	const int width = std::max (1, _lufs_spectrum.get_allocation ().get_width ());
+	const double height = std::max (1, _lufs_spectrum.get_allocation ().get_height ());
+	const double sample_rate = _session ? _session->nominal_sample_rate () : 48000.0;
+	std::vector<double> levels (width, 0.0);
+	if (_lufs_fft) {
+		for (int x = 0; x < width; ++x) {
+			const double low_hz = 30.0 * std::pow (20000.0 / 30.0, double (x) / width);
+			const double high_hz = 30.0 * std::pow (20000.0 / 30.0, double (x + 1) / width);
+			const size_t first = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (1, size_t (low_hz * 4096.0 / sample_rate)));
+			const size_t last = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (first, size_t (high_hz * 4096.0 / sample_rate)));
+			float peak = 0.f;
+			for (size_t bin = first; bin <= last; ++bin) peak = std::max (peak, _lufs_fft->power_at_bin (bin));
+			levels[x] = std::max (0.0, std::min (1.0, (10.0 * std::log10 (peak + 1e-12) + 78.0) / 78.0));
+		}
 	}
-	cairo_line_to (cr, width, 67);
+	for (double hz : { 100.0, 1000.0, 10000.0 }) {
+		const double x = width * std::log (hz / 30.0) / std::log (20000.0 / 30.0);
+		cairo_set_source_rgb (cr, 0.16, 0.16, 0.23);
+		cairo_move_to (cr, x, 0); cairo_line_to (cr, x, height); cairo_stroke (cr);
+	}
+	cairo_pattern_t* fill = cairo_pattern_create_linear (0, height, 0, 0);
+	cairo_pattern_add_color_stop_rgba (fill, 0.0, 0.37, 0.0, 0.48, 0.9);
+	cairo_pattern_add_color_stop_rgba (fill, 0.38, 0.92, 0.0, 0.55, 0.95);
+	cairo_pattern_add_color_stop_rgba (fill, 0.68, 1.0, 0.07, 0.19, 0.98);
+	cairo_pattern_add_color_stop_rgba (fill, 1.0, 1.0, 0.65, 0.13, 1.0);
+	cairo_move_to (cr, 0, height - 1);
+	for (int x = 0; x < width; ++x) cairo_line_to (cr, x, height - 1 - levels[x] * (height - 11));
+	cairo_line_to (cr, width, height - 1);
 	cairo_close_path (cr);
-	cairo_set_source (cr, fill);
-	cairo_fill_preserve (cr);
-	cairo_set_source_rgb (cr, 0.86, 0.68, 1.0);
-	cairo_set_line_width (cr, 1.0);
-	cairo_stroke (cr);
+	cairo_set_source (cr, fill); cairo_fill (cr);
 	cairo_pattern_destroy (fill);
-	cairo_set_source_rgb (cr, 0.58, 0.52, 0.70);
+	cairo_set_source_rgb (cr, 0.98, 0.94, 1.0);
+	cairo_set_line_width (cr, 1.0);
+	for (int x = 0; x < width; ++x) {
+		const double y = height - 1 - levels[x] * (height - 11);
+		if (x == 0) cairo_move_to (cr, x, y); else cairo_line_to (cr, x, y);
+	}
+	cairo_stroke (cr);
+	cairo_set_source_rgb (cr, 0.70, 0.65, 0.77);
 	cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_set_font_size (cr, 8);
-	cairo_move_to (cr, 3, 66); cairo_show_text (cr, "30");
-	cairo_move_to (cr, width * 0.53, 66); cairo_show_text (cr, "1k");
-	cairo_move_to (cr, width - 27, 66); cairo_show_text (cr, "20k");
+	cairo_move_to (cr, 3, height - 2); cairo_show_text (cr, "30");
+	cairo_move_to (cr, width * 0.53, height - 2); cairo_show_text (cr, "1k");
+	cairo_move_to (cr, width - 27, height - 2); cairo_show_text (cr, "20k");
 	if (_lufs_pitch_hz > 0.f) {
-		char text[32];
-		snprintf (text, sizeof (text), "%.0f Hz", _lufs_pitch_hz);
-		cairo_set_source_rgb (cr, 0.83, 0.73, 0.96);
-		cairo_set_font_size (cr, 10);
-		cairo_move_to (cr, 5, 12);
+		const int midi = int (std::round (69.0 + 12.0 * std::log2 (_lufs_pitch_hz / 440.0)));
+		const int cents = int (std::round (1200.0 * std::log2 (_lufs_pitch_hz / (440.0 * std::pow (2.0, (midi - 69) / 12.0)))));
+		const char* notes[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+		const size_t pitch_bin = std::min<size_t> (_lufs_fft->bins () - 1, size_t (_lufs_pitch_hz * 4096.0 / sample_rate));
+		const double db = 10.0 * std::log10 (_lufs_fft->power_at_bin (pitch_bin) + 1e-12);
+		char text[80];
+		snprintf (text, sizeof (text), "%.1f dB | %.1f Hz | %s%d %+d cents", db, _lufs_pitch_hz, notes[(midi % 12 + 12) % 12], midi / 12 - 1, cents);
+		cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, 0.70);
+		cairo_rectangle (cr, 0, 0, width, 15); cairo_fill (cr);
+		cairo_set_source_rgb (cr, 1.0, 0.95, 1.0);
+		cairo_set_font_size (cr, 9);
+		cairo_move_to (cr, 5, 11);
 		cairo_show_text (cr, text);
 	}
 	cairo_destroy (cr);
@@ -1342,17 +1455,7 @@ Editor::draw_lufs_detail (GdkEventExpose*)
 	cairo_set_line_width (cr, 1.0);
 	cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 	if (_lufs_detail_mode == 0) {
-		for (int x = 0; x < 192; ++x) {
-			const double source = x * 95.0 / 191.0;
-			const size_t first = size_t (source), next = std::min<size_t> (95, first + 1);
-			const double blend = source - first;
-			for (int bin = 0; bin < 64; ++bin) {
-				const double v = std::min (1.0, 1.6 * ((1.0 - blend) * _lufs_spectrum_history[first][bin] + blend * _lufs_spectrum_history[next][bin]));
-				set_frequency_color (cr, bin / 63.0, v);
-				cairo_rectangle (cr, 20 + x * (w - 40) / 192.0, 10 + (63 - bin) * (h - 35) / 64.0, (w - 40) / 192.0 + 0.5, (h - 35) / 64.0 + 0.5);
-				cairo_fill (cr);
-			}
-		}
+		paint_spectrogram (cr, 20, 10, w - 40, h - 30);
 	} else if (_lufs_detail_mode == 1 || _lufs_detail_mode == 5) {
 		const size_t sample_count = _lufs_detail_mode == 1 ? 8192 : 2048;
 		for (int channel = 0; channel < 2; ++channel) {
