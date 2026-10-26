@@ -311,16 +311,16 @@ ARDOUR_UI::install_actions ()
 	act = ActionManager::register_action (common_actions, X_("NewMIDITracer"), _("MIDI Tracer"), sigc::mem_fun(*this, &ARDOUR_UI::new_midi_tracer_window));
 	ActionManager::session_sensitive_actions.push_back (act);
 
-	ActionManager::register_action (common_actions, X_("chat"), _("Chat"),  sigc::mem_fun(*this, &ARDOUR_UI::launch_chat));
-	ActionManager::register_action (common_actions, X_("tutorial"), S_("Help|Tutorial"),  mem_fun(*this, &ARDOUR_UI::launch_tutorial));
+	ActionManager::register_action (common_actions, X_("chat"), _("Support Issues"),  sigc::mem_fun(*this, &ARDOUR_UI::launch_chat));
+	ActionManager::register_action (common_actions, X_("tutorial"), S_("Help|Phaedra Guide"),  mem_fun(*this, &ARDOUR_UI::launch_tutorial));
 	ActionManager::register_action (common_actions, X_("check-for-updates"), _("Check for Updates"), mem_fun(*this, &ARDOUR_UI::check_for_updates));
-	ActionManager::register_action (common_actions, X_("reference"), S_("Manual|Reference"),  mem_fun(*this, &ARDOUR_UI::launch_reference));
+	ActionManager::register_action (common_actions, X_("reference"), S_("Manual|Phaedra Guide"),  mem_fun(*this, &ARDOUR_UI::launch_reference));
 	ActionManager::register_action (common_actions, X_("tracker"), _("Report a Bug"), mem_fun(*this, &ARDOUR_UI::launch_tracker));
 	ActionManager::register_action (common_actions, X_("website"), _("Website"), mem_fun(*this, &ARDOUR_UI::launch_website));
 	ActionManager::register_action (common_actions, X_("version-history"), _("Version History"), sigc::ptr_fun (&show_phaedra_version_history));
 	ActionManager::register_action (common_actions, X_("website-dev"), _("Development"), mem_fun(*this, &ARDOUR_UI::launch_website_dev));
-	ActionManager::register_action (common_actions, X_("forums"), _("User Forums"), mem_fun(*this, &ARDOUR_UI::launch_forums));
-	ActionManager::register_action (common_actions, X_("howto-report"), _("How to Report a Bug"), mem_fun(*this, &ARDOUR_UI::launch_howto_report));
+	ActionManager::register_action (common_actions, X_("forums"), _("Support Issues"), mem_fun(*this, &ARDOUR_UI::launch_forums));
+	ActionManager::register_action (common_actions, X_("howto-report"), _("Issue Reporting"), mem_fun(*this, &ARDOUR_UI::launch_howto_report));
 
 	act = ActionManager::register_action (common_actions, X_("Save"), _("Save"),  sigc::hide_return (sigc::bind (sigc::mem_fun(*this, &ARDOUR_UI::save_state), string(""), false)));
 	ActionManager::session_sensitive_actions.push_back (act);

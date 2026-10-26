@@ -46,7 +46,6 @@
 #include "export_report.h"
 #include "gui_thread.h"
 #include "mixer_ui.h"
-#include "nag.h"
 #include "ui_config.h"
 
 #include "pbd/i18n.h"
@@ -477,13 +476,7 @@ ExportDialog::show_progress ()
 
 	if (!status->aborted()) {
 		hide();
-		if (!ARDOUR::Profile->get_mixbus () && !ARDOUR::Profile->get_livetrax ()) {
-			NagScreen* ns = NagScreen::maybe_nag (_("export"));
-			if (ns) {
-				ns->nag ();
-				delete ns;
-			}
-		}
+
 	} else {
 		notify_errors ();
 	}

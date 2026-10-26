@@ -764,13 +764,8 @@
       <menuitem action='videos'/>
       <menuitem action='forums'/>
 #else
-      <menuitem action='chat'/>
-      <menuitem action='tutorial'/>
-      <menuitem action='reference'/>
-      <menuitem action='forums'/>
-      <menuitem action='howto-report'/>
-      <menuitem action='tracker'/>
       <menuitem action='website'/>
+      <menuitem action='tracker'/>
       <menuitem action='website-dev'/>
 #endif
     </menu>

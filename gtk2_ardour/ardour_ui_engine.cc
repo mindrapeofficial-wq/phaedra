@@ -57,56 +57,26 @@ using namespace std;
 void
 ARDOUR_UI::audioengine_became_silent ()
 {
-	ArdourMessageDialog msg (string_compose (_("This is a free/demo copy of %1. It has just switched to silent mode."), PROGRAM_NAME),
+	ArdourMessageDialog msg (_("The audio engine has switched to silent mode."),
 	                         true,
 	                         Gtk::MESSAGE_WARNING,
 	                         Gtk::BUTTONS_NONE,
 	                         true);
 
-	msg.set_title (string_compose (_("%1 is now silent"), PROGRAM_NAME));
-
-	Gtk::Label pay_label (string_compose (_("Please consider paying for a copy of %1 - you can pay whatever you want.\nDownload the unrestricted build after paying..."), PROGRAM_NAME));
-	Gtk::Label subscribe_label (_("Better yet become a subscriber - subscriptions start at US$1 per month."));
-	Gtk::Button pay_button (_("Pay for a copy (via the web)"));
-	Gtk::Button subscribe_button (_("Become a subscriber (via the web)"));
-	Gtk::HBox pay_button_box;
-	Gtk::HBox subscribe_button_box;
-
-	pay_button_box.pack_start (pay_button, true, false);
-	subscribe_button_box.pack_start (subscribe_button, true, false);
-
-	bool (*openuri)(const char*) = PBD::open_uri; /* this forces selection of the const char* variant of PBD::open_uri(), which we need to avoid ambiguity below */
-
-	pay_button.signal_clicked().connect (sigc::hide_return (sigc::bind (sigc::ptr_fun (openuri), (const char*) "https://ardour.org/download")));
-	subscribe_button.signal_clicked().connect (sigc::hide_return (sigc::bind (sigc::ptr_fun (openuri), (const char*) "https://ardour.org/subscribe")));
-
-
-	msg.get_vbox()->pack_start (pay_label);
-	msg.get_vbox()->pack_start (pay_button_box);
-	msg.get_vbox()->pack_start (subscribe_label);
-	msg.get_vbox()->pack_start (subscribe_button_box);
-
-	msg.get_vbox()->show_all ();
-
+	msg.set_title (_("Audio is silent"));
 	msg.add_button (_("Remain silent"), Gtk::RESPONSE_CANCEL);
 	msg.add_button (_("Save and quit"), Gtk::RESPONSE_NO);
-	msg.add_button (_("Give me more time"), Gtk::RESPONSE_YES);
+	msg.add_button (_("Try again"), Gtk::RESPONSE_YES);
 
-	int r = msg.run ();
-
-	switch (r) {
+	switch (msg.run ()) {
 	case Gtk::RESPONSE_YES:
 		AudioEngine::instance()->reset_silence_countdown ();
 		break;
-
 	case Gtk::RESPONSE_NO:
-		/* save and quit */
 		save_state_canfail ("");
 		exit (EXIT_SUCCESS);
 		break;
-
 	default:
-		/* don't reset, save session and exit */
 		break;
 	}
 }

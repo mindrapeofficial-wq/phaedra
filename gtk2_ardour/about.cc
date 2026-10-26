@@ -646,10 +646,11 @@ About::About ()
 
 	set_translator_credits (t);
 	set_copyright (_("Copyright (C) 1999-2026 Paul Davis\n"));
+	set_comments (_("Phaedra includes code derived from Ardour. Original author credits and license terms are included below."));
 	set_license (gpl);
-	set_name (X_("Ardour"));
-	set_website (X_("https://ardour.org/"));
-	set_website_label (_("http://ardour.org/"));
+	set_name (X_("Phaedra"));
+	set_website (X_("https://phaedra-daw.vercel.app/"));
+	set_website_label (_("phaedra-daw.vercel.app"));
 	set_version ((string_compose(_("%1%2\n(rev %3)\n%4%5"),
 				     VERSIONSTRING,
 				     codename,

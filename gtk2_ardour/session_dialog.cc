@@ -1450,7 +1450,7 @@ void
 SessionDialog::updates_button_clicked ()
 {
 	//now open a browser window so user can see more
-	PBD::open_uri (Config->get_updates_url());
+	PBD::open_uri ("https://github.com/mindrapeofficial-wq/phaedra/releases");
 }
 
 bool
