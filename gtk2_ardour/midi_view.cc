@@ -639,7 +639,7 @@ MidiView::button_press (GdkEventButton* ev)
 		return false;
 	}
 
-	MouseMode m = _editing_context.current_mouse_mode();
+	MouseMode m = (ev->state & GDK_CONTROL_MASK) ? MouseDraw : _editing_context.current_mouse_mode();
 	int held_note = -1;
 
 	if (m == MouseDraw || (m == MouseContent && Keyboard::modifier_state_contains (ev->state, Keyboard::insert_note_modifier()))) {

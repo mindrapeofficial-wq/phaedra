@@ -302,8 +302,11 @@ MidiRegionView::canvas_group_event(GdkEvent* ev)
 		return false;
 	}
 
-	if (!_editing_context.internal_editing()) {
-		// not in internal edit mode, so just act like a normal region
+	/* Ctrl temporarily draws notes even when the selected tool edits regions.
+	 * Keep forwarding the gesture until its drag has finished. */
+	const bool ctrl_draw = ev->type == GDK_BUTTON_PRESS && ev->button.button == 1 &&
+	                       (ev->button.state & GDK_CONTROL_MASK);
+	if (!_editing_context.internal_editing() && !ctrl_draw && !draw_drag) {
 		return RegionView::canvas_group_event (ev);
 	}
 
