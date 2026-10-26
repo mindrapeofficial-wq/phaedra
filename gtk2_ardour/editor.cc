@@ -1426,6 +1426,9 @@ Editor::show_lufs_detail (GdkEventButton* event, int mode)
 	_lufs_detail_text->set_no_show_all (false);
 	_lufs_detail_canvas->show ();
 	_lufs_detail_text->show ();
+	_lufs_strip_background.set_size_request (-1, 330);
+	content_top_bar.set_size_request (-1, 330);
+	content_top_bar.queue_resize ();
 	_lufs_detail_canvas->queue_draw ();
 	return true;
 }
@@ -1438,6 +1441,9 @@ Editor::hide_lufs_detail (GdkEventAny*)
 	_lufs_detail_text->hide ();
 	_lufs_detail_canvas->set_no_show_all ();
 	_lufs_detail_text->set_no_show_all ();
+	_lufs_strip_background.set_size_request (-1, 80);
+	content_top_bar.set_size_request (-1, 80);
+	content_top_bar.queue_resize ();
 	return true;
 }
 
