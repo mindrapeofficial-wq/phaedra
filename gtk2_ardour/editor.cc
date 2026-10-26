@@ -1116,6 +1116,24 @@ Editor::draw_lufs_bars (GdkEventExpose*)
 	return true;
 }
 
+static void
+set_frequency_color (cairo_t* cr, double band, double level)
+{
+	/* Each log-frequency band keeps the same hue as its sound changes in level. */
+	const double hue = std::max (0.0, std::min (4.0, band * 4.0));
+	const int sector = std::min (3, int (hue));
+	const double part = hue - sector;
+	double red = 0.0, green = 0.0, blue = 0.0;
+	switch (sector) {
+	case 0: red = 1.0; green = part; break;
+	case 1: red = 1.0 - part; green = 1.0; break;
+	case 2: green = 1.0; blue = part; break;
+	default: green = 1.0 - part; blue = 1.0; break;
+	}
+	const double brightness = std::pow (std::max (0.0, std::min (1.0, level)), 0.75);
+	cairo_set_source_rgb (cr, red * brightness, green * brightness, blue * brightness);
+}
+
 bool
 Editor::draw_lufs_spectrogram (GdkEventExpose*)
 {
@@ -1129,7 +1147,7 @@ Editor::draw_lufs_spectrogram (GdkEventExpose*)
 		const double blend = source - first;
 		for (size_t bin = 0; bin < 64; ++bin) {
 			const double v = std::min (1.0, (1.0 - blend) * _lufs_spectrum_history[first][bin] * 1.6 + blend * _lufs_spectrum_history[next][bin] * 1.6);
-			cairo_set_source_rgb (cr, std::min (1.0, v * 2.5), std::max (0.0, (v - 0.45) * 2.0), std::min (1.0, v < 0.65 ? v * 2.3 : (1.0 - v) * 2.7));
+			set_frequency_color (cr, bin / 63.0, v);
 			cairo_rectangle (cr, x, 65.0 - bin, 2.0, 1.0);
 			cairo_fill (cr);
 		}
@@ -1198,9 +1216,11 @@ Editor::draw_lufs_spectrum (GdkEventExpose*)
 	cairo_set_source_rgb (cr, 0.015, 0.012, 0.035); cairo_paint (cr);
 	const double width = std::max (1, _lufs_spectrum.get_allocation ().get_width ());
 	cairo_pattern_t* fill = cairo_pattern_create_linear (0, 0, width, 0);
-	cairo_pattern_add_color_stop_rgba (fill, 0.0, 0.42, 0.12, 0.82, 0.75);
-	cairo_pattern_add_color_stop_rgba (fill, 0.45, 0.92, 0.10, 0.58, 0.75);
-	cairo_pattern_add_color_stop_rgba (fill, 1.0, 1.0, 0.43, 0.13, 0.75);
+	cairo_pattern_add_color_stop_rgba (fill, 0.0, 1.0, 0.12, 0.04, 0.75);
+	cairo_pattern_add_color_stop_rgba (fill, 0.25, 1.0, 0.73, 0.06, 0.75);
+	cairo_pattern_add_color_stop_rgba (fill, 0.5, 0.13, 0.96, 0.18, 0.75);
+	cairo_pattern_add_color_stop_rgba (fill, 0.75, 0.04, 0.86, 0.98, 0.75);
+	cairo_pattern_add_color_stop_rgba (fill, 1.0, 0.06, 0.22, 1.0, 0.75);
 	cairo_move_to (cr, 0, 67);
 	for (size_t bin = 0; bin < _lufs_spectrum_levels.size (); ++bin) {
 		const double x = bin * width / 63.0;
@@ -1328,7 +1348,7 @@ Editor::draw_lufs_detail (GdkEventExpose*)
 			const double blend = source - first;
 			for (int bin = 0; bin < 64; ++bin) {
 				const double v = std::min (1.0, 1.6 * ((1.0 - blend) * _lufs_spectrum_history[first][bin] + blend * _lufs_spectrum_history[next][bin]));
-				cairo_set_source_rgb (cr, std::min (1.0, v * 2.5), std::max (0.0, (v - 0.45) * 2.0), std::min (1.0, v < 0.65 ? v * 2.3 : (1.0 - v) * 2.7));
+				set_frequency_color (cr, bin / 63.0, v);
 				cairo_rectangle (cr, 20 + x * (w - 40) / 192.0, 10 + (63 - bin) * (h - 35) / 64.0, (w - 40) / 192.0 + 0.5, (h - 35) / 64.0 + 0.5);
 				cairo_fill (cr);
 			}
@@ -1392,9 +1412,11 @@ Editor::draw_lufs_detail (GdkEventExpose*)
 		cairo_move_to (cr, cx, cy); cairo_line_to (cr, cx + (radius - 20) * std::cos (angle), cy + (radius - 20) * std::sin (angle)); cairo_stroke (cr);
 	} else if (_lufs_detail_mode == 6) {
 		cairo_pattern_t* fill = cairo_pattern_create_linear (20, 0, w - 20, 0);
-		cairo_pattern_add_color_stop_rgba (fill, 0, 0.42, 0.12, 0.82, 0.8);
-		cairo_pattern_add_color_stop_rgba (fill, 0.5, 0.93, 0.11, 0.60, 0.8);
-		cairo_pattern_add_color_stop_rgba (fill, 1, 1.0, 0.45, 0.13, 0.8);
+		cairo_pattern_add_color_stop_rgba (fill, 0.0, 1.0, 0.12, 0.04, 0.8);
+		cairo_pattern_add_color_stop_rgba (fill, 0.25, 1.0, 0.73, 0.06, 0.8);
+		cairo_pattern_add_color_stop_rgba (fill, 0.5, 0.13, 0.96, 0.18, 0.8);
+		cairo_pattern_add_color_stop_rgba (fill, 0.75, 0.04, 0.86, 0.98, 0.8);
+		cairo_pattern_add_color_stop_rgba (fill, 1.0, 0.06, 0.22, 1.0, 0.8);
 		cairo_move_to (cr, 20, h - 20);
 		for (size_t i = 0; i < 64; ++i) cairo_line_to (cr, 20 + i * (w - 40) / 63.0, h - 20 - _lufs_spectrum_levels[i] * (h - 50));
 		cairo_line_to (cr, w - 20, h - 20); cairo_close_path (cr);
@@ -3509,11 +3531,6 @@ Editor::setup_toolbar ()
 	advanced_box->pack_end (*follow_mode_hbox, false, false);
 	advanced_box->set_no_show_all ();
 	ebox_vpacker.pack_start (*advanced_box, false, false);
-	Gtk::ToggleButton* advanced_button = manage (new Gtk::ToggleButton (_("Advanced")));
-	advanced_button->signal_toggled ().connect ([advanced_button, advanced_box] () {
-	    if (advanced_button->get_active ()) advanced_box->show_all ();
-	    else advanced_box->hide ();
-	});
 
 	HBox* toolbar_left = manage (new HBox);
 	HBox* toolbar_center = manage (new HBox);
@@ -3525,7 +3542,6 @@ Editor::setup_toolbar ()
 	/* Select is the normal mode; Ctrl and Alt temporarily provide Draw and
 	 * Stretch, and S splits at the playhead. Keep only the grid controls. */
 	toolbar_left->pack_start (snap_box, false, false);
-	toolbar_right->pack_start (*advanced_button, false, false);
 	content_header_hbox.remove (content_tabbables);
 	toolbar_right->pack_end (content_tabbables, false, false);
 	Glib::RefPtr<SizeGroup> balanced_sides = SizeGroup::create (SIZE_GROUP_HORIZONTAL);

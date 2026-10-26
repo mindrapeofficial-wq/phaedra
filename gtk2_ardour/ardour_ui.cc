@@ -1954,6 +1954,12 @@ ARDOUR_UI::toggle_session_auto_loop ()
 		return;
 	}
 
+	/* In Phaedra the loop button is a persistent repeat mode.  Ardour's
+	 * non-mode setting cancels the loop as soon as the user presses Play. */
+	if (!Config->get_loop_is_mode ()) {
+		Config->set_loop_is_mode (true);
+	}
+
 	if (_session->get_play_loop()) {
 
 		/* looping enabled, our job is to disable it */
