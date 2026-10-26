@@ -33,6 +33,7 @@
 
 #include <stdint.h>
 #include <cstdlib>
+#include <cstdio>
 #include <cmath>
 #include <string>
 #include <algorithm>
@@ -78,6 +79,7 @@
 #include "ardour/audioregion.h"
 #include "ardour/lmath.h"
 #include "ardour/location.h"
+#include "ardour/meter.h"
 #include "ardour/midi_track.h"
 #include "ardour/profile.h"
 #include "ardour/route.h"
@@ -652,6 +654,25 @@ Editor::Editor ()
 	/* pack all the main pieces into appropriate containers from _tabbable
 	 */
 	content_app_bar.add (_application_bar);
+	/* Phaedra: a fixed master loudness strip above the transport. */
+	_lufs_strip_background.set_size_request (-1, 108);
+	_lufs_strip_background.modify_bg (Gtk::STATE_NORMAL, Gdk::Color ("#090813"));
+	_lufs_strip_box.set_spacing (12);
+	_lufs_strip_box.set_border_width (12);
+	_lufs_strip_box.pack_start (_lufs_m_label, true, true);
+	_lufs_strip_box.pack_start (_lufs_s_label, true, true);
+	_lufs_strip_box.pack_start (_lufs_i_label, true, true);
+	_lufs_strip_box.pack_start (_lufs_tp_label, true, true);
+	_lufs_reset_button.set_label (_("Reset"));
+	_lufs_reset_button.set_size_request (72, 32);
+	_lufs_reset_button.signal_clicked ().connect (sigc::mem_fun (*this, &Editor::reset_lufs_strip));
+	_lufs_strip_box.pack_end (_lufs_reset_button, false, false);
+	_lufs_strip_background.add (_lufs_strip_box);
+	content_top_bar.add (_lufs_strip_background);
+	content_top_bar.show ();
+	_lufs_strip_background.show_all ();
+	update_lufs_strip ();
+	_lufs_strip_timer = Glib::signal_timeout ().connect (sigc::mem_fun (*this, &Editor::update_lufs_strip), 100);
 	content_att_right.add (_editor_list_vbox);
 	content_att_bottom.add (_bottom_hbox);
 	content_main_top.add (global_vpacker);
@@ -808,6 +829,7 @@ Editor::Editor ()
 
 Editor::~Editor()
 {
+	_lufs_strip_timer.disconnect ();
 	delete own_bindings;
 	delete tempo_marker_menu;
 	delete meter_marker_menu;
@@ -847,6 +869,46 @@ Editor::~Editor()
 	}
 	for (std::map<ARDOUR::FadeShape, Gtk::Image*>::const_iterator i = _xfade_out_images.begin(); i != _xfade_out_images.end (); ++i) {
 		delete i->second;
+	}
+}
+
+bool
+Editor::update_lufs_strip ()
+{
+	std::shared_ptr<PeakMeter> meter;
+	if (_session && _session->master_out ()) {
+		meter = _session->master_out ()->shared_peak_meter ();
+	}
+	_lufs_reset_button.set_sensitive (bool (meter));
+	const float readings[4] = {
+		meter ? meter->lufs_momentary () : -200.f,
+		meter ? meter->lufs_short_term () : -200.f,
+		meter ? meter->lufs_integrated () : -200.f,
+		meter ? meter->lufs_true_peak () : -200.f
+	};
+	const char* titles[4] = { "MOMENTARY", "SHORT TERM", "INTEGRATED", "TRUE PEAK" };
+	Gtk::Label* labels[4] = { &_lufs_m_label, &_lufs_s_label, &_lufs_i_label, &_lufs_tp_label };
+	for (int i = 0; i < 4; ++i) {
+		char value[32];
+		if (std::isfinite (readings[i]) && readings[i] > -180.f) {
+			snprintf (value, sizeof (value), "%.1f", readings[i]);
+		} else {
+			snprintf (value, sizeof (value), "--.-");
+		}
+		const char* unit = i == 3 ? "dBTP" : "LUFS";
+		char markup[256];
+		snprintf (markup, sizeof (markup), "<span foreground='#aaa4ca' size='small'>%s</span>\n<span foreground='#d8b8ff' size='xx-large'>%s</span> <span foreground='#8e87ae' size='small'>%s</span>", titles[i], value, unit);
+		labels[i]->set_markup (markup);
+	}
+	return true;
+}
+
+void
+Editor::reset_lufs_strip ()
+{
+	if (_session && _session->master_out ()) {
+		_session->master_out ()->shared_peak_meter ()->reset_lufs ();
+		update_lufs_strip ();
 	}
 }
 

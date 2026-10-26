@@ -111,6 +111,8 @@ Tabbable::default_layout ()
 	toolbar_frame->set_name ("TransportFrame");
 	toolbar_frame->add (content_header_hbox);
 
+	content_top_bar.set_no_show_all ();
+	_content_vbox.pack_start (content_top_bar, false, false);
 	_content_vbox.pack_start (*toolbar_frame, false, false);
 
 	if (_panelayout & PaneLeft) {
