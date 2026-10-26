@@ -2083,6 +2083,8 @@
   <Plugin type="LV2" id="http://gareus.org/oss/lv2/meters#spectr30stereo" tags="analyser" name="1/3 Octave Spectrum Display Stereo"/>
   <Plugin type="LV2" id="http://gareus.org/oss/lv2/meters#spectr30stereo_gtk" tags="analyser" name="1/3 Octave Spectrum Display Stereo GTK"/>
   <Plugin type="LV2" id="http://harrisonconsoles.com/lv2/har_delay/stereo" tags="delay modulation spatial" name="3D Triple Delay (Stereo)"/>
+  <Plugin type="LV2" id="https://phaedra.arcanumgames.es/plugins/ds" tags="dyn:de-esser" name="Phaedra DS" />
+  <Plugin type="LV2" id="https://phaedra.arcanumgames.es/plugins/air" tags="eq:filter vocal" name="Phaedra Air" />
   <Plugin type="LV2" id="urn:ardour:a-comp" tags="dyn:compressor inline-ui" name="a-Compressor"/>
   <Plugin type="LV2" id="urn:ardour:a-comp#stereo" tags="dyn:compressor inline-ui" name="a-Compressor stereo"/>
   <Plugin type="LV2" id="urn:ardour:a-delay" tags="delay" name="a-Delay"/>

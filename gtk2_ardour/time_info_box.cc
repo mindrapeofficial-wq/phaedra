@@ -57,13 +57,13 @@ TimeInfoBox::TimeInfoBox (std::string state_node_name, bool with_punch)
 
 	selection_start = new AudioClock (
 			string_compose ("%1-selection-start", state_node_name),
-			false, "selection", false, false, false, false);
+			false, "selection", true, false, false, false);
 	selection_end = new AudioClock (
 			string_compose ("%1-selection-end", state_node_name),
-			false, "selection", false, false, false, false);
+			false, "selection", true, false, false, false);
 	selection_length = new AudioClock (
 			string_compose ("%1-selection-length", state_node_name),
-			false, "selection", false, false, true, false);
+			false, "selection", true, false, true, false);
 
 	selection_start->set_corner_radius(0);
 	selection_end->set_corner_radius(0);
@@ -129,9 +129,9 @@ TimeInfoBox::TimeInfoBox (std::string state_node_name, bool with_punch)
 	selection_start->mode_changed.connect (sigc::bind (sigc::mem_fun (*this, &TimeInfoBox::sync_selection_mode), selection_start));
 	selection_end->mode_changed.connect (sigc::bind (sigc::mem_fun (*this, &TimeInfoBox::sync_selection_mode), selection_end));
 	selection_length->mode_changed.connect (sigc::bind (sigc::mem_fun (*this, &TimeInfoBox::sync_selection_mode), selection_length));
-
-	selection_start->signal_button_release_event().connect (sigc::bind (sigc::mem_fun (*this, &TimeInfoBox::clock_button_release_event), selection_start), true);
-	selection_end->signal_button_release_event().connect (sigc::bind (sigc::mem_fun (*this, &TimeInfoBox::clock_button_release_event), selection_end), true);
+	selection_start->ValueChanged.connect (sigc::bind (sigc::mem_fun (*this, &TimeInfoBox::selection_clock_changed), selection_start));
+	selection_end->ValueChanged.connect (sigc::bind (sigc::mem_fun (*this, &TimeInfoBox::selection_clock_changed), selection_end));
+	selection_length->ValueChanged.connect (sigc::bind (sigc::mem_fun (*this, &TimeInfoBox::selection_clock_changed), selection_length));
 
 	if (with_punch_clock) {
 		punch_start->mode_changed.connect (sigc::bind (sigc::mem_fun (*this, &TimeInfoBox::sync_punch_mode), punch_start));
@@ -252,6 +252,42 @@ TimeInfoBox::region_selection_changed ()
 	selection_start->set (s);
 	selection_end->set (e);
 	selection_length->set_duration (s.distance (e).increment(), true);
+}
+
+void
+TimeInfoBox::selection_clock_changed (AudioClock* clock)
+{
+	if (!_session) {
+		return;
+	}
+
+	Selection& selection (Editor::instance().get_selection());
+	if (selection.time.empty()) {
+		return;
+	}
+
+	/* The range end is exclusive; the End clock displays its last sample. */
+	samplepos_t start = selection.time.start_time().samples();
+	samplepos_t end = selection.time.end_time().samples();
+	if (clock == selection_start) {
+		start = selection_start->last_when().samples();
+	} else if (clock == selection_end) {
+		end = selection_end->last_when().samples() + 1;
+	} else if (clock == selection_length) {
+		end = start + selection_length->current_duration (timepos_t (start)).samples();
+	}
+
+	if (end <= start) {
+		selection_changed ();
+		return;
+	}
+
+	/* Keep the existing selection identity so its ruler handles follow the edit. */
+	if (selection.time.size() == 1) {
+		selection.replace (selection.time.front().id, timepos_t (start), timepos_t (end));
+	} else {
+		selection.set (timepos_t (start), timepos_t (end));
+	}
 }
 
 void

@@ -390,6 +390,8 @@ children = [
         'libs/plugins/a-exp.lv2',
         'libs/plugins/a-delay.lv2',
         'libs/plugins/a-eq.lv2',
+        'libs/plugins/a-air.lv2',
+        'libs/plugins/a-ds.lv2',
         'libs/plugins/a-reverb.lv2',
         'libs/plugins/a-fluidsynth.lv2',
         #'libs/plugins/a-vapor.lv2',

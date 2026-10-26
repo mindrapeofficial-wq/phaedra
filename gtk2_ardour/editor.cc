@@ -418,7 +418,7 @@ Editor::Editor ()
 
 	rtbl = setup_ruler_new (_ruler_box_samples, _ruler_labels, _("Samples"));
 
-	rtbl = setup_ruler_new (_ruler_box_bbt, _ruler_labels, _("Bars:Beats"));
+	rtbl = setup_ruler_new (_ruler_box_bbt, _ruler_labels, std::string ());
 
 	rtbl = setup_ruler_new (_ruler_box_tempo, _ruler_labels, _("Tempo"));
 	setup_ruler_add (rtbl, _ruler_btn_tempo_add);

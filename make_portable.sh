@@ -11,13 +11,13 @@ echo "=== Creating Phaedra Portable ==="
 
 rm -rf "$DESTDIR"
 mkdir -p "$DESTDIR/bin"
-mkdir -p "$DESTDIR/lib/ardour8/surfaces"
-mkdir -p "$DESTDIR/lib/ardour8/backends"
-mkdir -p "$DESTDIR/lib/ardour8/panners"
-mkdir -p "$DESTDIR/lib/ardour8/vamp"
-mkdir -p "$DESTDIR/lib/ardour8/suil"
+mkdir -p "$DESTDIR/lib/phaedra8/surfaces"
+mkdir -p "$DESTDIR/lib/phaedra8/backends"
+mkdir -p "$DESTDIR/lib/phaedra8/panners"
+mkdir -p "$DESTDIR/lib/phaedra8/vamp"
+mkdir -p "$DESTDIR/lib/phaedra8/suil"
 mkdir -p "$DESTDIR/lib/gtk-2.0/engines"
-mkdir -p "$DESTDIR/share/ardour8"
+mkdir -p "$DESTDIR/share/phaedra8"
 mkdir -p "$DESTDIR/etc/fonts"
 
 echo "--- Copying main executable..."
@@ -61,31 +61,40 @@ cp build/libs/fst/ardour-vst-scanner.exe "$DESTDIR/bin/" 2>/dev/null || true
 cp build/libs/fst/ardour-vst3-scanner.exe "$DESTDIR/bin/" 2>/dev/null || true
 
 echo "--- Copying surfaces, backends, panners..."
-find build/libs/surfaces/ -iname "*.dll" -exec cp {} "$DESTDIR/lib/ardour8/surfaces/" \;
-find build/libs/backends/ -iname "*.dll" -exec cp {} "$DESTDIR/lib/ardour8/backends/" \;
-find build/libs/panners/ -iname "*.dll" -exec cp {} "$DESTDIR/lib/ardour8/panners/" \;
+find build/libs/surfaces/ -iname "*.dll" -exec cp {} "$DESTDIR/lib/phaedra8/surfaces/" \;
+find build/libs/backends/ -iname "*.dll" -exec cp {} "$DESTDIR/lib/phaedra8/backends/" \;
+find build/libs/panners/ -iname "*.dll" -exec cp {} "$DESTDIR/lib/phaedra8/panners/" \;
 
 echo "--- Copying vamp plugins..."
-cp build/libs/vamp-plugins/*ardourvampplugins*.dll "$DESTDIR/lib/ardour8/vamp/libardourvampplugins.dll" 2>/dev/null || true
-cp build/libs/vamp-pyin/*ardourvamppyin*.dll "$DESTDIR/lib/ardour8/vamp/libardourvamppyin.dll" 2>/dev/null || true
+cp build/libs/vamp-plugins/*ardourvampplugins*.dll "$DESTDIR/lib/phaedra8/vamp/libardourvampplugins.dll" 2>/dev/null || true
+cp build/libs/vamp-pyin/*ardourvamppyin*.dll "$DESTDIR/lib/phaedra8/vamp/libardourvamppyin.dll" 2>/dev/null || true
 
 echo "--- Copying GTK engine..."
 cp build/libs/clearlooks-newer/clearlooks.dll "$DESTDIR/lib/gtk-2.0/engines/libclearlooks.la"
 
 echo "--- Copying suil..."
-cp build/libs/tk/suil/suil_win_in_gtk2.dll "$DESTDIR/lib/ardour8/suil/" 2>/dev/null || true
+cp build/libs/tk/suil/suil_win_in_gtk2.dll "$DESTDIR/lib/phaedra8/suil/" 2>/dev/null || true
 
 echo "--- Copying LV2 bundles..."
-cp -r build/libs/LV2 "$DESTDIR/lib/ardour8/" 2>/dev/null || true
+cp -r build/libs/LV2 "$DESTDIR/lib/phaedra8/" 2>/dev/null || true
 
+# Required default Phaedra effects.
+for bundle in a-air a-ds; do
+    for file in "$bundle.dll" "$bundle.ttl" manifest.ttl; do
+        test -f "$DESTDIR/lib/phaedra8/LV2/$bundle.lv2/$file" || {
+            echo "Missing bundled Phaedra plugin file: $bundle/$file" >&2
+            exit 1
+        }
+    done
+done
 echo "--- Bundling Prisma instrument..."
 PRISMA_PACKAGE_ROOT="${PRISMA_PACKAGE_ROOT:-$SRCDIR/vendor/prisma}"
 test -f "$PRISMA_PACKAGE_ROOT/Prisma.vst3/Contents/x86_64-win/Prisma.vst3" || { echo "Prisma VST3 package missing: $PRISMA_PACKAGE_ROOT" >&2; exit 1; }
 test -f "$PRISMA_PACKAGE_ROOT/SurgeXTData/skins/prisma.surge-skin/skin.xml" || { echo "Prisma skin missing: $PRISMA_PACKAGE_ROOT" >&2; exit 1; }
-mkdir -p "$DESTDIR/lib/ardour8/vst3"
-cp -r "$PRISMA_PACKAGE_ROOT/Prisma.vst3" "$DESTDIR/lib/ardour8/vst3/"
-cp -r "$PRISMA_PACKAGE_ROOT/SurgeXTData" "$DESTDIR/lib/ardour8/vst3/"
-cp "$PRISMA_PACKAGE_ROOT/LICENSE-Surge-XT.txt" "$DESTDIR/lib/ardour8/vst3/"
+mkdir -p "$DESTDIR/lib/phaedra8/vst3"
+cp -r "$PRISMA_PACKAGE_ROOT/Prisma.vst3" "$DESTDIR/lib/phaedra8/vst3/"
+cp -r "$PRISMA_PACKAGE_ROOT/SurgeXTData" "$DESTDIR/lib/phaedra8/vst3/"
+cp "$PRISMA_PACKAGE_ROOT/LICENSE-Surge-XT.txt" "$DESTDIR/lib/phaedra8/vst3/"
 
 echo "--- Copying MINGW runtime DLLs..."
 # Use ldd to find all needed DLLs
@@ -105,33 +114,33 @@ done
 
 echo "--- Copying share data..."
 # RC and config files
-cp build/gtk2_ardour/clearlooks.rc "$DESTDIR/share/ardour8/" 2>/dev/null || true
-cp build/gtk2_ardour/clearlooks.ardoursans.rc "$DESTDIR/share/ardour8/" 2>/dev/null || true
-cp build/gtk2_ardour/default_ui_config "$DESTDIR/share/ardour8/" 2>/dev/null || true
-cp build/gtk2_ardour/ardour.menus "$DESTDIR/share/ardour8/"
-cp build/gtk2_ardour/*.keys "$DESTDIR/share/ardour8/" 2>/dev/null || true
-cp gtk2_ardour/ArdourMono.ttf "$DESTDIR/share/ardour8/"
-cp gtk2_ardour/ArdourSans.ttf "$DESTDIR/share/ardour8/"
-cp system_config "$DESTDIR/share/ardour8/" 2>/dev/null || true
+cp build/gtk2_ardour/clearlooks.rc "$DESTDIR/share/phaedra8/" 2>/dev/null || true
+cp build/gtk2_ardour/clearlooks.ardoursans.rc "$DESTDIR/share/phaedra8/" 2>/dev/null || true
+cp build/gtk2_ardour/default_ui_config "$DESTDIR/share/phaedra8/" 2>/dev/null || true
+cp build/gtk2_ardour/ardour.menus "$DESTDIR/share/phaedra8/"
+cp build/gtk2_ardour/*.keys "$DESTDIR/share/phaedra8/" 2>/dev/null || true
+cp gtk2_ardour/ArdourMono.ttf "$DESTDIR/share/phaedra8/"
+cp gtk2_ardour/ArdourSans.ttf "$DESTDIR/share/phaedra8/"
+cp system_config "$DESTDIR/share/phaedra8/" 2>/dev/null || true
 
 # Themes
-cp -r gtk2_ardour/themes "$DESTDIR/share/ardour8/"
+cp -r gtk2_ardour/themes "$DESTDIR/share/phaedra8/"
 
 # Resources (icons, splash)
-cp -r gtk2_ardour/resources "$DESTDIR/share/ardour8/"
+cp -r gtk2_ardour/resources "$DESTDIR/share/phaedra8/"
 
 # Icons
-cp -r gtk2_ardour/icons "$DESTDIR/share/ardour8/"
+cp -r gtk2_ardour/icons "$DESTDIR/share/phaedra8/"
 
 # Share data
-cp -r share/patchfiles "$DESTDIR/share/ardour8/" 2>/dev/null || true
-cp -r share/plugin_metadata "$DESTDIR/share/ardour8/" 2>/dev/null || true
-cp -r share/export "$DESTDIR/share/ardour8/" 2>/dev/null || true
-cp -r share/scripts "$DESTDIR/share/ardour8/" 2>/dev/null || true
-cp -r share/templates "$DESTDIR/share/ardour8/" 2>/dev/null || true
-cp -r share/mcp "$DESTDIR/share/ardour8/" 2>/dev/null || true
-cp -r share/midi_maps "$DESTDIR/share/ardour8/" 2>/dev/null || true
-cp share/chords.txt "$DESTDIR/share/ardour8/"
+cp -r share/patchfiles "$DESTDIR/share/phaedra8/" 2>/dev/null || true
+cp -r share/plugin_metadata "$DESTDIR/share/phaedra8/" 2>/dev/null || true
+cp -r share/export "$DESTDIR/share/phaedra8/" 2>/dev/null || true
+cp -r share/scripts "$DESTDIR/share/phaedra8/" 2>/dev/null || true
+cp -r share/templates "$DESTDIR/share/phaedra8/" 2>/dev/null || true
+cp -r share/mcp "$DESTDIR/share/phaedra8/" 2>/dev/null || true
+cp -r share/midi_maps "$DESTDIR/share/phaedra8/" 2>/dev/null || true
+cp share/chords.txt "$DESTDIR/share/phaedra8/"
 
 # Compile every available application translation into the location used by
 # bundle_env_mingw.cc. Waf does not build .mo files during a normal build.
@@ -145,7 +154,7 @@ for catalog in gtk2_ardour/po/*.po libs/ardour/po/*.po libs/gtkmm2ext/po/*.po li
         libs/gtkmm2ext/po/*) domain=gtkmm2ext3 ;;
         libs/tk/ytk/po/*) domain=ytk8 ;;
     esac
-    locale_dir="$DESTDIR/share/ardour8/locale/$language/LC_MESSAGES"
+    locale_dir="$DESTDIR/share/phaedra8/locale/$language/LC_MESSAGES"
     mkdir -p "$locale_dir"
     msgfmt -o "$locale_dir/$domain.mo" "$catalog"
 done
@@ -168,9 +177,12 @@ cat > "$DESTDIR/Phaedra.bat" << 'ENDOFBAT'
 @echo off
 set PHAEDRA_DIR=%~dp0
 set PATH=%PHAEDRA_DIR%bin;%PATH%
-set ARDOUR_DATA_PATH=%PHAEDRA_DIR%share\ardour8
-set ARDOUR_CONFIG_PATH=%APPDATA%\Phaedra8
-set ARDOUR_DLL_PATH=%PHAEDRA_DIR%lib\ardour8
+set PHAEDRA_DATA_PATH=%PHAEDRA_DIR%share\phaedra8
+set ARDOUR_DATA_PATH=%PHAEDRA_DATA_PATH%
+set PHAEDRA_CONFIG_PATH=%APPDATA%\Phaedra8
+set ARDOUR_CONFIG_PATH=%PHAEDRA_CONFIG_PATH%
+set PHAEDRA_DLL_PATH=%PHAEDRA_DIR%lib\phaedra8
+set ARDOUR_DLL_PATH=%PHAEDRA_DLL_PATH%
 set GTK_PATH=%PHAEDRA_DIR%lib
 set FONTCONFIG_FILE=%PHAEDRA_DIR%etc\fonts\fonts.conf
 

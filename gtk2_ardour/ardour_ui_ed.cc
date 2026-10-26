@@ -311,16 +311,16 @@ ARDOUR_UI::install_actions ()
 	act = ActionManager::register_action (common_actions, X_("NewMIDITracer"), _("MIDI Tracer"), sigc::mem_fun(*this, &ARDOUR_UI::new_midi_tracer_window));
 	ActionManager::session_sensitive_actions.push_back (act);
 
-	ActionManager::register_action (common_actions, X_("chat"), _("Chat"),  sigc::mem_fun(*this, &ARDOUR_UI::launch_chat));
-	ActionManager::register_action (common_actions, X_("tutorial"), S_("Help|Tutorial"),  mem_fun(*this, &ARDOUR_UI::launch_tutorial));
+	ActionManager::register_action (common_actions, X_("chat"), _("Support Issues"),  sigc::mem_fun(*this, &ARDOUR_UI::launch_chat));
+	ActionManager::register_action (common_actions, X_("tutorial"), S_("Help|Phaedra Guide"),  mem_fun(*this, &ARDOUR_UI::launch_tutorial));
 	ActionManager::register_action (common_actions, X_("check-for-updates"), _("Check for Updates"), mem_fun(*this, &ARDOUR_UI::check_for_updates));
-	ActionManager::register_action (common_actions, X_("reference"), S_("Manual|Reference"),  mem_fun(*this, &ARDOUR_UI::launch_reference));
+	ActionManager::register_action (common_actions, X_("reference"), S_("Manual|Phaedra Guide"),  mem_fun(*this, &ARDOUR_UI::launch_reference));
 	ActionManager::register_action (common_actions, X_("tracker"), _("Report a Bug"), mem_fun(*this, &ARDOUR_UI::launch_tracker));
 	ActionManager::register_action (common_actions, X_("website"), _("Website"), mem_fun(*this, &ARDOUR_UI::launch_website));
 	ActionManager::register_action (common_actions, X_("version-history"), _("Version History"), sigc::ptr_fun (&show_phaedra_version_history));
 	ActionManager::register_action (common_actions, X_("website-dev"), _("Development"), mem_fun(*this, &ARDOUR_UI::launch_website_dev));
-	ActionManager::register_action (common_actions, X_("forums"), _("User Forums"), mem_fun(*this, &ARDOUR_UI::launch_forums));
-	ActionManager::register_action (common_actions, X_("howto-report"), _("How to Report a Bug"), mem_fun(*this, &ARDOUR_UI::launch_howto_report));
+	ActionManager::register_action (common_actions, X_("forums"), _("Support Issues"), mem_fun(*this, &ARDOUR_UI::launch_forums));
+	ActionManager::register_action (common_actions, X_("howto-report"), _("Issue Reporting"), mem_fun(*this, &ARDOUR_UI::launch_howto_report));
 
 	act = ActionManager::register_action (common_actions, X_("Save"), _("Save"),  sigc::hide_return (sigc::bind (sigc::mem_fun(*this, &ARDOUR_UI::save_state), string(""), false)));
 	ActionManager::session_sensitive_actions.push_back (act);
@@ -925,8 +925,13 @@ ARDOUR_UI::build_menu_bar ()
 	_status_bar_visibility.add (&snapshot_name_label   ,X_("Name"),      _("Snapshot Name and Modified Indicator"), false);
 	_status_bar_visibility.add (&peak_thread_work_label,X_("Peakfile"),  _("Active Peak-file Work"), false);
 	_status_bar_visibility.add (&format_label,          X_("Format"),    _("File Format"), false);
-	_status_bar_visibility.add (&latency_info_label,    X_("Latency"),   _("Total I/O Latency"), !Profile->get_small_screen());
+	#ifdef _WIN32
+    _status_bar_visibility.add (&latency_info_label, X_("SystemCPU"), _("CPU: PC / Phaedra"), true);
+    _status_bar_visibility.add (&pdc_info_label, X_("SystemRAM"), _("RAM: PC / Phaedra"), true);
+#else
+    _status_bar_visibility.add (&latency_info_label,    X_("Latency"),   _("Total I/O Latency"), !Profile->get_small_screen());
 	_status_bar_visibility.add (&pdc_info_label,        X_("PDC"),       _("Plugin Latency"), !Profile->get_small_screen());
+#endif
 	_status_bar_visibility.add (&timecode_format_label, X_("TCFormat"),  _("Timecode Format"), false);
 	_status_bar_visibility.add (&sample_rate_label,     X_("Audio"),     _("Audio"), true);
 	_status_bar_visibility.add (&disk_space_label,      X_("Disk"),      _("Disk Space"), !Profile->get_small_screen());
@@ -948,6 +953,10 @@ ARDOUR_UI::build_menu_bar ()
 
 	ArdourWidgets::set_tooltip (session_path_label, _("Double click to open session folder."));
 	ArdourWidgets::set_tooltip (format_label, _("Double click to edit audio file format."));
+#ifdef _WIN32
+    ArdourWidgets::set_tooltip (latency_info_label, "CPU: porcentaje del PC / porcentaje de Phaedra");
+    ArdourWidgets::set_tooltip (pdc_info_label, "RAM: porcentaje del PC / porcentaje de Phaedra");
+#endif
 	ArdourWidgets::set_tooltip (timecode_format_label, _("Double click to change timecode settings."));
 	ArdourWidgets::set_tooltip (sample_rate_label, _("Double click to show audio/midi setup."));
 }

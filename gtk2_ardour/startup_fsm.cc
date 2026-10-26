@@ -994,17 +994,17 @@ considered finished at this time.\n\
 1) Please do <b>NOT</b> use this software with the expectation that it is stable or reliable\n\
    though it may be so, depending on your workflow.\n\
 2) Please wait for a helpful writeup of new features.\n\
-3) <b>Please do NOT use the forums at ardour.org to report issues</b>.\n\
-4) <b>Please do NOT file bugs for this alpha-development versions at this point in time</b>.\n\
-   There is no bug triaging before the initial development concludes and\n\
-   reporting issue for incomplete, ongoing work-in-progress is mostly useless.\n\
-5) Please <b>DO</b> join us on IRC for real time discussions about %1 %2. You\n\
-   can get there directly from within the program via the Help -> Chat menu option.\n\
-6) Please <b>DO</b> submit patches for issues after discussing them on IRC.\n\
+3) <b>Please report Phaedra issues through the project repository</b>.\n\
+4) <b>Please include steps to reproduce any issue you report</b>.\n\
+   Check existing issues before opening a new report.\n\
+   Include your Phaedra version and Windows version.\n\
+5) Visit the Phaedra repository for updates about %1 %2. You\n\
+   can get there from the Help menu.\n\
+6) Contributions can be proposed through the Phaedra repository.\n\
 \n\
-Full information on all the above can be found on the support page at\n\
+Project information and issue reporting are available at\n\
 \n\
-                http://ardour.org/support</span>\n\
+                https://github.com/mindrapeofficial-wq/phaedra</span>\n\
 "), PROGRAM_NAME, VERSIONSTRING));
 
 

@@ -40,6 +40,11 @@ namespace ARDOUR {
 	 */
         LIBARDOUR_API std::string user_config_directory (int version = -1);
 
+#ifdef PLATFORM_WINDOWS
+	/* Read-only compatibility path for settings from Ardour 8. */
+	LIBARDOUR_API std::string legacy_user_config_directory ();
+#endif
+
 	/**
 	 * @return the path to the directory used to store user specific
 	 * caches (e.g. plugin indices, blacklist/whitelist)

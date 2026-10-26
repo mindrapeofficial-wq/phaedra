@@ -33,7 +33,6 @@
 #include "ardour/session_directory.h"
 #include "ardour/surround_return.h"
 
-#include "nag.h"
 #include "simple_export_dialog.h"
 
 #include "pbd/i18n.h"
@@ -345,13 +344,7 @@ SimpleExportDialog::start_export ()
 		if (_post_export_combo.get_active_row_number () == 0) {
 			PBD::open_folder (folder ());
 		}
-		if (!ARDOUR::Profile->get_mixbus () && !ARDOUR::Profile->get_livetrax ()) {
-			NagScreen* ns = NagScreen::maybe_nag (_("Export"));
-			if (ns) {
-				ns->nag ();
-				delete ns;
-			}
-		}
+
 	} else if (!_status->aborted ()) {
 		hide ();
 		std::string        txt = _("Export has been aborted due to an error!\nSee the Log window for details.");

@@ -39,8 +39,12 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previous, PWSTR args, int show
     }
     swprintf(bin, MAX_PATH, L"%ls\\bin", root);
     swprintf(exe, MAX_PATH, L"%ls\\Phaedra.exe", bin);
-    swprintf(data, MAX_PATH, L"%ls\\share\\ardour8", root);
-    swprintf(dlls, MAX_PATH, L"%ls\\lib\\ardour8", root);
+    swprintf(data, MAX_PATH, L"%ls\\share\\phaedra8", root);
+    if (GetFileAttributesW(data) == INVALID_FILE_ATTRIBUTES)
+        swprintf(data, MAX_PATH, L"%ls\\share\\ardour8", root);
+    swprintf(dlls, MAX_PATH, L"%ls\\lib\\phaedra8", root);
+    if (GetFileAttributesW(dlls) == INVALID_FILE_ATTRIBUTES)
+        swprintf(dlls, MAX_PATH, L"%ls\\lib\\ardour8", root);
     swprintf(gtk, MAX_PATH, L"%ls\\lib", root);
     swprintf(fonts, MAX_PATH, L"%ls\\etc\\fonts\\fonts.conf", root);
     if (GetFileAttributesW(exe) == INVALID_FILE_ATTRIBUTES ||
@@ -65,8 +69,11 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previous, PWSTR args, int show
     swprintf(path, wcslen(bin) + path_len + 3, L"%ls;%ls", bin, oldpath);
     SetEnvironmentVariableW(L"PATH", path);
     free(oldpath); free(path);
+    SetEnvironmentVariableW(L"PHAEDRA_DATA_PATH", data);
     SetEnvironmentVariableW(L"ARDOUR_DATA_PATH", data);
+    SetEnvironmentVariableW(L"PHAEDRA_CONFIG_PATH", config);
     SetEnvironmentVariableW(L"ARDOUR_CONFIG_PATH", config);
+    SetEnvironmentVariableW(L"PHAEDRA_DLL_PATH", dlls);
     SetEnvironmentVariableW(L"ARDOUR_DLL_PATH", dlls);
     SetEnvironmentVariableW(L"GTK_PATH", gtk);
     SetEnvironmentVariableW(L"FONTCONFIG_FILE", fonts);

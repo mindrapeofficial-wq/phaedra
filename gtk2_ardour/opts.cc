@@ -93,8 +93,8 @@ print_help (const char *execname)
 		<< _("  -T, --template <name>       Use given template for new session\n")
 		<< _("  -v, --version               Print version and exit\n")
 		<< "\n\n"
-		<< _("Report bugs to http://tracker.ardour.org\n")
-		<< _("Website http://ardour.org\n")
+		<< _("Report bugs to https://github.com/mindrapeofficial-wq/phaedra/issues\n")
+		<< _("Website https://phaedra-daw.vercel.app\n")
 		;
 	return 1;
 }

@@ -1,6 +1,6 @@
 #define AppName "Phaedra"
 #ifndef AppVersion
-#define AppVersion "1.0.10"
+#define AppVersion "1.0.11"
 #endif
 #ifndef PortableRoot
 #define PortableRoot "Phaedra-Portable"
@@ -24,8 +24,8 @@ WizardStyle=modern dark
 WizardBackColor=#1D1930
 WizardImageBackColor=#1D1930
 WizardSmallImageBackColor=#1D1930
-WizardSmallImageFile={#PortableRoot}\share\ardour8\resources\Phaedra-icon_256px.png
-SetupIconFile={#PortableRoot}\share\ardour8\icons\Phaedra.ico
+WizardSmallImageFile={#PortableRoot}\share\phaedra8\resources\Phaedra-icon_256px.png
+SetupIconFile={#PortableRoot}\share\phaedra8\icons\Phaedra.ico
 UninstallDisplayIcon={app}\Phaedra.exe
 OutputDir=.
 OutputBaseFilename=Phaedra-Instalador-Windows-x64

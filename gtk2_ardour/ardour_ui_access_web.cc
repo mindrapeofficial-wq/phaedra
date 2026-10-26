@@ -57,14 +57,14 @@ using namespace std;
 void
 ARDOUR_UI::launch_chat ()
 {
-	ArdourMessageDialog dialog(_("<b>Just ask and wait for an answer.\nIt may take from minutes to hours.</b>"), true);
+	ArdourMessageDialog dialog(_("Phaedra support is handled through GitHub issues."), true);
 
-	dialog.set_title (_("About the Chat"));
-	dialog.set_secondary_text (_("When you're inside the chat just ask your question and wait for an answer. The chat is occupied by real people with real lives so many of them are passively online and might not read your question before minutes or hours later.\nSo please be patient and wait for an answer.\n\nYou should just leave the chat window open and check back regularly until someone has answered your question."));
+	dialog.set_title (_("Phaedra Support"));
+	dialog.set_secondary_text (_("Open Phaedra issues in your browser?"));
 
 	switch (dialog.run()) {
 	case RESPONSE_OK:
-		open_uri("https://ardour.org/chat");
+		open_uri("https://github.com/mindrapeofficial-wq/phaedra/issues");
 		break;
 	default:
 		break;
@@ -109,48 +109,48 @@ ARDOUR_UI::check_for_updates ()
 void
 ARDOUR_UI::launch_tutorial ()
 {
-	PBD::open_uri (Config->get_tutorial_manual_url());
+	PBD::open_uri ("https://github.com/mindrapeofficial-wq/phaedra#readme");
 }
 
 void
 ARDOUR_UI::launch_reference ()
 {
-	PBD::open_uri (Config->get_reference_manual_url());
+	PBD::open_uri ("https://github.com/mindrapeofficial-wq/phaedra#readme");
 }
 
 void
 ARDOUR_UI::launch_tracker ()
 {
-	PBD::open_uri ("https://tracker.ardour.org");
+	PBD::open_uri ("https://github.com/mindrapeofficial-wq/phaedra/issues");
 }
 
 void
 ARDOUR_UI::launch_subscribe ()
 {
-	PBD::open_uri ("https://community.ardour.org/subscribe");
+	PBD::open_uri ("https://phaedra-daw.vercel.app");
 }
 
 void
 ARDOUR_UI::launch_website ()
 {
-	PBD::open_uri ("https://ardour.org");
+	PBD::open_uri ("https://phaedra-daw.vercel.app");
 }
 
 void
 ARDOUR_UI::launch_website_dev ()
 {
-	PBD::open_uri ("https://ardour.org/development.html");
+	PBD::open_uri ("https://github.com/mindrapeofficial-wq/phaedra");
 }
 
 void
 ARDOUR_UI::launch_forums ()
 {
-	PBD::open_uri ("https://community.ardour.org/forums");
+	PBD::open_uri ("https://github.com/mindrapeofficial-wq/phaedra/issues");
 }
 
 void
 ARDOUR_UI::launch_howto_report ()
 {
-	PBD::open_uri ("https://ardour.org/reporting_bugs");
+	PBD::open_uri ("https://github.com/mindrapeofficial-wq/phaedra/issues");
 }
 

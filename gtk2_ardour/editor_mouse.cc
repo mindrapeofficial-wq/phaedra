@@ -652,7 +652,7 @@ Editor::button_press_handler_1 (ArdourCanvas::Item* item, GdkEvent* event, ItemT
 	case BBTRulerItem:
 		if (!Keyboard::modifier_state_equals (event->button.state, Keyboard::PrimaryModifier)
 		    && !ArdourKeyboard::indicates_constraint (event->button.state)) {
-			_drags->set (new CursorDrag (*this, *_playhead_cursor, false), event);
+			_drags->set (new SelectionDrag (*this, item, SelectionDrag::CreateSelection), event);
 		}
 		return true;
 

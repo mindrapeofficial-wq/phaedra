@@ -50,6 +50,14 @@
 #include <stdint.h>
 #include <fcntl.h>
 #include <time.h>
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#include <psapi.h>
+#endif
+#include <cstdio>
 
 #include <glib.h>
 #include "pbd/gstdio_compat.h"
@@ -673,6 +681,16 @@ ARDOUR_UI::post_engine ()
 	XMLNode* n = Config->extra_xml (X_("UI"));
 	if (n) {
 		_status_bar_visibility.set_state (*n);
+#ifdef _WIN32
+		/* Existing profiles predate these fields. Add them once, then keep the
+		 * user's subsequent visibility choices. */
+		std::string const visible = _status_bar_visibility.get_state_value ();
+		if (visible.find ("SystemCPU") == std::string::npos &&
+		    visible.find ("SystemRAM") == std::string::npos) {
+			_status_bar_visibility.set_state (VisibilityGroup::add_element (
+				VisibilityGroup::add_element (visible, "SystemCPU"), "SystemRAM"));
+		}
+#endif
 	}
 
 	check_memory_locking();
@@ -1452,6 +1470,10 @@ ARDOUR_UI::update_timecode_format ()
 void
 ARDOUR_UI::session_latency_updated (bool for_playback)
 {
+#ifdef _WIN32
+    (void)for_playback;
+    return;
+#endif
 	if (!for_playback) {
 		/* latency updates happen in pairs, in the following order:
 		 *  - for capture
@@ -1478,25 +1500,97 @@ ARDOUR_UI::session_latency_updated (bool for_playback)
 	}
 }
 
+#ifdef _WIN32
+static ULONGLONG
+phaedra_filetime_ticks (FILETIME const& value)
+{
+    ULARGE_INTEGER ticks;
+    ticks.LowPart = value.dwLowDateTime;
+    ticks.HighPart = value.dwHighDateTime;
+    return ticks.QuadPart;
+}
+
+static std::string
+phaedra_usage_span (double percent, bool precise)
+{
+    char text[96];
+    const char* color = percent >= 85.0 ? "#f06b6b" : percent >= 65.0 ? "#e8c85d" : "#72d993";
+    snprintf (text, sizeof (text), "<span foreground=\"%s\">%.1f%%</span>", color, percent);
+    if (!precise) {
+        snprintf (text, sizeof (text), "<span foreground=\"%s\">%.0f%%</span>", color, percent);
+    }
+    return text;
+}
+#endif
+
 gint
 ARDOUR_UI::update_wall_clock ()
 {
-	time_t now;
-	struct tm *tm_now;
-	static int last_min = -1;
+#ifdef _WIN32
+    static ULONGLONG previous_total = 0;
+    static ULONGLONG previous_idle = 0;
+    static ULONGLONG previous_process = 0;
+    FILETIME idle, kernel, user;
+    FILETIME created, exited, process_kernel, process_user;
+    if (GetSystemTimes (&idle, &kernel, &user)
+        && GetProcessTimes (GetCurrentProcess (), &created, &exited, &process_kernel, &process_user)) {
+        const ULONGLONG total = phaedra_filetime_ticks (kernel) + phaedra_filetime_ticks (user);
+        const ULONGLONG idle_ticks = phaedra_filetime_ticks (idle);
+        const ULONGLONG process = phaedra_filetime_ticks (process_kernel) + phaedra_filetime_ticks (process_user);
+        if (previous_total && total > previous_total && idle_ticks >= previous_idle && process >= previous_process) {
+            const double elapsed = static_cast<double> (total - previous_total);
+            const double system_percent = std::max (0.0, std::min (100.0,
+                100.0 * (elapsed - static_cast<double> (idle_ticks - previous_idle)) / elapsed));
+            const double process_percent = std::max (0.0, std::min (100.0,
+                100.0 * static_cast<double> (process - previous_process) / elapsed));
+            latency_info_label.set_markup (string_compose ("CPU %1/%2",
+                phaedra_usage_span (system_percent, false), phaedra_usage_span (process_percent, true)));
+        } else {
+            latency_info_label.set_text ("CPU --/--");
+        }
+        previous_total = total;
+        previous_idle = idle_ticks;
+        previous_process = process;
+    } else {
+        latency_info_label.set_text ("CPU --/--");
+    }
 
-	time (&now);
-	tm_now = localtime (&now);
-	if (last_min != tm_now->tm_min) {
-		char buf[16];
-		sprintf (buf, "%02d:%02d", tm_now->tm_hour, tm_now->tm_min);
-		wall_clock_label.set_text (buf);
-		last_min = tm_now->tm_min;
-	}
+    MEMORYSTATUSEX memory;
+    memory.dwLength = sizeof (memory);
+    PROCESS_MEMORY_COUNTERS process_memory;
+    if (GlobalMemoryStatusEx (&memory)
+        && K32GetProcessMemoryInfo (GetCurrentProcess (), &process_memory, sizeof (process_memory))
+        && memory.ullTotalPhys) {
+        const double system_percent = 100.0 * static_cast<double> (memory.ullTotalPhys - memory.ullAvailPhys)
+            / static_cast<double> (memory.ullTotalPhys);
+        const double process_percent = 100.0 * static_cast<double> (process_memory.WorkingSetSize)
+            / static_cast<double> (memory.ullTotalPhys);
+        pdc_info_label.set_markup (string_compose ("RAM %1/%2",
+            phaedra_usage_span (system_percent, false), phaedra_usage_span (process_percent, true)));
+        const double process_mib = static_cast<double> (process_memory.WorkingSetSize) / (1024.0 * 1024.0);
+        char detail[128];
+        snprintf (detail, sizeof (detail), "RAM: PC / Phaedra (%.0f MiB de Phaedra)", process_mib);
+        ArdourWidgets::set_tooltip (pdc_info_label, detail);
+    } else {
+        pdc_info_label.set_text ("RAM --/--");
+    }
+#endif
 
-	return TRUE;
+    time_t now;
+    struct tm *tm_now;
+    static int last_min = -1;
+
+    time (&now);
+    tm_now = localtime (&now);
+    if (last_min != tm_now->tm_min) {
+        char buf[16];
+        sprintf (buf, "%02d:%02d", tm_now->tm_hour, tm_now->tm_min);
+        wall_clock_label.set_text (buf);
+        last_min = tm_now->tm_min;
+    }
+
+    return TRUE;
 }
-
 void
 ARDOUR_UI::session_add_midi_route (
 		bool disk,

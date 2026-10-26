@@ -69,7 +69,8 @@ fixup_bundle_environment (int, char* [], string & localedir)
 		path += "\\locale";
 
 		if (!Glib::file_test (path, Glib::FILE_TEST_IS_DIR)) {
-			const char* data_path = getenv ("ARDOUR_DATA_PATH");
+			const char* data_path = getenv ("PHAEDRA_DATA_PATH");
+			if (!data_path) { data_path = getenv ("ARDOUR_DATA_PATH"); }
 			if (data_path) {
 				std::string dp (data_path);
 				std::string::size_type colon = dp.find (':');
