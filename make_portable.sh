@@ -78,6 +78,15 @@ cp build/libs/tk/suil/suil_win_in_gtk2.dll "$DESTDIR/lib/ardour8/suil/" 2>/dev/n
 echo "--- Copying LV2 bundles..."
 cp -r build/libs/LV2 "$DESTDIR/lib/ardour8/" 2>/dev/null || true
 
+echo "--- Bundling Prisma instrument..."
+PRISMA_PACKAGE_ROOT="${PRISMA_PACKAGE_ROOT:-$SRCDIR/vendor/prisma}"
+test -f "$PRISMA_PACKAGE_ROOT/Prisma.vst3/Contents/x86_64-win/Prisma.vst3" || { echo "Prisma VST3 package missing: $PRISMA_PACKAGE_ROOT" >&2; exit 1; }
+test -f "$PRISMA_PACKAGE_ROOT/SurgeXTData/skins/prisma.surge-skin/skin.xml" || { echo "Prisma skin missing: $PRISMA_PACKAGE_ROOT" >&2; exit 1; }
+mkdir -p "$DESTDIR/lib/ardour8/vst3"
+cp -r "$PRISMA_PACKAGE_ROOT/Prisma.vst3" "$DESTDIR/lib/ardour8/vst3/"
+cp -r "$PRISMA_PACKAGE_ROOT/SurgeXTData" "$DESTDIR/lib/ardour8/vst3/"
+cp "$PRISMA_PACKAGE_ROOT/LICENSE-Surge-XT.txt" "$DESTDIR/lib/ardour8/vst3/"
+
 echo "--- Copying MINGW runtime DLLs..."
 # Use ldd to find all needed DLLs
 ldd "$DESTDIR/bin/Phaedra.exe" 2>/dev/null | grep "ucrt64" | awk '{print $3}' | while read dll; do

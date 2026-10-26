@@ -1,0 +1,409 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5516f9a..a6b68dd 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -157,7 +157,7 @@ endif()
+ 
+ if(MSVC)
+   add_compile_options(
+-    -WX       # treat all warnings as errors
++    /WX-     # MSVC 18 emits new warnings in bundled dependencies
+ 
+     # MSVC-only warnings, Clang-cl silently ignores these
+     /wd4244   # float to double
+diff --git a/src/surge-xt/CMakeLists.txt b/src/surge-xt/CMakeLists.txt
+index 25897a3..9e124e2 100644
+--- a/src/surge-xt/CMakeLists.txt
++++ b/src/surge-xt/CMakeLists.txt
+@@ -16,30 +16,30 @@ juce_add_binary_data(surge-xt-binary
+ )
+ 
+ if(WIN32 AND ${CMAKE_SIZEOF_VOID_P} EQUAL 4)
+-  set(SURGE_XT_PRODUCT_NAME "Surge XT (32-bit)")
++  set(SURGE_XT_PRODUCT_NAME "Prisma (32-bit)")
+ else()
+-  set(SURGE_XT_PRODUCT_NAME "Surge XT")
++  set(SURGE_XT_PRODUCT_NAME "Prisma")
+ endif()
+ 
+ juce_add_plugin(${PROJECT_NAME}
+   PRODUCT_NAME ${SURGE_XT_PRODUCT_NAME}
+-  COMPANY_NAME "Surge Synth Team"
+-  COMPANY_WEBSITE "https://surge-synth-team.org/"
+-  BUNDLE_ID "org.surge-synth-team.surge-xt"
+-  PLUGIN_MANUFACTURER_CODE VmbA
+-  PLUGIN_CODE SgXT
++  COMPANY_NAME "Phaedra"
++  COMPANY_WEBSITE "https://github.com/mindrapeofficial-wq/phaedra"
++  BUNDLE_ID "org.phaedra.prisma"
++  PLUGIN_MANUFACTURER_CODE Phdr
++  PLUGIN_CODE Prsm
+ 
+-  ICON_BIG "${CMAKE_SOURCE_DIR}/resources/surge-xt/SurgeLogo.png"
++  ICON_BIG "${CMAKE_SOURCE_DIR}/resources/prisma/PrismaIcon.png"
+ 
+   IS_SYNTH TRUE
+   NEEDS_MIDI_INPUT TRUE
+   NEEDS_MIDI_OUTPUT FALSE
+   IS_MIDI_EFFECT FALSE
+   MICROPHONE_PERMISSION_ENABLED TRUE
+-  MICROPHONE_PERMISSION_TEXT "Surge XT would like to use your microphone for Audio Input"
++  MICROPHONE_PERMISSION_TEXT "PRISMA would like to use your microphone for Audio Input"
+ 
+   BLUETOOTH_PERMISSION_ENABLED TRUE
+-  BLUETOOTH_PERMISSION_TEXT "Surge XT would like to use BlueTooth"
++  BLUETOOTH_PERMISSION_TEXT "PRISMA would like to use BlueTooth"
+ 
+   COPY_PLUGIN_AFTER_BUILD ${SURGE_COPY_AFTER_BUILD}
+ 
+@@ -62,7 +62,7 @@ juce_add_plugin(${PROJECT_NAME}
+ 
+ if(SURGE_BUILD_CLAP)
+   clap_juce_extensions_plugin(TARGET surge-xt
+-    CLAP_ID "org.surge-synth-team.surge-xt"
++    CLAP_ID "org.phaedra.prisma"
+ 
+     CLAP_SUPPORTS_CUSTOM_FACTORY 1
+     CLAP_FEATURES "instrument" "synthesizer" "stereo" "free and open source")
+@@ -252,7 +252,7 @@ if(APPLE)
+   )
+ endif()
+ 
+-surge_juce_package(${PROJECT_NAME} "Surge XT")
++surge_juce_package(${PROJECT_NAME} "Prisma")
+ 
+ if (${SURGE_BUILD_TESTRUNNER})
+   add_subdirectory(xt-tests)
+diff --git a/src/surge-xt/SurgeSynthEditor.cpp b/src/surge-xt/SurgeSynthEditor.cpp
+index 07cfd22..2606edf 100644
+--- a/src/surge-xt/SurgeSynthEditor.cpp
++++ b/src/surge-xt/SurgeSynthEditor.cpp
+@@ -375,7 +375,7 @@ void SurgeSynthEditor::reapplySurgeComponentColours()
+     {
+         if (auto dw = dynamic_cast<juce::DocumentWindow *>(p))
+         {
+-            dw->setName("Surge XT");
++            dw->setName("PRISMA");
+ 
+             if (processor.wrapperType == juce::AudioProcessor::wrapperType_Standalone)
+             {
+diff --git a/src/surge-xt/gui/SkinSupport.cpp b/src/surge-xt/gui/SkinSupport.cpp
+index c17f452..36798bf 100644
+--- a/src/surge-xt/gui/SkinSupport.cpp
++++ b/src/surge-xt/gui/SkinSupport.cpp
+@@ -183,7 +183,7 @@ void SkinDB::rescanForSkins(SurgeStorage *storage)
+                     e.rootType = rt;
+                     e.root = path;
+                     e.name = lo + PATH_SEPARATOR;
+-                    if (e.name.find("default.surge-skin") != std::string::npos && rt == FACTORY &&
++                    if (e.name.find("prisma.surge-skin") != std::string::npos && rt == FACTORY &&
+                         defaultSkinEntry.name == "")
+                     {
+                         defaultSkinEntry = e;
+@@ -371,7 +371,7 @@ bool Skin::reloadSkin(std::shared_ptr<SurgeImageStore> bitmapStore)
+     }
+     if (version == 1)
+     {
+-        FIXMEERROR << "Surge XT no longer supports Version 1 skins. Please make the "
++        FIXMEERROR << "PRISMA no longer supports Version 1 skins. Please make the "
+                    << "(relatively minor) set of changes to bring this skin to version 2"
+                    << std::endl;
+         return false;
+diff --git a/src/surge-xt/gui/SurgeGUIEditor.cpp b/src/surge-xt/gui/SurgeGUIEditor.cpp
+index d26bc3a..ea13152 100644
+--- a/src/surge-xt/gui/SurgeGUIEditor.cpp
++++ b/src/surge-xt/gui/SurgeGUIEditor.cpp
+@@ -724,8 +724,8 @@ void SurgeGUIEditor::idle()
+                 oss << "Loading patch " << synth->patchid_queue
+                     << " has not occurred after 200 idle cycles. This means that the audio system"
+                     << " is delayed while loading many patches in a row. The audio system has to be"
+-                    << " running in order to load Surge XT patches. If the audio system is working,"
+-                       " you can probably ignore this message and continue once Surge XT catches "
++                    << " running in order to load PRISMA patches. If the audio system is working,"
++                       " you can probably ignore this message and continue once PRISMA catches "
+                        "up.";
+ 
+                 synth->storage.reportError(oss.str(), "Patch Loading Error");
+@@ -2423,7 +2423,7 @@ bool SurgeGUIEditor::open(void *parent)
+         auto db = Surge::GUI::SkinDB::get();
+ 
+         std::ostringstream oss;
+-        oss << "Unable to load current skin! Reverting the skin to Surge XT Classic.\n\nSkin "
++        oss << "Unable to load current skin! Reverting the skin to PRISMA default.\n\nSkin "
+                "Error:\n"
+             << db->getAndResetErrorString();
+ 
+@@ -3055,18 +3055,18 @@ void SurgeGUIEditor::showTooLargeZoomError(double width, double height, float zf
+ {
+ #if !LINUX
+     std::ostringstream msg;
+-    msg << "Surge XT adjusts the maximum zoom level in order to prevent the interface becoming "
++    msg << "PRISMA adjusts the maximum zoom level in order to prevent the interface becoming "
+            "larger than available screen area. Your screen resolution is "
+         << width << "x" << height << " for which the target zoom level of " << zf
+         << "% would be too large." << std::endl
+         << std::endl;
+     if (currentSkin && currentSkin->hasFixedZooms())
+     {
+-        msg << "Surge XT chose the largest fitting fixed zoom which is provided by this skin.";
++        msg << "PRISMA chose the largest fitting fixed zoom which is provided by this skin.";
+     }
+     else
+     {
+-        msg << "Surge XT chose the largest fitting zoom level of " << zf << "%.";
++        msg << "PRISMA chose the largest fitting zoom level of " << zf << "%.";
+     }
+     synth->storage.reportError(msg.str(), "Zoom Level Adjusted");
+ #endif
+@@ -3350,7 +3350,7 @@ void SurgeGUIEditor::promptForUserValueEntry(Parameter *p, juce::Component *c, i
+         {
+             synth->storage.reportError(
+                 "This parameter does not support editing its value by text input.\n\n"
+-                "Please report this to Surge Synth Team in order to fix the problem!",
++                "Please report this to the PRISMA developers in order to fix the problem!",
+                 "Error");
+             return;
+         }
+@@ -3573,7 +3573,7 @@ void SurgeGUIEditor::setupSkinFromEntry(const Surge::GUI::SkinDB::Entry &entry)
+     {
+         std::ostringstream oss;
+         oss << "Unable to load " << entry.root << entry.name
+-            << " skin! Reverting the skin to Surge XT Classic.\n\nSkin Error:\n"
++            << " skin! Reverting the skin to PRISMA default.\n\nSkin Error:\n"
+             << db->getAndResetErrorString();
+ 
+         auto msg = std::string(oss.str());
+@@ -4940,7 +4940,7 @@ bool SurgeGUIEditor::onDrop(const std::string &fname)
+     {
+         std::ostringstream oss;
+         oss << "Would you like to install the skin from\n"
+-            << fname << "\ninto Surge XT user folder?";
++            << fname << "\ninto PRISMA user folder?";
+         auto cb = [this, fPath]() {
+             auto db = Surge::GUI::SkinDB::get();
+             auto me = db->installSkinFromPathToUserDirectory(&(this->synth->storage), fPath);
+@@ -5012,7 +5012,7 @@ bool SurgeGUIEditor::onDrop(const std::string &fname)
+             oss << fmt::format("{0} wavetable{1}", sz, sz != 1 ? "s" : "");
+         }
+ 
+-        oss << " from\n" << fname << "\ninto Surge XT user folder?";
++        oss << " from\n" << fname << "\ninto PRISMA user folder?";
+ 
+         auto cb = [this, zipHandler]() {
+             auto storage = &this->synth->storage;
+@@ -5255,7 +5255,7 @@ void SurgeGUIEditor::showAboutScreen(int devModeGrid)
+     // this is special - it can't make a rebuild so just add it normally
+     frame->addAndMakeVisible(*aboutScreen);
+ 
+-    auto ann = std::string("Surge XT About Screen. Version ") + Surge::Build::FullVersionStr;
++    auto ann = std::string("PRISMA About Screen. Version ") + Surge::Build::FullVersionStr;
+     enqueueAccessibleAnnouncement(ann);
+ }
+ 
+@@ -6041,7 +6041,7 @@ bool SurgeGUIEditor::keyPressed(const juce::KeyPress &key, juce::Component *orig
+     {
+         promptForOKCancelWithDontAskAgain(
+             "Enable Keyboard Shortcuts",
+-            "You have used a keyboard shortcut that Surge XT has assigned to a certain "
++            "You have used a keyboard shortcut that PRISMA has assigned to a certain "
+             "action,\n"
+             "but the option to use keyboard shortcuts is currently disabled. "
+             "\nWould you like to enable it?\n\n"
+diff --git a/src/surge-xt/gui/SurgeGUIEditorHtmlGenerators.cpp b/src/surge-xt/gui/SurgeGUIEditorHtmlGenerators.cpp
+index c30e755..dc89480 100644
+--- a/src/surge-xt/gui/SurgeGUIEditorHtmlGenerators.cpp
++++ b/src/surge-xt/gui/SurgeGUIEditorHtmlGenerators.cpp
+@@ -95,7 +95,7 @@ std::string SurgeGUIEditor::tuningToHtml()
+   <body style="margin: 0pt; background: #CDCED4;">
+     <div style="border-bottom: 1px solid #123463; background: #ff9000; padding: 2pt;">
+       <div style="font-size: 20pt; font-family: Lato; padding: 2pt; color:#123463;">
+-        Surge XT Tuning Information
++        PRISMA Tuning Information
+       </div>
+       <div style="font-size: 12pt; font-family: Lato; padding: 2pt;">
+     )HTML" << synth->storage.currentScale.description
+@@ -265,7 +265,7 @@ std::string SurgeGUIEditor::tuningToHtml()
+ 
+     if (synth->storage.currentMapping.count > 48)
+     {
+-        htmls << "Surge XT only displays interval matrices for scales lower than 48 in length"
++        htmls << "PRISMA only displays interval matrices for scales lower than 48 in length"
+               << std::endl;
+     }
+     else
+@@ -371,7 +371,7 @@ th {
+   <body style="margin: 0pt; background: #CDCED4;">
+     <div style="border-bottom: 1px solid #123463; background: #ff9000; padding: 2pt;">
+       <div style="font-size: 20pt; font-family: Lato; padding: 2pt; color:#123463;">
+-        Surge XT MIDI Mapping
++        PRISMA MIDI Mapping
+       </div>
+     </div>
+ 
+@@ -500,7 +500,7 @@ std::string SurgeGUIEditor::skinInspectorHtml(SkinInspectorFlags f)
+        <body style="margin: 0pt; background: #CDCED4;">
+                    <div style="border-bottom: 1px solid #123463; background: #ff9000; padding: 2pt;">
+                               <div style="font-size: 20pt; font-family: Lato; padding: 2pt; color:#123463;">
+-                                         Surge XT Skin Inspector
++                                         PRISMA Skin Inspector
+                    </div>
+                      </div>
+ 
+@@ -739,7 +739,7 @@ std::string SurgeGUIEditor::patchToHtml(bool includeDefaults)
+ 
+         <div class="header">
+             <div style="font-size: 20pt; padding: 2pt; color: #123463;">
+-                Surge XT Patch Export To Text
++                PRISMA Patch Export To Text
+             </div>
+         </div>
+ )HTML";
+diff --git a/src/surge-xt/gui/SurgeGUIEditorKeyboardActions.h b/src/surge-xt/gui/SurgeGUIEditorKeyboardActions.h
+index dc30e15..deccf49 100644
+--- a/src/surge-xt/gui/SurgeGUIEditorKeyboardActions.h
++++ b/src/surge-xt/gui/SurgeGUIEditorKeyboardActions.h
+@@ -342,7 +342,7 @@ inline std::string keyboardActionDescription(KeyboardActions a)
+         desc = "Open Manual";
+         break;
+     case TOGGLE_ABOUT:
+-        desc = "About Surge XT";
++        desc = "About PRISMA";
+         skipOSCase = true;
+         break;
+     case ANNOUNCE_STATE:
+diff --git a/src/surge-xt/gui/SurgeGUIEditorMenuStructures.cpp b/src/surge-xt/gui/SurgeGUIEditorMenuStructures.cpp
+index b8d7afe..adad33a 100644
+--- a/src/surge-xt/gui/SurgeGUIEditorMenuStructures.cpp
++++ b/src/surge-xt/gui/SurgeGUIEditorMenuStructures.cpp
+@@ -1941,33 +1941,7 @@ void SurgeGUIEditor::showSettingsMenu(const juce::Point<int> &where,
+ 
+     settingsMenu.addSeparator();
+ 
+-    settingsMenu.addItem(Surge::GUI::toOSCase("Reach the Developers..."), []() {
+-        juce::URL(fmt::format("{}feedback", stringWebsite)).launchInDefaultBrowser();
+-    });
+-
+-    settingsMenu.addItem(Surge::GUI::toOSCase("Read the Code..."),
+-                         []() { juce::URL(stringRepository).launchInDefaultBrowser(); });
+-
+-    settingsMenu.addItem(Surge::GUI::toOSCase("Download Additional Content..."), []() {
+-        juce::URL(fmt::format("{}surge-synthesizer.github.io/wiki/Additional-Content",
+-                              stringOrganization))
+-            .launchInDefaultBrowser();
+-    });
+-
+-    settingsMenu.addItem(Surge::GUI::toOSCase("Skin Library..."), []() {
+-        juce::URL(fmt::format("{}skin-library", stringWebsite)).launchInDefaultBrowser();
+-    });
+-
+-    Surge::GUI::addMenuWithShortcut(settingsMenu, Surge::GUI::toOSCase("Surge XT Manual..."),
+-                                    showShortcutDescription("F1"),
+-                                    []() { juce::URL(stringManual).launchInDefaultBrowser(); });
+-
+-    settingsMenu.addItem(Surge::GUI::toOSCase("Surge XT Website..."),
+-                         []() { juce::URL(stringWebsite).launchInDefaultBrowser(); });
+-
+-    settingsMenu.addSeparator();
+-
+-    Surge::GUI::addMenuWithShortcut(settingsMenu, "About Surge XT", showShortcutDescription("F12"),
++    Surge::GUI::addMenuWithShortcut(settingsMenu, "About PRISMA", showShortcutDescription("F12"),
+                                     [this]() { this->showAboutScreen(); });
+ 
+     settingsMenu.showMenuAsync(popupMenuOptions(where),
+diff --git a/src/surge-xt/gui/SurgeJUCELookAndFeel.cpp b/src/surge-xt/gui/SurgeJUCELookAndFeel.cpp
+index f13756a..56a37cb 100644
+--- a/src/surge-xt/gui/SurgeJUCELookAndFeel.cpp
++++ b/src/surge-xt/gui/SurgeJUCELookAndFeel.cpp
+@@ -219,7 +219,7 @@ void SurgeJUCELookAndFeel::drawDocumentWindowTitleBar(DocumentWindow &window, Gr
+ 
+     auto wt = window.getName();
+ 
+-    String surgeLabel = "Surge XT";
++    String surgeLabel = "PRISMA";
+     String surgeVersion = Surge::Build::FullVersionStr;
+     auto fontSurge = skin->fontManager->getLatoAtSize(14, juce::Font::bold);
+     auto fontVersion = skin->fontManager->getFiraMonoAtSize(14, juce::Font::bold);
+@@ -231,9 +231,9 @@ void SurgeJUCELookAndFeel::drawDocumentWindowTitleBar(DocumentWindow &window, Gr
+     if (Surge::Build::IsRelease)
+         surgeVersion = "";
+ 
+-    if (wt != "Surge XT")
++    if (wt != "PRISMA")
+     {
+-        surgeLabel = "Surge XT -";
++        surgeLabel = "PRISMA -";
+         surgeVersion = wt;
+         fontVersion = fontSurge;
+     }
+diff --git a/src/surge-xt/gui/overlays/AboutScreen.cpp b/src/surge-xt/gui/overlays/AboutScreen.cpp
+index 0f16d81..b6c1e72 100644
+--- a/src/surge-xt/gui/overlays/AboutScreen.cpp
++++ b/src/surge-xt/gui/overlays/AboutScreen.cpp
+@@ -149,7 +149,7 @@ AboutScreen::AboutScreen()
+     setAccessible(true);
+     setFocusContainerType(juce::Component::FocusContainerType::keyboardFocusContainer);
+     setWantsKeyboardFocus(true);
+-    std::string version = std::string("About Surge XT ") + Surge::Build::FullVersionStr;
++    std::string version = std::string("About PRISMA ") + Surge::Build::FullVersionStr;
+     setTitle(version);
+     setDescription(version);
+ }
+@@ -158,7 +158,7 @@ AboutScreen::~AboutScreen() noexcept = default;
+ 
+ void AboutScreen::populateData()
+ {
+-    std::string version = std::string("Surge XT ") + Surge::Build::FullVersionStr;
++    std::string version = std::string("PRISMA ") + Surge::Build::FullVersionStr;
+     std::ostringstream oss;
+     oss << Surge::Build::BuildDate << " @ " << Surge::Build::BuildTime << " on '"
+         << Surge::Build::BuildHost << "/" << Surge::Build::BuildLocation << "' with '"
+diff --git a/src/surge-xt/gui/overlays/PatchDBViewer.cpp b/src/surge-xt/gui/overlays/PatchDBViewer.cpp
+index 2ae94db..39eba5c 100644
+--- a/src/surge-xt/gui/overlays/PatchDBViewer.cpp
++++ b/src/surge-xt/gui/overlays/PatchDBViewer.cpp
+@@ -271,7 +271,7 @@ struct PatchDBSQLTreeViewItem : public SharedTreeViewItem
+         // TODO: Surge XT logo
+         // g.setFont(skin->fontManager->getLatoAtSize(9));
+         g.setColour(juce::Colours::black);
+-        g.drawText("Surge XT", 2, 0, width - 2, height, juce::Justification::centredLeft);
++        g.drawText("PRISMA", 2, 0, width - 2, height, juce::Justification::centredLeft);
+     }
+ 
+     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PatchDBSQLTreeViewItem);
+diff --git a/src/surge-xt/gui/widgets/EffectChooser.cpp b/src/surge-xt/gui/widgets/EffectChooser.cpp
+index 4f43467..4b12b18 100644
+--- a/src/surge-xt/gui/widgets/EffectChooser.cpp
++++ b/src/surge-xt/gui/widgets/EffectChooser.cpp
+@@ -106,7 +106,7 @@ void EffectChooser::paint(juce::Graphics &g)
+         jassert(false);
+         g.fillAll(juce::Colours::red);
+         g.setColour(juce::Colours::white);
+-        g.drawText("Can't load skin version 1 in Surge XT!", getLocalBounds(),
++        g.drawText("Can't load skin version 1 in PRISMA!", getLocalBounds(),
+                    juce::Justification::centred);
+         return;
+     }
+diff --git a/src/surge-xt/gui/widgets/MainFrame.cpp b/src/surge-xt/gui/widgets/MainFrame.cpp
+index f3d2b20..6f84cee 100644
+--- a/src/surge-xt/gui/widgets/MainFrame.cpp
++++ b/src/surge-xt/gui/widgets/MainFrame.cpp
+@@ -37,7 +37,7 @@ MainFrame::MainFrame()
+ {
+     setFocusContainerType(juce::Component::FocusContainerType::focusContainer);
+     setAccessible(true);
+-    setDescription("Surge XT");
++    setDescription("PRISMA");
+     setTitle("Main Frame");
+ }
+ 
+@@ -90,8 +90,8 @@ juce::Component *MainFrame::getSynthControlsLayer()
+         synthControls = std::make_unique<OverlayComponent>();
+         synthControls->setBounds(getLocalBounds());
+         synthControls->setInterceptsMouseClicks(false, true);
+-        synthControls->setTitle("Surge Synth Controls");
+-        synthControls->setDescription("Surge Synth Controls");
++        synthControls->setTitle("PRISMA Synth Controls");
++        synthControls->setDescription("PRISMA Synth Controls");
+         synthControls->getProperties().set("ControlGroup", (int)12);
+     }
+ 

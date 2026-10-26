@@ -2065,6 +2065,7 @@ PluginManager::vst3_refresh (bool cache_only)
 #ifdef __APPLE__
 	vst3_discover_from_path ("~/Library/Audio/Plug-Ins/VST3:/Library/Audio/Plug-Ins/VST3:/Network/Library/Audio/Plug-ins/VST3", cache_only);
 #elif defined PLATFORM_WINDOWS
+	vst3_discover_from_path (Glib::build_filename (ardour_dll_directory(), "vst3"), cache_only);
 	std::string prog = PBD::get_win_special_folder_path (CSIDL_PROGRAM_FILES);
 	vst3_discover_from_path (Glib::build_filename (prog, "Common Files", "VST3"), cache_only);
 #else
@@ -2140,6 +2141,12 @@ PluginManager::vst3_plugin (string const& module_path, string const& bundle_path
 
 	info->n_outputs.set_audio (i.n_outputs + i.n_aux_outputs);
 	info->n_outputs.set_midi (i.n_midi_outputs);
+
+	for (PluginInfoList::const_iterator existing = _vst3_plugin_info->begin(); existing != _vst3_plugin_info->end(); ++existing) {
+		if ((*existing)->unique_id == info->unique_id) {
+			return;
+		}
+	}
 
 	_vst3_plugin_info->push_back (info);
 
@@ -2337,6 +2344,9 @@ PluginManager::run_vst3_scanner_app (std::string bundle_path, PSLEPtr psle) cons
 PluginManager::PluginStatusType
 PluginManager::get_status (const PluginInfoPtr& pi) const
 {
+	if (pi && pi->type == LV2 && (pi->creator == "Ardour Community" || pi->unique_id.find ("http://ardour.org/") == 0)) {
+		return Concealed;
+	}
 	PluginStatus ps (pi->type, pi->unique_id);
 	PluginStatusList::const_iterator i = find (statuses.begin(), statuses.end(), ps);
 	if (i == statuses.end()) {

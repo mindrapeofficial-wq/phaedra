@@ -748,7 +748,7 @@ Editor::Editor ()
 	_lufs_strip_background.show_all ();
 	_lufs_detail_canvas->hide ();
 	_lufs_detail_text->hide ();
-	_lufs_fft = new GTKArdour::FFT (4096);
+	_lufs_fft = new GTKArdour::FFT (8192);
 	update_lufs_strip ();
 	_lufs_strip_timer = Glib::signal_timeout ().connect (sigc::mem_fun (*this, &Editor::update_lufs_strip), 100);
 	content_att_right.add (_editor_list_vbox);
@@ -964,7 +964,7 @@ static DJWaveformHistory dj_waveform_history;
 
 struct SpectrogramHistory {
 	Editor* owner = nullptr;
-	std::array<std::array<float, 512>, 256> levels {};
+	std::array<std::array<float, 256>, 512> levels {};
 };
 
 static SpectrogramHistory spectrogram_history;
@@ -1010,7 +1010,7 @@ Editor::update_lufs_strip ()
 	}
 	dj_waveform_history.left.back () = left_peak;
 	dj_waveform_history.right.back () = right_peak;
-	std::array<float, 4096> fft_input;
+	std::array<float, 8192> fft_input;
 	for (size_t i = 0; i < fft_input.size (); ++i) {
 		const size_t sample = _lufs_preview_left.size () - fft_input.size () + i;
 		fft_input[i] = _lufs_preview_left[sample];
@@ -1027,7 +1027,7 @@ Editor::update_lufs_strip ()
 	float strongest = 0.f;
 	_lufs_pitch_hz = 0.f;
 	for (size_t bin = 0; bin < _lufs_fft->bins (); ++bin) {
-		const double frequency = bin * sample_rate / 4096.0;
+		const double frequency = bin * sample_rate / 8192.0;
 		const float power = _lufs_fft->power_at_bin (bin);
 		if (frequency >= 65.0 && frequency <= 2000.0 && power > strongest) {
 			strongest = power;
@@ -1037,8 +1037,8 @@ Editor::update_lufs_strip ()
 	for (size_t band = 0; band < _lufs_spectrum_levels.size (); ++band) {
 		const double low = 30.0 * std::pow (20000.0 / 30.0, double (band) / 64.0);
 		const double high = 30.0 * std::pow (20000.0 / 30.0, double (band + 1) / 64.0);
-		const size_t first = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (1, size_t (low * 4096.0 / sample_rate)));
-		const size_t last = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (first, size_t (high * 4096.0 / sample_rate)));
+		const size_t first = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (1, size_t (low * 8192.0 / sample_rate)));
+		const size_t last = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (first, size_t (high * 8192.0 / sample_rate)));
 		float power = 0.f;
 		for (size_t b = first; b <= last; ++b) power = std::max (power, _lufs_fft->power_at_bin (b));
 		const double db = 10.0 * std::log10 (power + 1e-12);
@@ -1048,15 +1048,23 @@ Editor::update_lufs_strip ()
 	for (size_t row = 1; row < spectrogram_history.levels.size (); ++row) {
 		spectrogram_history.levels[row - 1] = spectrogram_history.levels[row];
 	}
-	for (size_t band = 0; band < 512; ++band) {
-		const double low = 30.0 * std::pow (20000.0 / 30.0, double (band) / 512.0);
-		const double high = 30.0 * std::pow (20000.0 / 30.0, double (band + 1) / 512.0);
-		const size_t first = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (1, size_t (low * 4096.0 / sample_rate)));
-		const size_t last = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (first, size_t (high * 4096.0 / sample_rate)));
+	std::array<double, 256> spectrogram_db;
+	float strongest_spectrum_power = 0.f;
+	for (size_t band = 0; band < 256; ++band) {
+		const double low = 30.0 * std::pow (20000.0 / 30.0, double (band) / 256.0);
+		const double high = 30.0 * std::pow (20000.0 / 30.0, double (band + 1) / 256.0);
+		const size_t first = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (1, size_t (low * 8192.0 / sample_rate)));
+		const size_t last = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (first, size_t (high * 8192.0 / sample_rate)));
 		float power = 0.f;
 		for (size_t bin = first; bin <= last; ++bin) power = std::max (power, _lufs_fft->power_at_bin (bin));
-		const double db = 10.0 * std::log10 (power + 1e-12);
-		spectrogram_history.levels.back ()[band] = std::max (0.0, std::min (1.0, (db + 80.0) / 80.0));
+		strongest_spectrum_power = std::max (strongest_spectrum_power, power);
+		spectrogram_db[band] = 10.0 * std::log10 (power + 1e-12);
+	}
+	const double peak_db = 10.0 * std::log10 (strongest_spectrum_power + 1e-12);
+	const double signal_gate = std::max (0.0, std::min (1.0, (peak_db + 85.0) / 35.0));
+	for (size_t band = 0; band < 256; ++band) {
+		const double relative = std::max (0.0, std::min (1.0, (spectrogram_db[band] - peak_db + 52.0) / 52.0));
+		spectrogram_history.levels.back ()[band] = relative * signal_gate;
 	}
 	_lufs_scope.queue_draw ();
 	_lufs_correlation.queue_draw ();
@@ -1218,7 +1226,7 @@ static uint32_t
 spectrogram_pixel (double level)
 {
 	/* MiniMeters inspired heat scale, sampled from the supplied reference. */
-	const double v = std::max (0.0, std::min (1.0, (level - 0.20) * 1.45));
+	const double v = std::max (0.0, std::min (1.0, (level - 0.15) * 2.0));
 	const double stops[6][3] = {
 		{ 0.0, 0.0, 0.0 }, { 0.18, 0.0, 0.32 }, { 0.60, 0.0, 0.65 },
 		{ 0.90, 0.0, 0.56 }, { 0.96, 0.20, 0.03 }, { 1.0, 0.68, 0.03 }
@@ -1239,17 +1247,17 @@ paint_spectrogram (cairo_t* cr, double x, double y, double width, double height,
 	const int render_height = sharp ? std::min (256, std::max (1, int (height))) : 256;
 	std::vector<uint32_t> pixels (render_width * render_height);
 	for (int row = 0; row < render_height; ++row) {
-		/* The compact meter shows the latest rows one-for-one instead of
-		 * squeezing 25 seconds into only 68 screen pixels. */
-		const int first_row = sharp ? 256 - render_height + row : row * 256 / render_height;
-		const int last_row = sharp ? first_row + 1 : (row + 1) * 256 / render_height;
+		/* Bass sits at the bottom; high frequencies at the top. */
+		const int first_band = (render_height - row - 1) * 256 / render_height;
+		const int last_band = (render_height - row) * 256 / render_height;
 		for (int band = 0; band < render_width; ++band) {
-			const int first_band = band * 512 / render_width;
-			const int last_band = (band + 1) * 512 / render_width;
+			/* The newest FFT frame enters at the right edge. */
+			const int first_frame = sharp ? 512 - render_width + band : band * 512 / render_width;
+			const int last_frame = sharp ? first_frame + 1 : (band + 1) * 512 / render_width;
 			float brightest = 0.f;
-			for (int source_row = first_row; source_row < last_row; ++source_row) {
+			for (int frame = first_frame; frame < last_frame; ++frame) {
 				for (int source_band = first_band; source_band < last_band; ++source_band) {
-					brightest = std::max (brightest, spectrogram_history.levels[source_row][source_band]);
+					brightest = std::max (brightest, spectrogram_history.levels[frame][source_band]);
 				}
 			}
 			pixels[row * render_width + band] = spectrogram_pixel (brightest);
@@ -1275,7 +1283,7 @@ Editor::draw_lufs_spectrogram (GdkEventExpose*)
 	cairo_set_source_rgb (cr, 0.0, 0.0, 0.0); cairo_paint (cr);
 	const int width = std::max (1, _lufs_spectrogram.get_allocation ().get_width ());
 	const int height = std::max (1, _lufs_spectrogram.get_allocation ().get_height ());
-	/* Frequency runs left to right; new audio enters at the bottom. */
+	/* Time runs left to right; bass is at the bottom. */
 	paint_spectrogram (cr, 0, 0, width, height, true);
 	cairo_destroy (cr);
 	return true;
@@ -1352,8 +1360,8 @@ Editor::draw_lufs_spectrum (GdkEventExpose*)
 		for (int x = 0; x < width; ++x) {
 			const double low_hz = 30.0 * std::pow (20000.0 / 30.0, double (x) / width);
 			const double high_hz = 30.0 * std::pow (20000.0 / 30.0, double (x + 1) / width);
-			const size_t first = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (1, size_t (low_hz * 4096.0 / sample_rate)));
-			const size_t last = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (first, size_t (high_hz * 4096.0 / sample_rate)));
+			const size_t first = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (1, size_t (low_hz * 8192.0 / sample_rate)));
+			const size_t last = std::min<size_t> (_lufs_fft->bins () - 1, std::max<size_t> (first, size_t (high_hz * 8192.0 / sample_rate)));
 			float peak = 0.f;
 			for (size_t bin = first; bin <= last; ++bin) peak = std::max (peak, _lufs_fft->power_at_bin (bin));
 			levels[x] = std::max (0.0, std::min (1.0, (10.0 * std::log10 (peak + 1e-12) + 78.0) / 78.0));
@@ -1392,7 +1400,7 @@ Editor::draw_lufs_spectrum (GdkEventExpose*)
 		const int midi = int (std::round (69.0 + 12.0 * std::log2 (_lufs_pitch_hz / 440.0)));
 		const int cents = int (std::round (1200.0 * std::log2 (_lufs_pitch_hz / (440.0 * std::pow (2.0, (midi - 69) / 12.0)))));
 		const char* notes[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-		const size_t pitch_bin = std::min<size_t> (_lufs_fft->bins () - 1, size_t (_lufs_pitch_hz * 4096.0 / sample_rate));
+		const size_t pitch_bin = std::min<size_t> (_lufs_fft->bins () - 1, size_t (_lufs_pitch_hz * 8192.0 / sample_rate));
 		const double db = 10.0 * std::log10 (_lufs_fft->power_at_bin (pitch_bin) + 1e-12);
 		char text[80];
 		snprintf (text, sizeof (text), "%.1f dB | %.1f Hz | %s%d %+d cents", db, _lufs_pitch_hz, notes[(midi % 12 + 12) % 12], midi / 12 - 1, cents);
@@ -1473,13 +1481,13 @@ Editor::update_lufs_detail_text ()
 	const double sample_rate = _session ? _session->nominal_sample_rate () : 48000.0;
 	char detail[512];
 	switch (_lufs_detail_mode) {
-	case 0: snprintf (detail, sizeof (detail), "Espectrograma · 30 Hz–20 kHz · FFT 4096 · historial de 9,6 s"); break;
+	case 0: snprintf (detail, sizeof (detail), "Espectrograma · 30 Hz–20 kHz · FFT 8192 · historial de 51,2 s"); break;
 	case 1: snprintf (detail, sizeof (detail), "Forma de onda estéreo · pico L %.1f dBFS · pico R %.1f dBFS", 20.0 * std::log10 (peak_left + 1e-9), 20.0 * std::log10 (peak_right + 1e-9)); break;
 	case 2: snprintf (detail, sizeof (detail), "Vectorscopio Mid/Side · correlación %+.2f · %.0f ms de señal", correlation, 1000.0 * _lufs_preview_left.size () / sample_rate); break;
 	case 3: snprintf (detail, sizeof (detail), "Correlación estéreo %+.3f · +1 mono · 0 decorrelacionado · −1 contrafase", correlation); break;
 	case 4: snprintf (detail, sizeof (detail), "Nivel VU %+.1f · calibración: −18 dBFS RMS = 0 VU", _lufs_vu_db); break;
 	case 5: snprintf (detail, sizeof (detail), "Osciloscopio L/R · pico L %.1f dBFS · pico R %.1f dBFS", 20.0 * std::log10 (peak_left + 1e-9), 20.0 * std::log10 (peak_right + 1e-9)); break;
-	case 6: snprintf (detail, sizeof (detail), "Espectro · FFT 4096 · frecuencia dominante %.0f Hz", _lufs_pitch_hz); break;
+	case 6: snprintf (detail, sizeof (detail), "Espectro · FFT 8192 · frecuencia dominante %.0f Hz", _lufs_pitch_hz); break;
 	default: {
 		const float value = meter ? meter->lufs_momentary () : -200.f;
 		if (std::isfinite (value) && value > -180.f) snprintf (detail, sizeof (detail), "LUFS momentáneo (M): %.1f · ventana de 400 ms", value);
