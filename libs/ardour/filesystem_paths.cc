@@ -261,7 +261,6 @@ ardour_config_search_path ()
 		// Start by adding the user's personal config folder
 		search_path += user_config_directory();
 #ifdef PLATFORM_WINDOWS
-		search_path += legacy_user_config_directory ();
 		// On Windows, add am intermediate configuration folder
 		// (one that's guaranteed to be writable by all users).
 		const gchar* const *all_users_folder = g_get_system_config_dirs();
@@ -283,6 +282,8 @@ ardour_config_search_path ()
 
 		// now add a suitable config path from the bundle
 		search_path += windows_search_path ();
+		// Packaged Phaedra resources take precedence over old Ardour overrides.
+		search_path += legacy_user_config_directory ();
 #endif
 		// Finally, add the Phaedra path (or the legacy Ardour path).
 		std::string s = phaedra_path_or_legacy ("PHAEDRA_CONFIG_PATH", "ARDOUR_CONFIG_PATH");
@@ -304,8 +305,8 @@ ardour_data_search_path ()
 	if (search_path.empty()) {
 		search_path += user_config_directory();
 #ifdef PLATFORM_WINDOWS
-		search_path += legacy_user_config_directory ();
 		search_path += windows_search_path ();
+		search_path += legacy_user_config_directory ();
 #endif
 		std::string s = phaedra_path_or_legacy ("PHAEDRA_DATA_PATH", "ARDOUR_DATA_PATH");
 		if (s.empty()) {
