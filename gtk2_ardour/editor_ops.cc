@@ -6932,9 +6932,15 @@ Editor::set_loop_from_selection (bool play)
 
 	timepos_t start, end;
 
-	if (!get_selection_extents (start, end)) {
+	/* A time range dragged in empty canvas wins over any regions that happen
+	 * to remain selected from an earlier edit. */
+	if (!selection->time.empty ()) {
+		start = selection->time.start_time ();
+		end = selection->time.end_time ();
+	} else if (!get_selection_extents (start, end)) {
 		return;
 	}
+	if (end <= start) return;
 
 	set_loop_range (start, end,  _("set loop range from selection"));
 

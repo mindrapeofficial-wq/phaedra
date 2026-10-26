@@ -2379,6 +2379,13 @@ Editor::update_join_object_range_location (double y)
 Editing::MouseMode
 Editor::effective_mouse_mode () const
 {
+	/* Momentary tools: releasing the modifier restores the selected mode. */
+	if (Keyboard::the_keyboard ().key_is_down (GDK_Control_L) || Keyboard::the_keyboard ().key_is_down (GDK_Control_R)) {
+		return MouseDraw;
+	}
+	if (Keyboard::the_keyboard ().key_is_down (GDK_Alt_L) || Keyboard::the_keyboard ().key_is_down (GDK_Alt_R)) {
+		return MouseTimeFX;
+	}
 	if (_join_object_range_state == JOIN_OBJECT_RANGE_OBJECT) {
 		return MouseObject;
 	} else if (_join_object_range_state == JOIN_OBJECT_RANGE_RANGE) {

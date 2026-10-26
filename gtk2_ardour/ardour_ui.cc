@@ -1962,17 +1962,8 @@ ARDOUR_UI::toggle_session_auto_loop ()
 
 	} else {
 
-		/* looping not enabled, our job is to enable it.
-
-		   loop-is-NOT-mode: this action always starts the transport rolling.
-		   loop-IS-mode:     this action simply sets the loop play mechanism, but
-		                        does not start transport.
-		*/
-		if (Config->get_loop_is_mode()) {
-			_session->request_play_loop (true, false);
-		} else {
-			_session->request_play_loop (true, true);
-		}
+		/* Start playback at the selected loop range when enabling loop. */
+		_session->request_play_loop (true, true);
 	}
 
 	//show the loop markers

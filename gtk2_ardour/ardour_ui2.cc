@@ -246,7 +246,8 @@ ARDOUR_UI::setup_transport ()
 #define TCOL col, col + 1
 
 	tabbables_table.attach (editor_visibility_button,       TCOL, 0, 1 , FILL, FILL, hpadding, vpadding);
-	tabbables_table.attach (mixer_visibility_button,       TCOL, 1, 2 , FILL, FILL, hpadding, vpadding);
+	++col;
+	tabbables_table.attach (mixer_visibility_button,       TCOL, 0, 1 , FILL, FILL, hpadding, vpadding);
 	++col;
 
 	/* Phaedra: hide Rec/Cue buttons */

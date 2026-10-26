@@ -1233,10 +1233,15 @@ Editor::draw_lufs_spectrum (GdkEventExpose*)
 	return true;
 }
 
+static int lufs_detail_generation = 0;
+static gint64 lufs_detail_started = 0;
+
 bool
 Editor::show_lufs_detail (GdkEventButton* event, int mode)
 {
 	if (event->button != 1) return false;
+	++lufs_detail_generation;
+	lufs_detail_started = g_get_monotonic_time ();
 	_lufs_detail_mode = mode;
 	update_lufs_detail_text ();
 	_lufs_detail_canvas->set_no_show_all (false);
@@ -1250,6 +1255,12 @@ Editor::show_lufs_detail (GdkEventButton* event, int mode)
 bool
 Editor::hide_lufs_detail (GdkEventAny*)
 {
+	const gint64 elapsed = g_get_monotonic_time () - lufs_detail_started;
+	if (elapsed < 450000) {
+		const unsigned int delay = std::max<gint64> (1, (450000 - elapsed) / 1000);
+		Glib::signal_timeout ().connect (sigc::bind_return (sigc::bind (sigc::mem_fun (*this, &Editor::close_lufs_detail), lufs_detail_generation), false), delay);
+		return true;
+	}
 	_lufs_detail_canvas->hide ();
 	_lufs_detail_text->hide ();
 	_lufs_detail_canvas->set_no_show_all ();
@@ -1258,9 +1269,9 @@ Editor::hide_lufs_detail (GdkEventAny*)
 }
 
 void
-Editor::close_lufs_detail (int)
+Editor::close_lufs_detail (int generation)
 {
-	hide_lufs_detail (nullptr);
+	if (generation == lufs_detail_generation) hide_lufs_detail (nullptr);
 }
 
 void
@@ -3511,19 +3522,18 @@ Editor::setup_toolbar ()
 	toolbar_right->set_spacing (3);
 
 	_application_bar.move_to_editor_toolbar (*toolbar_left, *toolbar_center, *toolbar_right);
-	toolbar_left->pack_start (tool_selector, false, false);
-	/* Keep the essential tools visible without opening the Advanced section. */
-	toolbar_left->pack_start (mouse_move_button, false, false);
-	toolbar_left->pack_start (mouse_cut_button, false, false);
-	toolbar_left->pack_start (mouse_timefx_button, false, false);
-	toolbar_left->pack_start (mouse_draw_button, false, false);
+	/* Select is the normal mode; Ctrl and Alt temporarily provide Draw and
+	 * Stretch, and S splits at the playhead. Keep only the grid controls. */
 	toolbar_left->pack_start (snap_box, false, false);
 	toolbar_right->pack_start (*advanced_button, false, false);
 	content_header_hbox.remove (content_tabbables);
 	toolbar_right->pack_end (content_tabbables, false, false);
-	toolbar_hbox.pack_start (*toolbar_left, false, false);
+	Glib::RefPtr<SizeGroup> balanced_sides = SizeGroup::create (SIZE_GROUP_HORIZONTAL);
+	balanced_sides->add_widget (*toolbar_left);
+	balanced_sides->add_widget (*toolbar_right);
+	toolbar_hbox.pack_start (*toolbar_left, true, true);
 	toolbar_hbox.pack_start (*toolbar_center, false, false);
-	toolbar_hbox.pack_start (*toolbar_right, false, false);
+	toolbar_hbox.pack_start (*toolbar_right, true, true);
 	Gtk::Widget* old_header = content_header_hbox.get_parent ();
 	if (old_header) {
 		old_header->set_no_show_all ();

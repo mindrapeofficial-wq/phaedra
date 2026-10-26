@@ -233,7 +233,7 @@ EditingContext::EditingContext (std::string const & name)
 
 	zoom_focus_selector.set_name ("zoom button");
 
-	snap_mode_button.set_text (_("Snap"));
+	snap_mode_button.set_text ("🧲");
 	snap_mode_button.set_name ("mouse mode button");
 	snap_mode_button.signal_button_press_event().connect (sigc::mem_fun (*this, &EditingContext::snap_mode_button_clicked), false);
 
