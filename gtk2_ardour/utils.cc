@@ -650,17 +650,21 @@ ARDOUR_UI_UTILS::guess_default_ui_scale ()
 	gint width = 0;
 	gint height = 0;
 	GdkScreen* screen = gdk_display_get_screen (gdk_display_get_default (), 0);
-	gint n_monitors = gdk_screen_get_n_monitors (screen);
-
 	if (!screen) {
 		return 100;
 	}
 
-	for (gint i = 0; i < n_monitors; ++i) {
+	gint n_monitors = gdk_screen_get_n_monitors (screen);
+	gint monitor = gdk_screen_get_primary_monitor (screen);
+	if (monitor < 0 || monitor >= n_monitors) {
+		monitor = 0;
+	}
+
+	if (n_monitors > 0) {
 		GdkRectangle rect;
-		gdk_screen_get_monitor_geometry (screen, i, &rect);
-		width = std::max (width, rect.width);
-		height = std::max (height, rect.height);
+		gdk_screen_get_monitor_geometry (screen, monitor, &rect);
+		width = rect.width;
+		height = rect.height;
 	}
 
 	float wx = width  / 1920.f;

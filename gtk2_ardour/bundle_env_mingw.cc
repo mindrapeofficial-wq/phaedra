@@ -64,6 +64,19 @@ fixup_bundle_environment (int, char* [], string & localedir)
 
 	std::string path;
 
+	/* Windows does not reliably expose its UI language through LANG.  Pass
+	 * the user's Windows locale to gettext before any catalogs are loaded. */
+	if (!Glib::getenv ("LANGUAGE").size () &&
+	    !Glib::getenv ("LANG").size () &&
+	    !Glib::getenv ("LC_ALL").size () &&
+	    !Glib::getenv ("LC_MESSAGES").size ()) {
+		gchar* language = g_win32_getlocale ();
+		if (language) {
+			Glib::setenv ("LANGUAGE", language, false);
+			g_free (language);
+		}
+	}
+
 	if (ARDOUR::translations_are_enabled ()) {
 		path = windows_search_path().to_string();
 		path += "\\locale";

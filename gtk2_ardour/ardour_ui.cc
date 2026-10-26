@@ -478,6 +478,10 @@ ARDOUR_UI::ARDOUR_UI (int *argcp, char **argvp[], const char* localedir)
 
 	SessionEvent::create_per_thread_pool ("GUI", 4096);
 
+#ifdef PLATFORM_WINDOWS
+	/* Match the primary display at each launch, including after a monitor change. */
+	UIConfiguration::instance().set_font_scale (1024 * guess_default_ui_scale ());
+#endif
 	UIConfiguration::instance().reset_dpi ();
 
 	TimeAxisViewItem::set_constant_heights ();

@@ -30,6 +30,7 @@
    would connect changes to the mixer or editor objects.
 */
 
+#include <algorithm>
 #include <cstdio>
 
 #include "pbd/error.h"
@@ -373,6 +374,21 @@ ARDOUR_UI::apply_window_settings (bool with_size)
 {
 	const XMLNode* mnode = main_window_settings ();
 
+#ifdef PLATFORM_WINDOWS
+	/* Saved coordinates may refer to a display which is no longer attached. */
+	GdkScreen* screen = gtk_window_get_screen (_main_window.gobj ());
+	GdkRectangle display = { 0, 0, 1920, 1080 };
+	if (screen && gdk_screen_get_n_monitors (screen) > 0) {
+		gint primary = gdk_screen_get_primary_monitor (screen);
+		if (primary < 0 || primary >= gdk_screen_get_n_monitors (screen)) {
+			primary = 0;
+		}
+		gdk_screen_get_monitor_geometry (screen, primary, &display);
+	}
+	if (!mnode && with_size) {
+		_main_window.set_default_size (display.width * 9 / 10, display.height * 9 / 10);
+	}
+#endif
 	if (!mnode) {
 		return;
 	}
@@ -401,6 +417,31 @@ ARDOUR_UI::apply_window_settings (bool with_size)
 			h = atoi (prop->value());
 		}
 
+#ifdef PLATFORM_WINDOWS
+		if (screen && x >= 0 && y >= 0) {
+			const gint monitor = gdk_screen_get_monitor_at_point (screen, x, y);
+			GdkRectangle saved_display;
+			gdk_screen_get_monitor_geometry (screen, monitor, &saved_display);
+			if (x < saved_display.x || y < saved_display.y ||
+			    x >= saved_display.x + saved_display.width ||
+			    y >= saved_display.y + saved_display.height) {
+				x = display.x;
+				y = display.y;
+			} else {
+				display = saved_display;
+			}
+		}
+		if (w <= 0 || h <= 0) {
+			w = display.width * 9 / 10;
+			h = display.height * 9 / 10;
+		}
+		w = std::min (w, display.width);
+		h = std::min (h, display.height);
+		if (x >= 0 && y >= 0) {
+			x = std::max (display.x, std::min (x, display.x + display.width - w));
+			y = std::max (display.y, std::min (y, display.y + display.height - h));
+		}
+#endif
 		if (x >= 0 && y >= 0 && w >= 0 && h >= 0) {
 			_main_window.set_position (Gtk::WIN_POS_NONE);
 		}
