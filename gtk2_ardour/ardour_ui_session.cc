@@ -1200,7 +1200,7 @@ int
 ARDOUR_UI::ask_about_saving_session (const vector<string>& actions)
 {
 	const bool quitting = actions.size() >= 3 && actions[0] == _("Cancel") && actions[1] == _("Don't Save");
-	ArdourDialog window (quitting ? _("Save Changes") : _("Unsaved Session"));
+	ArdourDialog window (_main_window, quitting ? _("Save Changes") : _("Unsaved Session"));
 	Gtk::HBox dhbox;  // the hbox for the image and text
 	Gtk::Label  prompt_label;
 	Gtk::Image* dimage = manage (new Gtk::Image(Stock::DIALOG_WARNING,  Gtk::ICON_SIZE_DIALOG));

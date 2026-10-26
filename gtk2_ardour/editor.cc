@@ -717,7 +717,7 @@ Editor::Editor ()
 	_lufs_strip_background.set_above_child (true);
 	_lufs_strip_background.add_events (Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 	_lufs_strip_background.signal_button_press_event ().connect ([this] (GdkEventButton* event) {
-		if (event->button != 1) return false;
+		if (event->button != 3) return false;
 		Gtk::Widget* meters[8] = { &_lufs_spectrogram, &_lufs_waveform, &_lufs_scope,
 			&_lufs_correlation, &_lufs_needle, &_lufs_oscilloscope, &_lufs_spectrum, &_lufs_bars };
 		double left = _lufs_strip_box.get_border_width ();
@@ -730,6 +730,20 @@ Editor::Editor ()
 	});
 	_lufs_strip_background.signal_button_release_event ().connect ([this] (GdkEventButton*) { return hide_lufs_detail (nullptr); });
 	content_top_bar.add (_lufs_strip_background);
+	content_top_bar.set_above_child (true);
+	content_top_bar.add_events (Gdk::BUTTON_PRESS_MASK);
+	content_top_bar.signal_button_press_event ().connect ([this] (GdkEventButton* event) {
+		if (event->button != 3) return false;
+		Gtk::Widget* meters[8] = { &_lufs_spectrogram, &_lufs_waveform, &_lufs_scope,
+			&_lufs_correlation, &_lufs_needle, &_lufs_oscilloscope, &_lufs_spectrum, &_lufs_bars };
+		double left = _lufs_strip_box.get_border_width ();
+		for (int i = 0; i < 8; ++i) {
+			const double right = left + meters[i]->get_allocation ().get_width ();
+			if (event->x >= left && event->x <= right) return show_lufs_detail (event, i);
+			left = right + _lufs_strip_box.get_spacing ();
+		}
+		return false;
+	});
 	content_top_bar.show ();
 	_lufs_strip_background.show_all ();
 	_lufs_detail_canvas->hide ();
@@ -1225,8 +1239,10 @@ paint_spectrogram (cairo_t* cr, double x, double y, double width, double height,
 	const int render_height = sharp ? std::min (256, std::max (1, int (height))) : 256;
 	std::vector<uint32_t> pixels (render_width * render_height);
 	for (int row = 0; row < render_height; ++row) {
-		const int first_row = row * 256 / render_height;
-		const int last_row = (row + 1) * 256 / render_height;
+		/* The compact meter shows the latest rows one-for-one instead of
+		 * squeezing 25 seconds into only 68 screen pixels. */
+		const int first_row = sharp ? 256 - render_height + row : row * 256 / render_height;
+		const int last_row = sharp ? first_row + 1 : (row + 1) * 256 / render_height;
 		for (int band = 0; band < render_width; ++band) {
 			const int first_band = band * 512 / render_width;
 			const int last_band = (band + 1) * 512 / render_width;
@@ -1392,14 +1408,18 @@ Editor::draw_lufs_spectrum (GdkEventExpose*)
 }
 
 static int lufs_detail_generation = 0;
-static gint64 lufs_detail_started = 0;
+static bool lufs_detail_pinned = false;
 
 bool
 Editor::show_lufs_detail (GdkEventButton* event, int mode)
 {
-	if (event->button != 1) return false;
+	if (event->button != 3) return false;
+	if (_lufs_detail_canvas->is_visible () && _lufs_detail_mode == mode) {
+		lufs_detail_pinned = false;
+		return hide_lufs_detail (nullptr);
+	}
 	++lufs_detail_generation;
-	lufs_detail_started = g_get_monotonic_time ();
+	lufs_detail_pinned = true;
 	_lufs_detail_mode = mode;
 	update_lufs_detail_text ();
 	_lufs_detail_canvas->set_no_show_all (false);
@@ -1413,12 +1433,7 @@ Editor::show_lufs_detail (GdkEventButton* event, int mode)
 bool
 Editor::hide_lufs_detail (GdkEventAny*)
 {
-	const gint64 elapsed = g_get_monotonic_time () - lufs_detail_started;
-	if (elapsed < 450000) {
-		const unsigned int delay = std::max<gint64> (1, (450000 - elapsed) / 1000);
-		Glib::signal_timeout ().connect (sigc::bind_return (sigc::bind (sigc::mem_fun (*this, &Editor::close_lufs_detail), lufs_detail_generation), false), delay);
-		return true;
-	}
+	if (lufs_detail_pinned) return true;
 	_lufs_detail_canvas->hide ();
 	_lufs_detail_text->hide ();
 	_lufs_detail_canvas->set_no_show_all ();
