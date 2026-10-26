@@ -54,6 +54,12 @@ ARDOUR::read_recent_sessions (RecentSessions& rs)
 {
 	std::string path = Glib::build_filename (user_config_directory(), recent_file_name);
 	FILE* fin = g_fopen (path.c_str(), "rb");
+#ifdef PLATFORM_WINDOWS
+	if (!fin && errno == ENOENT) {
+		path = Glib::build_filename (legacy_user_config_directory (), recent_file_name);
+		fin = g_fopen (path.c_str(), "rb");
+	}
+#endif
 
 	if (!fin) {
 		if (errno != ENOENT) {
@@ -112,6 +118,12 @@ ARDOUR::read_recent_templates (std::deque<std::string>& rt)
 {
 	std::string path = Glib::build_filename (user_config_directory(), recent_templates_file_name);
 	FILE* fin = g_fopen (path.c_str(), "rb");
+#ifdef PLATFORM_WINDOWS
+	if (!fin && errno == ENOENT) {
+		path = Glib::build_filename (legacy_user_config_directory (), recent_templates_file_name);
+		fin = g_fopen (path.c_str(), "rb");
+	}
+#endif
 
 	if (!fin) {
 		if (errno != ENOENT) {
