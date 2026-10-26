@@ -1161,7 +1161,8 @@ Pianoroll::button_press_handler_1 (ArdourCanvas::Item* item, GdkEvent* event, It
 
 	NoteBase* note = nullptr;
 	Evoral::Parameter param = automation_by_y (event->button.y);
-	Editing::MouseMode mouse_mode = current_mouse_mode();
+	Editing::MouseMode mouse_mode = (event->button.button == 1 && (event->button.state & GDK_CONTROL_MASK))
+		? Editing::MouseDraw : current_mouse_mode();
 
 	_mouse_changed_selection = false;
 
@@ -1643,7 +1644,8 @@ Pianoroll::which_canvas_cursor (ItemType type) const
 	EC_LOCAL_TEMPO_SCOPE;
 
 	Gdk::Cursor* cursor = which_mode_cursor ();
-	Editing::MouseMode mouse_mode = current_mouse_mode ();
+	Editing::MouseMode mouse_mode = (Keyboard::the_keyboard ().key_is_down (GDK_Control_L) || Keyboard::the_keyboard ().key_is_down (GDK_Control_R))
+		? Editing::MouseDraw : current_mouse_mode ();
 
 	if (mouse_mode == Editing::MouseContent) {
 
@@ -2740,6 +2742,9 @@ Pianoroll::button_selection (ArdourCanvas::Item* item, GdkEvent* event, ItemType
 	EC_LOCAL_TEMPO_SCOPE;
 
 	auto eff_mouse_mode = effective_mouse_mode ();
+	if (event->button.button == 1 && (event->button.state & GDK_CONTROL_MASK)) {
+		eff_mouse_mode = Editing::MouseDraw;
+	}
 
 	if (event->type == GDK_BUTTON_PRESS || event->type == GDK_BUTTON_RELEASE) {
 

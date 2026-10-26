@@ -353,6 +353,9 @@ Editor::button_selection (ArdourCanvas::Item* item, GdkEvent* event, ItemType it
 	 */
 
 	MouseMode eff_mouse_mode = effective_mouse_mode ();
+	if (event->button.button == 1 && (event->button.state & GDK_CONTROL_MASK)) {
+		eff_mouse_mode = MouseDraw;
+	}
 	auto mouse_mode = current_mouse_mode ();
 
 	if (eff_mouse_mode == MouseCut) {
@@ -719,6 +722,9 @@ Editor::button_press_handler_1 (ArdourCanvas::Item* item, GdkEvent* event, ItemT
 	}
 
 	Editing::MouseMode eff = effective_mouse_mode ();
+	if (event->button.button == 1 && (event->button.state & GDK_CONTROL_MASK)) {
+		eff = MouseDraw;
+	}
 
 	/* The blank area below the tracks is always a time-selection surface.
 	 * A plain drag there should work without first switching to Range mode. */
