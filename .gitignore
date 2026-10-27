@@ -153,4 +153,6 @@ waf3-*
 # misc custom files git should ignore
 /local
 Phaedra-Portable/
+# Reproducible MSVC build output for Prisma; source overlay is tracked separately.
+/vendor/prisma/
 *.zip
