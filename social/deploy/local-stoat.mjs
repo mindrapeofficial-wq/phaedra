@@ -12,6 +12,7 @@ import { randomUUID } from 'node:crypto';
 const here = dirname(fileURLToPath(import.meta.url));
 const lock = JSON.parse(readFileSync(join(here, 'stoat.lock.json'), 'utf8'));
 const services = ['database', 'redis', 'rabbit', 'minio', 'createbuckets', 'api', 'events', 'autumn', 'caddy', 'web'];
+const criticalServices = services.filter((service) => service !== 'createbuckets');
 const manifestName = 'phaedra-stoat-local.json';
 
 function usage() {
@@ -127,22 +128,24 @@ function diagnosticRedactor(upstream) {
 function diagnose(directory, manifest) {
   const redact = diagnosticRedactor(join(directory, 'upstream'));
   const status = compose(directory, manifest, ['ps', '--all'], { quiet: true, timeout: 15000 });
-  const logs = compose(directory, manifest, ['logs', '--no-color', '--tail', '120', 'api', 'events', 'autumn', 'caddy'],
+  // Include dependencies: if Mongo/Rabbit/S3 fails, the API containers can remain
+  // merely Created and have no logs of their own.
+  const logs = compose(directory, manifest, ['logs', '--no-color', '--tail', '120', ...services],
     { quiet: true, timeout: 20000 });
   console.log(redact(status));
   console.log(redact(logs));
 }
 
 function assertServicesAlive(directory, manifest) {
-  const output = compose(directory, manifest, ['ps', '--all', '--format', 'json', 'api', 'events', 'autumn', 'caddy'],
+  const output = compose(directory, manifest, ['ps', '--all', '--format', 'json', ...criticalServices],
     { quiet: true, timeout: 15000 });
   let states;
   try {
     states = output.startsWith('[') ? JSON.parse(output) : output.split('\n').filter(Boolean).map((line) => JSON.parse(line));
   } catch { throw new Error('Could not inspect local Docker service state. Run diagnose.'); }
-  const stopped = states.filter((item) => ['exited', 'dead'].includes(String(item.State).toLowerCase()));
+  const stopped = states.filter((item) => ['exited', 'dead'].includes(String(item.State).toLowerCase()) || item.Health === 'unhealthy');
   if (stopped.length) {
-    const summary = stopped.map((item) => `${['api', 'events', 'autumn', 'caddy'].includes(item.Service) ? item.Service : 'service'} (exit ${Number(item.ExitCode) || 0})`).join(', ');
+    const summary = stopped.map((item) => `${criticalServices.includes(item.Service) ? item.Service : 'service'} (${item.Health === 'unhealthy' ? 'unhealthy' : `exit ${Number(item.ExitCode) || 0}`})`).join(', ');
     throw new Error(`Local service stopped during startup: ${summary}. Run diagnose for redacted logs.`);
   }
 }
