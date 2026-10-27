@@ -651,7 +651,10 @@ StartupFSM::get_session_parameters_from_path (string const & path_, string const
 		SampleFormat fmt;
 		string program_version;
 
-		const string statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::statefile_suffix);
+		string statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::statefile_suffix);
+		if (!Glib::file_test (statefile_path, Glib::FILE_TEST_IS_REGULAR)) {
+			statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::legacy_statefile_suffix);
+		}
 		switch (Session::get_info_from_path (statefile_path, sr, fmt, program_version, &session_engine_hints)) {
 			case 0:
 				/* OK */
@@ -791,7 +794,10 @@ StartupFSM::check_session_parameters (bool must_be_new)
 			float sr;
 			SampleFormat fmt;
 			string program_version;
-			const string statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::statefile_suffix);
+			string statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::statefile_suffix);
+			if (!Glib::file_test (statefile_path, Glib::FILE_TEST_IS_REGULAR)) {
+				statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::legacy_statefile_suffix);
+			}
 			switch (Session::get_info_from_path (statefile_path, sr, fmt, program_version, &session_engine_hints)) {
 				case 0:
 					/* OK */
@@ -829,7 +835,7 @@ StartupFSM::check_session_parameters (bool must_be_new)
 		}
 	}
 
-	/* check for ".ardour" in statefile name, because we don't want
+	/* check for statefile suffix in statefile name, because we don't want
 	 * it
 	 *
 	 * XXX Note this weird conflation of a
@@ -918,7 +924,10 @@ StartupFSM::check_session_parameters (bool must_be_new)
 	float sr;
 	SampleFormat fmt;
 	string program_version;
-	const string statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::statefile_suffix);
+	string statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::statefile_suffix);
+	if (!Glib::file_test (statefile_path, Glib::FILE_TEST_IS_REGULAR)) {
+		statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::legacy_statefile_suffix);
+	}
 
 	if (!session_is_new) {
 		switch (Session::get_info_from_path (statefile_path, sr, fmt, program_version, &session_engine_hints)) {

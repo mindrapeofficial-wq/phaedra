@@ -197,7 +197,10 @@ ARDOUR_UI::session_dialog_response_handler (int response, SessionDialog* session
 			msg.run ();
 			return; /* back to main event loop */
 		} else if (rv == 0) {
-			const string statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::statefile_suffix);
+			string statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::statefile_suffix);
+			if (!Glib::file_test (statefile_path, Glib::FILE_TEST_IS_REGULAR)) {
+				statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::legacy_statefile_suffix);
+			}
 			session_name = statefile_path;
 		} else {
 
@@ -207,7 +210,10 @@ ARDOUR_UI::session_dialog_response_handler (int response, SessionDialog* session
 				msg.run ();
 				return; /* back to main event loop */
 			} else if (rv == 0) {
-				const string statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::statefile_suffix);
+				string statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::statefile_suffix);
+				if (!Glib::file_test (statefile_path, Glib::FILE_TEST_IS_REGULAR)) {
+					statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::legacy_statefile_suffix);
+				}
 				session_name = statefile_path;
 				/* we got a session now */
 				session_dialog->hide ();
@@ -218,6 +224,10 @@ ARDOUR_UI::session_dialog_response_handler (int response, SessionDialog* session
 	}
 
 	string::size_type suffix = session_name.find (statefile_suffix);
+
+	if (suffix == string::npos) {
+		suffix = session_name.find (legacy_statefile_suffix);
+	}
 
 	if (suffix != string::npos) {
 		session_name = session_name.substr (0, suffix);
@@ -366,7 +376,11 @@ ARDOUR_UI::load_session (const std::string& path, const std::string& snap_name, 
 		SampleFormat sf;
 		string pv;
 
-		Session::get_info_from_path (Glib::build_filename (path, snap_name + statefile_suffix), sr, sf, pv);
+		string info_path = Glib::build_filename (path, snap_name + statefile_suffix);
+		if (!Glib::file_test (info_path, Glib::FILE_TEST_IS_REGULAR)) {
+			info_path = Glib::build_filename (path, snap_name + legacy_statefile_suffix);
+		}
+		Session::get_info_from_path (info_path, sr, sf, pv);
 
 		/* this will stop the engine if the SR is different */
 

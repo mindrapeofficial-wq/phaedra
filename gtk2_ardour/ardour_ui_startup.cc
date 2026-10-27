@@ -840,7 +840,11 @@ ARDOUR_UI::load_from_application_api (const std::string& path)
 				float sr;
 				SampleFormat sf;
 				string pv;
-				if (0 == Session::get_info_from_path (Glib::build_filename (path, basename_nosuffix (path) + statefile_suffix), sr, sf, pv)) {
+				string sf_path = Glib::build_filename (path, basename_nosuffix (path) + statefile_suffix);
+				if (!Glib::file_test (sf_path, Glib::FILE_TEST_IS_REGULAR)) {
+					sf_path = Glib::build_filename (path, basename_nosuffix (path) + legacy_statefile_suffix);
+				}
+				if (0 == Session::get_info_from_path (sf_path, sr, sf, pv)) {
 					ARDOUR::AudioEngine::instance ()->set_sample_rate (sr);
 				}
 			}

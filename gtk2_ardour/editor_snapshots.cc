@@ -234,6 +234,9 @@ EditorSnapshots::redisplay ()
 		}
 
 		std::string s = Glib::build_filename (_session->path(), statename + ARDOUR::statefile_suffix);
+		if (!Glib::file_test (s, Glib::FILE_TEST_IS_REGULAR)) {
+			s = Glib::build_filename (_session->path(), statename + ARDOUR::legacy_statefile_suffix);
+		}
 
 		GStatBuf gsb;
 		g_stat (s.c_str(), &gsb);

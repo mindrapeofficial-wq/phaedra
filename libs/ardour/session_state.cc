@@ -913,7 +913,7 @@ Session::save_state_full (std::string snapshot_name, SessionSaveDisposition ssd)
 
 	if (ssd != SavePending) {
 
-		/* proper save: use statefile_suffix (.ardour in English) */
+		/* proper save: use statefile_suffix (.phaedra) */
 
 		xml_path = Glib::build_filename (xml_path, legalize_for_path (snapshot_name + statefile_suffix));
 
@@ -1257,8 +1257,11 @@ Session::load_state (string snapshot_name, bool from_template)
 	if (!Glib::file_test (xmlpath, Glib::FILE_TEST_IS_REGULAR)) {
 		xmlpath = Glib::build_filename (_session_dir->root_path(), legalize_for_path (snapshot_name + statefile_suffix));
 		if (!Glib::file_test (xmlpath, Glib::FILE_TEST_IS_REGULAR)) {
-			error << string_compose(_("%1: session file \"%2\" doesn't exist!"), _name, xmlpath) << endmsg;
-			return 1;
+			xmlpath = Glib::build_filename (_session_dir->root_path(), legalize_for_path (snapshot_name + legacy_statefile_suffix));
+			if (!Glib::file_test (xmlpath, Glib::FILE_TEST_IS_REGULAR)) {
+				error << string_compose(_("%1: session file \"%2\" doesn't exist!"), _name, xmlpath) << endmsg;
+				return 1;
+			}
 		}
 	}
 
@@ -3939,12 +3942,21 @@ Session::load_route_groups (const XMLNode& node, int version)
 }
 
 static bool
+ends_with_suffix (const string& str, const char* suffix)
+{
+	size_t slen = strlen (suffix);
+	return str.length() > slen
+	       && str.compare (str.length() - slen, slen, suffix) == 0;
+}
+
+static bool
 state_file_filter (const string &str, void* /*arg*/)
 {
-	return (str.length() > strlen(statefile_suffix)
-	        && str.find (statefile_suffix) == (str.length() - strlen (statefile_suffix))
-	        && str.substr (0, 2) != "._" /* ignore HFS+ extended data */
-	       );
+	if (str.substr (0, 2) == "._") {
+		return false;
+	}
+	return ends_with_suffix (str, statefile_suffix)
+	       || ends_with_suffix (str, legacy_statefile_suffix);
 }
 
 static string
@@ -3958,7 +3970,9 @@ remove_end(string state)
 	}
 
 	if ((end = statename.rfind(statefile_suffix)) == string::npos) {
-		end = statename.length();
+		if ((end = statename.rfind(legacy_statefile_suffix)) == string::npos) {
+			end = statename.length();
+		}
 	}
 
 	return string(statename.substr (0, end));
@@ -4099,12 +4113,8 @@ accept_all_state_files (const string& path, void* /*arg*/)
 		return false;
 	}
 
-	std::string const statefile_ext (statefile_suffix);
-	if (path.length() >= statefile_ext.length()) {
-		return (0 == path.compare (path.length() - statefile_ext.length(), statefile_ext.length(), statefile_ext));
-	} else {
-		return false;
-	}
+	return ends_with_suffix (path, statefile_suffix)
+	       || ends_with_suffix (path, legacy_statefile_suffix);
 }
 
 int

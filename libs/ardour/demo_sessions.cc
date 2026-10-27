@@ -108,7 +108,8 @@ ARDOUR::inflate_demo_session (std::string const& demo, std::string save_as)
 
 			std::string ofn (fn.substr (prefix.length ()));
 
-			if (ofn == string_compose ("%1%2", demo, ARDOUR::statefile_suffix)) {
+			if (ofn == string_compose ("%1%2", demo, ARDOUR::statefile_suffix)
+			    || ofn == string_compose ("%1%2", demo, ARDOUR::legacy_statefile_suffix)) {
 				ofn = string_compose ("%1%2", save_as, ARDOUR::statefile_suffix);
 			} else if ((pos = ofn.find (interchange)) != string::npos) {
 				ofn = "interchange/" + save_as + ofn.substr (pos + interchange.length ());

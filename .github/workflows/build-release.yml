@@ -5,9 +5,6 @@ on:
     tags:
       - 'v*'
 
-permissions:
-  contents: write
-
 jobs:
   build:
     runs-on: windows-latest
@@ -17,8 +14,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: msys2/setup-msys2@v2
         with:
@@ -29,6 +24,7 @@ jobs:
             mingw-w64-ucrt-x86_64-pkg-config
             mingw-w64-ucrt-x86_64-boost
             mingw-w64-ucrt-x86_64-gtk2
+            mingw-w64-ucrt-x86_64-gtkmm
             mingw-w64-ucrt-x86_64-libsndfile
             mingw-w64-ucrt-x86_64-libsamplerate
             mingw-w64-ucrt-x86_64-fftw
@@ -41,14 +37,12 @@ jobs:
             mingw-w64-ucrt-x86_64-sord
             mingw-w64-ucrt-x86_64-sratom
             mingw-w64-ucrt-x86_64-lilv
+            mingw-w64-ucrt-x86_64-suil
             mingw-w64-ucrt-x86_64-rubberband
             mingw-w64-ucrt-x86_64-vamp-plugin-sdk
             mingw-w64-ucrt-x86_64-libarchive
             mingw-w64-ucrt-x86_64-portaudio
-            mingw-w64-ucrt-x86_64-jack2
             mingw-w64-ucrt-x86_64-cairo
-            mingw-w64-ucrt-x86_64-cairomm
-            mingw-w64-ucrt-x86_64-pangomm
             mingw-w64-ucrt-x86_64-pango
             mingw-w64-ucrt-x86_64-glib2
             mingw-w64-ucrt-x86_64-glibmm
@@ -59,7 +53,6 @@ jobs:
             mingw-w64-ucrt-x86_64-libvorbis
             mingw-w64-ucrt-x86_64-cppunit
             mingw-w64-ucrt-x86_64-readline
-            git
             base-devel
             zip
             python
@@ -69,7 +62,6 @@ jobs:
           python waf configure \
             --with-backends=portaudio,dummy \
             --no-phone-home \
-            --no-dr-mingw \
             --dist-target=mingw \
             --optimize \
             --program-name=Phaedra
@@ -90,22 +82,10 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           cd Phaedra-Portable && zip -r "../Phaedra-v${VERSION}.zip" . && cd ..
 
-      - name: Build Windows installer
-        shell: pwsh
-        run: |
-          choco install innosetup --version=6.7.1 --no-progress -y
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          $version = '${{ github.ref_name }}'.TrimStart('v')
-          $iscc = Get-ChildItem -Path ${env:ProgramFiles(x86)} -Filter ISCC.exe -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
-          if (-not $iscc) { throw 'ISCC.exe not found' }
-          & $iscc "/DAppVersion=$version" Phaedra.iss
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Upload Release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            Phaedra-v*.zip
-            Phaedra-Instalador-Windows-x64.exe
+          files: Phaedra-v*.zip
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

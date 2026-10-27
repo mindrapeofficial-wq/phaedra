@@ -1,4 +1,4 @@
-param([string]$PhaedraDir, [int]$LauncherPid, [switch]$Manual)
+param([string]$PhaedraDir, [int]$LauncherPid)
 $ErrorActionPreference = 'Stop'
 $versionFile = Join-Path $PhaedraDir 'version.txt'
 if (-not (Test-Path -LiteralPath $versionFile)) { exit 0 }
@@ -7,22 +7,10 @@ try {
     $headers = @{ 'User-Agent' = 'Phaedra-Updater'; 'Accept' = 'application/vnd.github+json' }
     $release = Invoke-RestMethod -Uri 'https://api.github.com/repos/mindrapeofficial-wq/phaedra/releases/latest' -Headers $headers -TimeoutSec 10
     $remote = [version]([string]$release.tag_name).TrimStart('v')
-    if ($remote -le $local) {
-        if ($Manual) {
-            Add-Type -AssemblyName System.Windows.Forms
-            [System.Windows.Forms.MessageBox]::Show("Phaedra $local ya esta actualizado.", 'Phaedra', 'OK', 'Information') | Out-Null
-        }
-        exit 0
-    }
+    if ($remote -le $local) { exit 0 }
     $asset = @($release.assets | Where-Object { $_.name -eq 'Phaedra-Instalador-Windows-x64.exe' }) | Select-Object -First 1
-    if (-not $asset -or $asset.digest -notmatch '^sha256:[a-fA-F0-9]{64}$') { throw 'No se encontro un instalador verificable.' }
-} catch {
-    if ($Manual) {
-        Add-Type -AssemblyName System.Windows.Forms
-        [System.Windows.Forms.MessageBox]::Show("No se pudo buscar actualizaciones: $($_.Exception.Message)", 'Phaedra', 'OK', 'Error') | Out-Null
-    }
-    exit 0
-}
+    if (-not $asset -or $asset.digest -notmatch '^sha256:[a-fA-F0-9]{64}$') { exit 0 }
+} catch { exit 0 }
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 $notes = ([string]$release.body).Trim()
@@ -106,9 +94,6 @@ try {
     $actual = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
     if ($actual -ne $expected) { throw 'La verificacion del archivo no coincide.' }
     $form.Close()
-    if ($Manual) {
-        [System.Windows.Forms.MessageBox]::Show('Descarga completa. Guarda tu proyecto y cierra Phaedra para instalar la actualizacion.', 'Phaedra', 'OK', 'Information') | Out-Null
-    }
     $helper = Join-Path $PhaedraDir 'updater\install-update.ps1'
     $arguments = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "{0}" -Installer "{1}" -PhaedraDir "{2}" -LauncherPid {3}' -f $helper,$installer,$PhaedraDir,$LauncherPid
     Start-Process -FilePath 'powershell.exe' -ArgumentList $arguments -WindowStyle Hidden | Out-Null
