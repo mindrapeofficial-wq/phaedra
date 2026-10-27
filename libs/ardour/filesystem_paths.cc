@@ -194,14 +194,17 @@ user_cache_directory (int version)
 std::string
 ardour_dll_directory ()
 {
-	std::string dll_dir_path = Glib::getenv("ARDOUR_DLL_PATH");
+	std::string dll_dir_path = Glib::getenv("PHAEDRA_DLL_PATH");
+	if (dll_dir_path.empty()) {
+		dll_dir_path = Glib::getenv("ARDOUR_DLL_PATH");
+	}
 	if (dll_dir_path.empty()) {
 #ifdef PLATFORM_WINDOWS
 		dll_dir_path = windows_package_directory_path();
 		dll_dir_path = Glib::build_filename (dll_dir_path, "lib");
 		dll_dir_path = Glib::build_filename (dll_dir_path, LIBARDOUR);
 #else
-		std::cerr << _("ARDOUR_DLL_PATH not set in environment - exiting\n");
+		std::cerr << _("PHAEDRA_DLL_PATH not set in environment - exiting\n");
 		::exit (EXIT_FAILURE);
 #endif
 	}
@@ -266,10 +269,13 @@ ardour_config_search_path ()
 		// now add a suitable config path from the bundle
 		search_path += windows_search_path ();
 #endif
-		// finally, add any paths from ARDOUR_CONFIG_PATH if it exists
-		std::string s = Glib::getenv("ARDOUR_CONFIG_PATH");
+		// finally, add any paths from PHAEDRA_CONFIG_PATH (or legacy ARDOUR_CONFIG_PATH)
+		std::string s = Glib::getenv("PHAEDRA_CONFIG_PATH");
 		if (s.empty()) {
-			std::cerr << _("ARDOUR_CONFIG_PATH not set in environment\n");
+			s = Glib::getenv("ARDOUR_CONFIG_PATH");
+		}
+		if (s.empty()) {
+			std::cerr << _("PHAEDRA_CONFIG_PATH not set in environment\n");
 		} else {
 			search_path += Searchpath (s);
 		}
@@ -288,9 +294,12 @@ ardour_data_search_path ()
 #ifdef PLATFORM_WINDOWS
 		search_path += windows_search_path ();
 #endif
-		std::string s = Glib::getenv("ARDOUR_DATA_PATH");
+		std::string s = Glib::getenv("PHAEDRA_DATA_PATH");
 		if (s.empty()) {
-			std::cerr << _("ARDOUR_DATA_PATH not set in environment\n");
+			s = Glib::getenv("ARDOUR_DATA_PATH");
+		}
+		if (s.empty()) {
+			std::cerr << _("PHAEDRA_DATA_PATH not set in environment\n");
 		} else {
 			search_path += Searchpath (s);
 		}
