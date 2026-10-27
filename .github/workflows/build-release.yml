@@ -63,8 +63,8 @@ jobs:
       - name: Build cairomm-1.0 from source
         run: |
           cd /tmp
-          curl -L -o cairomm-1.14.5.tar.xz https://download.gnome.org/sources/cairomm/1.14/cairomm-1.14.5.tar.xz
-          tar xf cairomm-1.14.5.tar.xz
+          curl -L -o cairomm-1.14.5.tar.gz https://gitlab.gnome.org/GNOME/cairomm/-/archive/1.14.5/cairomm-1.14.5.tar.gz
+          tar xf cairomm-1.14.5.tar.gz
           cd cairomm-1.14.5
           meson setup _build --prefix=$MINGW_PREFIX -Dbuild-examples=false -Dbuild-documentation=false -Dbuild-tests=false
           meson compile -C _build
@@ -73,8 +73,8 @@ jobs:
       - name: Build pangomm-1.4 from source
         run: |
           cd /tmp
-          curl -L -o pangomm-2.46.4.tar.xz https://download.gnome.org/sources/pangomm/2.46/pangomm-2.46.4.tar.xz
-          tar xf pangomm-2.46.4.tar.xz
+          curl -L -o pangomm-2.46.4.tar.gz https://gitlab.gnome.org/GNOME/pangomm/-/archive/2.46.4/pangomm-2.46.4.tar.gz
+          tar xf pangomm-2.46.4.tar.gz
           cd pangomm-2.46.4
           meson setup _build --prefix=$MINGW_PREFIX -Dbuild-documentation=false -Dbuild-tests=false
           meson compile -C _build
