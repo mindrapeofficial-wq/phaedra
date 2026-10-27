@@ -51,8 +51,6 @@ jobs:
     name: Two users and audio on real Stoat
     runs-on: ubuntu-24.04
     timeout-minutes: 22
-    env:
-      PHAEDRA_STOAT_STATE: ${{ runner.temp }}/phaedra-stoat
     steps:
       - uses: actions/checkout@v4
         with:
@@ -60,6 +58,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Select the isolated state directory
+        run: echo "PHAEDRA_STOAT_STATE=$RUNNER_TEMP/phaedra-stoat" >> "$GITHUB_ENV"
       - name: Prepare pinned, isolated Stoat instance
         run: node social/deploy/local-stoat.mjs prepare --directory "$PHAEDRA_STOAT_STATE"
       - name: Start the real local services
