@@ -12,6 +12,12 @@ import { randomBytes, createHash } from 'node:crypto';
 
 const stateDirectory = process.env.PHAEDRA_STOAT_STATE;
 const timeout = 20000;
+const safeErrorTypes = new Set([
+  'DisallowedContactSupport', 'IncorrectData', 'CompromisedPassword', 'ShortPassword',
+  'MissingInvite', 'InvalidInvite', 'CaptchaFailed', 'BlockedByShield',
+  'InvalidCredentials', 'InvalidSession', 'NotAuthenticated', 'UnverifiedAccount',
+  'EmailFailed', 'FailedValidation', 'InternalError', 'DatabaseError', 'InvalidOperation',
+]);
 
 async function readJsonResponse(response, context) {
   if (!response.ok) throw new Error(`${context}: HTTP ${response.status}.`);
@@ -26,7 +32,12 @@ async function request(apiUrl, path, { method = 'GET', data, token } = {}) {
     body: data ? JSON.stringify(data) : undefined,
     redirect: 'error', signal: AbortSignal.timeout(timeout),
   });
-  if (!response.ok) throw new Error(`${method} ${path}: HTTP ${response.status}.`);
+  if (!response.ok) {
+    // Report only known server error names, never an authentication response body.
+    const failure = await response.json().catch(() => null);
+    const type = safeErrorTypes.has(failure?.type) ? ` (${failure.type})` : '';
+    throw new Error(`${method} ${path}: HTTP ${response.status}${type}.`);
+  }
   return response.status === 204 ? undefined : readJsonResponse(response, `${method} ${path}`);
 }
 
@@ -48,6 +59,7 @@ async function verifiedInstance(directory) {
   assert.equal(marker.id, manifest.id, 'The server does not match the local state directory.');
   assert.equal(marker.revision, lock.revision, 'Unexpected server source revision.');
   const info = await request(manifest.apiUrl, '/');
+  assert.equal(info.features?.email, false, 'The isolated test instance must have SMTP disabled.');
   // Never follow instance discovery to a third-party backend from this test.
   for (const endpoint of [info.ws, info.features?.autumn?.url]) {
     assert.ok(typeof endpoint === 'string', 'Instance discovery lacks a required local service.');
@@ -60,7 +72,9 @@ async function verifiedInstance(directory) {
 
 async function createTestUser(apiUrl, label) {
   const suffix = randomBytes(8).toString('hex');
-  const email = `phaedra-${label.toLowerCase()}-${suffix}@example.com`;
+  // Stoat explicitly blocks example.com. The reserved .test domain cannot
+  // address a real mailbox; this isolated deployment also disables SMTP.
+  const email = `phaedra-${label.toLowerCase()}-${suffix}@phaedra.test`;
   const password = randomBytes(24).toString('base64url') + 'aA1!';
   await request(apiUrl, '/auth/account/create', { method: 'POST', data: { email, password } });
   const session = await request(apiUrl, '/auth/session/login', {
