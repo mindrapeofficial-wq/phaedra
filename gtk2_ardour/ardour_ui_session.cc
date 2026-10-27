@@ -197,7 +197,10 @@ ARDOUR_UI::session_dialog_response_handler (int response, SessionDialog* session
 			msg.run ();
 			return; /* back to main event loop */
 		} else if (rv == 0) {
-			const string statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::statefile_suffix);
+			string statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::statefile_suffix);
+			if (!Glib::file_test (statefile_path, Glib::FILE_TEST_IS_REGULAR)) {
+				statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::legacy_statefile_suffix);
+			}
 			session_name = statefile_path;
 		} else {
 
@@ -207,7 +210,10 @@ ARDOUR_UI::session_dialog_response_handler (int response, SessionDialog* session
 				msg.run ();
 				return; /* back to main event loop */
 			} else if (rv == 0) {
-				const string statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::statefile_suffix);
+				string statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::statefile_suffix);
+				if (!Glib::file_test (statefile_path, Glib::FILE_TEST_IS_REGULAR)) {
+					statefile_path = Glib::build_filename (session_path, session_name + ARDOUR::legacy_statefile_suffix);
+				}
 				session_name = statefile_path;
 				/* we got a session now */
 				session_dialog->hide ();
@@ -218,6 +224,10 @@ ARDOUR_UI::session_dialog_response_handler (int response, SessionDialog* session
 	}
 
 	string::size_type suffix = session_name.find (statefile_suffix);
+
+	if (suffix == string::npos) {
+		suffix = session_name.find (legacy_statefile_suffix);
+	}
 
 	if (suffix != string::npos) {
 		session_name = session_name.substr (0, suffix);
@@ -366,7 +376,11 @@ ARDOUR_UI::load_session (const std::string& path, const std::string& snap_name, 
 		SampleFormat sf;
 		string pv;
 
-		Session::get_info_from_path (Glib::build_filename (path, snap_name + statefile_suffix), sr, sf, pv);
+		string info_path = Glib::build_filename (path, snap_name + statefile_suffix);
+		if (!Glib::file_test (info_path, Glib::FILE_TEST_IS_REGULAR)) {
+			info_path = Glib::build_filename (path, snap_name + legacy_statefile_suffix);
+		}
+		Session::get_info_from_path (info_path, sr, sf, pv);
 
 		/* this will stop the engine if the SR is different */
 
@@ -1199,7 +1213,8 @@ ARDOUR_UI::open_recent_session ()
 int
 ARDOUR_UI::ask_about_saving_session (const vector<string>& actions)
 {
-	ArdourDialog window (_("Unsaved Session"));
+	const bool quitting = actions.size() >= 3 && actions[0] == _("Cancel") && actions[1] == _("Don't Save");
+	ArdourDialog window (quitting ? _("Save Changes") : _("Unsaved Session"));
 	Gtk::HBox dhbox;  // the hbox for the image and text
 	Gtk::Label  prompt_label;
 	Gtk::Image* dimage = manage (new Gtk::Image(Stock::DIALOG_WARNING,  Gtk::ICON_SIZE_DIALOG));
@@ -1220,7 +1235,11 @@ ARDOUR_UI::ask_about_saving_session (const vector<string>& actions)
 
 	string prompt;
 
-	if (_session->snap_name() == _session->name()) {
+	if (quitting && _session->unnamed()) {
+		prompt = string_compose (_("Save the temporary session \"%1\" before closing?\n\nIf you don't save, this temporary session will be deleted."), _session->snap_name());
+	} else if (quitting) {
+		prompt = string_compose (_("Save changes to \"%1\" before closing?\n\nIf you don't save, your changes will be lost."), _session->snap_name());
+	} else if (_session->snap_name() == _session->name()) {
 		prompt = string_compose(_("The session \"%1\"\nhas not been saved.\n\nAny changes made this time\nwill be lost unless you save it.\n\nWhat do you want to do?"),
 					_session->snap_name());
 	} else {

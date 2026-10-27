@@ -26,7 +26,8 @@
 namespace ARDOUR {
 
 const char* const template_suffix = X_(".template");
-const char* const statefile_suffix = X_(".ardour");
+const char* const statefile_suffix = X_(".phaedra");
+const char* const legacy_statefile_suffix = X_(".ardour");
 const char* const pending_suffix = X_(".pending");
 const char* const peakfile_suffix = X_(".peak");
 const char* const backup_suffix = X_(".bak");
@@ -34,8 +35,8 @@ const char* const temp_suffix = X_(".tmp");
 const char* const history_suffix = X_(".history");
 const char* const export_preset_suffix = X_(".preset");
 const char* const export_format_suffix = X_(".format");
-const char* const session_archive_suffix = X_(".ardour-session-archive");
-const char* const template_archive_suffix = X_(".ardour-template-archive");
+const char* const session_archive_suffix = X_(".phaedra-session-archive");
+const char* const template_archive_suffix = X_(".phaedra-template-archive");
 const char* const midi_map_suffix = X_(".map");
 const char* const advanced_authoring_format_suffix = X_(".aaf");
 const char* const routestate_suffix = X_(".routestate");

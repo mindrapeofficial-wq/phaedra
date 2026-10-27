@@ -213,56 +213,16 @@ ApplicationBar::on_parent_changed (Gtk::Widget*)
 	int col = 0;
 #define TCOL col, col + 1
 
-	_table.attach (_transport_ctrl, TCOL, 0, 1 , SHRINK, SHRINK, 0, 0);
-	_table.attach (*ssbox,         TCOL, 1, 2 , FILL,   SHRINK, 0, 0);
+	_table.attach (_transport_ctrl, TCOL, 0, 2 , SHRINK, SHRINK, 0, 0);
 	++col;
 
-	_table.attach (_recpunch_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 8, 0);
-	++col;
-
-	_table.attach (_punch_label, TCOL, 0, 1 , FILL, SHRINK, 3, 0);
-	_table.attach (_layered_label, TCOL, 1, 2 , FILL, SHRINK, 3, 0);
-	++col;
-
-	_table.attach (_punch_in_button,      col,      col + 1, 0, 1 , FILL, SHRINK, hpadding, vpadding);
-	_table.attach (_punch_space,          col + 1,  col + 2, 0, 1 , FILL, SHRINK, 0, vpadding);
-	_table.attach (_punch_out_button,     col + 2,  col + 3, 0, 1 , FILL, SHRINK, hpadding, vpadding);
-	_table.attach (_record_mode_selector, col,      col + 3, 1, 2 , FILL, SHRINK, hpadding, vpadding);
-	col += 3;
-
-	_table.attach (_latency_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 8, 0);
-	++col;
-
-	_table.attach (_latency_disable_button, TCOL, 0, 1 , FILL, SHRINK, hpadding, vpadding);
-	_table.attach (_route_latency_value, TCOL, 1, 2 , SHRINK, EXPAND|FILL, hpadding, 0);
-	++col;
-
-	_route_latency_value.set_alignment (Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
-
-	_left_hbox.set_spacing (3);
-	_table.attach (_left_hbox, TCOL, 0, 2, EXPAND|FILL, EXPAND|FILL, hpadding, 0);
-	++col;
-
-	_table.attach (_primary_clock_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 8, 0);
+	_table.attach (_primary_clock_spacer, TCOL, 0, 2 , EXPAND|FILL, EXPAND|FILL, 8, 0);
 	++col;
 
 	_table.attach (_primary_clock,                col,     col + 2, 0, 1 , FILL, SHRINK, hpadding, 0);
 	_table.attach (*(_primary_clock.left_btn()),  col,     col + 1, 1, 2 , FILL, SHRINK, hpadding, 0);
 	_table.attach (*(_primary_clock.right_btn()), col + 1, col + 2, 1, 2 , FILL, SHRINK, hpadding, 0);
 	col += 2;
-
-	if (!ARDOUR::Profile->get_small_screen()) {
-		_table.attach (_secondary_clock_spacer, TCOL, 0, 2 , SHRINK, EXPAND|FILL, 8, 0);
-		++col;
-
-		_table.attach (_secondary_clock,                col,     col + 2, 0, 1 , FILL, SHRINK, hpadding, 0);
-		_table.attach (*(_secondary_clock.left_btn()),  col,     col + 1, 1, 2 , FILL, SHRINK, hpadding, 0);
-		_table.attach (*(_secondary_clock.right_btn()), col + 1, col + 2, 1, 2 , FILL, SHRINK, hpadding, 0);
-		(ARDOUR_UI::instance()->secondary_clock)->set_no_show_all (true);
-		(ARDOUR_UI::instance()->secondary_clock)->left_btn()->set_no_show_all (true);
-		(ARDOUR_UI::instance()->secondary_clock)->right_btn()->set_no_show_all (true);
-		col += 2;
-	}
 
 	/* editor-meter, mini-timeline and selection clock are options in the transport_hbox */
 	_transport_hbox.set_spacing (3);
@@ -870,6 +830,24 @@ void
 ApplicationBar::focus_on_clock ()
 {
 	_primary_clock.focus ();
+}
+
+void
+ApplicationBar::move_to_editor_toolbar (Gtk::Box& left, Gtk::Box& center, Gtk::Box& right)
+{
+	/* Keep the existing controls and their action bindings while moving them
+	 * out of the two-row transport table. The clock gets its own center cell. */
+	_table.remove (_transport_ctrl);
+	left.pack_start (_transport_ctrl, false, false);
+	_table.remove (_transport_hbox);
+	left.pack_start (_transport_hbox, false, false);
+
+	_table.remove (_primary_clock);
+	center.pack_start (_primary_clock, false, false);
+	_table.remove (*_primary_clock.left_btn ());
+	right.pack_start (*_primary_clock.left_btn (), false, false);
+	_table.remove (*_primary_clock.right_btn ());
+	right.pack_start (*_primary_clock.right_btn (), false, false);
 }
 
 void

@@ -10,6 +10,8 @@
     <Color name="alert:ruddy" value="922B21ff"/>
     <Color name="transport:play active" value="22C55Eff"/>
     <Color name="transport:rec active" value="EF4444ff"/>
+    <Color name="transport:button bg" value="2a2a3aff"/>
+    <Color name="transport:rec idle" value="7f2222ff"/>
     <Color name="alert:yellow" value="D4A4FFff"/>
     <Color name="meter color0" value="4A0E78ff"/>
     <Color name="meter color1" value="5B1A8Fff"/>
@@ -459,7 +461,7 @@
     <ColorAlias name="transport active option button: fill" alias="widget:bg"/>
     <ColorAlias name="transport active option button: fill active" alias="theme:contrasting"/>
     <ColorAlias name="transport active option button: led active" alias="theme:contrasting"/>
-    <ColorAlias name="transport button: fill" alias="widget:bg"/>
+    <ColorAlias name="transport button: fill" alias="transport:button bg"/>
     <ColorAlias name="transport button: fill active" alias="transport:play active"/>
     <ColorAlias name="transport button: led active" alias="transport:play active"/>
     <ColorAlias name="transport clock: background" alias="theme:bg2"/>
@@ -475,7 +477,7 @@
     <ColorAlias name="transport option button: fill active" alias="theme:contrasting less"/>
     <ColorAlias name="transport option button: led active" alias="theme:contrasting"/>
     <ColorAlias name="transport punch rect" alias="widget:ruddy"/>
-    <ColorAlias name="transport recenable button: fill" alias="alert:red"/>
+    <ColorAlias name="transport recenable button: fill" alias="transport:rec idle"/>
     <ColorAlias name="transport recenable button: fill active" alias="transport:rec active"/>
     <ColorAlias name="transport recenable button: led active" alias="alert:red"/>
     <ColorAlias name="trim handle" alias="alert:blue"/>

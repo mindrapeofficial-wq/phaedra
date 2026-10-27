@@ -99,6 +99,12 @@ using namespace Gtkmm2ext;
 using namespace Gtk;
 using namespace Glib;
 
+static void
+show_phaedra_version_history ()
+{
+	PBD::open_uri ("https://github.com/mindrapeofficial-wq/phaedra/releases");
+}
+
 int
 ARDOUR_UI::create_editor ()
 {
@@ -169,6 +175,7 @@ ARDOUR_UI::install_actions ()
 	/* menus + submenus that need action items */
 
 	ActionManager::register_action (main_menu_actions, X_("Session"), _("Session"));
+	ActionManager::register_action (main_menu_actions, X_("AdvancedSession"), _("Advanced"));
 	act = ActionManager::register_action (main_menu_actions, X_("Cleanup"), _("Clean-up"));
 	ActionManager::write_sensitive_actions.push_back (act);
 	ActionManager::register_action (main_menu_actions, X_("Sync"), _("Sync"));
@@ -306,9 +313,11 @@ ARDOUR_UI::install_actions ()
 
 	ActionManager::register_action (common_actions, X_("chat"), _("Chat"),  sigc::mem_fun(*this, &ARDOUR_UI::launch_chat));
 	ActionManager::register_action (common_actions, X_("tutorial"), S_("Help|Tutorial"),  mem_fun(*this, &ARDOUR_UI::launch_tutorial));
+	ActionManager::register_action (common_actions, X_("check-for-updates"), _("Check for Updates"), mem_fun(*this, &ARDOUR_UI::check_for_updates));
 	ActionManager::register_action (common_actions, X_("reference"), S_("Manual|Reference"),  mem_fun(*this, &ARDOUR_UI::launch_reference));
 	ActionManager::register_action (common_actions, X_("tracker"), _("Report a Bug"), mem_fun(*this, &ARDOUR_UI::launch_tracker));
 	ActionManager::register_action (common_actions, X_("website"), _("Website"), mem_fun(*this, &ARDOUR_UI::launch_website));
+	ActionManager::register_action (common_actions, X_("version-history"), _("Version History"), sigc::ptr_fun (&show_phaedra_version_history));
 	ActionManager::register_action (common_actions, X_("website-dev"), _("Development"), mem_fun(*this, &ARDOUR_UI::launch_website_dev));
 	ActionManager::register_action (common_actions, X_("forums"), _("User Forums"), mem_fun(*this, &ARDOUR_UI::launch_forums));
 	ActionManager::register_action (common_actions, X_("howto-report"), _("How to Report a Bug"), mem_fun(*this, &ARDOUR_UI::launch_howto_report));

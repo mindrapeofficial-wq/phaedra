@@ -5613,7 +5613,7 @@ SelectionDrag::motion (GdkEvent* event, bool first_move)
 	}
 
 	if (first_move) {
-		if (_editor.should_ripple_all ()) {
+		if ((_item == _editor.bbt_ruler) || _editor.should_ripple_all ()) {
 			PBD::Unwinder<bool> uw (_editor._editor_track_selection_change_without_scroll, true);
 			editing_context.get_selection().set (_editor.get_track_views ());
 		}
@@ -5685,7 +5685,7 @@ SelectionDrag::motion (GdkEvent* event, bool first_move)
 
 			bool RippleAll = _editor.should_ripple_all ();
 
-			if (!RippleAll && top >= 0 && bottom >= 0) {
+			if (!(_item == _editor.bbt_ruler) && !RippleAll && top >= 0 && bottom >= 0) {
 				/* first, find the tracks that are covered in the y range selection */
 				for (TrackViewList::const_iterator i = all_tracks.begin (); i != all_tracks.end (); ++i) {
 					if ((*i)->covered_by_y_range (top, bottom)) {
@@ -5849,8 +5849,18 @@ SelectionDrag::finished (GdkEvent* event, bool movement_occurred)
 		}
 
 	} else {
-		/* just a click, no pointer movement.
+		/* A click on the beat ruler still places the playhead. Only a
+		 * horizontal drag creates a range selection.
 		 */
+		if ((_item == _editor.bbt_ruler) && s) {
+			timepos_t where (editing_context.canvas_event_sample (event));
+			editing_context.snap_to_with_modifier (where, event);
+			s->request_locate (where.samples ());
+			editing_context.stop_canvas_autoscroll ();
+			_editor.clicked_selection = 0;
+			editing_context.commit_reversible_selection_op ();
+			return;
+		}
 
 		if (was_double_click ()) {
 			if (UIConfiguration::instance ().get_use_double_click_to_zoom_to_selection ()) {

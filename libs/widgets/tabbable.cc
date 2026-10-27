@@ -102,7 +102,7 @@ Tabbable::default_layout ()
 	bottom_attachment_button.set_sensitive (0 != (_panelayout & (PaneBottom | AttBottom)));
 
 	content_header_hbox.pack_start (content_app_bar, true, true);
-	content_header_hbox.pack_start (content_attachments, false, false);
+	/* Phaedra: attachment buttons removed, tabbables (Edit/Mix) kept */
 	content_header_hbox.pack_start (content_tabbables, false, false);
 
 	/* wrap the header eboxes in a themeable frame */

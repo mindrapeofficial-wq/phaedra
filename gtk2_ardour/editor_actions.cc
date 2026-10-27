@@ -629,14 +629,14 @@ Editor::register_actions ()
 
 	no_ruler_shown_update = true;
 
-	ruler_minsec_action->set_active (true);
+	ruler_minsec_action->set_active (false);
 	ruler_timecode_action->set_active (false);
 	ruler_samples_action->set_active (false);
 	ruler_bbt_action->set_active (true);
-	ruler_meter_action->set_active (true);
-	ruler_tempo_action->set_active (true);
-	ruler_range_action->set_active (true);
-	ruler_marker_action->set_active (true);
+	ruler_meter_action->set_active (false);
+	ruler_tempo_action->set_active (false);
+	ruler_range_action->set_active (false);
+	ruler_marker_action->set_active (false);
 
 	ruler_video_action->set_active (false);
 	xjadeo_proc_action->set_active (false);

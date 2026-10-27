@@ -21,7 +21,9 @@ mkdir -p "$DESTDIR/share/ardour8"
 mkdir -p "$DESTDIR/etc/fonts"
 
 echo "--- Copying main executable..."
-cp build/gtk2_ardour/ardour-8.12.0.exe "$DESTDIR/bin/Phaedra.exe"
+APP_EXE=$(ls -t build/gtk2_ardour/ardour-*.exe 2>/dev/null | head -n 1)
+test -n "$APP_EXE" || { echo "Phaedra executable not found" >&2; exit 1; }
+cp "$APP_EXE" "$DESTDIR/bin/Phaedra.exe"
 
 echo "--- Copying Ardour DLLs..."
 for dll in \
@@ -99,8 +101,8 @@ cp build/gtk2_ardour/clearlooks.ardoursans.rc "$DESTDIR/share/ardour8/" 2>/dev/n
 cp build/gtk2_ardour/default_ui_config "$DESTDIR/share/ardour8/" 2>/dev/null || true
 cp build/gtk2_ardour/ardour.menus "$DESTDIR/share/ardour8/"
 cp build/gtk2_ardour/*.keys "$DESTDIR/share/ardour8/" 2>/dev/null || true
-cp build/gtk2_ardour/ArdourMono.ttf "$DESTDIR/share/ardour8/" 2>/dev/null || true
-cp build/gtk2_ardour/ArdourSans.ttf "$DESTDIR/share/ardour8/" 2>/dev/null || true
+cp gtk2_ardour/ArdourMono.ttf "$DESTDIR/share/ardour8/"
+cp gtk2_ardour/ArdourSans.ttf "$DESTDIR/share/ardour8/"
 cp system_config "$DESTDIR/share/ardour8/" 2>/dev/null || true
 
 # Themes
@@ -122,8 +124,22 @@ cp -r share/mcp "$DESTDIR/share/ardour8/" 2>/dev/null || true
 cp -r share/midi_maps "$DESTDIR/share/ardour8/" 2>/dev/null || true
 cp share/chords.txt "$DESTDIR/share/ardour8/"
 
-# Locale
-cp -r build/share/ardour8/locale "$DESTDIR/share/locale" 2>/dev/null || true
+# Compile every available application translation into the location used by
+# bundle_env_mingw.cc. Waf does not build .mo files during a normal build.
+echo "--- Compiling translations..."
+command -v msgfmt >/dev/null || { echo "msgfmt is required to package translations" >&2; exit 1; }
+for catalog in gtk2_ardour/po/*.po libs/ardour/po/*.po libs/gtkmm2ext/po/*.po libs/tk/ytk/po/*.po; do
+    language="$(basename "$catalog" .po)"
+    case "$catalog" in
+        gtk2_ardour/po/*) domain=gtk2_ardour8 ;;
+        libs/ardour/po/*) domain=ardour8 ;;
+        libs/gtkmm2ext/po/*) domain=gtkmm2ext3 ;;
+        libs/tk/ytk/po/*) domain=ytk8 ;;
+    esac
+    locale_dir="$DESTDIR/share/ardour8/locale/$language/LC_MESSAGES"
+    mkdir -p "$locale_dir"
+    msgfmt -o "$locale_dir/$domain.mo" "$catalog"
+done
 
 # Fontconfig
 cp "$MINGW_PREFIX/etc/fonts/fonts.conf" "$DESTDIR/etc/fonts/" 2>/dev/null || true
@@ -134,9 +150,10 @@ gcc -municode -mwindows tools/phaedra_launcher.c build/phaedra_launcher.res -o "
 
 echo "--- Setting up auto-updater..."
 mkdir -p "$DESTDIR/updater"
-cp phaedra_updater/updater.ps1 "$DESTDIR/updater/"
+cp phaedra_updater/updater.ps1 phaedra_updater/install-update.ps1 "$DESTDIR/updater/"
 cp phaedra_updater/version.txt "$DESTDIR/"
 cp phaedra_updater/update_config.ini "$DESTDIR/"
+cp COPYING "$DESTDIR/"
 
 cat > "$DESTDIR/Phaedra.bat" << 'ENDOFBAT'
 @echo off
@@ -148,11 +165,7 @@ set ARDOUR_DLL_PATH=%PHAEDRA_DIR%lib\ardour8
 set GTK_PATH=%PHAEDRA_DIR%lib
 set FONTCONFIG_FILE=%PHAEDRA_DIR%etc\fonts\fonts.conf
 
-if exist "%PHAEDRA_DIR%updater\updater.ps1" (
-    powershell -ExecutionPolicy Bypass -NoProfile -File "%PHAEDRA_DIR%updater\updater.ps1" -PhaedraDir "%PHAEDRA_DIR%"
-)
-
-start "" "%PHAEDRA_DIR%bin\Phaedra.exe"
+start "" "%PHAEDRA_DIR%Phaedra.exe"
 ENDOFBAT
 
 echo ""

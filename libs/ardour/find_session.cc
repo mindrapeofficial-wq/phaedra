@@ -91,9 +91,12 @@ find_session (string str, string& path, string& snapshot, bool& isnew)
 				/* is it there ? */
 
 				if (g_stat (tmp.c_str(), &statbuf)) {
-					error << string_compose (_("cannot check statefile %1 (%2)"), tmp, strerror (errno))
-					      << endmsg;
-					return -1;
+					tmp = Glib::build_filename (str, str+legacy_statefile_suffix);
+					if (g_stat (tmp.c_str(), &statbuf)) {
+						error << string_compose (_("cannot check statefile %1 (%2)"), tmp, strerror (errno))
+						      << endmsg;
+						return -1;
+					}
 				}
 
 				path = str;
@@ -126,12 +129,12 @@ find_session (string str, string& path, string& snapshot, bool& isnew)
 
 			suffix = snapshot.find (statefile_suffix);
 
-			const string::size_type start_pos_of_extension = snapshot.size () - strlen (statefile_suffix);
-			// we should check the start of extension position
-			// because files '*.ardour.bak' are possible
-			if (suffix != start_pos_of_extension) {
-				error << string_compose (_("%1 is not a snapshot file"), str) << endmsg;
-				return -1;
+			if (suffix == string::npos || suffix != snapshot.size () - strlen (statefile_suffix)) {
+				suffix = snapshot.find (legacy_statefile_suffix);
+				if (suffix == string::npos || suffix != snapshot.size () - strlen (legacy_statefile_suffix)) {
+					error << string_compose (_("%1 is not a snapshot file"), str) << endmsg;
+					return -1;
+				}
 			}
 
 			/* remove suffix */
@@ -234,8 +237,11 @@ inflate_session (const std::string& zipfile, const std::string& target_dir, stri
 
 		string sn = bn + "/" + bn + statefile_suffix;
 		if (std::find (files.begin(), files.end(), sn) == files.end()) {
-			error << _("Archive does not contain a session file") << endmsg;
-			return -5;
+			sn = bn + "/" + bn + legacy_statefile_suffix;
+			if (std::find (files.begin(), files.end(), sn) == files.end()) {
+				error << _("Archive does not contain a session file") << endmsg;
+				return -5;
+			}
 		}
 
 		/* check if target folder exists */

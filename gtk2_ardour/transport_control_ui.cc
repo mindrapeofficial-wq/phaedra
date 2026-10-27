@@ -113,19 +113,24 @@ TransportControlUI::setup (TransportControlProvider* ui)
 
 #define PX_SCALE(px) std::max((float)px, rintf((float)px * UIConfiguration::instance().get_ui_scale()))
 
-	_click_button.set_size_request (PX_SCALE(20), PX_SCALE(20));
-	set_spacing (PX_SCALE(2));
+	_click_button.set_size_request (PX_SCALE(24), PX_SCALE(24));
+	_roll_button.set_size_request (PX_SCALE(30), PX_SCALE(30));
+	_stop_button.set_size_request (PX_SCALE(30), PX_SCALE(30));
+	_rec_button.set_size_request (PX_SCALE(30), PX_SCALE(30));
+	_goto_start_button.set_size_request (PX_SCALE(24), PX_SCALE(24));
+	_auto_loop_button.set_size_request (PX_SCALE(24), PX_SCALE(24));
+	set_spacing (PX_SCALE(4));
 
 #undef PX_SCALE
 
 	if (!ARDOUR::Profile->get_mixbus()) {
-		pack_start (_goto_start_button, true, true);
-		pack_start (_stop_button, true, true);
-		pack_start (_roll_button, true, true);
-		pack_start (_rec_button, true, true, 3);
-		pack_start (_transport_spacer, false, false, 6);
-		pack_start (_click_button, true, true, 0);
-		pack_start (_auto_loop_button, true, true);
+		pack_start (_goto_start_button, false, false, 0);
+		pack_start (_stop_button, false, false, 0);
+		pack_start (_roll_button, false, false, 0);
+		pack_start (_rec_button, false, false, 2);
+		pack_start (_transport_spacer, false, false, 8);
+		pack_start (_click_button, false, false, 0);
+		pack_start (_auto_loop_button, false, false, 0);
 	}
 
 	_roll_button.set_name ("transport button");
@@ -135,8 +140,15 @@ TransportControlUI::setup (TransportControlProvider* ui)
 	_auto_loop_button.set_name ("transport button");
 	_play_selection_button.set_name ("transport button");
 	_rec_button.set_name ("transport recenable button");
-	_midi_panic_button.set_name ("transport button"); // XXX ???
+	_midi_panic_button.set_name ("transport button");
 	_click_button.set_name ("transport button");
+
+	_roll_button.set_tweaks (ArdourButton::Square);
+	_stop_button.set_tweaks (ArdourButton::Square);
+	_rec_button.set_tweaks (ArdourButton::Square);
+	_goto_start_button.set_tweaks (ArdourButton::Square);
+	_auto_loop_button.set_tweaks (ArdourButton::Square);
+	_click_button.set_tweaks (ArdourButton::Square);
 
 	_roll_button.set_controllable (ui->roll_controllable);
 	_stop_button.set_controllable (ui->stop_controllable);

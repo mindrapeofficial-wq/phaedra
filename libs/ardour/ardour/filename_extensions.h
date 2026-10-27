@@ -27,6 +27,7 @@ namespace ARDOUR {
 
 	LIBARDOUR_API extern const char* const template_suffix;
 	LIBARDOUR_API extern const char* const statefile_suffix;
+	LIBARDOUR_API extern const char* const legacy_statefile_suffix;
 	LIBARDOUR_API extern const char* const pending_suffix;
 	LIBARDOUR_API extern const char* const peakfile_suffix;
 	LIBARDOUR_API extern const char* const backup_suffix;

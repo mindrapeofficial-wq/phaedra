@@ -580,6 +580,7 @@ SessionDialog::setup_existing_box ()
 
 	FileFilter session_filter;
 	session_filter.add_pattern (string_compose(X_("*%1"), ARDOUR::statefile_suffix));
+	session_filter.add_pattern (string_compose(X_("*%1"), ARDOUR::legacy_statefile_suffix));
 	session_filter.set_name (string_compose (_("%1 sessions"), PROGRAM_NAME));
 	existing_session_chooser.add_filter (session_filter);
 
@@ -595,6 +596,7 @@ SessionDialog::setup_existing_box ()
 
 	FileFilter all_filter;
 	all_filter.add_pattern (string_compose(X_("*%1"), ARDOUR::statefile_suffix));
+	all_filter.add_pattern (string_compose(X_("*%1"), ARDOUR::legacy_statefile_suffix));
 	all_filter.add_pattern (string_compose(X_("*%1"), ARDOUR::session_archive_suffix));
 	all_filter.add_pattern (string_compose(X_("*%1"), ARDOUR::advanced_authoring_format_suffix));
 	all_filter.set_name (_("All supported files"));
@@ -1158,7 +1160,10 @@ SessionDialog::redisplay_recent_sessions ()
 			state_file_basename = Session::get_snapshot_from_instant (dirname);
 			std::string s = Glib::build_filename (dirname, state_file_basename + statefile_suffix);
 			if (!Glib::file_test (s, Glib::FILE_TEST_IS_REGULAR)) {
-				state_file_basename = "";
+				s = Glib::build_filename (dirname, state_file_basename + legacy_statefile_suffix);
+				if (!Glib::file_test (s, Glib::FILE_TEST_IS_REGULAR)) {
+					state_file_basename = "";
+				}
 			}
 		}
 
@@ -1167,6 +1172,9 @@ SessionDialog::redisplay_recent_sessions ()
 		}
 
 		std::string s = Glib::build_filename (dirname, state_file_basename + statefile_suffix);
+		if (!Glib::file_test (s, Glib::FILE_TEST_IS_REGULAR)) {
+			s = Glib::build_filename (dirname, state_file_basename + legacy_statefile_suffix);
+		}
 
 		int err = Session::get_info_from_path (s, sr, sf, program_version);
 		if (err < 0) {
@@ -1232,6 +1240,9 @@ SessionDialog::redisplay_recent_sessions ()
 			for (std::vector<std::string>::iterator i2 = state_file_names.begin(); i2 != state_file_names.end(); ++i2) {
 
 				s = Glib::build_filename (dirname, *i2 + statefile_suffix);
+				if (!Glib::file_test (s, Glib::FILE_TEST_IS_REGULAR)) {
+					s = Glib::build_filename (dirname, *i2 + legacy_statefile_suffix);
+				}
 				Gtk::TreeModel::Row child_row = *(recent_session_model->append (row.children()));
 
 				child_row[recent_session_columns.visible_name] = *i2;

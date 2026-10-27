@@ -3747,7 +3747,7 @@ msgstr "añadir punto de control ganancia"
 
 #: audio_trigger_properties_box.cc:74
 msgid "Stretch"
-msgstr ""
+msgstr "Estirar"
 
 #: audio_trigger_properties_box.cc:78
 msgid "BPM:"
@@ -3973,7 +3973,7 @@ msgstr ""
 
 #: bbt_marker_dialog.cc:99
 msgid "Save Changes"
-msgstr ""
+msgstr "Guardar cambios"
 
 #: bundle_manager.cc:194
 msgid "Disassociate"
@@ -5292,7 +5292,7 @@ msgstr "Tempo"
 
 #: editor.cc:422 editor_actions.cc:594
 msgid "Time Signature"
-msgstr ""
+msgstr "Compás"
 
 #: editor.cc:425 editor_actions.cc:596
 msgid "Range Markers"
@@ -19253,7 +19253,7 @@ msgstr ""
 
 #: route_ui.cc:2709
 msgid "Advanced"
-msgstr ""
+msgstr "Avanzado"
 
 #: route_ui.cc:2858
 msgid "Rename Playlist"
@@ -25992,3 +25992,58 @@ msgstr ""
 #~ msgstr ""
 #~ "%1%2\n"
 #~ "(compilado a partir de revisión %3)"
+
+#: ardour_ui.cc:1016
+msgid "Don't Save"
+msgstr "No guardar"
+
+#: ardour_ui_ed.cc:313
+msgid "Version History"
+msgstr "Historial de versiones"
+
+#: ardour_ui_session.cc:1228
+msgid ""
+"Save changes to \"%1\" before closing?\n"
+"\n"
+"If you don't save, your changes will be lost."
+msgstr ""
+"¿Guardar los cambios de \"%1\" antes de salir?\n"
+"\n"
+"Si no guardas, se perderán los cambios."
+
+#: ardour_ui_session.cc:1228
+msgid ""
+"Save the temporary session \"%1\" before closing?\n"
+"\n"
+"If you don't save, this temporary session will be deleted."
+msgstr ""
+"¿Guardar la sesión temporal \"%1\" antes de salir?\n"
+"\n"
+"Si no guardas, esta sesión temporal se eliminará."
+
+#: main_clock.cc
+msgid "Tempo (BPM)"
+msgstr "Tempo (BPM)"
+
+#: main_clock.cc
+msgid "Enter a BPM value between 1 and 999."
+msgstr "Introduce un valor de BPM entre 1 y 999."
+
+#: main_clock.cc
+msgid "Enter a time signature such as 4/4."
+msgstr "Introduce un compás como 4/4."
+
+msgid "Check for Updates"
+msgstr "Buscar actualizaciones"
+
+msgid "Smart / Select"
+msgstr "Inteligente / Seleccionar"
+
+msgid "Draw"
+msgstr "Dibujar"
+
+msgid "The Phaedra updater is not installed."
+msgstr "El actualizador de Phaedra no está instalado."
+
+msgid "Content"
+msgstr "Contenido"

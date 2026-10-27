@@ -113,6 +113,9 @@ UIConfiguration::UIConfiguration ()
 	/* This is global across all Configuration objects */
 
 	build_metadata ();
+	/* Keep Lua action slots available in Preferences, but leave the
+	 * application bar clear until the user explicitly enables them. */
+	set_action_table_columns (0);
 
 	load_state();
 

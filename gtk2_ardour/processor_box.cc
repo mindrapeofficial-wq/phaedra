@@ -238,6 +238,18 @@ ProcessorEntry::ProcessorEntry (ProcessorBox* parent, std::shared_ptr<Processor>
 		routing_icon.hide();
 		output_routing_icon.hide();
 
+		// The main gain is already controlled by the strip's volume fader.
+		// Keep its processor entry for routing and ordering, but do not show
+		// a redundant "Fader" row in the processor list.
+		if (std::shared_ptr<Amp> amp = std::dynamic_pointer_cast<Amp> (_processor)) {
+			if (amp->gain_control()->parameter().type() == GainAutomation) {
+				_button.set_no_show_all (true);
+				_button.hide ();
+				output_icon.set_no_show_all (true);
+				output_icon.hide ();
+			}
+		}
+
 		_processor->ActiveChanged.connect (active_connection, invalidator (*this), std::bind (&ProcessorEntry::processor_active_changed, this), gui_context());
 		_processor->PropertyChanged.connect (name_connection, invalidator (*this), std::bind (&ProcessorEntry::processor_property_changed, this, _1), gui_context());
 		_processor->ConfigurationChanged.connect (config_connection, invalidator (*this), std::bind (&ProcessorEntry::processor_configuration_changed, this, _1, _2), gui_context());

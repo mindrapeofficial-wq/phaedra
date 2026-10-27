@@ -62,6 +62,7 @@ public:
 	void set_session (ARDOUR::Session *);
 
 	void focus_on_clock ();
+	void move_to_editor_toolbar (Gtk::Box& left, Gtk::Box& center, Gtk::Box& right);
 
 private:
 	void on_parent_changed (Gtk::Widget*);

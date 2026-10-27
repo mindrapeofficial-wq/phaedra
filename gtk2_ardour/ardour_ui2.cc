@@ -245,12 +245,17 @@ ARDOUR_UI::setup_transport ()
 	int col = 0;
 #define TCOL col, col + 1
 
-	tabbables_table.attach (recorder_visibility_button,     TCOL, 0, 1 , FILL, FILL, hpadding, vpadding);
-	tabbables_table.attach (trigger_page_visibility_button, TCOL, 1, 2 , FILL, FILL, hpadding, vpadding);
-	++col;
 	tabbables_table.attach (editor_visibility_button,       TCOL, 0, 1 , FILL, FILL, hpadding, vpadding);
-	tabbables_table.attach (mixer_visibility_button,        TCOL, 1, 2 , FILL, FILL, hpadding, vpadding);
+	tabbables_table.attach (mixer_visibility_button,       TCOL, 1, 2 , FILL, FILL, hpadding, vpadding);
 	++col;
+
+	/* Phaedra: hide Rec/Cue buttons */
+	recorder_visibility_button.set_no_show_all (true);
+	recorder_visibility_button.hide ();
+	trigger_page_visibility_button.set_no_show_all (true);
+	trigger_page_visibility_button.hide ();
+	prefs_visibility_button.set_no_show_all (true);
+	prefs_visibility_button.hide ();
 
 	tabbables_table.show_all ();
 }

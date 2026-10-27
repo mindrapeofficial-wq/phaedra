@@ -37,6 +37,12 @@
 #endif
 
 #include "pbd/openuri.h"
+#include "ardour/filesystem_paths.h"
+#include <glibmm/spawn.h>
+#include <glibmm/miscutils.h>
+#ifdef PLATFORM_WINDOWS
+#include <windows.h>
+#endif
 
 #include "ardour_message.h"
 #include "ardour_ui.h"
@@ -65,6 +71,41 @@ ARDOUR_UI::launch_chat ()
 	}
 }
 
+void
+ARDOUR_UI::check_for_updates ()
+{
+#ifdef PLATFORM_WINDOWS
+	const std::string root = ARDOUR::windows_package_directory_path ();
+	const std::string script = Glib::build_filename (root, "updater", "updater.ps1");
+	if (!Glib::file_test (script, Glib::FILE_TEST_EXISTS)) {
+		ArdourMessageDialog dialog (_("The Phaedra updater is not installed."), false, Gtk::MESSAGE_WARNING);
+		dialog.run ();
+		return;
+	}
+	std::vector<std::string> args;
+	args.push_back ("powershell.exe");
+	args.push_back ("-NoProfile");
+	args.push_back ("-ExecutionPolicy");
+	args.push_back ("Bypass");
+	args.push_back ("-WindowStyle");
+	args.push_back ("Hidden");
+	args.push_back ("-File");
+	args.push_back (script);
+	args.push_back ("-PhaedraDir");
+	args.push_back (root);
+	args.push_back ("-LauncherPid");
+	args.push_back (std::to_string (GetCurrentProcessId ()));
+	args.push_back ("-Manual");
+	try {
+		Glib::spawn_async ("", args, Glib::SPAWN_SEARCH_PATH);
+	} catch (const Glib::Error& e) {
+		ArdourMessageDialog dialog (e.what (), false, Gtk::MESSAGE_ERROR);
+		dialog.run ();
+	}
+#else
+	PBD::open_uri ("https://github.com/mindrapeofficial-wq/phaedra/releases/latest");
+#endif
+}
 void
 ARDOUR_UI::launch_tutorial ()
 {

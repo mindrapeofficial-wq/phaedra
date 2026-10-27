@@ -107,11 +107,13 @@ StripImportDialog::setup_file_page ()
 
 	FileFilter session_filter;
 	session_filter.add_pattern (string_compose (X_("*%1"), ARDOUR::statefile_suffix));
+	session_filter.add_pattern (string_compose (X_("*%1"), ARDOUR::legacy_statefile_suffix));
 	session_filter.set_name (string_compose (_("%1 sessions"), PROGRAM_NAME));
 	_chooser.add_filter (session_filter);
 
 	FileFilter all_filter;
 	all_filter.add_pattern (string_compose (X_("*%1"), ARDOUR::statefile_suffix));
+	all_filter.add_pattern (string_compose (X_("*%1"), ARDOUR::legacy_statefile_suffix));
 	all_filter.add_pattern (string_compose (X_("*%1"), template_suffix));
 	all_filter.add_pattern (string_compose (X_("*%1"), routestate_suffix));
 	all_filter.set_name (_("All supported files"));
@@ -161,11 +163,19 @@ StripImportDialog::setup_file_page ()
 				for (auto const& snap : state_file_names) {
 					Gtk::TreeModel::Row child_row = *(_recent_model->append (row.children ()));
 					child_row[_columns.name]      = snap;
-					child_row[_columns.path]      = Glib::build_filename (dirname, snap + statefile_suffix);
+					std::string sp = Glib::build_filename (dirname, snap + statefile_suffix);
+					if (!Glib::file_test (sp, Glib::FILE_TEST_IS_REGULAR)) {
+						sp = Glib::build_filename (dirname, snap + legacy_statefile_suffix);
+					}
+					child_row[_columns.path]      = sp;
 				}
 			} else {
 				row[_columns.name] = state_file_names.front ();
-				row[_columns.path] = Glib::build_filename (dirname, state_file_names.front () + statefile_suffix);
+				std::string sp = Glib::build_filename (dirname, state_file_names.front () + statefile_suffix);
+				if (!Glib::file_test (sp, Glib::FILE_TEST_IS_REGULAR)) {
+					sp = Glib::build_filename (dirname, state_file_names.front () + legacy_statefile_suffix);
+				}
+				row[_columns.path] = sp;
 			}
 		}
 
