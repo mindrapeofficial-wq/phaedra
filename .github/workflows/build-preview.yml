@@ -140,3 +140,121 @@ jobs:
             Phaedra-v*.zip
             Phaedra-Instalador-Windows-x64.exe
           retention-days: 2
+
+  installer-smoke:
+    needs: build
+    runs-on: windows-2022
+    timeout-minutes: 30
+    steps:
+      - name: Download the exact ZIP and installer built in this run
+        uses: actions/download-artifact@v4
+        with:
+          name: phaedra-windows-preview
+          path: preview-artifacts
+
+      - name: Verify artifacts and required Portable payload
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $zip = Join-Path $PWD 'preview-artifacts\Phaedra-v1.0.13.zip'
+          $installer = Join-Path $PWD 'preview-artifacts\Phaedra-Instalador-Windows-x64.exe'
+          foreach ($path in @($zip, $installer)) {
+            if (-not (Test-Path -LiteralPath $path -PathType Leaf) -or (Get-Item -LiteralPath $path).Length -lt 1MB) {
+              throw "Artifact missing or implausibly small: $path"
+            }
+            Write-Host "$path $((Get-Item -LiteralPath $path).Length) bytes SHA256=$((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash)"
+          }
+          $archive = [IO.Compression.ZipFile]::OpenRead($zip)
+          try {
+            $required = @(
+              'version.txt',
+              'COPYING',
+              'Phaedra.exe',
+              'bin/Phaedra.exe',
+              'lib/phaedra8/vst3/Prisma.vst3/Contents/x86_64-win/Prisma.vst3',
+              'lib/phaedra8/vst3/SurgeXTData/skins/prisma.surge-skin/skin.xml',
+              'lib/phaedra8/vst3/LICENSE-Surge-XT.txt',
+              'lib/phaedra8/vst3/PRISMA-SOURCE.txt'
+            )
+            foreach ($name in $required) {
+              $entry = $archive.GetEntry($name)
+              if ($null -eq $entry -or $entry.Length -eq 0) { throw "Missing/empty ZIP entry: $name" }
+              Write-Host "ZIP payload OK: $name ($($entry.Length) bytes)"
+            }
+            $reader = [IO.StreamReader]::new($archive.GetEntry('version.txt').Open())
+            try { $version = $reader.ReadToEnd().Trim() } finally { $reader.Dispose() }
+            if ($version -ne '1.0.13') { throw "Wrong version in ZIP: $version" }
+            Write-Host "ZIP contains $($archive.Entries.Count) entries."
+          }
+          finally { $archive.Dispose() }
+
+      - name: Silent install and compare installed payload with Portable ZIP
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $installer = Join-Path $PWD 'preview-artifacts\Phaedra-Instalador-Windows-x64.exe'
+          $zip = Join-Path $PWD 'preview-artifacts\Phaedra-v1.0.13.zip'
+          $install = Join-Path $env:RUNNER_TEMP 'Phaedra-v1.0.13-smoke'
+          $log = Join-Path $env:RUNNER_TEMP 'phaedra-install.log'
+          $arguments = @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', "/DIR=$install", "/LOG=$log")
+          $process = Start-Process -FilePath $installer -ArgumentList $arguments -Wait -PassThru
+          if ($process.ExitCode -ne 0) {
+            if (Test-Path $log) { Get-Content $log -Tail 80 }
+            throw "Inno Setup silent installation failed (exit $($process.ExitCode))."
+          }
+          $archive = [IO.Compression.ZipFile]::OpenRead($zip)
+          try {
+            $checked = 0
+            foreach ($entry in $archive.Entries) {
+              if ($entry.FullName.EndsWith('/')) { continue }
+              $installed = Join-Path $install ($entry.FullName.Replace('/', '\'))
+              if (-not (Test-Path -LiteralPath $installed -PathType Leaf)) {
+                throw "Installer omitted Portable file: $($entry.FullName)"
+              }
+              if ((Get-Item -LiteralPath $installed).Length -ne $entry.Length) {
+                throw "Installer file size differs from ZIP: $($entry.FullName)"
+              }
+              $checked++
+            }
+            Write-Host "Installed all $checked ZIP files with matching sizes."
+            $sha = [Security.Cryptography.SHA256]::Create()
+            try {
+              foreach ($name in @(
+                'Phaedra.exe',
+                'bin/Phaedra.exe',
+                'lib/phaedra8/vst3/Prisma.vst3/Contents/x86_64-win/Prisma.vst3',
+                'lib/phaedra8/vst3/SurgeXTData/skins/prisma.surge-skin/skin.xml',
+                'lib/phaedra8/vst3/LICENSE-Surge-XT.txt'
+              )) {
+                $stream = $archive.GetEntry($name).Open()
+                try { $expected = [Convert]::ToHexString($sha.ComputeHash($stream)) } finally { $stream.Dispose() }
+                $actual = (Get-FileHash -LiteralPath (Join-Path $install ($name.Replace('/', '\'))) -Algorithm SHA256).Hash
+                if ($expected -ne $actual) { throw "Installed file hash differs from Portable ZIP: $name" }
+                Write-Host "Installer SHA256 matches ZIP: $name"
+              }
+            }
+            finally { $sha.Dispose() }
+            if ((Get-Content -LiteralPath (Join-Path $install 'version.txt') -Raw).Trim() -ne '1.0.13') {
+              throw 'Installed version is not 1.0.13'
+            }
+          }
+          finally { $archive.Dispose() }
+          if (-not (Get-ChildItem -LiteralPath $install -Filter 'unins*.exe' -File)) {
+            throw 'Inno Setup uninstaller not found'
+          }
+
+      - name: Silent uninstall
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $install = Join-Path $env:RUNNER_TEMP 'Phaedra-v1.0.13-smoke'
+          $uninstaller = Get-ChildItem -LiteralPath $install -Filter 'unins*.exe' -File | Select-Object -First 1
+          if (-not $uninstaller) { throw 'Inno Setup uninstaller missing' }
+          $process = Start-Process -FilePath $uninstaller.FullName -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART' -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw "Uninstall failed (exit $($process.ExitCode))." }
+          if (Test-Path -LiteralPath (Join-Path $install 'bin\Phaedra.exe')) {
+            throw 'Phaedra binary remains after uninstall'
+          }
+          Write-Host 'Install + complete payload audit + uninstall passed (GUI startup not tested).'
