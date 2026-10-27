@@ -1,5 +1,5 @@
 # Rebuild the Phaedra Prisma VST3 from its pinned upstream source.
-# Runs with PowerShell on windows-latest (Visual Studio 2022 + CMake).
+# Runs with PowerShell on Windows with native CMake and Visual Studio 2022/2026.
 # Does not enable ASIO, redistribute external binaries, or touch release assets.
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
@@ -50,16 +50,25 @@ $VSWhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer
 if (-not (Test-Path $NativeCMake)) { throw "Native Windows CMake not found: $NativeCMake" }
 if (-not (Test-Path $VSWhere)) { throw "Visual Studio locator not found: $VSWhere" }
 $VSInstance = (& $VSWhere -latest -products '*' -requires 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -property installationPath | Select-Object -First 1)
-if (-not $VSInstance -or -not (Test-Path $VSInstance)) {
+$VSVersion = (& $VSWhere -latest -products '*' -requires 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -property installationVersion | Select-Object -First 1)
+if (-not $VSInstance -or -not (Test-Path $VSInstance) -or -not $VSVersion) {
     throw 'No Visual Studio installation with the C++ compiler was detected'
+}
+$VSMajor = [int]($VSVersion -split '\\.')[0]
+switch ($VSMajor) {
+    17 { $VSGenerator = 'Visual Studio 17 2022' }
+    18 { $VSGenerator = 'Visual Studio 18 2026' }
+    default { throw "Unsupported Visual Studio version: $VSVersion" }
 }
 Write-Host "Native CMake: $NativeCMake"
 Write-Host "Visual Studio instance: $VSInstance"
+Write-Host "CMake generator: $VSGenerator ($VSVersion)"
 Invoke-Checked $NativeCMake @('--version')
 Invoke-Checked $NativeCMake @(
     '-S', $Source, '-B', $Build,
-    '-G', 'Visual Studio 17 2022', '-A', 'x64',
+    '-G', $VSGenerator, '-A', 'x64',
     "-DCMAKE_GENERATOR_INSTANCE=$VSInstance",
+    '-DCMAKE_POLICY_VERSION_MINIMUM=3.5',
     '-DSURGE_BUILD_TESTRUNNER=OFF',
     '-DSURGE_BUILD_FX=OFF',
     '-DSURGE_SKIP_STANDALONE=ON',
