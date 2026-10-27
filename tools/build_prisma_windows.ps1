@@ -54,7 +54,7 @@ $VSVersion = (& $VSWhere -latest -products '*' -requires 'Microsoft.VisualStudio
 if (-not $VSInstance -or -not (Test-Path $VSInstance) -or -not $VSVersion) {
     throw 'No Visual Studio installation with the C++ compiler was detected'
 }
-$VSMajor = [int]($VSVersion -split '\\.')[0]
+$VSMajor = [int]($VSVersion.Split('.')[0])
 switch ($VSMajor) {
     17 { $VSGenerator = 'Visual Studio 17 2022' }
     18 { $VSGenerator = 'Visual Studio 18 2026' }
