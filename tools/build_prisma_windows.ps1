@@ -44,15 +44,28 @@ Copy-Item (Join-Path $Overlay 'PrismaIcon.png') (Join-Path $LogoDir 'PrismaIcon.
 Copy-Item (Join-Path $Overlay 'build-prisma-skin.py') (Join-Path $Source 'scripts/build-prisma-skin.py')
 Invoke-Checked 'python' @((Join-Path $Source 'scripts/build-prisma-skin.py'))
 
-Invoke-Checked 'cmake' @(
+# Use the native Windows CMake, not MSYS2's CMake, for the Visual Studio generator.
+$NativeCMake = Join-Path $env:ProgramFiles 'CMake/bin/cmake.exe'
+$VSWhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio/Installer/vswhere.exe'
+if (-not (Test-Path $NativeCMake)) { throw "Native Windows CMake not found: $NativeCMake" }
+if (-not (Test-Path $VSWhere)) { throw "Visual Studio locator not found: $VSWhere" }
+$VSInstance = (& $VSWhere -latest -products '*' -requires 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -property installationPath | Select-Object -First 1)
+if (-not $VSInstance -or -not (Test-Path $VSInstance)) {
+    throw 'No Visual Studio installation with the C++ compiler was detected'
+}
+Write-Host "Native CMake: $NativeCMake"
+Write-Host "Visual Studio instance: $VSInstance"
+Invoke-Checked $NativeCMake @('--version')
+Invoke-Checked $NativeCMake @(
     '-S', $Source, '-B', $Build,
     '-G', 'Visual Studio 17 2022', '-A', 'x64',
+    "-DCMAKE_GENERATOR_INSTANCE=$VSInstance",
     '-DSURGE_BUILD_TESTRUNNER=OFF',
     '-DSURGE_BUILD_FX=OFF',
     '-DSURGE_SKIP_STANDALONE=ON',
     '-DSURGE_COPY_AFTER_BUILD=OFF'
 )
-Invoke-Checked 'cmake' @('--build', $Build, '--config', 'Release', '--target', 'surge-xt_VST3', '--parallel', '4')
+Invoke-Checked $NativeCMake @('--build', $Build, '--config', 'Release', '--target', 'surge-xt_VST3', '--parallel', '4')
 
 $Plugins = @(Get-ChildItem -Path $Build -Directory -Filter 'Prisma.vst3' -Recurse | Where-Object {
     Test-Path (Join-Path $_.FullName 'Contents/x86_64-win/Prisma.vst3')
