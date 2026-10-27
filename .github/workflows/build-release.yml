@@ -71,6 +71,11 @@ jobs:
             mingw-w64-ucrt-x86_64-pangomm-2.46.4-1-any.pkg.tar.zst \
             mingw-w64-ucrt-x86_64-atkmm-2.28.4-1-any.pkg.tar.zst
 
+      - name: Create JACK stub library
+        run: |
+          echo "" | gcc -x c -c - -o /tmp/empty.o
+          ar rcs $MINGW_PREFIX/lib/libjack64.a /tmp/empty.o
+
       - name: Configure
         run: |
           python waf configure \
