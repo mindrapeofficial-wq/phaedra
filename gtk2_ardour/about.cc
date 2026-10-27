@@ -648,8 +648,8 @@ About::About ()
 	set_copyright (_("Copyright (C) 2026 Phaedra contributors\nBased on Ardour, Copyright (C) 1999-2026 Paul Davis\n"));
 	set_license (gpl);
 	set_name (X_("Phaedra"));
-	set_website (X_("https://github.com/mindrapeofficial-wq/phaedra"));
-	set_website_label (_("https://github.com/mindrapeofficial-wq/phaedra"));
+	set_website (X_("https://phaedra.com.es"));
+	set_website_label (_("https://phaedra.com.es"));
 	set_version ((string_compose(_("%1%2\n(rev %3)\n%4%5"),
 				     VERSIONSTRING,
 				     codename,

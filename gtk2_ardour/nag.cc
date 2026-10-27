@@ -201,7 +201,7 @@ NagScreen::offer_to_donate ()
 void
 NagScreen::offer_to_subscribe ()
 {
-	const char* uri = "https://github.com/mindrapeofficial-wq/phaedra";
+	const char* uri = "https://phaedra.com.es";
 
 	if (PBD::open_uri (uri)) {
 		mark_subscriber ();
