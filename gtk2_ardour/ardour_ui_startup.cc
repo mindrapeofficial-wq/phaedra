@@ -456,7 +456,7 @@ ARDOUR_UI::nsm_init ()
 	 * The wrapper startup script should set the environment variable 'ARDOUR_SELF'
 	 */
 	const char *process_name = g_getenv ("ARDOUR_SELF");
-	nsm->announce (PROGRAM_NAME, ":dirty:switch:", process_name ? process_name : "ardour7");
+	nsm->announce (PROGRAM_NAME, ":dirty:switch:", process_name ? process_name : "phaedra");
 
 	unsigned int i = 0;
 	// wait for announce reply from nsm server

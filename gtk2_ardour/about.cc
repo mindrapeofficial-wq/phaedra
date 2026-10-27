@@ -645,11 +645,11 @@ About::About ()
 #endif
 
 	set_translator_credits (t);
-	set_copyright (_("Copyright (C) 1999-2026 Paul Davis\n"));
+	set_copyright (_("Copyright (C) 2026 Phaedra contributors\nBased on Ardour, Copyright (C) 1999-2026 Paul Davis\n"));
 	set_license (gpl);
-	set_name (X_("Ardour"));
-	set_website (X_("https://ardour.org/"));
-	set_website_label (_("http://ardour.org/"));
+	set_name (X_("Phaedra"));
+	set_website (X_("https://github.com/mindrapeofficial-wq/phaedra"));
+	set_website_label (_("https://github.com/mindrapeofficial-wq/phaedra"));
 	set_version ((string_compose(_("%1%2\n(rev %3)\n%4%5"),
 				     VERSIONSTRING,
 				     codename,

@@ -64,7 +64,7 @@ ARDOUR_UI::launch_chat ()
 
 	switch (dialog.run()) {
 	case RESPONSE_OK:
-		open_uri("https://ardour.org/chat");
+		open_uri("https://github.com/mindrapeofficial-wq/phaedra/discussions");
 		break;
 	default:
 		break;
@@ -121,36 +121,36 @@ ARDOUR_UI::launch_reference ()
 void
 ARDOUR_UI::launch_tracker ()
 {
-	PBD::open_uri ("https://tracker.ardour.org");
+	PBD::open_uri ("https://github.com/mindrapeofficial-wq/phaedra/issues");
 }
 
 void
 ARDOUR_UI::launch_subscribe ()
 {
-	PBD::open_uri ("https://community.ardour.org/subscribe");
+	PBD::open_uri ("https://github.com/mindrapeofficial-wq/phaedra");
 }
 
 void
 ARDOUR_UI::launch_website ()
 {
-	PBD::open_uri ("https://ardour.org");
+	PBD::open_uri ("https://github.com/mindrapeofficial-wq/phaedra");
 }
 
 void
 ARDOUR_UI::launch_website_dev ()
 {
-	PBD::open_uri ("https://ardour.org/development.html");
+	PBD::open_uri ("https://github.com/mindrapeofficial-wq/phaedra");
 }
 
 void
 ARDOUR_UI::launch_forums ()
 {
-	PBD::open_uri ("https://community.ardour.org/forums");
+	PBD::open_uri ("https://github.com/mindrapeofficial-wq/phaedra/discussions");
 }
 
 void
 ARDOUR_UI::launch_howto_report ()
 {
-	PBD::open_uri ("https://ardour.org/reporting_bugs");
+	PBD::open_uri ("https://github.com/mindrapeofficial-wq/phaedra/issues");
 }
 
