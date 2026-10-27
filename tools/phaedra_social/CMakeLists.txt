@@ -15,6 +15,9 @@ target_compile_features(PhaedraSocial PRIVATE cxx_std_17)
 set_property(TARGET PhaedraSocial PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 target_compile_definitions(PhaedraSocial PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN NOMINMAX _WIN32_WINNT=0x0A00)
 target_compile_options(PhaedraSocial PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:/W4;/utf-8;/permissive-;/EHsc>")
+# The .rc already embeds our DPI/UAC manifest as resource 1. Generating a
+# second linker manifest produces duplicate RT_MANIFEST resources (CVT1100).
+target_link_options(PhaedraSocial PRIVATE /MANIFEST:NO)
 target_include_directories(PhaedraSocial PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_include_directories(PhaedraSocial SYSTEM PRIVATE "${WEBVIEW2_SDK_DIR}/build/native/include")
 target_link_libraries(PhaedraSocial PRIVATE ole32 shell32 user32 gdi32 winhttp uuid)

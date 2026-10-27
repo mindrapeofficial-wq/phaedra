@@ -52,10 +52,13 @@ Sin `PHAEDRA_STOAT_STATE`, el test aparece **omitido**, nunca como una integraci
 
 ```bash
 node social/deploy/local-stoat.mjs status --directory /tmp/phaedra-stoat
+node social/deploy/local-stoat.mjs diagnose --directory /tmp/phaedra-stoat
 node social/deploy/local-stoat.mjs down --directory /tmp/phaedra-stoat
 ```
 
 `down` detiene únicamente el proyecto Compose identificado en el manifiesto. Conserva los datos y secretos locales; el directorio se puede eliminar después si ya no se necesita. No subirlo a GitHub, incluirlo en artefactos ni publicar los logs completos de autenticación.
+
+`diagnose` recoge los últimos logs de API, WebSocket, Autumn y Caddy en memoria y elimina los valores de `secrets.env`, las cadenas del TOML y los campos de autenticación antes de mostrarlos. No imprime los archivos de configuración ni los logs sin redacción. `up` detecta si uno de esos procesos termina al arrancar y falla inmediatamente para permitir ese diagnóstico.
 
 ## Versiones y alcance de la reproducibilidad
 

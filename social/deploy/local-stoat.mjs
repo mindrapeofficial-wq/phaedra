@@ -15,13 +15,13 @@ const services = ['database', 'redis', 'rabbit', 'minio', 'createbuckets', 'api'
 const manifestName = 'phaedra-stoat-local.json';
 
 function usage() {
-  console.error('Usage: node social/deploy/local-stoat.mjs prepare|up|down|status --directory PATH [--port 18080]');
+  console.error('Usage: node social/deploy/local-stoat.mjs prepare|up|down|status|diagnose --directory PATH [--port 18080]');
   process.exitCode = 1;
 }
 
 function parseArgs(args) {
   const [command, ...options] = args;
-  if (!['prepare', 'up', 'down', 'status'].includes(command)) return null;
+  if (!['prepare', 'up', 'down', 'status', 'diagnose'].includes(command)) return null;
   let directory = join(here, '.state');
   let port = 18080;
   for (let i = 0; i < options.length; i += 2) {
@@ -72,11 +72,87 @@ function compose(directory, manifest, args, options = {}) {
   ], { cwd: join(directory, 'upstream'), ...options });
 }
 
+function removeDisabledVoiceSecrets(upstream) {
+  const path = join(upstream, 'secrets.env');
+  const source = readFileSync(path, 'utf8');
+  // The config crate merges environment keys into the TOML. Keeping the two
+  // generated LiveKit secrets would recreate an incomplete node (no url/lat/lon)
+  // after its TOML table was removed, causing every backend binary to panic.
+  const cleaned = source.split(/\r?\n/)
+    .filter((line) => !/^\s*(?:export\s+)?REVOLT__API__LIVEKIT__NODES__/i.test(line))
+    .join('\n');
+  if (cleaned !== source) writeFileSync(path, cleaned, { mode: 0o600 });
+}
+
+function diagnosticRedactor(upstream) {
+  const values = new Set(['minioautumn', 'rabbitpass']);
+  const remember = (value) => {
+    if (!value) return;
+    values.add(value);
+    values.add(JSON.stringify(value).slice(1, -1));
+    values.add(encodeURIComponent(value));
+  };
+  for (const line of readFileSync(join(upstream, 'secrets.env'), 'utf8').split(/\r?\n/)) {
+    const match = line.match(/^\s*(?:export\s+)?[A-Za-z_][A-Za-z0-9_]*\s*=\s*(.*?)\s*$/);
+    if (!match) continue;
+    let value = match[1];
+    remember(value);
+    if (value.startsWith('"') && value.endsWith('"')) {
+      try { value = JSON.parse(value); } catch { value = value.slice(1, -1); }
+    } else if (value.startsWith("'") && value.endsWith("'")) value = value.slice(1, -1);
+    else value = value.replace(/\s+#.*$/, '');
+    remember(value);
+  }
+  // Redact every TOML string, including unknown future credentials and arrays.
+  // This deliberately also removes endpoint values rather than risk a secret.
+  const config = readFileSync(join(upstream, 'Revolt.toml'), 'utf8');
+  for (const match of config.matchAll(/"(?:[^"\\]|\\.)*"|'[^']*'/g)) {
+    let value = match[0];
+    if (value.startsWith('"')) {
+      try { value = JSON.parse(value); } catch { value = value.slice(1, -1); }
+    } else value = value.slice(1, -1);
+    remember(value);
+  }
+  const ordered = [...values].filter(Boolean).sort((a, b) => b.length - a.length);
+  return (text) => {
+    let result = text;
+    for (const value of ordered) result = result.replaceAll(value, '[REDACTED]');
+    return result
+      .replace(/((?:authorization|x-session-token|x-bot-token)\s*[:=]\s*)[^\s,;}]+/gi, '$1[REDACTED]')
+      .replace(/(["']?(?:password|token|secret|encryption_key|private_key)["']?\s*[:=]\s*)"(?:[^"\\]|\\.)*"/gi, '$1"[REDACTED]"')
+      .replace(/([?&](?:token|key|secret|password)=)[^\s&"']+/gi, '$1[REDACTED]');
+  };
+}
+
+function diagnose(directory, manifest) {
+  const redact = diagnosticRedactor(join(directory, 'upstream'));
+  const status = compose(directory, manifest, ['ps', '--all'], { quiet: true, timeout: 15000 });
+  const logs = compose(directory, manifest, ['logs', '--no-color', '--tail', '120', 'api', 'events', 'autumn', 'caddy'],
+    { quiet: true, timeout: 20000 });
+  console.log(redact(status));
+  console.log(redact(logs));
+}
+
+function assertServicesAlive(directory, manifest) {
+  const output = compose(directory, manifest, ['ps', '--all', '--format', 'json', 'api', 'events', 'autumn', 'caddy'],
+    { quiet: true, timeout: 15000 });
+  let states;
+  try {
+    states = output.startsWith('[') ? JSON.parse(output) : output.split('\n').filter(Boolean).map((line) => JSON.parse(line));
+  } catch { throw new Error('Could not inspect local Docker service state. Run diagnose.'); }
+  const stopped = states.filter((item) => ['exited', 'dead'].includes(String(item.State).toLowerCase()));
+  if (stopped.length) {
+    const summary = stopped.map((item) => `${['api', 'events', 'autumn', 'caddy'].includes(item.Service) ? item.Service : 'service'} (exit ${Number(item.ExitCode) || 0})`).join(', ');
+    throw new Error(`Local service stopped during startup: ${summary}. Run diagnose for redacted logs.`);
+  }
+}
+
 function prepare(directory, port) {
   const manifestPath = join(directory, manifestName);
   if (existsSync(manifestPath)) {
     const manifest = loadManifest(directory);
     if (manifest.port !== port) throw new Error('This instance already uses a different port. Use a new directory.');
+    removeDisabledVoiceSecrets(join(directory, 'upstream'));
     console.log(`Existing local instance retained: ${manifest.apiUrl}`);
     return;
   }
@@ -95,6 +171,7 @@ function prepare(directory, port) {
   // Use the official secret generator. Responses: external proxy, no camera/video.
   // It runs only after verification of the source revision; its output is private.
   run('bash', ['generate_config.sh', host], { cwd: upstream, input: 'y\nn\n', quiet: true });
+  removeDisabledVoiceSecrets(upstream);
   for (const name of ['Revolt.toml', '.env.web', 'stoat.json']) {
     const path = join(upstream, name);
     const content = readFileSync(path, 'utf8')
@@ -144,9 +221,10 @@ function prepare(directory, port) {
   console.log('Secrets remain in the local state directory. No service has been started.');
 }
 
-async function waitReady(manifest) {
+async function waitReady(directory, manifest) {
   const deadline = Date.now() + 180000;
   while (Date.now() < deadline) {
+    assertServicesAlive(directory, manifest);
     try {
       const response = await fetch(manifest.apiUrl + '/', { signal: AbortSignal.timeout(4000) });
       if (response.ok) {
@@ -172,17 +250,19 @@ try {
   else {
     const manifest = loadManifest(options.directory);
     if (options.command === 'up') {
+      removeDisabledVoiceSecrets(join(options.directory, 'upstream'));
       compose(options.directory, manifest, ['version'], { quiet: true });
       compose(options.directory, manifest, ['config', '--quiet'], { quiet: true });
       compose(options.directory, manifest, ['pull', ...services], { timeout: 600000 });
       compose(options.directory, manifest, ['up', '--detach', ...services], { timeout: 240000 });
-      await waitReady(manifest);
+      await waitReady(options.directory, manifest);
       console.log(`Stoat ready: ${manifest.apiUrl}`);
       console.log('This instance is loopback-only. Voice and video services are not started.');
     } else if (options.command === 'down') {
       compose(options.directory, manifest, ['down', '--remove-orphans'], { timeout: 120000 });
       console.log('Local services stopped. Database and local secrets are retained in the state directory.');
-    } else compose(options.directory, manifest, ['ps', '--all']);
+    } else if (options.command === 'diagnose') diagnose(options.directory, manifest);
+    else compose(options.directory, manifest, ['ps', '--all']);
   }
 } catch (error) {
   console.error(`Phaedra local Stoat: ${error.message}`);

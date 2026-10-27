@@ -29,6 +29,7 @@ concurrency:
 jobs:
   client:
     name: Client contracts and package safety
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-24.04
     timeout-minutes: 8
     steps:
@@ -49,6 +50,7 @@ jobs:
 
   integration:
     name: Two users and audio on real Stoat
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-24.04
     timeout-minutes: 22
     steps:
@@ -66,9 +68,9 @@ jobs:
         run: node social/deploy/local-stoat.mjs up --directory "$PHAEDRA_STOAT_STATE"
       - name: Exchange messages and verify an audio file between two accounts
         run: node social/tests/live-stoat.test.mjs
-      - name: Record service status without credentials
+      - name: Record service diagnostics without credentials
         if: failure()
-        run: node social/deploy/local-stoat.mjs status --directory "$PHAEDRA_STOAT_STATE"
+        run: node social/deploy/local-stoat.mjs diagnose --directory "$PHAEDRA_STOAT_STATE"
       - name: Stop the disposable services
         if: always()
         run: |
@@ -78,6 +80,7 @@ jobs:
 
   windows:
     name: Compile Windows social window
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: windows-2022
     timeout-minutes: 18
     steps:
