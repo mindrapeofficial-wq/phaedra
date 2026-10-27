@@ -1,0 +1,95 @@
+name: One-time cleanup of old Phaedra build artifacts
+
+on:
+  push:
+    branches:
+      - ops/cleanup-old-phaedra-artifacts-20261027
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  cleanup:
+    if: github.repository == 'mindrapeofficial-wq/phaedra'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete old builds while preserving recent backups
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import datetime as dt
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+          
+          repo = os.environ["GITHUB_REPOSITORY"]
+          token = os.environ["GH_TOKEN"]
+          base_url = "https://api.github.com"
+          cutoff = dt.datetime(2026, 10, 26, tzinfo=dt.timezone.utc)
+          headers = {
+              "Authorization": "Bearer " + token,
+              "Accept": "application/vnd.github+json",
+              "X-GitHub-Api-Version": "2022-11-28",
+              "User-Agent": "phaedra-safe-artifact-cleanup",
+          }
+          
+          def api(path, method="GET"):
+              request = urllib.request.Request(base_url + path, headers=headers, method=method)
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  if method == "DELETE":
+                      return {}
+                  return json.load(response)
+          
+          artifacts = []
+          for page in range(1, 26):
+              response = api(f"/repos/{repo}/actions/artifacts?per_page=100&page={page}")
+              batch = response.get("artifacts", [])
+              artifacts.extend(batch)
+              if len(batch) < 100:
+                  break
+          else:
+              raise RuntimeError("Too many artifact pages: stop without deleting")
+          
+          keep_ids = set()
+          for name, keep_count in (("windows-build", 2), ("phaedra-windows-preview", 1)):
+              active = sorted(
+                  (a for a in artifacts if a["name"] == name and not a.get("expired", False)),
+                  key=lambda a: a["created_at"],
+                  reverse=True,
+              )
+              keep_ids.update(int(a["id"]) for a in active[:keep_count])
+          
+          targets = []
+          for artifact in artifacts:
+              if artifact.get("expired"):
+                  continue
+              if artifact["name"] not in ("windows-build", "phaedra-windows-preview"):
+                  continue
+              if int(artifact["id"]) in keep_ids:
+                  continue
+              timestamp = dt.datetime.fromisoformat(artifact["created_at"].replace("Z", "+00:00"))
+              if timestamp >= cutoff:
+                  continue
+              targets.append(artifact)
+          
+          print(f"Found {len(artifacts)} artifacts; preserving {len(keep_ids)} recent build backups.")
+          print(f"Selected {len(targets)} old build artifacts for deletion (before {cutoff.isoformat()}).")
+          deleted = 0
+          freed = 0
+          for artifact in targets:
+              print(f"Deleting artifact {artifact['id']} {artifact['name']} "
+                    f"{artifact['created_at']} ({artifact['size_in_bytes']} bytes)", flush=True)
+              api(f"/repos/{repo}/actions/artifacts/{artifact['id']}", method="DELETE")
+              deleted += 1
+              freed += int(artifact["size_in_bytes"])
+          
+          result = f"Deleted {deleted} old artifacts, {freed / 1024**2:.1f} MiB reclaimed; recent backups retained."
+          print(result)
+          if os.environ.get("GITHUB_STEP_SUMMARY"):
+              with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as output:
+                  output.write("## Phaedra artifact cleanup\n\n" + result + "\n")
+          
+          PY
