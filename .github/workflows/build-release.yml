@@ -64,6 +64,15 @@ jobs:
             zip
             python
 
+      # The Prisma binary is generated, never stored in Git.
+      # Fail here rather than after the one-hour Phaedra build.
+      - name: Build Prisma VST3 from pinned Surge XT source
+        shell: pwsh
+        run: ./tools/build_prisma_windows.ps1
+
+      - name: Verify Prisma bundle before compiling Phaedra
+        run: bash tools/check_prisma_payload.sh vendor/prisma
+
       - name: Configure
         run: |
           python waf configure \
