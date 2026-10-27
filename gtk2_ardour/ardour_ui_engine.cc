@@ -77,8 +77,8 @@ ARDOUR_UI::audioengine_became_silent ()
 
 	bool (*openuri)(const char*) = PBD::open_uri; /* this forces selection of the const char* variant of PBD::open_uri(), which we need to avoid ambiguity below */
 
-	pay_button.signal_clicked().connect (sigc::hide_return (sigc::bind (sigc::ptr_fun (openuri), (const char*) "https://github.com/mindrapeofficial-wq/phaedra/releases/latest")));
-	subscribe_button.signal_clicked().connect (sigc::hide_return (sigc::bind (sigc::ptr_fun (openuri), (const char*) "https://github.com/mindrapeofficial-wq/phaedra")));
+	pay_button.signal_clicked().connect (sigc::hide_return (sigc::bind (sigc::ptr_fun (openuri), (const char*) "https://phaedra.com.es/download")));
+	subscribe_button.signal_clicked().connect (sigc::hide_return (sigc::bind (sigc::ptr_fun (openuri), (const char*) "https://phaedra.com.es")));
 
 
 	msg.get_vbox()->pack_start (pay_label);

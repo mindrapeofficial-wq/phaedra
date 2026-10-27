@@ -94,7 +94,7 @@ print_help (const char *execname)
 		<< _("  -v, --version               Print version and exit\n")
 		<< "\n\n"
 		<< _("Report bugs to https://github.com/mindrapeofficial-wq/phaedra/issues\n")
-		<< _("Website https://github.com/mindrapeofficial-wq/phaedra\n")
+		<< _("Website https://phaedra.com.es\n")
 		;
 	return 1;
 }
