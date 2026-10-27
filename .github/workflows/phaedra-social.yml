@@ -51,7 +51,10 @@ jobs:
   integration:
     name: Two users and audio on real Stoat
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
-    runs-on: ubuntu-24.04
+    # MongoDB 8 currently rejects the new Azure kernel on Ubuntu 24.04.
+    # Use the runner maintainers' workaround until SERVER-131779 reaches 8.x.
+    # https://github.com/actions/runner-images/issues/15005
+    runs-on: ubuntu-22.04
     timeout-minutes: 22
     steps:
       - uses: actions/checkout@v4

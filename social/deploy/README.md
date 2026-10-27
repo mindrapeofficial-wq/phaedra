@@ -64,6 +64,12 @@ node social/deploy/local-stoat.mjs down --directory /tmp/phaedra-stoat
 
 El checkout de configuración oficial está fijado por SHA y las imágenes del backend por `v0.15.5`. Las imágenes de infraestructura conservan las etiquetas del Compose oficial; estas etiquetas pueden actualizarse en sus registros. No se presenta esta configuración como una compilación hermética por digest.
 
+### Compatibilidad de MongoDB y el entorno de CI
+
+La integración usa temporalmente el runner **`ubuntu-22.04`** y conserva `mongo:8` del Compose oficial. En los runners Ubuntu 24.04 actualizados en octubre de 2026, MongoDB 8.3.13 termina con el error fatal `12257600`: interpreta el identificador del kernel de Ubuntu como una versión incompatible. El equipo de imágenes de GitHub reprodujo el fallo y verificó MongoDB 8.3.13 en Ubuntu 22.04; recomienda ese entorno mientras se publica un parche compatible. Véase [runner-images #15005](https://github.com/actions/runner-images/issues/15005).
+
+MongoDB registra la corrección en [SERVER-131779](https://jira.mongodb.org/browse/SERVER-131779), con versiones previstas 8.0.35 y 8.3.14; el cambio ya está en 9.0.4. Para volver a Ubuntu 24.04, verificar primero que la imagen 8.x con esa corrección esté publicada y repetir la prueba real completa. No desactivar la protección de MongoDB ni cambiar de versión mayor sobre los datos existentes para evitar este error. Los contenedores heredan el kernel del host: la misma limitación puede afectar a una ejecución local.
+
 La interfaz de Phaedra usa la API pública del servidor. Los avisos y licencias del software descargado permanecen en su checkout. Stoat y sus componentes conservan sus respectivas licencias; Phaedra Social es una integración independiente.
 
 Fuentes revisadas:
