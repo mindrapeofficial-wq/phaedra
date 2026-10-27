@@ -1,12 +1,12 @@
 [Desktop Entry]
-Name=Ardour
-Comment=Ardour Digital Audio Workstation
+Name=Phaedra
+Comment=Phaedra Digital Audio Workstation
 Exec=@ARDOUR_EXEC@
 Icon=@ARDOUR_ICON@
 Terminal=false
-MimeType=application/x-ardour;
+MimeType=application/x-phaedra;
 Type=Application
 Categories=AudioVideo;Audio;AudioEditing;X-Recorders;X-Multitrack;X-Jack;
-StartupWMClass=Ardour
+StartupWMClass=Phaedra
 X-NSM-Capable=true
 X-NSM-Exec=@ARDOUR_EXEC@
