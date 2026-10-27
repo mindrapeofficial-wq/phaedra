@@ -106,8 +106,8 @@ fixup_bundle_environment (int argc, char* argv[], string & localedir)
 		return;
 	}
 
-	if (g_getenv ("ARDOUR_SELF")) {
-		g_setenv ("ARDOUR_SELF", argv[0], 1);
+	if (g_getenv ("PHAEDRA_SELF") || g_getenv ("ARDOUR_SELF")) {
+		g_setenv ("PHAEDRA_SELF", argv[0], 1);
 	}
 	if (g_getenv ("PREBUNDLE_ENV")) {
 		EnvironmentalProtectionAgency::set_global_epa (new EnvironmentalProtectionAgency (true, "PREBUNDLE_ENV"));
@@ -141,7 +141,7 @@ fixup_bundle_environment (int argc, char* argv[], string & localedir)
 	}
 #endif
 
-	export_search_path (bundle_dir, "ARDOUR_DLL_PATH", "/lib");
+	export_search_path (bundle_dir, "PHAEDRA_DLL_PATH", "/lib");
 
 	/* inside an OS X .app bundle, there is no difference
 	   between DATA and CONFIG locations, since OS X doesn't
@@ -149,9 +149,9 @@ fixup_bundle_environment (int argc, char* argv[], string & localedir)
 	   machine-independent shared data.
 	*/
 
-	export_search_path (bundle_dir, "ARDOUR_DATA_PATH", "/Resources");
-	export_search_path (bundle_dir, "ARDOUR_CONFIG_PATH", "/Resources");
-	export_search_path (bundle_dir, "ARDOUR_INSTANT_XML_PATH", "/Resources");
+	export_search_path (bundle_dir, "PHAEDRA_DATA_PATH", "/Resources");
+	export_search_path (bundle_dir, "PHAEDRA_CONFIG_PATH", "/Resources");
+	export_search_path (bundle_dir, "PHAEDRA_INSTANT_XML_PATH", "/Resources");
 	export_search_path (bundle_dir, "LADSPA_PATH", "/Plugins");
 	export_search_path (bundle_dir, "VAMP_PATH", "/lib");
 	export_search_path (bundle_dir, "GTK_PATH", "/lib/gtkengines");
@@ -177,8 +177,8 @@ void load_custom_fonts()
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 	std::string font_file;
 
-	if (!find_file (ardour_data_search_path(), "ArdourMono.ttf", font_file)) {
-		cerr << _("Cannot find ArdourMono TrueType font") << endl;
+	if (!find_file (ardour_data_search_path(), "PhaedraMono.ttf", font_file)) {
+		cerr << _("Cannot find PhaedraMono TrueType font") << endl;
 	} else {
 		CFStringRef ttf;
 		CFURLRef fontURL;
@@ -189,12 +189,12 @@ void load_custom_fonts()
 				kCFStringEncodingUTF8, FALSE);
 		fontURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, ttf, kCFURLPOSIXPathStyle, TRUE);
 		if (CTFontManagerRegisterFontsForURL(fontURL, kCTFontManagerScopeProcess, &error) != true) {
-			cerr << _("Cannot load ArdourMono TrueType font.") << endl;
+			cerr << _("Cannot load PhaedraMono TrueType font.") << endl;
 		}
 	}
 
-	if (!find_file (ardour_data_search_path(), "ArdourSans.ttf", font_file)) {
-		cerr << _("Cannot find ArdourSans TrueType font") << endl;
+	if (!find_file (ardour_data_search_path(), "PhaedraSans.ttf", font_file)) {
+		cerr << _("Cannot find PhaedraSans TrueType font") << endl;
 	} else {
 		CFStringRef ttf;
 		CFURLRef fontURL;
@@ -205,7 +205,7 @@ void load_custom_fonts()
 				kCFStringEncodingUTF8, FALSE);
 		fontURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, ttf, kCFURLPOSIXPathStyle, TRUE);
 		if (CTFontManagerRegisterFontsForURL(fontURL, kCTFontManagerScopeProcess, &error) != true) {
-			cerr << _("Cannot load ArdourSans TrueType font.") << endl;
+			cerr << _("Cannot load PhaedraSans TrueType font.") << endl;
 		}
 	}
 #endif

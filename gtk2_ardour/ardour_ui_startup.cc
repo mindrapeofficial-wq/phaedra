@@ -453,9 +453,12 @@ ARDOUR_UI::nsm_init ()
 	 * Ardour4, Mixbus3 for bundled versions + full path on OSX & windows
 	 * argv[0] does not apply since we need the wrapper-script (not the binary itself)
 	 *
-	 * The wrapper startup script should set the environment variable 'ARDOUR_SELF'
+	 * The wrapper startup script should set the environment variable 'PHAEDRA_SELF'
 	 */
-	const char *process_name = g_getenv ("ARDOUR_SELF");
+	const char *process_name = g_getenv ("PHAEDRA_SELF");
+	if (!process_name) {
+		process_name = g_getenv ("ARDOUR_SELF");
+	}
 	nsm->announce (PROGRAM_NAME, ":dirty:switch:", process_name ? process_name : "phaedra");
 
 	unsigned int i = 0;

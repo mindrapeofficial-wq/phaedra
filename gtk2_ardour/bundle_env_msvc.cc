@@ -363,26 +363,26 @@ fixup_bundle_environment (int argc, char* argv[], string & localedir)
 	std::string path;
 	const  char *cstr;
 
-	// First, set up 'ARDOUR_DATA_PATH'
+	// First, set up 'PHAEDRA_DATA_PATH'
 	path  = get_module_folder() + "\\";
 	path += PROGRAM_NAME;
 	path += PROGRAM_VERSION;
 	path += "\\share";
-	Glib::setenv ("ARDOUR_DATA_PATH", path, true);
+	Glib::setenv ("PHAEDRA_DATA_PATH", path, true);
 
 
-	// Next, set up 'ARDOUR_CONFIG_PATH'
+	// Next, set up 'PHAEDRA_CONFIG_PATH'
 #ifdef _WIN64
 	path = user_config_directory() + "\\win64;";
 #else
 	path = user_config_directory() + "\\win32;";
 #endif
-	Glib::setenv ("ARDOUR_CONFIG_PATH", path, true);
+	Glib::setenv ("PHAEDRA_CONFIG_PATH", path, true);
 
 
-	// Next, set up 'ARDOUR_INSTANT_XML_PATH'
+	// Next, set up 'PHAEDRA_INSTANT_XML_PATH'
 	path = user_config_directory();
-	Glib::setenv ("ARDOUR_INSTANT_XML_PATH", path, true);
+	Glib::setenv ("PHAEDRA_INSTANT_XML_PATH", path, true);
 
 
 	// Next, set up 'LADSPA_PATH'
@@ -476,21 +476,21 @@ void load_custom_fonts()
 
 	std::string font_file;
 
-	if (!find_file (ardour_data_search_path(), "ArdourMono.ttf", font_file)) {
-		cerr << _("Cannot find ArdourMono TrueType font") << endl;
+	if (!find_file (ardour_data_search_path(), "PhaedraMono.ttf", font_file)) {
+		cerr << _("Cannot find PhaedraMono TrueType font") << endl;
 	} else {
 		FcBool ret = FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(font_file.c_str()));
 		if (ret == FcFalse) {
-			cerr << _("Cannot load ArdourMono TrueType font.") << endl;
+			cerr << _("Cannot load PhaedraMono TrueType font.") << endl;
 		}
 	}
 
-	if (!find_file (ardour_data_search_path(), "ArdourSans.ttf", font_file)) {
-		cerr << _("Cannot find ArdourSans TrueType font") << endl;
+	if (!find_file (ardour_data_search_path(), "PhaedraSans.ttf", font_file)) {
+		cerr << _("Cannot find PhaedraSans TrueType font") << endl;
 	} else {
 		FcBool ret = FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(font_file.c_str()));
 		if (ret == FcFalse) {
-			cerr << _("Cannot load ArdourSans TrueType font.") << endl;
+			cerr << _("Cannot load PhaedraSans TrueType font.") << endl;
 		}
 	}
 

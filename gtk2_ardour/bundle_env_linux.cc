@@ -85,10 +85,10 @@ fixup_bundle_environment (int /*argc*/, char* argv[], string & localedir)
 	   a dir separator in this context is just fine.
 	*/
 
-	export_search_path (dir_path, "ARDOUR_DLL_PATH", "/lib");
-	export_search_path (dir_path, "ARDOUR_CONFIG_PATH", "/etc");
-	export_search_path (dir_path, "ARDOUR_INSTANT_XML_PATH", "/share");
-	export_search_path (dir_path, "ARDOUR_DATA_PATH", "/share");
+	export_search_path (dir_path, "PHAEDRA_DLL_PATH", "/lib");
+	export_search_path (dir_path, "PHAEDRA_CONFIG_PATH", "/etc");
+	export_search_path (dir_path, "PHAEDRA_INSTANT_XML_PATH", "/share");
+	export_search_path (dir_path, "PHAEDRA_DATA_PATH", "/share");
 	export_search_path (dir_path, "LADSPA_PATH", "/plugins");
 	export_search_path (dir_path, "VAMP_PATH", "/lib");
 	export_search_path (dir_path, "GTK_PATH", "/lib/gtkengines");

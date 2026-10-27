@@ -55,7 +55,7 @@ fixup_bundle_environment (int, char* [], string & localedir)
 {
 	EnvironmentalProtectionAgency::set_global_epa (new EnvironmentalProtectionAgency (true));
 	/* what to do ? */
-	// we should at least set ARDOUR_DATA_PATH to prevent the warning message.
+	// we should at least set PHAEDRA_DATA_PATH to prevent the warning message.
 	// setting a FONTCONFIG_FILE won't hurt either see bundle_env_msvc.cc
 	// (pangocairo prefers the windows gdi backend unless PANGOCAIRO_BACKEND=fc is set)
 
@@ -69,7 +69,7 @@ fixup_bundle_environment (int, char* [], string & localedir)
 		path += "\\locale";
 
 		if (!Glib::file_test (path, Glib::FILE_TEST_IS_DIR)) {
-			const char* data_path = getenv ("ARDOUR_DATA_PATH");
+			const char* data_path = getenv ("PHAEDRA_DATA_PATH");
 			if (data_path) {
 				std::string dp (data_path);
 				std::string::size_type colon = dp.find (':');
@@ -109,7 +109,7 @@ fixup_bundle_environment (int, char* [], string & localedir)
 	 * because neither nsmd nor the GUI is currently available for windows.
 	 * furthermore it'll be even less common for derived products.
 	 */
-	Glib::setenv ("ARDOUR_SELF", Glib::build_filename(ardour_dll_directory(), "ardour.exe"), true);
+	Glib::setenv ("PHAEDRA_SELF", Glib::build_filename(ardour_dll_directory(), "Phaedra.exe"), true);
 
 	/* https://docs.microsoft.com/en-us/windows/win32/api/shellscalingapi/nf-shellscalingapi-setprocessdpiawareness */
 	HMODULE module = LoadLibraryA ("Shcore.dll");
@@ -146,12 +146,12 @@ unload_font_at_exception (PEXCEPTION_POINTERS pExceptionInfo)
 void
 load_custom_fonts()
 {
-	if (!find_file (ardour_data_search_path(), "ArdourMono.ttf", ardour_mono_file)) {
-		cerr << _("Cannot find ArdourMono TrueType font") << endl;
+	if (!find_file (ardour_data_search_path(), "PhaedraMono.ttf", ardour_mono_file)) {
+		cerr << _("Cannot find PhaedraMono TrueType font") << endl;
 	}
 
-	if (!find_file (ardour_data_search_path(), "ArdourSans.ttf", ardour_sans_file)) {
-		cerr << _("Cannot find ArdourSans TrueType font") << endl;
+	if (!find_file (ardour_data_search_path(), "PhaedraSans.ttf", ardour_sans_file)) {
+		cerr << _("Cannot find PhaedraSans TrueType font") << endl;
 	}
 
 	if (ardour_mono_file.empty () && ardour_sans_file.empty ()) {
@@ -163,12 +163,12 @@ load_custom_fonts()
 
 		if (!ardour_mono_file.empty () && FcFalse == FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(ardour_mono_file.c_str()))) {
 			ardour_mono_file.clear ();
-			cerr << _("Cannot load ArdourMono TrueType font.") << endl;
+			cerr << _("Cannot load PhaedraMono TrueType font.") << endl;
 		}
 
 		if (!ardour_sans_file.empty () && FcFalse == FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(ardour_sans_file.c_str()))) {
 			ardour_sans_file.clear ();
-			cerr << _("Cannot load ArdourSans TrueType font.") << endl;
+			cerr << _("Cannot load PhaedraSans TrueType font.") << endl;
 		}
 
 		if (FcFalse == FcConfigSetCurrent(config)) {
@@ -178,11 +178,11 @@ load_custom_fonts()
 		// pango with win32 backend
 		if (0 == AddFontResource(ardour_mono_file.c_str())) {
 			ardour_mono_file.clear ();
-			cerr << _("Cannot register ArdourMono TrueType font with windows gdi.") << endl;
+			cerr << _("Cannot register PhaedraMono TrueType font with windows gdi.") << endl;
 		}
 		if (0 == AddFontResource(ardour_sans_file.c_str())) {
 			ardour_sans_file.clear ();
-			cerr << _("Cannot register ArdourSans TrueType font with windows gdi.") << endl;
+			cerr << _("Cannot register PhaedraSans TrueType font with windows gdi.") << endl;
 		}
 		atexit (&unload_custom_fonts);
 		SetUnhandledExceptionFilter (unload_font_at_exception);

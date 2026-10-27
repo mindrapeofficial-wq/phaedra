@@ -65,9 +65,9 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previous, PWSTR args, int show
     swprintf(path, wcslen(bin) + path_len + 3, L"%ls;%ls", bin, oldpath);
     SetEnvironmentVariableW(L"PATH", path);
     free(oldpath); free(path);
-    SetEnvironmentVariableW(L"ARDOUR_DATA_PATH", data);
-    SetEnvironmentVariableW(L"ARDOUR_CONFIG_PATH", config);
-    SetEnvironmentVariableW(L"ARDOUR_DLL_PATH", dlls);
+    SetEnvironmentVariableW(L"PHAEDRA_DATA_PATH", data);
+    SetEnvironmentVariableW(L"PHAEDRA_CONFIG_PATH", config);
+    SetEnvironmentVariableW(L"PHAEDRA_DLL_PATH", dlls);
     SetEnvironmentVariableW(L"GTK_PATH", gtk);
     SetEnvironmentVariableW(L"FONTCONFIG_FILE", fonts);
     startup.cb = sizeof(startup);
