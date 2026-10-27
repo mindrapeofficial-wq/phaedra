@@ -19,51 +19,70 @@ jobs:
 
       - uses: msys2/setup-msys2@v2
         with:
-          msystem: MINGW64
+          msystem: UCRT64
           update: true
           install: >-
             git
-            mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-pkg-config
-            mingw-w64-x86_64-boost
-            mingw-w64-x86_64-gtk2
-            mingw-w64-x86_64-gtkmm
-            mingw-w64-x86_64-cairomm
-            mingw-w64-x86_64-pangomm
-            mingw-w64-x86_64-libsndfile
-            mingw-w64-x86_64-libsamplerate
-            mingw-w64-x86_64-fftw
-            mingw-w64-x86_64-aubio
-            mingw-w64-x86_64-liblo
-            mingw-w64-x86_64-taglib
-            mingw-w64-x86_64-libusb
-            mingw-w64-x86_64-lv2
-            mingw-w64-x86_64-serd
-            mingw-w64-x86_64-sord
-            mingw-w64-x86_64-sratom
-            mingw-w64-x86_64-lilv
-            mingw-w64-x86_64-rubberband
-            mingw-w64-x86_64-vamp-plugin-sdk
-            mingw-w64-x86_64-libarchive
-            mingw-w64-x86_64-portaudio
-            mingw-w64-x86_64-cairo
-            mingw-w64-x86_64-pango
-            mingw-w64-x86_64-glib2
-            mingw-w64-x86_64-glibmm
-            mingw-w64-x86_64-drmingw
-            mingw-w64-x86_64-curl
-            mingw-w64-x86_64-libxml2
-            mingw-w64-x86_64-flac
-            mingw-w64-x86_64-libogg
-            mingw-w64-x86_64-libvorbis
-            mingw-w64-x86_64-cppunit
-            mingw-w64-x86_64-readline
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-pkg-config
+            mingw-w64-ucrt-x86_64-meson
+            mingw-w64-ucrt-x86_64-boost
+            mingw-w64-ucrt-x86_64-gtk2
+            mingw-w64-ucrt-x86_64-libsndfile
+            mingw-w64-ucrt-x86_64-libsamplerate
+            mingw-w64-ucrt-x86_64-fftw
+            mingw-w64-ucrt-x86_64-aubio
+            mingw-w64-ucrt-x86_64-liblo
+            mingw-w64-ucrt-x86_64-taglib
+            mingw-w64-ucrt-x86_64-libusb
+            mingw-w64-ucrt-x86_64-lv2
+            mingw-w64-ucrt-x86_64-serd
+            mingw-w64-ucrt-x86_64-sord
+            mingw-w64-ucrt-x86_64-sratom
+            mingw-w64-ucrt-x86_64-lilv
+            mingw-w64-ucrt-x86_64-rubberband
+            mingw-w64-ucrt-x86_64-vamp-plugin-sdk
+            mingw-w64-ucrt-x86_64-libarchive
+            mingw-w64-ucrt-x86_64-portaudio
+            mingw-w64-ucrt-x86_64-cairo
+            mingw-w64-ucrt-x86_64-pango
+            mingw-w64-ucrt-x86_64-glib2
+            mingw-w64-ucrt-x86_64-glibmm
+            mingw-w64-ucrt-x86_64-drmingw
+            mingw-w64-ucrt-x86_64-curl
+            mingw-w64-ucrt-x86_64-libxml2
+            mingw-w64-ucrt-x86_64-flac
+            mingw-w64-ucrt-x86_64-libogg
+            mingw-w64-ucrt-x86_64-libvorbis
+            mingw-w64-ucrt-x86_64-cppunit
+            mingw-w64-ucrt-x86_64-readline
             base-devel
             zip
             python
 
+      - name: Build cairomm-1.0 from source
+        run: |
+          cd /tmp
+          curl -L -o cairomm-1.14.5.tar.xz https://download.gnome.org/sources/cairomm/1.14/cairomm-1.14.5.tar.xz
+          tar xf cairomm-1.14.5.tar.xz
+          cd cairomm-1.14.5
+          meson setup _build --prefix=$MINGW_PREFIX -Dbuild-examples=false -Dbuild-documentation=false -Dbuild-tests=false
+          meson compile -C _build
+          meson install -C _build
+
+      - name: Build pangomm-1.4 from source
+        run: |
+          cd /tmp
+          curl -L -o pangomm-2.46.4.tar.xz https://download.gnome.org/sources/pangomm/2.46/pangomm-2.46.4.tar.xz
+          tar xf pangomm-2.46.4.tar.xz
+          cd pangomm-2.46.4
+          meson setup _build --prefix=$MINGW_PREFIX -Dbuild-documentation=false -Dbuild-tests=false
+          meson compile -C _build
+          meson install -C _build
+
       - name: Configure
         run: |
+          cd $GITHUB_WORKSPACE
           python waf configure \
             --with-backends=portaudio,dummy \
             --no-phone-home \
@@ -72,18 +91,24 @@ jobs:
             --program-name=Phaedra
 
       - name: Build
-        run: python waf build -j4
+        run: |
+          cd $GITHUB_WORKSPACE
+          python waf build -j4
 
       - name: Package Portable
-        run: bash make_portable.sh
+        run: |
+          cd $GITHUB_WORKSPACE
+          bash make_portable.sh
 
       - name: Update version in portable
         run: |
+          cd $GITHUB_WORKSPACE
           VERSION="${GITHUB_REF_NAME#v}"
           echo "$VERSION" > Phaedra-Portable/version.txt
 
       - name: Create ZIP
         run: |
+          cd $GITHUB_WORKSPACE
           VERSION="${GITHUB_REF_NAME#v}"
           cd Phaedra-Portable && zip -r "../Phaedra-v${VERSION}.zip" . && cd ..
 
