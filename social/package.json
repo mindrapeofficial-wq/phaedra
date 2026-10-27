@@ -1,0 +1,16 @@
+{
+  "name": "phaedra-social",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cliente social de Phaedra para una instancia propia de Stoat",
+  "license": "GPL-2.0-or-later",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "node tests/all.test.mjs",
+    "test:live": "node tests/live-stoat.test.mjs",
+    "check": "node --check src/app.js && node --check src/stoat-client.js && node --check src/view-model.js"
+  }
+}

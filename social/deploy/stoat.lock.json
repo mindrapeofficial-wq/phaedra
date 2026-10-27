@@ -1,0 +1,6 @@
+{
+  "repository": "https://github.com/stoatchat/self-hosted.git",
+  "revision": "9af5e9063a8d1311477b7d2f24f5764ffe3e1cd1",
+  "backendVersion": "v0.15.5",
+  "description": "Official Stoat self-hosting configuration, reviewed 2026-10-27. Backend images use the upstream v0.15.5 tags; infrastructure images retain the upstream tags."
+}

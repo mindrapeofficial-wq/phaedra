@@ -3,7 +3,9 @@
 
 The original Ardour engine ABI path remains ardour8 intentionally.
 """
+import argparse
 import hashlib
+import json
 import os
 import re
 import shutil
@@ -18,6 +20,19 @@ PREFIX = (Path(sys.executable).resolve().parent.parent if os.name == "nt"
 ENGINE = os.environ.get("PHAEDRA_ENGINE_VERSION", "8.12.0")
 VERSION = os.environ.get("PHAEDRA_PACKAGE_VERSION", "0.0.0")
 CHANNEL = os.environ.get("PHAEDRA_CHANNEL", "stable")
+
+SOCIAL_REQUIRED_FILES = {
+    "bin/PhaedraSocial.exe",
+    "bin/WebView2Loader.dll",
+    "share/phaedra-social/index.html",
+    "share/phaedra-social/config.json",
+    "share/phaedra-social/style.css",
+    "share/phaedra-social/src/app.js",
+    "share/phaedra-social/src/stoat-client.js",
+    "share/phaedra-social/src/view-model.js",
+    "share/phaedra-social/assets/mark.svg",
+    "licenses/phaedra-social/LICENSE.txt",
+}
 
 
 def need(path):
@@ -42,6 +57,103 @@ def cp(source, destination):
 def copy_optional(src, dest):
     if Path(src).exists():
         cp(src, dest)
+
+
+def _read_unique_json(path):
+    def unique(pairs):
+        value = {}
+        for key, item in pairs:
+            if key in value:
+                raise ValueError("Duplicate JSON key: " + key)
+            value[key] = item
+        return value
+
+    try:
+        return json.loads(Path(path).read_text(encoding="utf-8"), object_pairs_hook=unique)
+    except (ValueError, UnicodeError) as exc:
+        raise RuntimeError("Invalid social bundle JSON: " + str(path)) from exc
+
+
+def _social_payload_path(name):
+    return name in ("bin/PhaedraSocial.exe", "bin/WebView2Loader.dll") or name.startswith(
+        ("share/phaedra-social/", "licenses/webview2/", "licenses/phaedra-social/"))
+
+
+def validate_social_bundle(bundle, installed=False):
+    """Validate an input bundle, or its owned files inside an installed DAW."""
+    bundle = Path(bundle)
+    if bundle.is_symlink() or not bundle.is_dir():
+        raise RuntimeError("Social bundle must be a real directory")
+    manifest_path = need(bundle / "social-bundle.json")
+    if manifest_path.is_symlink() or manifest_path.stat().st_size > 1024 * 1024:
+        raise RuntimeError("Invalid social bundle manifest")
+    manifest = _read_unique_json(manifest_path)
+    expected = {
+        "schemaVersion": 1,
+        "platform": "win-x64",
+        "host": "bin/PhaedraSocial.exe",
+        "loader": "bin/WebView2Loader.dll",
+        "assets": "share/phaedra-social",
+        "virtualOrigin": "https://phaedra-social.invalid",
+    }
+    if (not isinstance(manifest, dict) or type(manifest.get("schemaVersion")) is not int
+            or any(manifest.get(key) != value for key, value in expected.items())):
+        raise RuntimeError("Unsupported social bundle format or platform")
+    files = manifest.get("files")
+    if not isinstance(files, dict) or not SOCIAL_REQUIRED_FILES.issubset(files):
+        raise RuntimeError("Social bundle is missing required host, loader, client or license files")
+    if not any(name.startswith("licenses/webview2/") for name in files):
+        raise RuntimeError("Social bundle is missing the WebView2 SDK license")
+
+    casefolded = set()
+    for name, digest in files.items():
+        parts = name.split("/")
+        if (not name or any(part in ("", ".", "..") or part.rstrip(" .") != part for part in parts)
+                or "\\" in name or ":" in name
+                or any(ord(char) < 32 for char in name)
+                or name.casefold() in casefolded):
+            raise RuntimeError("Unsafe or duplicate social bundle path: " + name)
+        if not _social_payload_path(name):
+            raise RuntimeError("Unexpected social bundle path: " + name)
+        casefolded.add(name.casefold())
+        if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+            raise RuntimeError("Invalid social bundle checksum for " + name)
+
+    actual = set()
+    for path in bundle.rglob("*"):
+        if path.is_symlink():
+            raise RuntimeError("Social bundle cannot contain symbolic links")
+        if path.is_file():
+            name = path.relative_to(bundle).as_posix()
+            if name != "social-bundle.json" and (not installed or _social_payload_path(name)):
+                actual.add(name)
+    if actual != set(files):
+        raise RuntimeError("Social bundle files do not match its manifest")
+    for name, expected_hash in files.items():
+        path = bundle / name
+        if path.stat().st_size == 0 or hashlib.sha256(path.read_bytes()).hexdigest() != expected_hash:
+            raise RuntimeError("Social bundle checksum mismatch or empty file: " + name)
+
+    config_path = bundle / "share/phaedra-social/config.json"
+    if config_path.stat().st_size > 65536:
+        raise RuntimeError("Social client configuration exceeds 64 KiB")
+    config = _read_unique_json(config_path)
+    if not isinstance(config, dict) or type(config.get("schemaVersion")) is not int or config["schemaVersion"] != 1:
+        raise RuntimeError("Social client configuration requires schemaVersion 1")
+    return files
+
+
+def copy_social_bundle(bundle, destination):
+    """No bundle is included unless the caller explicitly supplies its path."""
+    if bundle is None:
+        return False
+    files = validate_social_bundle(bundle)
+    bundle, destination = Path(bundle), Path(destination)
+    for name in sorted(files):
+        cp(bundle / name, destination / name)
+    cp(bundle / "social-bundle.json", destination / "social-bundle.json")
+    print("Packaged optional Phaedra Social bundle:", len(files), "verified files")
+    return True
 
 
 def copy_built_dlls():
@@ -128,7 +240,14 @@ def write_manifest():
     manifest.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def main():
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--social-bundle", type=Path,
+                        help="Explicit verified Windows social bundle from tools/phaedra_social/build.ps1")
+    args = parser.parse_args(argv)
+    if args.social_bundle is not None:
+        # Reject a malformed optional input before replacing an existing package.
+        validate_social_bundle(args.social_bundle)
     if not re.fullmatch(r"\d+\.\d+\.\d+", ENGINE):
         raise RuntimeError("PHAEDRA_ENGINE_VERSION must be MAJOR.MINOR.PATCH")
     if not re.fullmatch(r"\d+\.\d+\.\d+", VERSION):
@@ -215,6 +334,7 @@ def main():
         'start "" "%~dp0Phaedra.exe"\r\n',
         encoding="ascii", newline="",
     )
+    copy_social_bundle(args.social_bundle, DEST)
     copy_runtime_dependencies()
     configure_channel(DEST, CHANNEL)
     write_manifest()

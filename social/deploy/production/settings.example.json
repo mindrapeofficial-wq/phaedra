@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "domain": "social.example.org",
+  "administratorEmail": "admin@example.org",
+  "maxUploadBytes": 20000000,
+  "smtp": {
+    "host": "smtp.example.org",
+    "port": 587,
+    "transport": "starttls",
+    "fromAddress": "noreply@example.org",
+    "replyTo": "support@example.org"
+  },
+  "captcha": {
+    "enabled": false,
+    "siteKey": ""
+  },
+  "legal": {
+    "termsUrl": "",
+    "privacyUrl": "",
+    "guidelinesUrl": ""
+  },
+  "backup": {
+    "ageRecipient": "REPLACE_WITH_OFFLINE_GENERATED_AGE_PUBLIC_RECIPIENT"
+  }
+}

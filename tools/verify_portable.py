@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Offline portable bundle verification: also run after creating the ZIP."""
+import argparse
 import hashlib
 import os
 import re
 import sys
 from pathlib import Path
+
+from package_windows import SOCIAL_REQUIRED_FILES, validate_social_bundle
 
 REQUIRED = [
     "Phaedra.exe", "bin/Phaedra.exe", "version.txt",
@@ -16,11 +19,18 @@ REQUIRED = [
 ]
 
 
-def verify(root):
+def verify(root, require_social=False):
     root = Path(root).resolve()
     for name in REQUIRED:
         if not (root / name).is_file():
             raise RuntimeError("Missing: " + name)
+    social_manifest = root / "social-bundle.json"
+    if social_manifest.is_file():
+        validate_social_bundle(root, installed=True)
+    elif require_social:
+        raise RuntimeError("Phaedra Social is required but its package manifest is missing")
+    elif any((root / name).exists() for name in SOCIAL_REQUIRED_FILES):
+        raise RuntimeError("Phaedra Social files are present without their package manifest")
     ver = (root / "version.txt").read_text(encoding="utf-8-sig").strip()
     if not re.fullmatch(r"\d+\.\d+\.\d+", ver):
         raise RuntimeError("Invalid version in version.txt: " + repr(ver))
@@ -62,9 +72,12 @@ def verify(root):
 
 if __name__ == "__main__":
     try:
-        if len(sys.argv) != 2:
-            raise RuntimeError("Usage: verify_portable.py <Phaedra-Portable>")
-        verify(sys.argv[1])
+        parser = argparse.ArgumentParser(description=__doc__)
+        parser.add_argument("root", type=Path, help="Extracted Phaedra portable package")
+        parser.add_argument("--require-social", action="store_true",
+                            help="Fail unless the complete verified Phaedra Social component is included")
+        args = parser.parse_args()
+        verify(args.root, require_social=args.require_social)
     except (RuntimeError, OSError) as exc:
         print("VERIFY ERROR:", exc, file=sys.stderr)
         sys.exit(1)

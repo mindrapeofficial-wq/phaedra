@@ -1,0 +1,161 @@
+name: Phaedra Social prototype
+
+on:
+  push:
+    branches: ['feat/phaedra-social-stoat-*', 'preview/live']
+    paths:
+      - 'social/**'
+      - 'tools/phaedra_social/**'
+      - 'tools/package_windows.py'
+      - 'tools/tests/test_package_social_assets.py'
+      - '.github/workflows/phaedra-social.yml'
+  pull_request:
+    paths:
+      - 'social/**'
+      - 'tools/phaedra_social/**'
+      - 'tools/package_windows.py'
+      - 'tools/tests/test_package_social_assets.py'
+      - 'gtk2_ardour/ardour_ui_access_web.cc'
+      - '.github/workflows/phaedra-social.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phaedra-social-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  client:
+    name: Client contracts and package safety
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JavaScript and run contract tests
+        working-directory: social
+        run: |
+          npm run check
+          npm test
+          npm run build
+      - name: Verify optional Windows bundle imports
+        run: python -m unittest discover -s tools/tests -p 'test_package_social_assets.py' -v
+      - name: Verify permanent deployment configuration and private state handling
+        run: node social/deploy/production/production.test.mjs
+
+  production_boot:
+    name: Boot the persistent deployment with authenticated services
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    runs-on: ubuntu-22.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Start the production topology on an isolated local network
+        env:
+          PHAEDRA_PRODUCTION_BOOT_TEST: '1'
+        run: node social/deploy/production/boot-test.mjs
+
+  integration:
+    name: Two users and audio on real Stoat
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    # MongoDB 8 currently rejects the new Azure kernel on Ubuntu 24.04.
+    # Use the runner maintainers' workaround until SERVER-131779 reaches 8.x.
+    # https://github.com/actions/runner-images/issues/15005
+    runs-on: ubuntu-22.04
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Select the isolated state directory
+        run: echo "PHAEDRA_STOAT_STATE=$RUNNER_TEMP/phaedra-stoat" >> "$GITHUB_ENV"
+      - name: Prepare pinned, isolated Stoat instance
+        run: node social/deploy/local-stoat.mjs prepare --directory "$PHAEDRA_STOAT_STATE"
+      - name: Start the real local services
+        run: node social/deploy/local-stoat.mjs up --directory "$PHAEDRA_STOAT_STATE"
+      - name: Exchange messages and verify an audio file between two accounts
+        run: node social/tests/live-stoat.test.mjs
+      - name: Record service diagnostics without credentials
+        if: failure()
+        run: node social/deploy/local-stoat.mjs diagnose --directory "$PHAEDRA_STOAT_STATE"
+      - name: Stop the disposable services
+        if: always()
+        run: |
+          if [ -f "$PHAEDRA_STOAT_STATE/phaedra-stoat-local.json" ]; then
+            node social/deploy/local-stoat.mjs down --directory "$PHAEDRA_STOAT_STATE"
+          fi
+
+  windows:
+    name: Compile Windows social window
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    runs-on: windows-2022
+    timeout-minutes: 18
+    env:
+      PUBLIC_PHAEDRA_SOCIAL_API_URL: ${{ vars.PUBLIC_PHAEDRA_SOCIAL_API_URL }}
+      PUBLIC_PHAEDRA_SOCIAL_REGISTRATION_URL: ${{ vars.PUBLIC_PHAEDRA_SOCIAL_REGISTRATION_URL }}
+      PUBLIC_PHAEDRA_SOCIAL_ALLOWED_SERVICE_ORIGINS: ${{ vars.PUBLIC_PHAEDRA_SOCIAL_ALLOWED_SERVICE_ORIGINS }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Build web client
+        working-directory: social
+        run: npm run build
+      - name: Compile isolated WebView2 host and verify the bundle
+        shell: pwsh
+        run: ./tools/phaedra_social/build.ps1 -ClientDist social/dist -OutputDir artifacts/phaedra-social
+      - name: Verify native resources without loading audio or opening a browser
+        shell: pwsh
+        run: |
+          $process = Start-Process -FilePath './artifacts/phaedra-social/bin/PhaedraSocial.exe' -ArgumentList '--self-test' -PassThru -Wait
+          if ($process.ExitCode -ne 0) { throw "Social self-test returned $($process.ExitCode)" }
+      - name: Load the actual login interface in WebView2
+        shell: pwsh
+        run: ./tools/phaedra_social/smoke-test.ps1 -BundleRoot artifacts/phaedra-social
+      - name: Package the prototype and matching source
+        shell: pwsh
+        run: |
+          Compress-Archive -Path './artifacts/phaedra-social/*' -DestinationPath './artifacts/Phaedra-Social-Prototype-win-x64.zip'
+          git archive --format=zip --output=artifacts/Phaedra-Social-Prototype-source.zip HEAD social tools/phaedra_social COPYING
+          if ($LASTEXITCODE -ne 0) { throw 'Could not export the matching source archive' }
+          @'
+          import zipfile
+          with zipfile.ZipFile('artifacts/Phaedra-Social-Prototype-source.zip', 'a', compression=zipfile.ZIP_DEFLATED) as source:
+              source.write('artifacts/phaedra-social/share/phaedra-social/config.json', 'social/build-config.public.json')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'Could not preserve the public build configuration' }
+          $archives = Get-ChildItem './artifacts/Phaedra-Social-Prototype-*.zip'
+          foreach ($archive in $archives) {
+            $digest = (Get-FileHash -LiteralPath $archive.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$digest  $($archive.Name)" | Set-Content "$($archive.FullName).sha256" -Encoding ascii
+          }
+      - name: Preserve the Windows prototype
+        uses: actions/upload-artifact@v4
+        with:
+          name: phaedra-social-windows-prototype
+          path: |
+            artifacts/Phaedra-Social-Prototype-*.zip
+            artifacts/Phaedra-Social-Prototype-*.zip.sha256
+          if-no-files-found: error
+          retention-days: 3
