@@ -47,6 +47,7 @@ jobs:
             mingw-w64-ucrt-x86_64-pango
             mingw-w64-ucrt-x86_64-glib2
             mingw-w64-ucrt-x86_64-glibmm
+            mingw-w64-ucrt-x86_64-drmingw
             mingw-w64-ucrt-x86_64-curl
             mingw-w64-ucrt-x86_64-libxml2
             mingw-w64-ucrt-x86_64-flac
