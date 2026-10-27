@@ -47,6 +47,25 @@ jobs:
           npm run build
       - name: Verify optional Windows bundle imports
         run: python -m unittest discover -s tools/tests -p 'test_package_social_assets.py' -v
+      - name: Verify permanent deployment configuration and private state handling
+        run: node social/deploy/production/production.test.mjs
+
+  production_boot:
+    name: Boot the persistent deployment with authenticated services
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+    runs-on: ubuntu-22.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Start the production topology on an isolated local network
+        env:
+          PHAEDRA_PRODUCTION_BOOT_TEST: '1'
+        run: node social/deploy/production/boot-test.mjs
 
   integration:
     name: Two users and audio on real Stoat

@@ -74,6 +74,8 @@ Requiere Docker y Docker Compose 2.24.4+. El workflow `Phaedra Social prototype`
 
 El despliegue de pruebas desactiva correo y CAPTCHA y solo expone `127.0.0.1`. No es una configuración para publicar una comunidad en Internet. La instancia permanente requiere dominio, HTTPS, correo/recuperación de cuentas, almacenamiento, copias y administración propios.
 
+La preparación para una beta permanente en una VM está en [deploy/production/README.md](deploy/production/README.md). Genera configuración HTTPS, credenciales de infraestructura, persistencia, registro por invitación y una configuración pública exportable al cliente. Incluye operaciones de respaldo cifrado y recuperación; el destino, DNS y SMTP se configuran antes de ponerla en línea.
+
 ## Integración en Windows
 
 El host se compila con MSVC y WebView2, separado del motor Waf/GTK. Ver [tools/phaedra_social/README.md](../tools/phaedra_social/README.md).
