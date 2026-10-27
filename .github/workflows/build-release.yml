@@ -10,7 +10,8 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
+    # Pin MSVC 2022 while validating Phaedra/Surge compatibility.
+    runs-on: windows-2022
     defaults:
       run:
         shell: msys2 {0}
