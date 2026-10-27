@@ -648,7 +648,7 @@ msgstr "Añadir Pista/Bus/VCA"
 
 #: add_route_dialog.cc:74
 msgid "Input Config:"
-msgstr ""
+msgstr "Configuración de entrada:"
 
 #: add_route_dialog.cc:75
 msgid "Configuration:"
@@ -716,7 +716,7 @@ msgstr "Operación mono, estéreo o multi-canal para la(s) pista(s)"
 
 #: add_route_dialog.cc:110
 msgid "Mono or stereo operation for the track(s)"
-msgstr ""
+msgstr "Funcionamiento mono o estéreo de las pistas"
 
 #: add_route_dialog.cc:112 add_route_dialog.cc:125
 msgid "A group which the track(s) will be assigned to"
@@ -1054,7 +1054,7 @@ msgstr "Re-analizar datos"
 
 #: application_bar.cc:105
 msgid "Layered"
-msgstr ""
+msgstr "Por capas"
 
 #: application_bar.cc:106
 msgid "Non-Layered"
@@ -1062,7 +1062,7 @@ msgstr "Sin Capas"
 
 #: application_bar.cc:107
 msgid "Snd on Snd"
-msgstr ""
+msgstr "Sonido sobre sonido"
 
 # en realidad no existe este término en el español...
 #: application_bar.cc:120 editor_actions.cc:667 rc_option_editor.cc:3772
@@ -1120,11 +1120,11 @@ msgstr "Auto Retorno"
 
 #: application_bar.cc:201
 msgid "Dim All"
-msgstr ""
+msgstr "Atenuar todo"
 
 #: application_bar.cc:203
 msgid "Mute All"
-msgstr ""
+msgstr "Silenciar todo"
 
 #: application_bar.cc:394
 msgid "Feedgeek"
@@ -1213,7 +1213,7 @@ msgstr "Restablecer Todos los Medidores de Pico"
 
 #: application_bar.cc:690
 msgid "No Align"
-msgstr ""
+msgstr "Sin alineación"
 
 #: application_bar.cc:749 editor_actions.cc:560
 msgid "Unset #%1"
@@ -1241,7 +1241,7 @@ msgstr ""
 
 #: application_bar.cc:925
 msgid "No Latency"
-msgstr ""
+msgstr "Sin latencia"
 
 #: application_bar.cc:941 application_bar.cc:949
 msgid "SyncSource|Int."
@@ -1319,7 +1319,7 @@ msgstr "Medidor de inactividad"
 
 #: ardour_ui.cc:319 io_plugin_window.cc:56
 msgid "I/O Plugins"
-msgstr ""
+msgstr "Plugins de E/S"
 
 #: ardour_ui.cc:320 plugin_manager_ui.cc:52
 msgid "Plugin Manager"
@@ -1331,7 +1331,7 @@ msgstr "Carga DSP de Plugins"
 
 #: ardour_ui.cc:322 dsp_stats_window.cc:29
 msgid "Performance Meters"
-msgstr ""
+msgstr "Medidores de rendimiento"
 
 #: ardour_ui.cc:323 rc_option_editor.cc:4073 transport_masters_dialog.cc:674
 msgid "Transport Masters"
@@ -1363,7 +1363,7 @@ msgstr "Teclado Virtual"
 
 #: ardour_ui.cc:330
 msgid "Library Downloader"
-msgstr ""
+msgstr "Descargador de bibliotecas"
 
 #: ardour_ui.cc:331
 msgid "Audio Connections"
@@ -1853,15 +1853,15 @@ msgstr "No puedes añadir pistas o buses sin una sesión ya cargada."
 
 #: ardour_ui.cc:2865
 msgid "Audio Channels for new track:"
-msgstr ""
+msgstr "Canales de audio de la pista nueva:"
 
 #: ardour_ui.cc:2865
 msgid "Audio Channels for new bus:"
-msgstr ""
+msgstr "Canales de audio del bus nuevo:"
 
 #: ardour_ui.cc:2873
 msgid "Custom Channel"
-msgstr ""
+msgstr "Canal personalizado"
 
 #: ardour_ui.cc:2929
 msgid ""
@@ -2189,7 +2189,7 @@ msgstr "Preferencias"
 
 #: ardour_ui_ed.cc:180 recorder_ui.cc:81 recorder_ui.cc:339
 msgid "Recorder"
-msgstr ""
+msgstr "Grabador"
 
 #: ardour_ui_ed.cc:181
 msgid "Cue Grid"
@@ -2258,7 +2258,7 @@ msgstr "Cerrar"
 
 #: ardour_ui_ed.cc:204
 msgid "Add New Track, Bus, VCA or Foldback..."
-msgstr ""
+msgstr "Añadir pista, bus, VCA o retorno..."
 
 #: ardour_ui_ed.cc:209
 msgid "Duplicate Tracks/Busses..."
@@ -2302,7 +2302,7 @@ msgstr "Instantánea Rápida (y cambiar a la nueva versión) ..."
 
 #: ardour_ui_ed.cc:245
 msgid "Save Session Copy As..."
-msgstr ""
+msgstr "Guardar copia de la sesión como..."
 
 #: ardour_ui_ed.cc:248
 msgid "Archive..."
@@ -2317,7 +2317,7 @@ msgstr "Renombrar..."
 
 #: ardour_ui_ed.cc:257
 msgid "Create Session Template..."
-msgstr ""
+msgstr "Crear plantilla de sesión..."
 
 #: ardour_ui_ed.cc:260
 msgid "Templates"
@@ -2325,11 +2325,11 @@ msgstr "Plantillas"
 
 #: ardour_ui_ed.cc:263
 msgid "Save Mixer Strips..."
-msgstr ""
+msgstr "Guardar canales del mezclador..."
 
 #: ardour_ui_ed.cc:268
 msgid "Import Mixer Strips..."
-msgstr ""
+msgstr "Importar canales del mezclador..."
 
 #: ardour_ui_ed.cc:273 export_format_dialog.cc:324
 msgid "Metadata"
@@ -2355,7 +2355,7 @@ msgstr "Vaciar papelera"
 
 #: ardour_ui_ed.cc:287
 msgid "Print Keyboard Shortcuts"
-msgstr ""
+msgstr "Imprimir atajos de teclado"
 
 #: ardour_ui_ed.cc:295
 msgid "Quit"
@@ -2527,7 +2527,7 @@ msgstr ""
 
 #: ardour_ui_ed.cc:436
 msgid "Fast Forward"
-msgstr ""
+msgstr "Avance rápido"
 
 #: ardour_ui_ed.cc:439
 msgid "Record Enable"
@@ -2547,7 +2547,7 @@ msgstr ""
 
 #: ardour_ui_ed.cc:451
 msgid "Toggle Metronome"
-msgstr ""
+msgstr "Activar/desactivar metrónomo"
 
 #: ardour_ui_ed.cc:454
 msgid "Toggle Auto Return"
@@ -2736,15 +2736,15 @@ msgstr "Localizar a marca %1"
 
 #: ardour_ui_ed.cc:641
 msgid "Jump to Loop Start"
-msgstr ""
+msgstr "Ir al inicio del bucle"
 
 #: ardour_ui_ed.cc:643
 msgid "Jump to Loop End"
-msgstr ""
+msgstr "Ir al final del bucle"
 
 #: ardour_ui_ed.cc:646
 msgid "Import Audio/MIDI files..."
-msgstr ""
+msgstr "Importar archivos de audio/MIDI..."
 
 #: ardour_ui_ed.cc:650
 msgid "Stem export..."
@@ -2752,7 +2752,7 @@ msgstr "Stem export..."
 
 #: ardour_ui_ed.cc:653
 msgid "Quick Audio Export..."
-msgstr ""
+msgstr "Exportación rápida de audio..."
 
 #: ardour_ui_ed.cc:656
 msgid "Export Surround Master..."
@@ -2984,11 +2984,11 @@ msgstr "Formato de archivo"
 
 #: ardour_ui_ed.cc:919
 msgid "Total I/O Latency"
-msgstr ""
+msgstr "Latencia total de E/S"
 
 #: ardour_ui_ed.cc:920
 msgid "Plugin Latency"
-msgstr ""
+msgstr "Latencia de plugins"
 
 #: ardour_ui_ed.cc:921
 msgid "Timecode Format"
@@ -3144,7 +3144,7 @@ msgstr "Error al cargar"
 
 #: ardour_ui_session.cc:475
 msgid "Session not loaded"
-msgstr ""
+msgstr "Sesión no cargada"
 
 #: ardour_ui_session.cc:491
 msgid ""
