@@ -690,6 +690,7 @@ try {
   if (!response.ok) throw new Error('No se ha podido cargar la configuración de esta instalación.');
   state.config = normalizeConfig(await response.json());
   $('server-url').value = state.config.apiUrl;
+  $('existing-chat').hidden = Boolean(state.config.apiUrl);
   $('upload-limit').textContent = `Audio de hasta ${fileSize(state.config.maxUploadBytes)}. El servidor puede aplicar un límite menor.`;
   if (state.config.registrationUrl) {
     $('registration-link').href = state.config.registrationUrl;

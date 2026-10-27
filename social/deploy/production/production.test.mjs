@@ -10,7 +10,7 @@ import { join } from 'node:path';
 import {
   command, configurationFiles, configurationHashes, lock, makeManifest, manifestFile,
   newInfrastructureSecrets, outsideRepository, privateJson, publicClientConfig,
-  readState, repositoryRoot, validateSecrets, validateSettings, writePrivate,
+  readState, redact, repositoryRoot, validateSecrets, validateSettings, writePrivate,
 } from './lib.mjs';
 import { productionCaddy, productionCompose, productionConfig } from './prepare.mjs';
 import { verify, verifyImageLock } from './manage.mjs';
@@ -191,6 +191,22 @@ test('command errors suppress secret-bearing child output', async () => {
   const secret = 'private-synthetic-error-content';
   await assert.rejects(command(process.execPath, ['-e', 'process.stderr.write(' + JSON.stringify(secret) + ');process.exit(9)']),
     (error) => error.message.includes('exit 9') && !error.message.includes(secret));
+});
+
+test('diagnostics redact all credential variants without erasing public status text', (t) => {
+  const state = fixtureState(t);
+  const infrastructure = newInfrastructureSecrets();
+  const encryptionKey = 'synthetic-file-key-with+/=symbols';
+  writePrivate(join(state.directory, 'admin-secrets.json'), JSON.stringify(infrastructure));
+  writePrivate(join(state.upstream, 'compose.production.json'), JSON.stringify(productionCompose(infrastructure)));
+  writePrivate(join(state.upstream, 'Revolt.toml'), productionConfig(state.settings, fakeSecrets, infrastructure));
+  writePrivate(join(state.upstream, 'secrets.env'), "REVOLT__FILES__ENCRYPTION_KEY='" + encryptionKey + "'\n");
+  const values = [...Object.values(infrastructure), ...Object.values(fakeSecrets), encryptionKey];
+  const variants = values.flatMap((value) => [value, JSON.stringify(value).slice(1, -1), encodeURIComponent(value)]);
+  const publicStatus = 'database: 3 checks, not ready; restart=no; container running';
+  const output = redact(state, publicStatus + '\n' + variants.join('\n'));
+  assert.equal(output.split('\n')[0], publicStatus);
+  for (const value of variants) assert.ok(!output.includes(value), 'A credential variant was not redacted.');
 });
 
 test('native dump transport preserves binary bytes through file descriptors', async (t) => {

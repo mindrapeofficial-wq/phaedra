@@ -283,10 +283,21 @@ export function redact(state, text) {
     } else if (value && typeof value === 'object') Object.values(value).forEach(collect);
   };
   collect(readJson(join(state.directory, 'admin-secrets.json')));
-  collect(readJson(join(state.upstream, 'compose.production.json')));
+  // Public settings such as restart="no" and max-file="3" are not secrets.
+  // Redacting every string erased useful words and numbers from diagnostics.
+  const sensitiveName = /password|secret|token|key|credential|username|mongodb|redis/i;
+  const collectSensitive = (value) => {
+    if (!value || typeof value !== 'object') return;
+    for (const [name, nested] of Object.entries(value)) {
+      if (sensitiveName.test(name) && typeof nested === 'string') collect(nested);
+      else collectSensitive(nested);
+    }
+  };
+  collectSensitive(readJson(join(state.upstream, 'compose.production.json')));
   const config = readFileSync(join(state.upstream, 'Revolt.toml'), 'utf8');
-  for (const match of config.matchAll(/"(?:[^"\\]|\\.)*"/g)) {
-    try { collect(JSON.parse(match[0])); } catch { /* Fail closed on known generated strings. */ }
+  for (const match of config.matchAll(/^\s*([a-z0-9_]+)\s*=\s*("(?:[^"\\]|\\.)*")/gmi)) {
+    if (!sensitiveName.test(match[1])) continue;
+    try { collect(JSON.parse(match[2])); } catch { /* Generated strings are valid JSON literals. */ }
   }
   for (const line of readFileSync(join(state.upstream, 'secrets.env'), 'utf8').split('\n')) {
     const match = line.match(/^[A-Z_][A-Z0-9_]*=(.*)$/);

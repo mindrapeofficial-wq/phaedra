@@ -149,7 +149,7 @@ PHAEDRA_PRODUCTION_BOOT_TEST=1 node social/deploy/production/boot-test.mjs
 
 Las pruebas usan fixtures sintéticos y no contactan SMTP, hCaptcha ni un dominio real. Verifican preparación, rutas privadas, permisos, configuración pública sin secretos, guardas de registro, transporte binario y errores redactados.
 
-El segundo comando requiere Docker. Crea una instancia nueva, conserva la autenticación y la persistencia de producción, añade un gateway HTTP exclusivo de prueba en 127.0.0.1:18081 y una red Docker interna sin salida externa. Comprueba la API, Autumn, los procesos permanentes y el rechazo de Mongo/Redis a operaciones sin credenciales. No acepta un directorio existente, crea cuentas ni llama a SMTP. El overlay de prueba no puede cargarse mediante manage/up.
+El segundo comando requiere Docker. Valida primero el Caddyfile HTTPS original con la imagen fijada y la red desactivada. Después crea una instancia nueva, conserva la autenticación y la persistencia de producción y usa un gateway HTTP exclusivo de prueba dentro de una red Docker interna sin salida externa ni puertos publicados. Consulta la API y Autumn desde el loopback del contenedor Caddy; comprueba los procesos permanentes y el rechazo de Mongo/Redis a operaciones sin credenciales. No acepta un directorio existente, crea cuentas ni llama a SMTP. El overlay de prueba no puede cargarse mediante manage/up.
 
 Entrega SMTP, certificado del dominio, cuentas propias y un ensayo completo de restauración se comprueban cuando exista el destino definitivo. Una validación de sintaxis no acredita un servicio público operativo.
 

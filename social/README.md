@@ -53,6 +53,8 @@ Las compilaciones de preview también aceptan tres variables públicas de GitHub
 
 Estas variables se configuran como **Repository variables**, no contienen credenciales y se incluyen en el cliente distribuido. Si están vacías, se conserva `config.json`; por defecto se solicita el servidor al abrir la ventana. Un archivo indicado mediante `--config` tiene prioridad sobre todas estas variables. Una dirección con credenciales, parámetros o un origen inválido hace fallar la compilación antes de sustituir una distribución anterior.
 
+Cuando todavía no hay una comunidad predeterminada, la pantalla de acceso ofrece un enlace al chat actual de Phaedra. Así puede seguir utilizándose mientras se configura la instancia permanente; el enlace se oculta al distribuir una API predeterminada.
+
 El ZIP de fuentes de cada paquete incluye la configuración pública emitida como `social/build-config.public.json`. Para reproducir esa configuración desde las fuentes extraídas, ejecutar `node social/scripts/build.mjs --config social/build-config.public.json`.
 
 No se deben poner contraseñas, tokens ni claves de servidor en esta configuración. Las credenciales de usuario se envían solo al API seleccionado; la sesión se conserva en memoria y se pierde al cerrar la ventana. El socket se autentica mediante un primer mensaje `Authenticate`, sin tokens en la URL. El cliente no sigue redirecciones en solicitudes autenticadas.
