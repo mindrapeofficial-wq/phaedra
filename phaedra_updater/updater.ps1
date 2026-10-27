@@ -8,8 +8,8 @@ try {
     $release = Invoke-RestMethod -Uri 'https://api.github.com/repos/mindrapeofficial-wq/phaedra/releases/latest' -Headers $headers -TimeoutSec 10
     $remote = [version]([string]$release.tag_name).TrimStart('v')
     if ($remote -le $local) { exit 0 }
-    $asset = @($release.assets | Where-Object { $_.name -eq 'Phaedra-Instalador-Windows-x64.exe' }) | Select-Object -First 1
-    if (-not $asset -or $asset.digest -notmatch '^sha256:[a-fA-F0-9]{64}$') { exit 0 }
+    $asset = @($release.assets | Where-Object { $_.name -match '^Phaedra-v.*\.zip$' }) | Select-Object -First 1
+    if (-not $asset) { exit 0 }
 } catch { exit 0 }
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
@@ -62,7 +62,7 @@ $dialog.Dispose()
 if ($answer -ne [System.Windows.Forms.DialogResult]::Yes) { exit 0 }
 $stage = Join-Path $env:LOCALAPPDATA 'PhaedraUpdater'
 New-Item -ItemType Directory -Force -Path $stage | Out-Null
-$installer = Join-Path $stage ("Phaedra-$remote-Instalador.exe")
+$zipFile = Join-Path $stage $asset.name
 $form = New-Object System.Windows.Forms.Form
 $form.Text = 'Actualizando Phaedra'
 $form.Size = New-Object System.Drawing.Size(440, 130)
@@ -84,18 +84,15 @@ $form.Show()
 $client = New-Object System.Net.WebClient
 $client.Headers.Add('User-Agent', 'Phaedra-Updater')
 try {
-    $client.DownloadFileAsync([uri]$asset.browser_download_url, $installer)
+    $client.DownloadFileAsync([uri]$asset.browser_download_url, $zipFile)
     while ($client.IsBusy) {
         [System.Windows.Forms.Application]::DoEvents()
         Start-Sleep -Milliseconds 80
     }
-    if (-not (Test-Path -LiteralPath $installer)) { throw 'La descarga no se completo.' }
-    $expected = ([string]$asset.digest).Substring(7).ToLowerInvariant()
-    $actual = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
-    if ($actual -ne $expected) { throw 'La verificacion del archivo no coincide.' }
+    if (-not (Test-Path -LiteralPath $zipFile)) { throw 'La descarga no se completo.' }
     $form.Close()
     $helper = Join-Path $PhaedraDir 'updater\install-update.ps1'
-    $arguments = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "{0}" -Installer "{1}" -PhaedraDir "{2}" -LauncherPid {3}' -f $helper,$installer,$PhaedraDir,$LauncherPid
+    $arguments = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "{0}" -ZipFile "{1}" -PhaedraDir "{2}" -LauncherPid {3}' -f $helper,$zipFile,$PhaedraDir,$LauncherPid
     Start-Process -FilePath 'powershell.exe' -ArgumentList $arguments -WindowStyle Hidden | Out-Null
     exit 2
 } catch {
