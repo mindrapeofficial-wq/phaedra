@@ -70,7 +70,7 @@ Invoke-Checked $NativeCMake @(
     "-DCMAKE_GENERATOR_INSTANCE=$VSInstance",
     '-DCMAKE_POLICY_VERSION_MINIMUM=3.5',
     '-DSURGE_BUILD_TESTRUNNER=OFF',
-    '-DSURGE_BUILD_FX=OFF',
+    # surge-fx target must exist for pluginval.cmake in this upstream version.
     '-DSURGE_SKIP_STANDALONE=ON',
     '-DSURGE_COPY_AFTER_BUILD=OFF'
 )
