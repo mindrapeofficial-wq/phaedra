@@ -38,6 +38,14 @@
 
 #include "pbd/openuri.h"
 
+#ifdef PLATFORM_WINDOWS
+#include "ardour/filesystem_paths.h"
+#include <glibmm/fileutils.h>
+#include <glibmm/miscutils.h>
+#include <glibmm/spawn.h>
+#include <vector>
+#endif
+
 #include "ardour_message.h"
 #include "ardour_ui.h"
 
@@ -51,7 +59,8 @@ using namespace std;
 /* Phaedra support destinations. Keep these centralized so the application
  * does not accidentally send Phaedra users to Ardour's project channels.
  *
- * The IRC channel is a first-party room. Hosting must be configured before opening it.
+ * Phaedra Social is optional and runs in its own process. The existing web
+ * chat stays available when that component has not been packaged.
  */
 namespace {
 /* Phaedra owns this chat application and domain. Developers can override
@@ -100,6 +109,26 @@ ARDOUR_UI::launch_chat ()
     if (url.rfind ("https://", 0) == 0 ||
         url.rfind ("http://localhost:", 0) == 0 ||
         url.rfind ("http://127.0.0.1:", 0) == 0) {
+#ifdef PLATFORM_WINDOWS
+        const std::string root = ARDOUR::windows_package_directory_path ();
+        const std::string helper = Glib::build_filename (root, "bin", "PhaedraSocial.exe");
+        if (Glib::file_test (helper, Glib::FILE_TEST_IS_REGULAR)) {
+            std::vector<std::string> args;
+            args.push_back (helper);
+            args.push_back ("--fallback-url");
+            args.push_back (url);
+            try {
+                /* An absolute executable path and argv avoid shell parsing.
+                 * The helper handles missing assets/runtime after spawning;
+                 * no browser code or network work runs on the DAW thread.
+                 */
+                Glib::spawn_async (root, args, Glib::SPAWN_DEFAULT);
+                return;
+            } catch (const Glib::Error&) {
+                /* A launch failure retains the existing web-chat behavior. */
+            }
+        }
+#endif
         open_phaedra_support_url (url.c_str());
         return;
     }
@@ -149,9 +178,7 @@ ARDOUR_UI::launch_website_dev ()
 void
 ARDOUR_UI::launch_forums ()
 {
-    /* GitHub Discussions is not enabled. Link to Phaedra's community
-     * guide, with both IRC live chat and the support issues tracker.
-     */
+    /* GitHub Discussions is not enabled. Link to Phaedra's community guide. */
     open_phaedra_support_url (phaedra_community_url);
 }
 
