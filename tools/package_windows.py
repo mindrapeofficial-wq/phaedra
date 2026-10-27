@@ -74,8 +74,13 @@ def _read_unique_json(path):
         raise RuntimeError("Invalid social bundle JSON: " + str(path)) from exc
 
 
-def validate_social_bundle(bundle):
-    """Validate the explicit optional bundle before importing any of its files."""
+def _social_payload_path(name):
+    return name in ("bin/PhaedraSocial.exe", "bin/WebView2Loader.dll") or name.startswith(
+        ("share/phaedra-social/", "licenses/webview2/", "licenses/phaedra-social/"))
+
+
+def validate_social_bundle(bundle, installed=False):
+    """Validate an input bundle, or its owned files inside an installed DAW."""
     bundle = Path(bundle)
     if bundle.is_symlink() or not bundle.is_dir():
         raise RuntimeError("Social bundle must be a real directory")
@@ -108,8 +113,7 @@ def validate_social_bundle(bundle):
                 or any(ord(char) < 32 for char in name)
                 or name.casefold() in casefolded):
             raise RuntimeError("Unsafe or duplicate social bundle path: " + name)
-        if name not in ("bin/PhaedraSocial.exe", "bin/WebView2Loader.dll") and not name.startswith(
-                ("share/phaedra-social/", "licenses/webview2/", "licenses/phaedra-social/")):
+        if not _social_payload_path(name):
             raise RuntimeError("Unexpected social bundle path: " + name)
         casefolded.add(name.casefold())
         if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
@@ -121,7 +125,7 @@ def validate_social_bundle(bundle):
             raise RuntimeError("Social bundle cannot contain symbolic links")
         if path.is_file():
             name = path.relative_to(bundle).as_posix()
-            if name != "social-bundle.json":
+            if name != "social-bundle.json" and (not installed or _social_payload_path(name)):
                 actual.add(name)
     if actual != set(files):
         raise RuntimeError("Social bundle files do not match its manifest")

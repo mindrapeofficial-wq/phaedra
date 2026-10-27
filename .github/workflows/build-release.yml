@@ -6,6 +6,11 @@ on:
     tags: ['v*']
   pull_request:
   workflow_dispatch:
+    inputs:
+      include_social:
+        description: 'Include Phaedra Social in this non-release preview build'
+        type: boolean
+        default: false
 
 concurrency:
   group: phaedra-${{ github.ref }}
@@ -15,12 +20,63 @@ permissions:
   contents: read
 
 jobs:
+  social:
+    name: Build the isolated social component for Phaedra Preview
+    if: >-
+      github.ref == 'refs/heads/preview/live' ||
+      github.base_ref == 'preview/live' ||
+      (github.event_name == 'workflow_dispatch' && github.ref_type != 'tag' && inputs.include_social)
+    runs-on: windows-2022
+    timeout-minutes: 18
+    env:
+      PUBLIC_PHAEDRA_SOCIAL_API_URL: ${{ vars.PUBLIC_PHAEDRA_SOCIAL_API_URL }}
+      PUBLIC_PHAEDRA_SOCIAL_REGISTRATION_URL: ${{ vars.PUBLIC_PHAEDRA_SOCIAL_REGISTRATION_URL }}
+      PUBLIC_PHAEDRA_SOCIAL_ALLOWED_SERVICE_ORIGINS: ${{ vars.PUBLIC_PHAEDRA_SOCIAL_ALLOWED_SERVICE_ORIGINS }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Validate and build the configured social client
+        working-directory: social
+        shell: pwsh
+        run: |
+          npm run check
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm test
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm run build
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Compile MSVC social host separately from the audio engine
+        shell: pwsh
+        run: ./tools/phaedra_social/build.ps1 -ClientDist social/dist -OutputDir artifacts/phaedra-social
+      - name: Load the real WebView2 interface without logging in
+        shell: pwsh
+        run: ./tools/phaedra_social/smoke-test.ps1 -BundleRoot artifacts/phaedra-social
+      - name: Preserve the verified component for this Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: phaedra-social-component
+          path: artifacts/phaedra-social/
+          if-no-files-found: error
+          retention-days: 3
+
   windows:
     name: Build and verify portable Windows DAW
+    needs: social
+    # Stable builds keep working when the optional preview-only job is skipped.
+    # A requested social component must succeed before packaging a DAW with it.
+    if: ${{ !cancelled() && (needs.social.result == 'success' || needs.social.result == 'skipped') }}
     runs-on: windows-2022
     timeout-minutes: 180
     env:
       PHAEDRA_ENGINE_VERSION: '8.12.0'
+      PHAEDRA_INCLUDE_SOCIAL: ${{ needs.social.result == 'success' && 'true' || 'false' }}
     defaults:
       run:
         shell: msys2 {0}
@@ -30,6 +86,13 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Obtain the social component built from this workflow's source
+        if: needs.social.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          name: phaedra-social-component
+          path: artifacts/phaedra-social
 
       - uses: msys2/setup-msys2@v2
         with:
@@ -87,7 +150,7 @@ jobs:
             version="0.0.0"
           fi
           echo "PHAEDRA_PACKAGE_VERSION=$version" >> "$GITHUB_ENV"
-          if [[ "$GITHUB_REF" == refs/heads/preview/live ]]; then
+          if [[ "$GITHUB_REF" == refs/heads/preview/live || "$PHAEDRA_INCLUDE_SOCIAL" == true ]]; then
             echo "PHAEDRA_CHANNEL=preview" >> "$GITHUB_ENV"
           else
             echo "PHAEDRA_CHANNEL=stable" >> "$GITHUB_ENV"
@@ -101,6 +164,16 @@ jobs:
           gcc -fsyntax-only tools/phaedra_launcher.c
           powershell.exe -NoProfile -Command '$errorsFound = $null; $tokens = $null; [void][System.Management.Automation.Language.Parser]::ParseFile("phaedra_updater/updater.ps1", [ref]$tokens, [ref]$errorsFound); if ($errorsFound.Count) { $errorsFound | Format-List; exit 1 }'
           powershell.exe -NoProfile -Command '$errorsFound = $null; $tokens = $null; [void][System.Management.Automation.Language.Parser]::ParseFile("phaedra_preview/PhaedraPreview.ps1", [ref]$tokens, [ref]$errorsFound); if ($errorsFound.Count) { $errorsFound | Format-List; exit 1 }'
+
+      - name: Validate the downloaded social component before compiling audio
+        if: needs.social.result == 'success'
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, 'tools')
+          from package_windows import validate_social_bundle
+          validate_social_bundle('artifacts/phaedra-social')
+          PY
 
       - name: Configure audio engine
         run: |
@@ -117,8 +190,27 @@ jobs:
 
       - name: Package Windows portable
         run: |
-          bash make_portable.sh
-          python tools/verify_portable.py Phaedra-Portable
+          if [[ "$PHAEDRA_INCLUDE_SOCIAL" == true ]]; then
+            bash make_portable.sh --social-bundle artifacts/phaedra-social
+            python tools/verify_portable.py Phaedra-Portable --require-social
+          else
+            bash make_portable.sh
+            python tools/verify_portable.py Phaedra-Portable
+          fi
+
+      - name: Verify the social component from its final DAW package location
+        if: needs.social.result == 'success'
+        shell: pwsh
+        run: |
+          $bundle = Join-Path $pwd 'Phaedra-Portable'
+          $helper = Join-Path $bundle 'bin/PhaedraSocial.exe'
+          $process = Start-Process -FilePath $helper -ArgumentList '--self-test' -WorkingDirectory $bundle -PassThru
+          if (-not $process.WaitForExit(30000)) {
+            $process.Kill()
+            throw 'Packaged social self-test did not exit within 30 seconds'
+          }
+          if ($process.ExitCode -ne 0) { throw "Packaged social self-test returned $($process.ExitCode)" }
+          ./tools/phaedra_social/smoke-test.ps1 -BundleRoot $bundle
 
       - name: Smoke-test Windows launch and core executable
         shell: pwsh
@@ -148,22 +240,32 @@ jobs:
           (cd Phaedra-Portable && find . -type f -print | LC_ALL=C sort | zip -X -q -9 "../$package" -@)
           sha256sum "$package" > "$package.sha256"
           python - "$package" <<'PY'
-          import sys, zipfile
+          import os, sys, zipfile
           with zipfile.ZipFile(sys.argv[1]) as bundle:
               assert bundle.testzip() is None, "Corrupt release ZIP"
               assert "version.txt" in bundle.namelist()
               assert "MANIFEST.sha256" in bundle.namelist()
+              if os.environ.get('PHAEDRA_INCLUDE_SOCIAL') == 'true':
+                  sys.path.insert(0, 'tools')
+                  from package_windows import SOCIAL_REQUIRED_FILES
+                  assert SOCIAL_REQUIRED_FILES.issubset(bundle.namelist()), 'Social component missing from DAW ZIP'
+                  assert 'social-bundle.json' in bundle.namelist(), 'Social manifest missing from DAW ZIP'
           PY
           source="Phaedra-v$PHAEDRA_PACKAGE_VERSION-source.zip"
           git archive --format=zip --output="$source" HEAD
           python - "$source" <<'PY'
-          import sys, zipfile
+          import os, sys, zipfile
           from pathlib import Path
           revision = Path('libs/ardour/revision.cc')
           if not revision.is_file():
               raise SystemExit('Missing generated revision.cc in source export')
           with zipfile.ZipFile(sys.argv[1], 'a', compression=zipfile.ZIP_DEFLATED) as bundle:
               bundle.write(revision, 'libs/ardour/revision.cc')
+              if os.environ.get('PHAEDRA_INCLUDE_SOCIAL') == 'true':
+                  # Repository variables may set public endpoints. Preserve the
+                  # exact emitted configuration alongside its matching sources.
+                  config = Path('Phaedra-Portable/share/phaedra-social/config.json')
+                  bundle.write(config, 'social/build-config.public.json')
           PY
           sha256sum "$source" > "$source.sha256"
 
@@ -182,7 +284,7 @@ jobs:
   publish:
     name: Release only after successful Windows smoke test
     needs: windows
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: ${{ !cancelled() && needs.windows.result == 'success' && startsWith(github.ref, 'refs/tags/v') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -206,7 +308,7 @@ jobs:
   publish_preview:
     name: Publish an isolated Phaedra Preview after successful Windows tests
     needs: windows
-    if: github.event_name == 'push' && github.ref == 'refs/heads/preview/live'
+    if: ${{ !cancelled() && needs.windows.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/preview/live' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write

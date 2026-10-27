@@ -29,11 +29,14 @@ constexpr wchar_t kVirtualHost[] = L"phaedra-social.invalid";
 constexpr wchar_t kDefaultFallback[] = L"https://phaedra-chat.vercel.app/";
 constexpr UINT kFailureMessage = WM_APP + 1;
 constexpr UINT kOpenExternalMessage = WM_APP + 2;
+constexpr UINT_PTR kSmokeDeadlineTimer = 1;
+constexpr UINT_PTR kSmokeProbeTimer = 2;
 
 struct Options {
     fs::path assets;
     std::wstring fallback = kDefaultFallback;
     bool self_test = false;
+    bool ui_smoke_test = false;
 };
 
 bool ParseWebUrl(const std::wstring& value, URL_COMPONENTS& parts) {
@@ -211,21 +214,27 @@ bool ReadOptions(Options& options, const fs::path& exe) {
     for (int i = 1; i < argc && valid; ++i) {
         const std::wstring argument = argv[i];
         if (argument == L"--self-test") options.self_test = true;
+        else if (argument == L"--ui-smoke-test") options.ui_smoke_test = true;
         else if (argument == L"--assets" && i + 1 < argc) options.assets = argv[++i];
         else if (argument == L"--fallback-url" && i + 1 < argc) options.fallback = argv[++i];
         else valid = false;
     }
     LocalFree(argv);
-    return valid && IsSafeFallback(options.fallback);
+    return valid && !(options.self_test && options.ui_smoke_test) && IsSafeFallback(options.fallback);
 }
 
 class SocialWindow {
 public:
     explicit SocialWindow(Options options, fs::path exe) : options_(std::move(options)), exe_(std::move(exe)) {}
-    ~SocialWindow() { CloseView(); if (loader_) FreeLibrary(loader_); }
+    ~SocialWindow() {
+        CloseView();
+        if (loader_) FreeLibrary(loader_);
+        if (!smoke_profile_.empty()) { std::error_code error; fs::remove_all(smoke_profile_, error); }
+    }
     void Shutdown() { CloseView(); }
 
     bool Create(HINSTANCE instance) {
+        exit_code_ = options_.ui_smoke_test ? 12 : 0;
         WNDCLASSEXW wc{sizeof(wc)};
         wc.hInstance = instance;
         wc.lpfnWndProc = WindowProcedure;
@@ -240,6 +249,10 @@ public:
         if (!window_) return false;
         ShowWindow(window_, SW_SHOW);
         UpdateWindow(window_);
+        if (options_.ui_smoke_test && !SetTimer(window_, kSmokeDeadlineTimer, 30000, nullptr)) {
+            Fail(L"No se pudo iniciar el límite de tiempo de la prueba visual.");
+            return true;
+        }
         StartWebView();
         return true;
     }
@@ -251,6 +264,9 @@ private:
     HMODULE loader_ = nullptr;
     bool closing_ = false;
     bool failure_pending_ = false;
+    bool smoke_probe_pending_ = false;
+    int exit_code_ = 0;
+    fs::path smoke_profile_;
     std::wstring failure_;
     std::deque<std::wstring> external_links_;
     ComPtr<ICoreWebView2Environment> environment_;
@@ -259,15 +275,20 @@ private:
 
     void CloseView() {
         closing_ = true;
+        if (window_) {
+            KillTimer(window_, kSmokeDeadlineTimer);
+            KillTimer(window_, kSmokeProbeTimer);
+        }
         if (controller_) controller_->Close();
         view_.Reset();
         controller_.Reset();
         environment_.Reset();
     }
 
-    void Fail(const wchar_t* reason) {
+    void Fail(const wchar_t* reason, int code = 10) {
         if (closing_ || failure_pending_) return;
         failure_pending_ = true;
+        exit_code_ = code;
         failure_ = reason;
         PostMessageW(window_, kFailureMessage, 0, 0);
     }
@@ -277,11 +298,51 @@ private:
     }
 
     void QueueExternal(const std::wstring& uri) {
-        if (closing_ || external_links_.size() >= 8) return;
+        if (closing_ || options_.ui_smoke_test || external_links_.size() >= 8) return;
         external_links_.push_back(uri);
         // Browser callbacks must return before any shell/UI operation can
         // display modal dialogs or re-enter the WebView message loop.
         PostMessageW(window_, kOpenExternalMessage, 0, 0);
+    }
+
+    void ProbeSmoke() {
+        if (!options_.ui_smoke_test || closing_ || failure_pending_ || smoke_probe_pending_ || !view_) return;
+        smoke_probe_pending_ = true;
+        // The upload-limit text is populated only after app.js has imported
+        // its modules, fetched config.json and normalized it successfully.
+        // No login form is submitted and no account is created by this probe.
+        constexpr wchar_t probe[] = LR"JS((() => {
+            if (location.origin !== 'https://phaedra-social.invalid') return -1;
+            const byId = (id) => document.getElementById(id);
+            if (document.readyState !== 'complete') return 0;
+            const login = byId('login-view'), form = byId('login-form');
+            const error = byId('login-error'), submit = byId('login-submit');
+            if (error && !error.hidden && error.textContent.trim()) return -1;
+            const logo = document.querySelector('img[src="./assets/mark.svg"]');
+            if (!login || !form || !submit || !byId('server-url') || !byId('email') || !byId('password')) return 0;
+            if (!byId('workspace')?.hidden || !error?.hidden || submit.disabled) return 0;
+            if (!byId('upload-limit')?.textContent.trim() || !document.styleSheets.length) return 0;
+            if (getComputedStyle(login).display === 'none' || login.getBoundingClientRect().width < 100) return 0;
+            if (!logo?.complete || logo.naturalWidth < 1) return 0;
+            return 1;
+        })())JS";
+        const HRESULT result = view_->ExecuteScript(probe,
+            Callback<ICoreWebView2ExecuteScriptCompletedHandler>(
+                [this](HRESULT status, LPCWSTR result_json) -> HRESULT {
+                    smoke_probe_pending_ = false;
+                    if (closing_) return S_OK;
+                    if (FAILED(status) || !result_json || wcscmp(result_json, L"-1") == 0) {
+                        Fail(L"La interfaz local no superó la comprobación de DOM y configuración.");
+                    } else if (wcscmp(result_json, L"1") == 0) {
+                        exit_code_ = 0;
+                        KillTimer(window_, kSmokeDeadlineTimer);
+                        KillTimer(window_, kSmokeProbeTimer);
+                        std::cout << "Phaedra Social: WebView2 loaded local HTML, CSS, logo, modules and login configuration.\n";
+                        PostMessageW(window_, WM_CLOSE, 0, 0);
+                    }
+                    return S_OK;
+                }).Get());
+        if (FAILED(result)) { smoke_probe_pending_ = false; Fail(L"No se pudo comprobar el DOM de WebView2."); }
     }
 
     void StartWebView() {
@@ -301,12 +362,19 @@ private:
             Fail(L"No está disponible Microsoft Edge WebView2 Runtime. Puedes usar el chat web mientras instalas el runtime oficial de Microsoft.");
             return;
         }
-        PWSTR local_app_data = nullptr;
-        if (FAILED(SHGetKnownFolderPath(FOLDERID_LocalAppData, KF_FLAG_CREATE, nullptr, &local_app_data))) {
-            Fail(L"No se pudo localizar la carpeta de datos del usuario."); return;
+        fs::path profile;
+        if (options_.ui_smoke_test) {
+            profile = fs::temp_directory_path() / (L"PhaedraSocialUiSmoke-" +
+                std::to_wstring(GetCurrentProcessId()) + L"-" + std::to_wstring(GetTickCount64()));
+            smoke_profile_ = profile;
+        } else {
+            PWSTR local_app_data = nullptr;
+            if (FAILED(SHGetKnownFolderPath(FOLDERID_LocalAppData, KF_FLAG_CREATE, nullptr, &local_app_data))) {
+                Fail(L"No se pudo localizar la carpeta de datos del usuario."); return;
+            }
+            profile = fs::path(local_app_data) / L"Phaedra" / L"Social";
+            CoTaskMemFree(local_app_data);
         }
-        const fs::path profile = fs::path(local_app_data) / L"Phaedra" / L"Social";
-        CoTaskMemFree(local_app_data);
         std::error_code error;
         fs::create_directories(profile, error);
         if (error) { Fail(L"No se pudo crear el perfil local de Phaedra Social."); return; }
@@ -347,6 +415,26 @@ private:
             kVirtualHost, options_.assets.c_str(), COREWEBVIEW2_HOST_RESOURCE_ACCESS_KIND_DENY))) return false;
 
         EventRegistrationToken token{};
+        if (options_.ui_smoke_test) {
+            if (FAILED(view_->AddWebResourceRequestedFilter(L"*", COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL)) ||
+                FAILED(view_->add_WebResourceRequested(Callback<ICoreWebView2WebResourceRequestedEventHandler>(
+                    [this](ICoreWebView2*, ICoreWebView2WebResourceRequestedEventArgs* args) -> HRESULT {
+                        if (closing_ || !environment_) return S_OK;
+                        ComPtr<ICoreWebView2WebResourceRequest> request;
+                        LPWSTR raw = nullptr;
+                        const HRESULT status = args->get_Request(&request);
+                        const bool local = SUCCEEDED(status) && request && SUCCEEDED(request->get_Uri(&raw)) &&
+                            raw && IsLocalDocument(raw);
+                        CoTaskMemFree(raw);
+                        if (!local) {
+                            ComPtr<ICoreWebView2WebResourceResponse> blocked;
+                            if (SUCCEEDED(environment_->CreateWebResourceResponse(nullptr, 403, L"Forbidden",
+                                L"Content-Type: text/plain", &blocked))) args->put_Response(blocked.Get());
+                            Fail(L"La prueba local intentó solicitar un recurso externo.");
+                        }
+                        return S_OK;
+                    }).Get(), &token))) return false;
+        }
         if (FAILED(view_->add_NavigationStarting(Callback<ICoreWebView2NavigationStartingEventHandler>(
             [this](ICoreWebView2*, ICoreWebView2NavigationStartingEventArgs* args) -> HRESULT {
                 LPWSTR raw = nullptr;
@@ -411,6 +499,8 @@ private:
                 // outside the panel; that cancellation is not a startup error.
                 if (!success && status != COREWEBVIEW2_WEB_ERROR_STATUS_OPERATION_CANCELED)
                     Fail(L"No se pudo cargar la interfaz local de Phaedra Social.");
+                else if (success && options_.ui_smoke_test && !SetTimer(window_, kSmokeProbeTimer, 250, nullptr))
+                    Fail(L"No se pudo programar la comprobación de la interfaz.");
                 return S_OK;
             }).Get(), &token))) return false;
 
@@ -428,6 +518,10 @@ private:
         }
         if (self) switch (message) {
             case WM_SIZE: self->Resize(); return 0;
+            case WM_TIMER:
+                if (wparam == kSmokeDeadlineTimer) self->Fail(L"La interfaz local no estuvo lista en 30 segundos.", 11);
+                else if (wparam == kSmokeProbeTimer) self->ProbeSmoke();
+                return 0;
             case WM_DPICHANGED: {
                 const auto* bounds = reinterpret_cast<RECT*>(lparam);
                 SetWindowPos(window, nullptr, bounds->left, bounds->top, bounds->right - bounds->left,
@@ -435,6 +529,11 @@ private:
                 return 0;
             }
             case kFailureMessage: {
+                if (self->options_.ui_smoke_test) {
+                    std::wcerr << L"Phaedra Social UI smoke test failed: " << self->failure_ << L'\n';
+                    DestroyWindow(window);
+                    return 0;
+                }
                 const std::wstring prompt = self->failure_ + L"\n\n¿Abrir el chat web existente en el navegador?";
                 if (MessageBoxW(window, prompt.c_str(), L"Phaedra Social", MB_YESNO | MB_ICONWARNING) == IDYES)
                     OpenExternal(window, self->options_.fallback);
@@ -449,7 +548,7 @@ private:
                 }
                 return 0;
             }
-            case WM_DESTROY: self->CloseView(); PostQuitMessage(0); return 0;
+            case WM_DESTROY: self->CloseView(); PostQuitMessage(self->exit_code_); return 0;
         }
         return DefWindowProcW(window, message, wparam, lparam);
     }
@@ -496,7 +595,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int) {
         return result;
     } catch (const std::exception& error) {
         std::cerr << "Phaedra Social: " << error.what() << '\n';
-        if (!options.self_test && MessageBoxW(nullptr,
+        if (!options.self_test && !options.ui_smoke_test && MessageBoxW(nullptr,
             L"El paquete de Phaedra Social está incompleto o su configuración no es válida.\n\n¿Abrir el chat web existente?",
             L"Phaedra Social", MB_YESNO | MB_ICONWARNING) == IDYES && IsSafeFallback(options.fallback))
             OpenExternal(nullptr, options.fallback);

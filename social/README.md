@@ -43,6 +43,18 @@ Puede mantenerse `apiUrl` vacío para que quien prueba el cliente introduzca el 
 node social/scripts/build.mjs --config /ruta/a/comunidad.local.json
 ```
 
+Las compilaciones de preview también aceptan tres variables públicas de GitHub Actions:
+
+| Variable | Contenido |
+| --- | --- |
+| `PUBLIC_PHAEDRA_SOCIAL_API_URL` | Raíz HTTPS de la API de la comunidad. |
+| `PUBLIC_PHAEDRA_SOCIAL_REGISTRATION_URL` | Dirección HTTPS del cliente oficial para registro y recuperación. |
+| `PUBLIC_PHAEDRA_SOCIAL_ALLOWED_SERVICE_ORIGINS` | Lista JSON de orígenes adicionales, por ejemplo `["https://files.example.org"]`. |
+
+Estas variables se configuran como **Repository variables**, no contienen credenciales y se incluyen en el cliente distribuido. Si están vacías, se conserva `config.json`; por defecto se solicita el servidor al abrir la ventana. Un archivo indicado mediante `--config` tiene prioridad sobre todas estas variables. Una dirección con credenciales, parámetros o un origen inválido hace fallar la compilación antes de sustituir una distribución anterior.
+
+El ZIP de fuentes de cada paquete incluye la configuración pública emitida como `social/build-config.public.json`. Para reproducir esa configuración desde las fuentes extraídas, ejecutar `node social/scripts/build.mjs --config social/build-config.public.json`.
+
 No se deben poner contraseñas, tokens ni claves de servidor en esta configuración. Las credenciales de usuario se envían solo al API seleccionado; la sesión se conserva en memoria y se pierde al cerrar la ventana. El socket se autentica mediante un primer mensaje `Authenticate`, sin tokens en la URL. El cliente no sigue redirecciones en solicitudes autenticadas.
 
 El registro de cuentas, verificación de correo y recuperación de contraseñas se realizan desde el cliente oficial de la instancia indicado por `registrationUrl`. Esta versión requiere cuentas con onboarding terminado. MFA no está implementado en el formulario del prototipo; las cuentas que lo requieren reciben una explicación y no se declara una sesión abierta.

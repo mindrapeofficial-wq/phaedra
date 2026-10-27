@@ -8,6 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from package_windows import SOCIAL_REQUIRED_FILES, copy_social_bundle
+from verify_portable import REQUIRED, verify
 
 
 class PackageSocialAssetTests(unittest.TestCase):
@@ -47,6 +48,26 @@ class PackageSocialAssetTests(unittest.TestCase):
     def save_manifest(self):
         (self.bundle / "social-bundle.json").write_text(json.dumps(self.manifest), encoding="utf-8")
 
+    def make_daw_package(self):
+        names = (set(REQUIRED) - {"MANIFEST.sha256"}) | {"lib/ardour8/backends/portaudio.dll"}
+        for name in names:
+            path = self.destination / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            if not path.exists():
+                path.write_bytes(b"audio package fixture\n")
+        (self.destination / "version.txt").write_text("0.0.0\n", encoding="ascii")
+        (self.destination / "preview-channel.flag").write_text("preview\n", encoding="ascii")
+        (self.destination / "update_config.ini").write_text("check_updates=false\n", encoding="ascii")
+        self.refresh_daw_manifest()
+
+    def refresh_daw_manifest(self):
+        hashes = []
+        for path in sorted(self.destination.rglob("*")):
+            if path.is_file() and path.name != "MANIFEST.sha256":
+                hashes.append(hashlib.sha256(path.read_bytes()).hexdigest() + "  " +
+                              path.relative_to(self.destination).as_posix())
+        (self.destination / "MANIFEST.sha256").write_text("\n".join(hashes) + "\n", encoding="utf-8")
+
     def test_omitted_component_does_not_create_or_change_package(self):
         self.assertFalse(copy_social_bundle(None, self.destination))
         self.assertFalse(self.destination.exists())
@@ -57,6 +78,32 @@ class PackageSocialAssetTests(unittest.TestCase):
             with self.subTest(name=name):
                 self.assertEqual((self.destination / name).read_bytes(), (self.bundle / name).read_bytes())
         self.assertTrue((self.destination / "social-bundle.json").is_file())
+
+    def test_complete_daw_with_social_passes_both_manifests(self):
+        copy_social_bundle(self.bundle, self.destination)
+        self.make_daw_package()
+        self.assertTrue(verify(self.destination, require_social=True))
+
+    def test_requested_social_cannot_silently_disappear_from_daw(self):
+        self.make_daw_package()
+        with self.assertRaisesRegex(RuntimeError, "Social is required"):
+            verify(self.destination, require_social=True)
+
+    def test_missing_installed_client_module_fails_even_with_rebuilt_daw_manifest(self):
+        copy_social_bundle(self.bundle, self.destination)
+        self.make_daw_package()
+        (self.destination / "share/phaedra-social/src/view-model.js").unlink()
+        self.refresh_daw_manifest()
+        with self.assertRaisesRegex(RuntimeError, "Social bundle files do not match"):
+            verify(self.destination, require_social=True)
+
+    def test_installed_social_without_its_manifest_is_rejected(self):
+        copy_social_bundle(self.bundle, self.destination)
+        self.make_daw_package()
+        (self.destination / "social-bundle.json").unlink()
+        self.refresh_daw_manifest()
+        with self.assertRaisesRegex(RuntimeError, "without their package manifest"):
+            verify(self.destination)
 
     def test_incomplete_client_is_rejected_before_destination_changes(self):
         name = "share/phaedra-social/src/stoat-client.js"

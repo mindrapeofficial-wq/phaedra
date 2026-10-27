@@ -5,12 +5,34 @@ import path from 'node:path';
 import { normalizeConfig } from '../src/view-model.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-export async function buildClient({ configPath = path.join(root, 'config.json'), output = path.join(root, 'dist'), quiet = false } = {}) {
+
+function publicEnvironmentConfig(config, environment) {
+  const result = { ...config };
+  const variables = {
+    PUBLIC_PHAEDRA_SOCIAL_API_URL: 'apiUrl',
+    PUBLIC_PHAEDRA_SOCIAL_REGISTRATION_URL: 'registrationUrl',
+  };
+  for (const [name, key] of Object.entries(variables)) {
+    const value = environment[name];
+    if (typeof value === 'string' && value.trim()) result[key] = value.trim();
+  }
+  const origins = environment.PUBLIC_PHAEDRA_SOCIAL_ALLOWED_SERVICE_ORIGINS;
+  if (typeof origins === 'string' && origins.trim()) {
+    try { result.allowedServiceOrigins = JSON.parse(origins); }
+    catch { throw new Error('PUBLIC_PHAEDRA_SOCIAL_ALLOWED_SERVICE_ORIGINS debe ser una lista JSON de orígenes.'); }
+  }
+  return normalizeConfig(result);
+}
+
+export async function buildClient({ configPath, output = path.join(root, 'dist'), quiet = false, environment = {} } = {}) {
 output = path.resolve(output);
 if (output === root || output === path.dirname(root) || path.relative(output, root).split(path.sep)[0] !== '..') {
   throw new Error('La salida no puede contener el código fuente.');
 }
-const config = normalizeConfig(JSON.parse(await readFile(configPath, 'utf8')));
+const fromFile = normalizeConfig(JSON.parse(await readFile(configPath ?? path.join(root, 'config.json'), 'utf8')));
+// Explicit --config wins over CI defaults. Only these public settings can
+// enter the bundle; no other environment variable is copied or logged.
+const config = configPath ? fromFile : publicEnvironmentConfig(fromFile, environment);
 // Build from an explicit allowlist: tests, deployment credentials and local
 // instance state must never become part of the distributed client.
 const sources = ['index.html', 'style.css', 'assets/mark.svg', 'src/app.js', 'src/view-model.js', 'src/stoat-client.js'];
@@ -39,5 +61,5 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     else if (args[i] === '--out') options.output = path.resolve(args[i + 1]);
     else throw new Error(`Opción desconocida: ${args[i]}`);
   }
-  await buildClient(options);
+  await buildClient({ ...options, environment: process.env });
 }

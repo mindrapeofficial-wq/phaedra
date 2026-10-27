@@ -86,6 +86,10 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: windows-2022
     timeout-minutes: 18
+    env:
+      PUBLIC_PHAEDRA_SOCIAL_API_URL: ${{ vars.PUBLIC_PHAEDRA_SOCIAL_API_URL }}
+      PUBLIC_PHAEDRA_SOCIAL_REGISTRATION_URL: ${{ vars.PUBLIC_PHAEDRA_SOCIAL_REGISTRATION_URL }}
+      PUBLIC_PHAEDRA_SOCIAL_ALLOWED_SERVICE_ORIGINS: ${{ vars.PUBLIC_PHAEDRA_SOCIAL_ALLOWED_SERVICE_ORIGINS }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -107,11 +111,21 @@ jobs:
         run: |
           $process = Start-Process -FilePath './artifacts/phaedra-social/bin/PhaedraSocial.exe' -ArgumentList '--self-test' -PassThru -Wait
           if ($process.ExitCode -ne 0) { throw "Social self-test returned $($process.ExitCode)" }
+      - name: Load the actual login interface in WebView2
+        shell: pwsh
+        run: ./tools/phaedra_social/smoke-test.ps1 -BundleRoot artifacts/phaedra-social
       - name: Package the prototype and matching source
         shell: pwsh
         run: |
           Compress-Archive -Path './artifacts/phaedra-social/*' -DestinationPath './artifacts/Phaedra-Social-Prototype-win-x64.zip'
           git archive --format=zip --output=artifacts/Phaedra-Social-Prototype-source.zip HEAD social tools/phaedra_social COPYING
+          if ($LASTEXITCODE -ne 0) { throw 'Could not export the matching source archive' }
+          @'
+          import zipfile
+          with zipfile.ZipFile('artifacts/Phaedra-Social-Prototype-source.zip', 'a', compression=zipfile.ZIP_DEFLATED) as source:
+              source.write('artifacts/phaedra-social/share/phaedra-social/config.json', 'social/build-config.public.json')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'Could not preserve the public build configuration' }
           $archives = Get-ChildItem './artifacts/Phaedra-Social-Prototype-*.zip'
           foreach ($archive in $archives) {
             $digest = (Get-FileHash -LiteralPath $archive.FullName -Algorithm SHA256).Hash.ToLowerInvariant()

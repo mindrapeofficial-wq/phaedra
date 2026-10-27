@@ -41,6 +41,41 @@ Without that option it packages the existing DAW as before. A requested bundle
 must be complete and its hashes valid; a broken social build is not silently
 treated as a successful integrated build.
 
+## Integration with the DAW preview build
+
+The DAW's `build-release.yml` workflow builds this component in an independent
+MSVC job for pushes to `preview/live` and pull requests targeting that branch.
+Manual non-tag builds can opt in with the `include_social` input. Stable tag
+builds keep their existing packaging path.
+
+The audio build downloads only the component produced by the same workflow,
+then calls:
+
+```bash
+bash make_portable.sh --social-bundle artifacts/phaedra-social
+python tools/verify_portable.py Phaedra-Portable --require-social
+```
+
+The packager includes the helper, loader, client and license notices in the
+DAW's own SHA-256 manifest. Verification checks both the DAW manifest and the
+social component manifest. The workflow runs `PhaedraSocial.exe --self-test`
+again from `Phaedra-Portable/bin`, then retains the existing launcher and DAW
+executable checks before creating a ZIP. The ZIP gate also requires all social
+assets. A failed requested social component prevents that preview from being
+published; it never silently falls back to packaging a DAW without it.
+
+Social preview packages remain on the separate preview update channel. Their
+client configuration comes from `social/config.json`, with optional public
+repository-variable overrides: `PUBLIC_PHAEDRA_SOCIAL_API_URL`,
+`PUBLIC_PHAEDRA_SOCIAL_REGISTRATION_URL`, and
+`PUBLIC_PHAEDRA_SOCIAL_ALLOWED_SERVICE_ORIGINS`. Empty variables preserve the
+committed configuration. These are public endpoint/origin settings, never
+credentials. The workflow has no built-in server address.
+
+The source ZIP also includes `social/build-config.public.json`, copied from
+the final package, so that a build using repository variables can be reproduced
+with `node social/scripts/build.mjs --config social/build-config.public.json`.
+
 ## Runtime and fallback
 
 The client is served from the reserved origin
@@ -53,6 +88,7 @@ Runtime arguments:
 
 ```powershell
 PhaedraSocial.exe --self-test
+PhaedraSocial.exe --ui-smoke-test
 PhaedraSocial.exe --assets C:\path\to\social\dist --fallback-url https://phaedra-chat.vercel.app/
 ```
 
@@ -60,6 +96,21 @@ PhaedraSocial.exe --assets C:\path\to\social\dist --fallback-url https://phaedra
 the loader file's presence. It exits without opening UI, creating a profile,
 loading WebView2, or making network requests. It does **not** verify installed
 WebView2 Runtime, authentication, message delivery, or voice.
+
+`--ui-smoke-test` opens an actual WebView2 controller with a unique temporary
+profile. Within 30 seconds it must load the local HTML, stylesheet, logo,
+JavaScript modules and the login form after successful configuration parsing.
+It does not submit credentials or contact the chat backend; unexpected external
+web resource requests fail the test. It exits without fallback dialogs:
+`0` means the UI loaded, `10` means runtime/navigation/UI failure, `11` is the
+30-second deadline, and `12` means the window closed before readiness.
+The temporary profile is cleaned up when possible after COM shutdown.
+
+For CI, run `./tools/phaedra_social/smoke-test.ps1 -BundleRoot <bundle>`; this
+wrapper adds a 45-second process limit and captures diagnostics. The Evergreen
+WebView2 Runtime must be installed in the Windows test environment. A missing
+runtime is a test failure, not a skipped check. This test does not verify
+authentication, server availability, or DAW recording/playback.
 
 On a normal launch, the loader is loaded explicitly from the executable's
 directory. If the Evergreen WebView2 Runtime is absent or the panel fails,
