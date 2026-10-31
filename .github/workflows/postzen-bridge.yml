@@ -1,0 +1,32 @@
+name: PostZen Instagram Bridge
+
+on:
+  pull_request:
+    paths:
+      - 'tools/postzen/**'
+      - '.github/workflows/postzen-bridge.yml'
+  push:
+    branches:
+      - 'feature/instagram-agent-skills-20261031'
+    paths:
+      - 'tools/postzen/**'
+      - '.github/workflows/postzen-bridge.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test PostZen bridge (mocked API, no credentials)
+        run: npm test
+        working-directory: tools/postzen
