@@ -2,13 +2,21 @@
 
 Este cambio instala **14 skills** de [postzen-dev/instagram-agent-skill](https://github.com/postzen-dev/instagram-agent-skill) como instrucciones locales de proyecto para gestionar la comunicación de PHAEDRA, con una puerta de autorización en cada publicación. Repositorio upstream fijado en el commit `7d3dd6e0183127e266e7c81f4d4044fa4fa9d368` (MIT). Archivo de licencia: `third_party/instagram-agent-skill/LICENSE`.
 
+## Estado operativo de PostZen, verificado 31/10/2026
+
+**La API REST ya está autenticada con la cuenta Instagram @phaedrasound** (ID `j9728s2139w1qrqdte0fynrjf98hbg4j`, consulta HTTP 200). Se creó y comprobó un borrador de prueba `m1767zvcde9ked9gpx7stxbchd8hbjy9`, estado `draft`, sin publicar. Se activaron dos reglas de respuesta **voluntaria por palabra clave exacta `INFO`**: comentario en publicaciones propias `qs74sd3yx608n5f54sred8wmm58hbc8s` y respuesta a historia `qs7a61g14qgm15r3ex1dxw95b58ha0gn`. Ambas fueron leídas de vuelta con `isActive: true`, sin envíos registrados al comprobar. No dupliques estas reglas, ni las siete publicaciones ya autorizadas en Metricool.
+
+Esta verificación **no autentica el servidor MCP en Claude Code o Codex**. El MCP sigue declarado en `.mcp.json` y cada cliente necesita completar su propio inicio de sesión o autorización. En la conversación de ChatGPT no hay plugin nativo PostZen; se probó la API REST mediante solicitud controlada por separado.
+
+Detalles de estado, alcance, procedimientos e IDs: [POSTZEN-OPERATIONS.md](./POSTZEN-OPERATIONS.md). El puente Node.js 1.1.0 (15 pruebas locales, sin credenciales incluidas) y el manual están guardados en Google Drive, carpeta `PHAEDRA/07-MARKETING`. No introducir la API key en commits, documentación, archivos de skills, prompts ni frontend.
+
 ## Estado verificable
 
 - **Archivos instalados en la rama de integración**: `.claude/skills/ig-*/` y `.agents/skills/ig-*/`. Claude Code usa la primera ruta; Codex descubre la segunda.
 - **Scripts incluidos**: hookscore.py, beats.py, caption.py, humanize.py, detect.py y swipe.py, junto a hooks.json, slop.json y rubric.json.
 - **PostZen MCP declarado** en `.mcp.json`: URL `https://mcp.postzen.dev/mcp`.
-- **PostZen NO está autenticado** al añadir estos archivos. Tampoco implica que @phaedrasound esté conectado a PostZen. La autenticación OAuth, permiso Read & Write y conexión de la cuenta deben ser autorizadas por su titular en el navegador.
-- **ChatGPT conectado a Metricool**, no a PostZen. El plugin de PostZen no apareció en el directorio de ChatGPT al auditarlo el 31/10/2026. Este cambio no instala ningún plugin nuevo en la sesión de ChatGPT y no modifica las automatizaciones de Metricool.
+- **La API REST de PostZen sí está autenticada y @phaedrasound está conectada**, según verificación posterior del 31/10/2026. Esto NO significa que el servidor MCP de Claude Code o Codex esté autenticado: cada cliente debe autorizarlo por separado.
+- **ChatGPT conectado a Metricool**, sin plugin MCP nativo de PostZen. PostZen se ha probado directamente por REST en una sesión aparte. Esta integración no instala por sí sola un plugin nuevo en ChatGPT y no modifica las publicaciones de Metricool.
 - **Estado del DAW**: Phaedra Lite v0.1.0-preview.5 pública en Windows/Linux, macOS preview.4; no anunciar una estable inexistente.
 
 ## Las 14 skills
