@@ -44,3 +44,7 @@ Los comandos de respuesta individual exigen `--approve-send` y el destinatario e
 - **ChatGPT**: PostZen todavía no aparece como plugin nativo disponible en esta conversación; Metricool sí está conectado. No inventar acciones de PostZen que no se hayan podido ejecutar realmente.
 
 Documentación: https://www.postzen.dev/agent-quickstart.md · https://www.postzen.dev/mcp/instagram · https://docs.postzen.dev/comment-automations
+
+## Código dentro del repositorio
+
+El puente REST se encuentra en [`tools/postzen/`](../../tools/postzen/README.md), sin dependencias npm externas. Para validarlo, ejecutar `cd tools/postzen && npm test`; GitHub Actions comprueba la misma suite en `.github/workflows/postzen-bridge.yml` sin clave de producción. Solo los comandos con aprobación por envío escriben respuestas; los dos flujos opt-in se administran del lado de PostZen. El ZIP de Drive es copia distribuible, no el único código fuente.
