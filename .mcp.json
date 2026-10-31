@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "postzen": {
+      "type": "http",
+      "url": "https://mcp.postzen.dev/mcp",
+      "headers": {
+        "Authorization": "Bearer ${POSTZEN_API_KEY}"
+      }
+    }
+  }
+}
