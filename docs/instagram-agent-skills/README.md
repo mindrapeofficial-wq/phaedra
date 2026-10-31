@@ -89,3 +89,7 @@ La configuración OAuth queda en tu propio cliente, no se commitea ni se compart
 7. Solo después, bajo aprobación explícita del usuario, activar cualquier función de escritura.
 
 Fuente: https://github.com/postzen-dev/instagram-agent-skill , https://docs.postzen.dev/mcp y https://docs.postzen.dev/platforms/instagram .
+
+### Código probado en esta misma rama
+
+El cliente REST Node.js 1.1.0 se añadió a [`tools/postzen/`](../../tools/postzen/README.md) con su suite de 15 pruebas; el workflow [PostZen Instagram Bridge](../../.github/workflows/postzen-bridge.yml) verifica su lógica sin credenciales. La fuente GitHub se mantiene independiente del motor del DAW y de la configuración OAuth del MCP.
