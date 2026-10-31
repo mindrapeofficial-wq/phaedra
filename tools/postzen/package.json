@@ -1,0 +1,15 @@
+{
+  "name": "postzen-instagram-bridge",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "description": "PostZen bridge: Instagram drafts, read-only inbox audit and reviewed replies",
+  "scripts": {
+    "test": "node --test",
+    "draft": "node bin/create-draft.mjs",
+    "inspect": "node bin/inspect.mjs",
+    "reply:comment": "node bin/reply-comment.mjs",
+    "reply:dm": "node bin/reply-dm.mjs"
+  },
+  "engines": {"node": ">=20"}
+}
