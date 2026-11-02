@@ -50,6 +50,34 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (req.method === "POST" && req.url === "/engagement-report") {
+    const authHeader = req.headers["authorization"];
+    if (authHeader !== `Bearer ${process.env.ENGAGE_SECRET}`) {
+      res.writeHead(401);
+      res.end("unauthorized");
+      return;
+    }
+    let body = "";
+    for await (const chunk of req) body += chunk;
+    try {
+      const { actions } = JSON.parse(body);
+      const { sendMessage } = await import("./telegram.js");
+      const GROUP_CHAT = process.env.TELEGRAM_GROUP_CHAT_ID || "-1004319265595";
+      const lines = ["🤖 <b>Engagement Report</b>\n"];
+      for (const a of actions) {
+        lines.push(`• <b>${a.type}</b>: ${a.detail}`);
+      }
+      await sendMessage(GROUP_CHAT, lines.join("\n"));
+      res.writeHead(200);
+      res.end("reported");
+    } catch (e) {
+      console.error("engagement-report error:", e);
+      res.writeHead(400);
+      res.end("error");
+    }
+    return;
+  }
+
   if (req.method === "GET" && req.url === "/health") {
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ status: "ok", bot: "Social Banana" }));
