@@ -21,7 +21,7 @@ export async function resolveCoverBrief(userMessage, previous = null) {
     return { draft, text: `Antes de crearla, dime qué quieres incluir: ${missingDetails.map(key => labels[key]).join("; ")}. Puedes dejar cualquiera fuera; si solo quieres editar la foto, di «sin texto ni extras». Después te pediré el prompt visual.` };
   }
   if (!draft.visualPrompt?.trim() || (previous?.pending && !previous?.awaitingVisualPrompt)) {
-    return { draft: { ...draft, awaitingVisualPrompt: true }, text: "Ya tengo los textos y extras. Ahora escribe el prompt con tus palabras: cómo quieres la imagen, ambiente, luz, colores y composición. Por ejemplo: «usa mi foto original, luz cinematográfica violeta, conserva los rostros y la ropa». No la generaré hasta tener esa indicación." };
+    return { draft: { ...draft, awaitingVisualPrompt: true }, text: "Ya tengo los textos y extras. Ahora escribe el prompt con tus palabras: cómo quieres tu portada musical, ambiente, luz, colores y composición. Puedes incluir el género musical y la emoción del lanzamiento. Por ejemplo: «portada de un single de R&B nocturno, usa mi foto original, luz cinematográfica violeta, conserva los rostros y la ropa». No la generaré hasta tener esa indicación." };
   }
   const exactText = [draft.artist && `Artist: ${draft.artist}`, draft.title && `Title: ${draft.title}`, draft.label && `Label: ${draft.label}`].filter(Boolean);
   return { draft, prompt: `${draft.visualPrompt}\n${exactText.length ? "Use ONLY these exact lettering strings, preserving their spelling:\n" + exactText.join("\n") : "No lettering, titles, artist names, labels, or watermarks."}\nGraphic elements: ${draft.graphics || "None. Do not invent logos, advisory stickers or badges."}` };

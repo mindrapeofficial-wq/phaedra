@@ -1,6 +1,7 @@
 const OPENAI_KEY = process.env.OPENAI_API_KEY;
 const IMAGE_MODEL = "gpt-image-2.5-sunburst";
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
+const IMAGE_ART_DIRECTION = `Primary purpose: create music cover artwork for an artist's single, EP or album. Unless the client explicitly requests another deliverable, treat this as finished music cover art, not a generic portrait, advertisement or social media template. Compose for a square cover by default, with a clear focal point and visual impact at thumbnail size. Let the client's supplied musical genre, mood and artistic identity guide the design; never invent those details or add musical instruments, notes or DAW imagery just because this is music artwork. Integrate only the requested artist name, release title and label with deliberate, legible typography and clear hierarchy. If no text is requested, make a complete text-free cover without placeholder lettering. Do not add logos, advisory stickers, badges or mockup frames unless requested. Follow the client's visual prompt and original reference photo, preserving the people and their features unless explicitly asked otherwise. Explicit client directions take precedence over these defaults.`;
 
 const SYSTEM_PROMPT = `Eres Banana, el asistente creativo y compañero de la comunidad Social Banana en Telegram. Ayudas a cada creador con SU proyecto. Eres una IA; no finjas ser humano ni tener experiencias personales.
 
@@ -21,6 +22,7 @@ MEMORIA Y CONTEXTO:
 TRABAJO:
 - Usa herramientas cuando el usuario pida una acción o datos que las requieran. Los saludos y charla normal NO requieren herramientas externas. Si el usuario comunica un dato suyo como "me llamo Emil", usa remember_user para guardarlo, aunque ocurra durante una presentación.
 - Para imágenes usa generate_image. Siempre PRO máxima. Respeta el prompt, la foto original y los nombres/títulos exactos; no inventes texto, marcas, logos o sujetos. Antes de crear portadas se recoge el briefing con los detalles opcionales y el prompt visual.
+- Tu especialidad visual principal son PORTADAS MUSICALES para singles, EP y álbumes. Por defecto diseña una portada cuadrada con identidad artística, composición clara y tipografía legible si se solicita texto. Invita a incluir género musical y emoción del lanzamiento en el prompt, sin inventarlos ni convertirlo en un interrogatorio. No confundas portada musical con retrato genérico o anuncio. Si el cliente pide explícitamente otro tipo de imagen, respétalo.
 - Usa ask_claude para análisis estratégico o creativo profundo solicitado, proporcionando el contexto real del cliente. No envíes conversaciones sociales a Claude.
 - Describe acciones y resultados reales: nunca digas que has enviado, publicado, investigado o generado algo sin éxito de la herramienta. Si una herramienta falla, explica qué faltó y el siguiente paso. No prometas acceder a toda una red cuando solo tienes datos parciales.
 - Recomendaciones de personas o círculos necesitan evidencia concreta de las interacciones disponibles. No inventes relaciones o investigación.
@@ -165,7 +167,7 @@ const TOOLS = [
     type: "function",
     function: {
       name: "generate_image",
-      description: "Create a requested image or cover. Automatically edits the actual reference photo when available. Follow the user visual direction and preserve the reference subject. Always Pro maximum quality. Use the user prompt faithfully.",
+      description: "Primarily create music cover artwork for singles, EPs and albums, square by default. Automatically edits the actual original reference photo when available. Follow the client's visual direction, exact lettering and reference subjects. Always Pro maximum quality. Respect explicit requests for other image types.",
       parameters: {
         type: "object",
         properties: {
@@ -235,7 +237,7 @@ async function executeTool(name, args, referenceUrl = null) {
 async function generateImage(prompt, size, quality = "pro", referenceUrl = null) {
   if (!OPENAI_KEY) return { error: "OPENAI_API_KEY not configured" };
   const signal = AbortSignal.timeout(240_000);
-  const body = { model: IMAGE_MODEL, prompt, size, quality: "max", output_format: "png", n: 1 };
+  const body = { model: IMAGE_MODEL, prompt: `${prompt}\n\nArt direction defaults (subordinate to the client's explicit instructions):\n${IMAGE_ART_DIRECTION}`, size, quality: "max", output_format: "png", n: 1 };
   let payload = JSON.stringify(body);
   const headers = { Authorization: `Bearer ${OPENAI_KEY}` };
   if (referenceUrl) {

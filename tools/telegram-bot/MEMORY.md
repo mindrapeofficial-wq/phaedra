@@ -1,6 +1,7 @@
 # Creator conversation and images
 
 - Images use `gpt-image-2.5-sunburst`, quality `max` (shown to users as Pro). No silent fallback to a different model or quality.
+- Image art direction defaults to music covers for singles, EPs and albums: square composition, thumbnail readability, client-supplied artistic identity and optional exact typography. These directions reach both the chat and actual image API, including photo edits. Explicit requests for other deliverables override the default; no music genre, lettering or decorative music symbols are invented.
 - `/imagen <prompt>` and `prompt: <prompt>` send the user's prompt directly. Otherwise chat can assemble a prompt from the conversation.
 - Original Telegram photo IDs, face-style answers, latest image prompt, recent 40 conversation messages, and explicitly supplied profile facts are stored in `public.sb_bot_memory` under `(chat_id, telegram_id)`. Generated images never replace the original reference.
 - Photo inspection asks whether a visible face belongs to the user and whether photorealism is wanted. Identity is self-reported, not recognized from faces. No generation occurs while the photorealism question is pending.
