@@ -7,10 +7,16 @@ export async function enqueueUpdate(update) {
   if (!Number.isSafeInteger(update.update_id)) throw new Error('Invalid update');
   if (!update.message?.chat?.id || update.message.from?.is_bot) return;
   // Persist before acknowledging Telegram; duplicate deliveries cannot add another job.
-  await database('sb_bot_jobs?on_conflict=update_id', 'POST', {
+  const inserted = await database('sb_bot_jobs?on_conflict=update_id&select=update_id', 'POST', {
     update_id: update.update_id, chat_id: update.message.chat.id,
     telegram_id: update.message.from?.id || 0, payload: update,
-  }, 'resolution=ignore-duplicates,return=minimal');
+  }, 'resolution=ignore-duplicates,return=representation');
+  if (inserted?.length) {
+    const waiting = await database(`sb_bot_jobs?update_id=lt.${update.update_id}&status=in.(pending,processing)&select=telegram_id&limit=2`);
+    if (waiting.length >= 2 || waiting.some(job => job.telegram_id === update.message.from?.id)) {
+      await sendMessage(update.message.chat.id, 'Te he leído. Tu mensaje está en cola; lo atenderé cuando termine el trabajo que está en curso.').catch(() => {});
+    }
+  }
 }
 export async function processJob(job, lease, handler = handleUpdate, notify = sendMessage) {
   const path = `sb_bot_jobs?update_id=eq.${job.update_id}&lease=eq.${lease}`;

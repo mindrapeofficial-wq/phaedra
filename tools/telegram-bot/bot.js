@@ -318,6 +318,10 @@ async function handleMessage(update) {
     } else await sendMessage(chatId, reply.text);
     if (userId !== OWNER_ID) await incrementUsage(userId).catch(() => console.error("[usage] increment failed"));
     console.log(`[bot] reply delivered chat=${chatId} image=${Boolean(reply.image)}`);
+  } catch (error) {
+    if (!imageDelivered) throw error;
+    console.error('[image] post-delivery save failed', error.name);
+    await sendMessage(chatId, 'La portada está entregada aquí. Ha fallado el guardado de parte del encargo; conserva la imagen de este mensaje.').catch(() => {});
   } finally {
     if (imageReservation) await finishImage(userId, imageReservation, imageDelivered).catch(() => console.error("[image] credit settlement failed"));
     clearInterval(typingTimer);

@@ -76,6 +76,19 @@ test('community follows fresh conversations without interrupting, overnight mess
   assert.equal(communityTiming({},context,Date.parse('2026-11-02T23:00:00Z')).allowed,false);
   assert.equal(communityTiming({day:'2026-11-02',sentToday:2,lastContextAt:now,lastSent:now-4*3600000},context,now).allowed,false);
 });
+test('a queued message gets one receipt, while a duplicate update gets none',async()=>{
+  const native=fetch;let exists=false,receipts=0;
+  globalThis.fetch=async(url,opts={})=>{
+    if(url.includes('on_conflict=update_id')){if(exists)return Response.json([]);exists=true;return Response.json([{update_id:88}]);}
+    if(url.includes('sb_bot_jobs?update_id=lt.'))return Response.json([{telegram_id:7}]);
+    if(url.endsWith('/sendMessage')){receipts++;return Response.json({ok:true});}
+    throw Error('Unexpected request');
+  };
+  try{
+    const update={update_id:88,message:{chat:{id:7},from:{id:7},text:'Otra idea'}};
+    await enqueueUpdate(update);await enqueueUpdate(update);assert.equal(receipts,1);
+  }finally{globalThis.fetch=native;}
+});
 test('voice produces valid mono PCM and rejects excessive audio before any download', async () => {
   const wav=pcmWav([Float32Array.from([-1,0,1]),Float32Array.from([-1,0,1])],48000);
   assert.equal(wav.toString('ascii',0,4),'RIFF'); assert.equal(wav.readUInt32LE(24),48000);

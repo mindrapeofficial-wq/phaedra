@@ -11,6 +11,7 @@ test('client accounts are isolated; revoked connections and arbitrary tool paths
   let moved = false;
   globalThis.fetch = async (url, options = {}) => {
     if (url.includes('sb_telegram_users')) return Response.json([{ user_id: 'client-uuid' }]);
+    if (url.includes('sb_claim_instagram_slot')) return Response.json(1);
     if (url.includes('sb_subscriptions')) return Response.json([{ livemode: true, status: 'active', risk_hold: false, paid_until: new Date(Date.now()+86400000).toISOString() }]);
     requests.push({ url, options });
     const u = new URL(url);
@@ -49,6 +50,7 @@ test('private OAuth link binds to provisioned profile; verification requires exa
   let row = null, accountProfile = 'profile_new';
   globalThis.fetch = async (url, options = {}) => {
     if (url.includes('sb_telegram_users')) return Response.json([{ user_id: 'client-uuid' }]);
+    if (url.includes('sb_claim_instagram_slot')) return Response.json(1);
     if (url.includes('sb_subscriptions')) return Response.json([{ livemode: true, status: 'active', risk_hold: false, paid_until: new Date(Date.now()+86400000).toISOString() }]);
     const u = new URL(url);
     if (u.pathname.includes('sb_instagram_connections')) {
@@ -83,6 +85,7 @@ test('Claude loads installed skills and executes a scoped tool roundtrip', async
   let calls = 0;
   globalThis.fetch = async (url, options = {}) => {
     if (url.includes('sb_telegram_users')) return Response.json([{ user_id: 'client-uuid' }]);
+    if (url.includes('sb_claim_instagram_slot')) return Response.json(1);
     if (url.includes('sb_subscriptions')) return Response.json([{ livemode: true, status: 'active', risk_hold: false, paid_until: new Date(Date.now()+86400000).toISOString() }]);
     if (url.includes('sb_instagram_connections')) return Response.json([{ profile_id: 'profile_one', account_id: 'account_one', status: 'active' }]);
     if (url.includes('/accounts?')) return Response.json({ accounts: [{ _id: 'account_one', profileId: 'profile_one', platform: 'instagram', status: 'connected' }] });

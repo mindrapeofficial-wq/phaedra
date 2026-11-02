@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { getFileUrl } from './telegram.js';
 import { requireInstagramAccess } from './entitlements.js';
+import { prepareInstagramCapacity } from './instagram-capacity.js';
 
 const BASE = 'https://api.postzen.dev/v1';
 const DB = process.env.SUPABASE_URL || 'https://mfylkalarzuhivhmvzbm.supabase.co';
@@ -36,6 +37,7 @@ async function accountsFor(row) {
 }
 export async function beginConnection(userId) {
   await requireInstagramAccess(userId);
+  await prepareInstagramCapacity(userId, { api: postzen, connection });
   let row = await connection(userId);
   if (!row) {
     // Reuse a provisioned profile after an interrupted connection attempt.

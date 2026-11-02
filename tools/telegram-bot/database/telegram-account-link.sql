@@ -21,4 +21,3 @@ begin
 end; $$;
 revoke all on function public.sb_link_telegram(text,uuid) from public,anon,authenticated;
 grant execute on function public.sb_link_telegram(text,uuid) to service_role;
-

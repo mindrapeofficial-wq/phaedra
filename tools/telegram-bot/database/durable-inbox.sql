@@ -23,4 +23,3 @@ begin
 end; $$;
 revoke all on function public.sb_claim_bot_job(uuid) from public,anon,authenticated;
 grant execute on function public.sb_claim_bot_job(uuid) to service_role;
-
