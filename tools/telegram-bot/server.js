@@ -1,9 +1,9 @@
 import http from "node:http";
 import { createHash, timingSafeEqual } from "node:crypto";
-import { handleUpdate } from "./bot.js";
+import { enqueueUpdate, startJobWorker, stopJobWorker, pumpJobs } from "./jobs.js";
 import { handleStripeWebhook } from "./stripe.js";
 import { runEngagementSession } from "./engage.js";
-import { startProactiveLoop } from "./proactive.js";
+import { startProactiveLoop, stopProactiveLoop } from "./proactive.js";
 import { memoryRequest } from "./memory.js";
 
 const PORT = process.env.PORT || 3000;
@@ -17,25 +17,32 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(401); res.end("unauthorized"); return;
     }
     let body = "";
-    for await (const chunk of req) body += chunk;
+    for await (const chunk of req) {
+      body += chunk;
+      if (Buffer.byteLength(body) > 1_000_000) { res.writeHead(413); res.end("payload too large"); return; }
+    }
     try {
       const update = JSON.parse(body);
       console.log("[webhook] update received", { chat: update.message?.chat?.id, type: update.message?.chat?.type, hasMessage: Boolean(update.message) });
-      handleUpdate(update).catch((e) => console.error("handler error:", e));
+      await enqueueUpdate(update);
       res.writeHead(200);
       res.end("ok");
-    } catch {
-      res.writeHead(400);
-      res.end("bad json");
+      void pumpJobs();
+    } catch (error) {
+      res.writeHead(error instanceof SyntaxError ? 400 : 503);
+      res.end("retry later");
     }
     return;
   }
 
   if (req.method === "POST" && req.url === "/stripe-webhook") {
     let body = "";
-    for await (const chunk of req) body += chunk;
+    for await (const chunk of req) {
+      body += chunk;
+      if (Buffer.byteLength(body) > 1_000_000) { res.writeHead(413); res.end("payload too large"); return; }
+    }
     try {
-      await handleStripeWebhook(body);
+      await handleStripeWebhook(body, req.headers["stripe-signature"]);
       res.writeHead(200);
       res.end("ok");
     } catch (e) {
@@ -48,7 +55,7 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === "POST" && req.url === "/engage") {
     const authHeader = req.headers["authorization"];
-    if (authHeader !== `Bearer ${process.env.ENGAGE_SECRET}`) {
+    if (!process.env.ENGAGE_SECRET || authHeader !== `Bearer ${process.env.ENGAGE_SECRET}`) {
       res.writeHead(401);
       res.end("unauthorized");
       return;
@@ -61,13 +68,16 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === "POST" && req.url === "/engagement-report") {
     const authHeader = req.headers["authorization"];
-    if (authHeader !== `Bearer ${process.env.ENGAGE_SECRET}`) {
+    if (!process.env.ENGAGE_SECRET || authHeader !== `Bearer ${process.env.ENGAGE_SECRET}`) {
       res.writeHead(401);
       res.end("unauthorized");
       return;
     }
     let body = "";
-    for await (const chunk of req) body += chunk;
+    for await (const chunk of req) {
+      body += chunk;
+      if (Buffer.byteLength(body) > 1_000_000) { res.writeHead(413); res.end("payload too large"); return; }
+    }
     try {
       const { actions } = JSON.parse(body);
       const { sendMessage } = await import("./telegram.js");
@@ -100,6 +110,7 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`Social Banana listening on :${PORT}`);
   startProactiveLoop();
+  startJobWorker();
   async function configureWebhook() {
     try {
       const response = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/setWebhook`, {
@@ -117,8 +128,11 @@ server.listen(PORT, () => {
   void configureWebhook();
   memoryRequest(0, 0).then(() => console.log("[memory] persistent store reachable"))
     .catch(() => console.error("[memory] persistent store unavailable"));
-  // Keep-alive: ping ourselves every 14 min so Render free tier doesn't sleep
-  setInterval(() => {
-    fetch(`https://social-banana-bot.onrender.com/health`).catch(() => {});
-  }, 14 * 60 * 1000);
+});
+
+process.on('SIGTERM', () => {
+  stopJobWorker(); stopProactiveLoop();
+  server.close();
+  // Unfinished work remains leased in the database and is reported on recovery.
+  setTimeout(() => process.exit(0), 25_000).unref();
 });

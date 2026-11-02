@@ -48,13 +48,6 @@ function pickTargets(pool, count) {
 
 export async function runEngagementSession() {
   try {
-    const shouldSkip = Math.random() < 0.15;
-    if (shouldSkip) {
-      console.log("[engage] Skipping this session (random skip)");
-      await notify("Sesion de engagement saltada (patron aleatorio). Proximo intento en unas horas.");
-      return { skipped: true };
-    }
-
     const commentCount = random(4, 7);
     const targets = pickTargets(TARGET_POOLS, commentCount);
 
@@ -104,9 +97,9 @@ FORMAT (strictly follow this, one per line):
     }
 
     // Build the Telegram message with links and ready-to-copy comments
-    const header = `ENGAGEMENT (${lines.length} comentarios listos)
+    const header = `Ideas de conversación (${lines.length} propuestas sin verificar)
 
-Abre cada link, busca el reel mas reciente, y pega el comentario:\n`;
+Estas cuentas son una lista de inspiración; no he consultado sus publicaciones recientes. Abre cada enlace, comprueba su contenido y adapta la propuesta solo si encaja:\n`;
 
     const body = lines
       .map(
@@ -115,7 +108,7 @@ Abre cada link, busca el reel mas reciente, y pega el comentario:\n`;
       )
       .join("\n\n");
 
-    const footer = "\n\nToca el comentario para copiarlo. Deja 30-60 seg entre cada uno.";
+    const footer = "\n\nSi quieres un comentario específico, envíame el contenido de la publicación. No envíes comentarios en serie ni atribuyas acciones que no hemos realizado.";
 
     await notify(header + body + footer);
     console.log("[engage] Sent", lines.length, "comments to Telegram");

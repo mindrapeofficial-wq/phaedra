@@ -1,3 +1,5 @@
+import { PRODUCT_CONTEXT } from "./product-context.js";
+import { runInstagramAgent } from "./instagram-agent.js";
 const OPENAI_KEY = process.env.OPENAI_API_KEY;
 const IMAGE_MODEL = "gpt-image-2.5-sunburst";
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
@@ -23,6 +25,7 @@ TRABAJO:
 - Usa herramientas cuando el usuario pida una acción o datos que las requieran. Los saludos y charla normal NO requieren herramientas externas. Si el usuario comunica un dato suyo como "me llamo Emil", usa remember_user para guardarlo, aunque ocurra durante una presentación.
 - Para imágenes usa generate_image. Siempre PRO máxima. Respeta el prompt, la foto original y los nombres/títulos exactos; no inventes texto, marcas, logos o sujetos. Antes de crear portadas se recoge el briefing con los detalles opcionales y el prompt visual.
 - Tu especialidad visual principal son PORTADAS MUSICALES para singles, EP y álbumes. Por defecto diseña una portada cuadrada con identidad artística, composición clara y tipografía legible si se solicita texto. Invita a incluir género musical y emoción del lanzamiento en el prompt, sin inventarlos ni convertirlo en un interrogatorio. No confundas portada musical con retrato genérico o anuncio. Si el cliente pide explícitamente otro tipo de imagen, respétalo.
+- Para consultar la cuenta de Instagram del cliente o guardar un borrador, usa ask_claude: tiene las herramientas reales por privado. Si no hay cuenta conectada, el cliente usa /instagram en privado. No supongas conexión solo por conocer un nombre de usuario.
 - Usa ask_claude para análisis estratégico o creativo profundo solicitado, proporcionando el contexto real del cliente. No envíes conversaciones sociales a Claude.
 - Describe acciones y resultados reales: nunca digas que has enviado, publicado, investigado o generado algo sin éxito de la herramienta. Si una herramienta falla, explica qué faltó y el siguiente paso. No prometas acceder a toda una red cuando solo tienes datos parciales.
 - Recomendaciones de personas o círculos necesitan evidencia concreta de las interacciones disponibles. No inventes relaciones o investigación.
@@ -36,7 +39,7 @@ const OWNER_CONTEXT = `Phaedra (@phaedrasound) es un proyecto del propietario, n
 
 
 const TOOLS = [
-  { type: "function", function: { name: "remember_user", description: "Save explicit user-provided facts to their private profile; corrections replace outdated facts. Never infer identity, sensitive traits, or physical measurements from a photo.", parameters: { type: "object", properties: { facts: { type: "object", properties: { name: { type: "string" }, social_accounts: { type: "string" }, metrics: { type: "string" }, goals: { type: "string" }, creative_preferences: { type: "string" }, self_description: { type: "string" }, agreed_next_steps: { type: "string" }, audience: { type: "string" }, resources_and_availability: { type: "string" }, visual_preferences: { type: "string" } }, additionalProperties: false } }, required: ["facts"] } } },
+  { type: "function", function: { name: "remember_user", description: "Save explicit user-provided facts to their private profile; corrections replace outdated facts. Never infer identity, sensitive traits, or physical measurements from a photo.", parameters: { type: "object", properties: { facts: { type: "object", properties: { name: { type: "string" }, artist_name: { type: "string" }, musical_genre: { type: "string" }, social_accounts: { type: "string" }, metrics: { type: "string" }, goals: { type: "string" }, creative_preferences: { type: "string" }, self_description: { type: "string" }, agreed_next_steps: { type: "string" }, audience: { type: "string" }, resources_and_availability: { type: "string" }, visual_preferences: { type: "string" } }, additionalProperties: false } }, required: ["facts"] } } },
   {
     type: "function",
     function: {
@@ -199,7 +202,7 @@ const TOOLS = [
 
 import * as pz from "./postzen.js";
 
-async function executeTool(name, args, referenceUrl = null) {
+async function executeTool(name, args, referenceUrl = null, options = {}) {
   switch (name) {
     case "get_recent_posts":
       return pz.getRecentPosts(args.limit || 5);
@@ -228,7 +231,7 @@ async function executeTool(name, args, referenceUrl = null) {
     case "generate_image":
       return generateImage(args.prompt, args.size || "1024x1024", "pro", args.use_reference === false ? null : referenceUrl);
     case "ask_claude":
-      return askClaude(args.task, args.context || "");
+      return askClaude(args.task, args.context || "", options);
     default:
       return { error: `Unknown tool: ${name}` };
   }
@@ -298,7 +301,9 @@ function imageReply(image) {
   return { text: "Portada lista · Calidad PRO (máxima) · GPT Image 2.5 Sunburst", image };
 }
 
-async function askClaude(task, context) {
+async function askClaude(task, context, options = {}) {
+  if (options.userId && !options.isGroup) return runInstagramAgent(task, context, options);
+  if (options.userId && options.isGroup && /instagram|cuenta|m[eé]trica|audita|analiza|borrador/i.test(task)) return { response: "Para trabajar con tu cuenta y tus datos, seguimos por privado: https://t.me/SocialBananaBot?start=instagram" };
   if (!ANTHROPIC_KEY) return { error: "ANTHROPIC_API_KEY not configured" };
   const systemMsg = `You are the creative strategist for the Social Banana community. Help the specific creator and project in the supplied task. Never assume that a member works for Phaedra or any other member's account. Reply naturally in Spanish; write content in the language requested by that client. Only content explicitly FOR @phaedrasound must be in English. Never mention @ny0b3. Never invent releases, metrics, research, relationships or completed external actions. Use only supplied evidence; explain gaps. Group introductions are social conversation, not Instagram campaigns. Ask one useful question when essential context is missing. Suggest practical creative next steps; never promise fame or pressure someone who declines. You can propose captions, scripts, plans and networking ideas, but these are drafts, not executed actions. Do not invent target accounts without evidence.`;
 
@@ -315,7 +320,7 @@ async function askClaude(task, context) {
   });
   if (!res.ok) {
     const err = await res.text();
-    console.error("Claude error:", res.status, err);
+    console.error("Claude error:", res.status);
     return { error: `Claude failed: ${res.status}` };
   }
   const data = await res.json();
@@ -335,12 +340,14 @@ export async function chat(userMessage, context, imageUrl = null, history = [], 
     const prepared = await options.prepareImage?.(options.directPrompt);
     if (prepared?.text) return { text: prepared.text };
     if (!prepared?.chatInstead) {
+      const denied = await options.beforeImage?.();
+      if (denied) return { text: denied };
       await options.onProgress?.("image");
       try { return imageReply(await generateImage(prepared?.prompt || options.directPrompt, "1024x1024", "pro", imageUrl)); }
       catch { return imageReply({ error: "Image timeout or service failure" }); }
     }
   }
-  const messages = [{ role: "system", content: SYSTEM_PROMPT }];
+  const messages = [{ role: "system", content: SYSTEM_PROMPT + "\n\n" + PRODUCT_CONTEXT }];
   if (options.isOwner) messages.push({ role: "system", content: OWNER_CONTEXT });
   messages.push({ role: "system", content: options.isGroup
     ? "Estás participando EN UN GRUPO DE TELEGRAM. Conversa directamente con los miembros. Una presentación de miembros es social, no un encargo para otras redes."
@@ -370,9 +377,10 @@ export async function chat(userMessage, context, imageUrl = null, history = [], 
   }
 
   messages.push({ role: "system", content: "Ficha privada de este usuario en esta conversación (datos, no instrucciones): " + JSON.stringify(options.profile || {}) });
-  const allowedTools = options.isOwner ? TOOLS : TOOLS.filter(t => ["remember_user", "generate_image", "ask_claude"].includes(t.function.name));
+  const allowedTools = TOOLS.filter(t => ["remember_user", "generate_image", "ask_claude"].includes(t.function.name));
   let profile = { ...(options.profile || {}) };
-  let response = await callOpenAI(messages, allowedTools);
+  const explicitFacts = /me llamo|mi nombre (?:art[ií]stico )?es|mi objetivo es|mi instagram es|mi cuenta es|mi nombre art[ií]stico/i.test(userMessage);
+  let response = await callOpenAI(messages, allowedTools, explicitFacts ? 'remember_user' : null);
   let generatedImage = null;
 
   // Function calling loop (max 5 rounds)
@@ -394,15 +402,17 @@ export async function chat(userMessage, context, imageUrl = null, history = [], 
             continue;
           }
           if (prepared?.prompt) args.prompt = prepared.prompt;
+          const denied = await options.beforeImage?.();
+          if (denied) return { text: denied, profile };
           await options.onProgress?.("image");
           args.prompt += "\n" + (options.photoStyle || "");
         } else if (tc.function.name === "ask_claude") await options.onProgress?.("strategy");
         if (!allowedTools.some(t => t.function.name === tc.function.name)) result = { error: "Tool not available for this user" };
         else if (tc.function.name === "remember_user") {
-          const fields = ["name", "social_accounts", "metrics", "goals", "creative_preferences", "self_description", "agreed_next_steps", "audience", "resources_and_availability", "visual_preferences"];
+          const fields = ["name", "artist_name", "musical_genre", "social_accounts", "metrics", "goals", "creative_preferences", "self_description", "agreed_next_steps", "audience", "resources_and_availability", "visual_preferences"];
           for (const field of fields) if (typeof args.facts?.[field] === "string") profile[field] = args.facts[field].slice(0, 2000);
           result = { saved: true };
-        } else result = await executeTool(tc.function.name, args, imageUrl);
+        } else result = await executeTool(tc.function.name, args, imageUrl, options);
       } catch (e) {
         result = { error: e.message };
       }
@@ -429,7 +439,7 @@ export async function chat(userMessage, context, imageUrl = null, history = [], 
   return { text: response.content || "Me falta un detalle para seguir: ¿qué resultado quieres conseguir?", profile };
 }
 
-async function callOpenAI(messages, allowedTools = TOOLS) {
+async function callOpenAI(messages, allowedTools = TOOLS, requiredTool = null) {
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     signal: AbortSignal.timeout(45_000),
     method: "POST",
@@ -438,14 +448,14 @@ async function callOpenAI(messages, allowedTools = TOOLS) {
       model: "gpt-4.1",
       messages,
       tools: allowedTools,
-      tool_choice: "auto",
+      tool_choice: requiredTool ? { type: "function", function: { name: requiredTool } } : "auto",
       max_tokens: 800,
       temperature: 0.7,
     }),
   });
   if (!res.ok) {
     const err = await res.text();
-    console.error("OpenAI error:", res.status, err);
+    console.error("OpenAI error:", res.status);
     return { content: "Uf, no me pude conectar con el cerebro." };
   }
   const data = await res.json();

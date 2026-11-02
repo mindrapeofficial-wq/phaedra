@@ -14,12 +14,12 @@ async function supabase(path, method = "GET", body = null) {
   };
   if (body) opts.body = JSON.stringify(body);
   const res = await timedFetch(`${SUPABASE_URL}/rest/v1${path}`, opts);
-  if (!res.ok) throw new Error(`Supabase ${res.status}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`User access unavailable (${res.status})`);
   const text = await res.text();
   return text ? JSON.parse(text) : null;
 }
 
-const FREE_DAILY_LIMIT = 5;
+const FREE_DAILY_LIMIT = 30;
 const PRO_DAILY_LIMIT = 50;
 
 const FREE_TOOLS = new Set([
@@ -81,19 +81,13 @@ export async function checkAccess(telegramId, username, toolName) {
 }
 
 export async function incrementUsage(telegramId) {
-  const today = new Date().toISOString().split("T")[0];
-  await supabase(
-    `/sb_telegram_users?telegram_id=eq.${telegramId}`,
-    "PATCH",
-    { daily_requests: 1, last_request_date: today, updated_at: new Date().toISOString() }
-  ).catch(() => {});
-  // Increment with raw SQL via RPC would be better, but PATCH works for now
+  await supabase("/rpc/sb_increment_telegram_usage", "POST", { p_telegram_id: telegramId });
 }
 
 export function getTierInfo(tier) {
   switch (tier) {
     case "owner": return { name: "Owner", limit: "ilimitado", tools: "todas" };
     case "pro": return { name: "Pro", limit: `${PRO_DAILY_LIMIT}/dia`, tools: "todas" };
-    default: return { name: "Free", limit: `${FREE_DAILY_LIMIT}/dia`, tools: "solo lectura" };
+    default: return { name: "Free", limit: `${FREE_DAILY_LIMIT}/dia`, tools: "conversación, ideas y una imagen PRO en total" };
   }
 }

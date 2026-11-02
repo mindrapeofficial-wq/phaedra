@@ -1,5 +1,10 @@
+import { transcribeVoice } from "./voice.js";
+import { createAccountLink } from "./account-link.js";
+import { privateProfile, saveProfileChanges, forgetCreativeMemory } from "./profiles.js";
+import { reserveImage, finishImage } from "./image-credits.js";
+import { beginConnection, verifyConnection, disableConnection, connection } from "./instagram.js";
+import { runInstagramAgent } from "./instagram-agent.js";
 import { sendMessage, sendTyping, sendPhoto, getFileUrl } from "./telegram.js";
-import { gatherStatus } from "./postzen.js";
 import { chat, detectFace } from "./ai.js";
 import { checkAccess, incrementUsage, getUser, getTierInfo } from "./tiers.js";
 import { runEngagementSession } from "./engage.js";
@@ -10,25 +15,34 @@ import { memoryRequest, groupConversationContext } from "./memory.js";
 
 const OWNER_ID = Number(process.env.TELEGRAM_OWNER_ID) || 1661812916;
 const GROUP_CHAT = String(process.env.TELEGRAM_GROUP_CHAT_ID || "-1004319265595");
-const STRIPE_LINK = process.env.STRIPE_PAYMENT_LINK || "https://buy.stripe.com/8x2dR8ez45JG85s4e504800";
 
-const activeChats = new Set();
+const activeChats = new Map();
 const FACE_QUESTION = "Veo un rostro en la foto. ¿Eres tú o es otra persona? ¿Quieres que la portada sea fotorrealista? Puedes decirme, por ejemplo: ‘soy yo, sí, fotorrealista’. Siempre la haré en calidad Pro.";
 
 export async function handleUpdate(update) {
   const chatId = update.message?.chat?.id;
   if (!chatId) return;
   const requestKey = `${chatId}:${update.message.from?.id}`;
-  if (activeChats.has(requestKey)) {
-    await sendMessage(chatId, "Sigo con el encargo anterior. Te aviso en cuanto termine; después seguimos con ese detalle.").catch(() => {});
+  const pending = activeChats.get(requestKey);
+  if (pending?.count >= 6) {
+    await sendMessage(chatId, "Tengo varios mensajes tuyos pendientes. Este último no ha entrado en la cola; reenvíamelo cuando termine los anteriores.").catch(() => {});
     return;
   }
-  activeChats.add(requestKey);
-  try { await handleMessage(update); }
-  catch (e) {
-    console.error("[bot] request failed", e.name);
-    await sendMessage(chatId, "Esta vez se ha cortado la conexión con uno de los servicios. No he completado el encargo; puedes volver a intentarlo.").catch(() => {});
-  } finally { activeChats.delete(requestKey); }
+  const slot = { count: (pending?.count || 0) + 1 };
+  slot.task = (pending?.task || Promise.resolve()).then(async () => {
+    try { await handleMessage(update); }
+    catch (e) {
+      console.error("[bot] request failed", e.name);
+      await sendMessage(chatId, "Esta vez se ha cortado la conexión con uno de los servicios. No he completado el encargo; puedes volver a intentarlo.").catch(() => {});
+    }
+  }).finally(() => {
+    const current = activeChats.get(requestKey);
+    if (current === slot) activeChats.delete(requestKey);
+    else if (current) current.count--;
+  });
+  activeChats.set(requestKey, slot);
+  if (pending) await sendMessage(chatId, "Te he leído. Tengo este mensaje en cola y lo atenderé cuando termine el encargo en curso.").catch(() => {});
+  await slot.task;
 }
 
 async function handleMessage(update) {
@@ -51,6 +65,14 @@ async function handleMessage(update) {
     return;
   }
   if (msg.from?.is_bot) return;
+  if (msg.voice) {
+    if (msg.chat.type !== "private" && String(msg.chat.id) !== GROUP_CHAT && !isBotTriggered(msg)) return;
+    const access = await checkAccess(msg.from.id, msg.from.username);
+    if (!access.allowed) { await sendMessage(msg.chat.id, access.reason); return; }
+    await sendMessage(msg.chat.id, "Te escucho; estoy pasando tu nota de voz a texto para responderte.");
+    try { msg.text = await transcribeVoice(msg.voice); }
+    catch (error) { await sendMessage(msg.chat.id, error.message); return; }
+  }
   if (!msg.text && !msg.caption && !msg.photo?.length) return;
   if (!msg.text) msg.text = msg.caption || "Usa esta foto como referencia para mi próxima petición.";
 
@@ -61,6 +83,40 @@ async function handleMessage(update) {
 
   // Handle commands first
   const cmd = msg.text.trim().toLowerCase();
+  if (/^\/cuenta(?:@socialbananabot)?$/.test(cmd)) {
+    if (isGroup) await sendMessage(chatId, "Vinculamos tu cuenta por privado: https://t.me/SocialBananaBot?start=cuenta");
+    else await sendMessage(chatId, await createAccountLink(userId, username));
+    return;
+  }
+  if (/^\/start(?:@socialbananabot)?\s+cuenta$/.test(cmd)) {
+    if (!isGroup) await sendMessage(chatId, await createAccountLink(userId, username));
+    return;
+  }
+  const instagramCommand = /^\/(?:instagram|conectarinstagram|desconectarinstagram)(?:@socialbananabot)?(?:\s|$)/i.test(cmd) || /^\/start(?:@socialbananabot)?\s+instagram(?:_check)?$/.test(cmd);
+  if (instagramCommand) {
+    if (isGroup) {
+      await sendMessage(chatId, "Conectamos tu cuenta por privado para mantener tus datos separados: https://t.me/SocialBananaBot?start=instagram");
+      return;
+    }
+    try {
+      if (cmd.startsWith("/desconectarinstagram")) {
+        await disableConnection(userId);
+        await sendMessage(chatId, "He desactivado el acceso de Banana a tu Instagram. Esto no borra publicaciones ni cancela contenido programado. Puedes revocar también PostZen desde las aplicaciones autorizadas de Instagram.");
+      } else if (/verificar|instagram_check/.test(cmd)) {
+        const linked = await verifyConnection(userId);
+        await sendMessage(chatId, `Cuenta conectada: ${linked.username}. Ya puedes pedirme que analice tu Instagram o prepare borradores para tu próximo lanzamiento. No publicaré por mi cuenta.`);
+      } else {
+        const linked = await connection(userId);
+        if (linked?.status === "active") {
+          await sendMessage(chatId, `Tu cuenta vinculada es ${linked.username}. Usa /instagram verificar para comprobarla, /instagram reconectar para renovar permisos o /desconectarinstagram para desactivar el acceso.`);
+          if (!cmd.includes("reconectar")) return;
+        }
+        const url = await beginConnection(userId);
+        await sendMessage(chatId, "Conecta tu cuenta Creator o Business desde Instagram. No me envíes tu contraseña. Al terminar, vuelve aquí y pulsa Comprobar conexión. El enlace caduca en unos 10 minutos.", { reply_markup: { inline_keyboard: [[{ text: "Conectar mi Instagram", url }], [{ text: "Comprobar conexión", url: "https://t.me/SocialBananaBot?start=instagram_check" }]] } });
+      }
+    } catch (error) { await sendMessage(chatId, error.message); }
+    return;
+  }
   if (/^\/start(?:@socialbananabot)?(?:\s|$)/i.test(cmd)) {
     await sendMessage(chatId, `¡Hola${msg.from?.first_name ? ", " + msg.from.first_name : ""}! Aquí podemos hablar de tu proyecto con calma. ¿Qué tipo de contenido creas, o te gustaría empezar a crear?\n\nIré recordando tus preferencias para ayudarte mejor. Puedes consultar lo guardado con /mimemoria o borrarlo con /olvidame.`);
     return;
@@ -82,17 +138,12 @@ async function handleMessage(update) {
     return;
   }
   if (cmd === "/upgrade") {
-    const user = await getUser(userId, username);
-    if (user.tier === "owner" || user.tier === "pro") {
-      await sendMessage(chatId, `Ya tienes el plan ${user.tier === "owner" ? "Owner" : "Pro"} activo.`);
-    } else {
-      await sendMessage(chatId, `Plan Pro - Todas las herramientas desbloqueadas:\n\n- Crear borradores de posts\n- Responder comentarios y DMs\n- Generar imagenes con DALL-E\n- Analisis con Claude AI\n- 50 consultas/dia\n\n<a href="${STRIPE_LINK}">Suscribirse al Plan Pro</a>`);
-    }
+    await sendMessage(chatId, "Las altas de pago todavía no están activadas en este bot. No te enviaré a pagar hasta que la suscripción y sus permisos estén comprobados.");
     return;
   }
 
   // In private, check access
-  if (!isGroup) {
+  if (!isGroup && !["/mimemoria", "/olvidame"].includes(cmd)) {
     const access = await checkAccess(userId, username);
     if (!access.allowed) {
       await sendMessage(chatId, access.reason);
@@ -103,8 +154,10 @@ async function handleMessage(update) {
   // Our creator group is conversational; other groups still require a mention/reply.
   if (isGroup) {
     if (!isBotTriggered(msg)) return;
-    const access = await checkAccess(userId, username);
-    if (!access.allowed) { await sendMessage(chatId, access.reason); return; }
+    if (!["/mimemoria", "/olvidame"].includes(cmd)) {
+      const access = await checkAccess(userId, username);
+      if (!access.allowed) { await sendMessage(chatId, access.reason); return; }
+    }
   }
 
   let text = ["/olvidame", "/mimemoria"].includes(cmd) ? cmd : cleanMessage(msg.text);
@@ -121,10 +174,12 @@ async function handleMessage(update) {
     return;
   }
   if (cmd === "/olvidame") {
-    await memoryRequest(chatId, userId, "DELETE");
-    await sendMessage(chatId, "He borrado tu memoria de esta conversación, incluida la referencia de tu foto.");
+    await forgetCreativeMemory(userId);
+    await sendMessage(chatId, "He borrado tu ficha creativa y la memoria de nuestras conversaciones, incluidas las referencias a tus fotos. Tu cuenta, suscripción y consumo de créditos se conservan.");
     return;
   }
+  // Only the user's private chat may load facts learned in other conversations.
+  if (!isGroup) state.profile = { ...state.profile, ...await privateProfile(userId) };
   if (cmd === "/mimemoria") {
     if (isGroup) { await sendMessage(chatId, "Tu ficha es privada. Consúltala por mensaje privado conmigo usando /mimemoria."); return; }
     const profile = JSON.stringify(state.profile || {}, null, 2);
@@ -143,6 +198,7 @@ async function handleMessage(update) {
     await memoryRequest(chatId, userId, "POST", state);
     return;
   }
+  let imageReservation = null, imageDelivered = false;
   const typingTimer = setInterval(() => sendTyping(chatId).catch(() => {}), 4500);
   const progressTimer = setTimeout(() => sendMessage(chatId, "Sigo trabajando en ello. Te aviso aquí cuando esté listo o si surge algún problema.").catch(() => {}), 45_000);
   const record = (role, content) => {
@@ -205,14 +261,22 @@ async function handleMessage(update) {
     if (/^(?:calidad\s+)?pro[.! ]*$/i.test(text) && state.lastPrompt) directPrompt = state.lastPrompt;
     if (state.coverDraft?.pending) directPrompt = text;
     if (directPrompt) directPrompt += "\n" + photoStyle;
-    let context = null;
-    if (userId === OWNER_ID && !directPrompt && /phaedra|instagram|analytics|estad[ií]stic|m[eé]trica|publicacion|programad|comentarios|\bdms?\b/i.test(text)) {
-      try { context = await gatherStatus(); } catch { /* proceed with conversation */ }
-    }
+    const context = null;
     const community = isGroup ? await groupConversationContext(chatId).catch(() => []) : [];
     record("user", text);
-    const reply = await chat(text, context, imageUrl, state.history, {
-      directPrompt, photoStyle, profile: state.profile, isOwner: userId === OWNER_ID, isGroup, community,
+    await memoryRequest(chatId, userId, "POST", state);
+    const instagramTask = /^(?:\/ig[-_]|analiza mi instagram|audita mi instagram)/i.test(msg.text);
+    const reply = instagramTask ? await (async () => {
+      if (isGroup) return { text: "Seguimos con tu cuenta por privado: https://t.me/SocialBananaBot?start=instagram" };
+      await sendMessage(chatId, "Voy a revisar tu petición con las herramientas de Instagram. Puede llevar 1–2 minutos; te cuento aquí el resultado.");
+      const result = await runInstagramAgent(msg.text, JSON.stringify(state.history.slice(-8)), { userId, mediaFiles: { generated: state.generatedFileId, reference: state.reference?.fileId }, profile: state.profile, requestId: String(update.update_id || msg.message_id || "") });
+      return { text: result.response };
+    })() : await chat(text, context, imageUrl, state.history, {
+      mediaFiles: { generated: state.generatedFileId, reference: state.reference?.fileId }, userId, requestId: String(update.update_id || msg.message_id || ""), directPrompt, photoStyle, profile: state.profile, isOwner: userId === OWNER_ID, isGroup, community,
+      beforeImage: async () => {
+        try { imageReservation = await reserveImage(userId, username); return null; }
+        catch (error) { return error.message; }
+      },
       prepareImage: async prompt => {
         const brief = await resolveCoverBrief(text, state.coverDraft);
         if (brief.unrelated) return { chatInstead: true };
@@ -224,12 +288,23 @@ async function handleMessage(update) {
         ? "Me pongo con tu portada en calidad PRO máxima" + (imageUrl ? ", usando tu foto original" : "") + ". Puede tardar aproximadamente 1–4 minutos. Te la envío aquí en cuanto termine."
         : "Voy a revisar los datos y preparar una propuesta con contexto. Puede llevar aproximadamente 1–2 minutos."),
     });
-    if (reply.profile) state.profile = { ...state.profile, ...reply.profile };
+    if (reply.profile) {
+      await saveProfileChanges(userId, state.profile, reply.profile);
+      state.profile = { ...state.profile, ...reply.profile };
+    }
     if (reply.image) state.lastPrompt = reply.image.prompt;
     record("assistant", reply.text);
     await memoryRequest(chatId, userId, "POST", state);
     if (reply.image) {
-      await sendPhoto(chatId, Buffer.from(reply.image.imageBase64, "base64"), reply.text);
+      const delivered = await sendPhoto(chatId, Buffer.from(reply.image.imageBase64, "base64"), reply.text);
+      imageDelivered = true;
+      try { await finishImage(userId, imageReservation, true); imageReservation = null; }
+      catch { console.error("[image] credit settlement pending retry"); }
+      const delivery = await delivered.json();
+      if (delivery.result?.photo?.length) {
+        state.generatedFileId = delivery.result.photo.at(-1).file_id;
+        await memoryRequest(chatId, userId, "POST", state);
+      }
       try {
         const archived = await archiveCover(userId, reply.image.imageBase64);
         if (archived?.id) {
@@ -241,9 +316,10 @@ async function handleMessage(update) {
         await sendMessage(chatId, "La portada está entregada aquí. No he podido guardar la copia en Drive; tendrás que conservar esta descarga por ahora.");
       }
     } else await sendMessage(chatId, reply.text);
-    if (userId !== OWNER_ID) await incrementUsage(userId);
+    if (userId !== OWNER_ID) await incrementUsage(userId).catch(() => console.error("[usage] increment failed"));
     console.log(`[bot] reply delivered chat=${chatId} image=${Boolean(reply.image)}`);
   } finally {
+    if (imageReservation) await finishImage(userId, imageReservation, imageDelivered).catch(() => console.error("[image] credit settlement failed"));
     clearInterval(typingTimer);
     clearTimeout(progressTimer);
   }

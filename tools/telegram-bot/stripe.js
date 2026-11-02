@@ -1,53 +1,17 @@
-import { getUser } from "./tiers.js";
+import { createHmac, timingSafeEqual } from "node:crypto";
 
-const SUPABASE_URL = process.env.SUPABASE_URL || "https://mfylkalarzuhivhmvzbm.supabase.co";
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
-
-async function supabasePatch(path, body) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1${path}`, {
-    method: "PATCH",
-    headers: {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-      "Content-Type": "application/json",
-      Prefer: "return=minimal",
-    },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) console.error("Supabase patch failed:", res.status, await res.text());
+export function verifyStripeSignature(body, signature, secret, now = Date.now()) {
+  if (!secret || typeof signature !== "string") return false;
+  const parts = signature.split(",").map(value => value.trim().split("="));
+  const timestamp = parts.find(([key]) => key === "t")?.[1];
+  if (!/^\d+$/.test(timestamp || "") || Math.abs(now / 1000 - Number(timestamp)) > 300) return false;
+  const expected = createHmac("sha256", secret).update(`${timestamp}.${body}`).digest();
+  return parts.some(([key, value]) => key === "v1" && /^[a-f0-9]{64}$/i.test(value || "") && timingSafeEqual(Buffer.from(value, "hex"), expected));
 }
 
-export async function handleStripeWebhook(body) {
-  const event = JSON.parse(body);
-  const type = event.type;
-  console.log(`[stripe] ${type}`);
-
-  if (type === "checkout.session.completed") {
-    const session = event.data.object;
-    const email = session.customer_email || session.customer_details?.email;
-    const telegramStart = session.client_reference_id;
-
-    if (telegramStart) {
-      const telegramId = parseInt(telegramStart, 10);
-      if (!isNaN(telegramId)) {
-        await supabasePatch(
-          `/sb_telegram_users?telegram_id=eq.${telegramId}`,
-          { tier: "pro", updated_at: new Date().toISOString() }
-        );
-        console.log(`[stripe] Upgraded telegram user ${telegramId} to pro`);
-      }
-    }
-  }
-
-  if (type === "customer.subscription.deleted") {
-    const sub = event.data.object;
-    const metadata = sub.metadata;
-    if (metadata?.telegram_id) {
-      await supabasePatch(
-        `/sb_telegram_users?telegram_id=eq.${metadata.telegram_id}`,
-        { tier: "free", updated_at: new Date().toISOString() }
-      );
-      console.log(`[stripe] Downgraded telegram user ${metadata.telegram_id} to free`);
-    }
-  }
+// A single billing authority serves both the extension and Telegram.
+// Register Stripe at the canonical Supabase banana-billing/webhook endpoint.
+export async function handleStripeWebhook(body, signature) {
+  if (!verifyStripeSignature(body, signature, process.env.STRIPE_WEBHOOK_SECRET)) throw new Error('Invalid Stripe signature');
+  throw new Error('Use the canonical banana-billing webhook; this legacy endpoint cannot grant access');
 }

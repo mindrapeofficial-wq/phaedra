@@ -2,7 +2,7 @@ const timedFetch = (url, options = {}) => fetch(url, { ...options, signal: optio
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const API = `https://api.telegram.org/bot${TOKEN}`;
 
-export async function sendMessage(chatId, text) {
+export async function sendMessage(chatId, text, options = {}) {
   text = String(text).replace(/<a href="([^"]+)">([^<]*)<\/a>/g, "$2: $1")
     .replace(/<\/?(?:b|i|strong|em|code|pre)>/g, "").replace(/\*\*/g, "");
   if (text.length > 4000) {
@@ -13,7 +13,7 @@ export async function sendMessage(chatId, text) {
   const res = await timedFetch(`${API}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: chatId, text }),
+    body: JSON.stringify({ chat_id: chatId, text, ...options }),
   });
   if (!res.ok) {
     const err = await res.text();
@@ -41,7 +41,7 @@ export async function sendPhoto(chatId, photo, caption) {
   const res = await timedFetch(`${API}/sendPhoto`, options);
   if (!res.ok) {
     const err = await res.text();
-    console.error("telegram sendPhoto failed:", res.status, err);
+    console.error("telegram sendPhoto failed:", res.status);
     throw new Error(`Telegram sendPhoto failed: ${res.status}`);
   }
   return res;

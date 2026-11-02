@@ -16,12 +16,19 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
   let failEdit = false, generations = 0;
   const json = body => new Response(JSON.stringify(body), { headers: { "Content-Type": "application/json" } });
   globalThis.fetch = async (url, options = {}) => {
+    if (url.includes("sb_creator_profiles")) return json([]);
+    if (url.includes("sb_merge_creator_profile")) return json(null);
     if (url.includes("/rest/v1/sb_telegram_users")) return json([{ tier: "owner" }]);
     if (url.includes("/rest/v1/sb_bot_memory")) {
       if (options.method === "POST") {
         const row = JSON.parse(options.body); memories.set(`${row.chat_id}:${row.telegram_id}`, row.state); return new Response(null, { status: 204 });
       }
-      const parsed = new URL(url); const key = parsed.searchParams.get("chat_id").slice(3) + ":" + parsed.searchParams.get("telegram_id").slice(3);
+      const parsed = new URL(url);
+      if (options.method === "DELETE" && !parsed.searchParams.has("chat_id")) {
+        for (const key of memories.keys()) if (key.endsWith(":" + parsed.searchParams.get("telegram_id").slice(3))) memories.delete(key);
+        return new Response(null, { status: 204 });
+      }
+      const key = parsed.searchParams.get("chat_id").slice(3) + ":" + parsed.searchParams.get("telegram_id").slice(3);
       if (options.method === "DELETE") { memories.delete(key); return new Response(null, { status: 204 }); }
       return json(memories.has(key) ? [{ state: structuredClone(memories.get(key)) }] : []);
     }
@@ -143,6 +150,11 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
     assert.equal(memories.get("500:1").coverDraft.pending, false);
     assert.match(memories.get("500:1").lastPrompt, /Artist: Luna/);
     assert.match(memories.get("500:1").lastPrompt, /Title: Neon Rain/);
+    await Promise.all([send({ text: "heyyy" }, 900), send({ text: "heyyy" }, 900)]);
+    assert.equal(memories.get("900:1").history.filter(m => m.role === "user").length, 2, "messages received during work must be processed in order, not discarded");
+    assert.ok(sentTexts.some(t => t.includes("mensaje en cola")));
+    await send({ text: "/instagram", reply_to_message: undefined, from: { id: 3 } }, -1004319265595);
+    assert.match(sentTexts.at(-1), /por privado/);
 
   } finally {
     globalThis.fetch = originalFetch;

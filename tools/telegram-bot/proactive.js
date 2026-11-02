@@ -1,62 +1,56 @@
-import { sendMessage } from "./telegram.js";
-import { askClaude } from "./ai.js";
-import { memoryRequest, groupConversationContext } from "./memory.js";
-import * as pz from "./postzen.js";
-
-const GROUP_CHAT = process.env.TELEGRAM_GROUP_CHAT_ID || "-1004319265595";
+import { sendMessage } from './telegram.js';
+import { askClaude } from './ai.js';
+import { memoryRequest, groupConversationContext } from './memory.js';
+import { PRODUCT_CONTEXT } from './product-context.js';
+const GROUP_CHAT = process.env.TELEGRAM_GROUP_CHAT_ID || '-1004319265595';
+const ANNOUNCEMENT = 'instagram-extension-10eur-preparation-v1';
 let timer, starting, running = false;
-
+export function communityTiming(state, community, now = Date.now()) {
+  const local = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Madrid', hour: 'numeric', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date(now));
+  const part = key => local.find(p => p.type === key)?.value;
+  const day = `${part('year')}-${part('month')}-${part('day')}`;
+  const hour = Number(part('hour'));
+  const latest = Math.max(0, ...community.map(p => Date.parse(p.updated_at) || 0));
+  const sentToday = state.day === day ? state.sentToday || 0 : 0;
+  const freshConversation = latest > (state.lastContextAt || 0);
+  return { day, latest, sentToday, allowed: hour >= 9 && hour < 23 && sentToday < 8 && latest > 0
+    && now - latest > 2 * 60_000 && now - (state.lastSent || 0) > 15 * 60_000
+    && (freshConversation || (sentToday < 2 && now - (state.lastSent || 0) > 3 * 3600_000)) };
+}
 export async function runProactiveTick() {
   if (running) return;
   running = true;
   try {
-    const hour = Number(new Intl.DateTimeFormat("en", { hour: "numeric", hourCycle: "h23", timeZone: "Europe/Madrid" }).format(new Date()));
-    if (hour < 9 || hour >= 22) return;
-    // A separate service record contains only public account activity and our prior group suggestions.
     const state = await memoryRequest(GROUP_CHAT, 0);
     const community = await groupConversationContext(GROUP_CHAT);
-    const posts = (await pz.getRecentPosts(5).catch(() => ({ data: [] }))).data || [];
-    const interactions = [];
-    for (const post of posts) {
-      const comments = (await pz.getPostComments(post._id).catch(() => ({ data: [] }))).data || [];
-      for (const comment of comments) interactions.push({ id: comment._id, author: comment.author?.username || comment.author?.name, text: (comment.text || "").slice(0, 500), postId: post._id });
+    const timing = communityTiming(state, community);
+    if (state.productAnnouncement !== ANNOUNCEMENT) {
+      const message = 'Os cuento lo que estamos preparando para Social Banana 🍌: una suscripción de 10 €/mes que incluirá conectar un Instagram y un mes de acceso a la extensión. Los cobros reales aún no están activados; cuando estén listos os explicaré cómo hacerlo.\n\nMientras tanto podemos trabajar en vuestra identidad y vuestras portadas: cada cuenta gratuita tendrá una imagen PRO para probar. Si ya tenéis una canción en marcha, contadme qué queréis transmitir y os ayudo a aterrizar la idea. También puedo guiaros para instalar Banana.';
+      await sendMessage(GROUP_CHAT, message);
+      state.productAnnouncement = ANNOUNCEMENT;
+      state.lastSent = Date.now(); state.day = timing.day; state.sentToday = timing.sentToday + 1;
+      state.suggestions = [...(state.suggestions || []), message].slice(-12);
+      await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+      console.log('[community] product update delivered'); return;
     }
-    const seen = new Set(state.seenComments || []);
-    const fresh = interactions.filter(c => c.id && !seen.has(c.id));
-    const snapshot = posts.map(p => ({ id: p._id, text: (p.content || "").slice(0, 200), analytics: p.analytics }));
-    const changed = JSON.stringify(snapshot) !== state.snapshot;
-    // Baseline after first install: don't dump old activity into the group.
-    if (!state.initialized) {
-      state.initialized = true;
-    } else if ((fresh.length || changed || community.length) && Date.now() - (state.lastSent || 0) > 90 * 60_000
-      && community.every(person => Date.now() - Date.parse(person.updated_at) > 8 * 60_000)) {
-      const result = await askClaude(
-        "Write one natural Spanish message to our creator group as an attentive creative manager. Use ONLY supplied public account evidence and conversations that happened IN THIS GROUP. Follow up on a creator's stated goal, celebrate a real step, propose a useful action, or ask ONE relevant question to understand their project/audience/next goal. Address people by supplied name when relevant. Never pressure, guilt, or insist after a declined question. No generic reminders, repeated ideas, report headings, HTML or Markdown. Don't ask for private physical details in the group, disclose private profiles or DMs, invent metrics, or pretend you researched profiles/the entire network. Explain the evidence behind any networking recommendation. Don't repeat prior suggestions; return exactly SKIP if nothing useful can be added. Max 80 words. Instagram copy in English. Never imply an external action was executed.",
-        JSON.stringify({ community, newPublicComments: fresh, posts: snapshot, previousSuggestions: state.suggestions || [] })
-      );
-      if (!result.error && result.response?.trim() !== "SKIP") {
-        const message = result.response.replace(/\*\*/g, "").trim();
-        await sendMessage(GROUP_CHAT, message);
-        state.lastSent = Date.now();
-        state.suggestions = [...(state.suggestions || []), message].slice(-12);
-      }
-    }
-    state.snapshot = JSON.stringify(snapshot);
-    state.seenComments = [...new Set([...(state.seenComments || []), ...interactions.map(c => c.id).filter(Boolean)])].slice(-1000);
-    await memoryRequest(GROUP_CHAT, 0, "POST", state);
-  } catch (e) { console.error("[proactive] check failed", e.name); }
+    if (!timing.allowed) return;
+    const result = await askClaude(
+      'Write one natural Spanish message as Banana, an active creative community manager. Use the public group conversation to move a member forward: a specific useful suggestion, a connection between shared goals, a next step, or ONE question about a missing goal. Use their supplied name where helpful. Be a participant, not a service menu. If a concrete need fits the product, explain that benefit and offer one easy next step; do not repeatedly pitch subscriptions. Respect refusals. Never invent metrics, research, completed actions, identity, testimony or capabilities. Do not disclose private profiles, DMs or individual billing. Avoid repeating the previous suggestions. Return exactly SKIP if there is no useful new contribution. Maximum 70 words.',
+      JSON.stringify({ product: PRODUCT_CONTEXT, community, previousSuggestions: state.suggestions || [] })
+    );
+    const message = result.response?.trim();
+    if (result.error || !message || message === 'SKIP') return;
+    await sendMessage(GROUP_CHAT, message);
+    state.lastSent = Date.now(); state.lastContextAt = timing.latest;
+    state.day = timing.day; state.sentToday = timing.sentToday + 1;
+    state.suggestions = [...(state.suggestions || []), message].slice(-12);
+    await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+    console.log('[community] contextual follow-up delivered');
+  } catch (error) { console.error('[community] follow-up failed', error.name); }
   finally { running = false; }
 }
-
 export function startProactiveLoop() {
   if (timer || starting) return;
-  starting = setTimeout(() => {
-    starting = null;
-    void runProactiveTick();
-    timer = setInterval(runProactiveTick, 30 * 60_000);
-  }, 120_000);
+  starting = setTimeout(() => { starting = null; void runProactiveTick(); timer = setInterval(runProactiveTick, 60_000); }, 20_000);
 }
-export function stopProactiveLoop() {
-  clearTimeout(starting); clearInterval(timer);
-  starting = timer = null;
-}
+export function stopProactiveLoop() { clearTimeout(starting); clearInterval(timer); starting = timer = null; }
