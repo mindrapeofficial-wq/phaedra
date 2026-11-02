@@ -25,3 +25,12 @@ test('cold or rate-limited worker gets one threaded receipt and retry; warm work
  assert.equal(await wakeTelegramWorker(request.body.message,{env,fetchImpl,noticeDelay:5,retryDelay:1}),true);assert.equal(attempts,2);assert.equal(receipts,1);
  receipts=0;assert.equal(await wakeTelegramWorker(request.body.message,{env,noticeDelay:50,fetchImpl:async url=>{if(url.includes('/sendMessage'))receipts++;return new Response('{"status":"ok"}');}}),true);assert.equal(receipts,0);
 });
+test('a warm worker with queued work still sends a single receipt',async()=>{
+ let receipts=0;
+ const fetchImpl=async(url,options)=>{
+   if(url.includes('/rest/v1/'))return new Response('[{"telegram_id":456}]');
+   if(url.includes('/sendMessage')){receipts++;assert.match(JSON.parse(options.body).text,/encargo anterior/);return new Response('{}');}
+   return new Response('{"status":"ok"}');
+ };
+ assert.equal(await wakeTelegramWorker({...request.body.message,updateId:10},{env,fetchImpl}),true);assert.equal(receipts,1);
+});
