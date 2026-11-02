@@ -88,10 +88,17 @@ export async function handleUpdate(update) {
       await incrementUsage(userId);
     }
 
-    const imageMatch = reply.match(/https:\/\/oaidalleapiprodscus\.blob\.core\.windows\.net[^\s)]+/);
+    const imageMatch = reply.match(/https:\/\/[^\s)]+\.(png|jpg|jpeg|webp)(\?[^\s)]*)?/i)
+      || reply.match(/https:\/\/oaidalleapiprodscus\.blob\.core\.windows\.net[^\s)]+/)
+      || reply.match(/https:\/\/[^\s)]*openai[^\s)]*\.(png|jpg|jpeg|webp|blob)[^\s)]*/i);
     if (imageMatch) {
       const caption = reply.replace(imageMatch[0], "").trim().slice(0, 1024);
-      await sendPhoto(chatId, imageMatch[0], caption);
+      try {
+        await sendPhoto(chatId, imageMatch[0], caption);
+      } catch (photoErr) {
+        console.error("sendPhoto failed, sending as text:", photoErr.message);
+        await sendMessage(chatId, reply);
+      }
     } else {
       await sendMessage(chatId, reply);
     }
