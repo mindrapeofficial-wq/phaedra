@@ -257,9 +257,18 @@ async function generateImage(prompt, size, quality = "pro", referenceUrl = null)
   if (referenceUrl) {
     const source = await fetch(referenceUrl, { signal });
     if (!source.ok) return { error: "Reference photo could not be downloaded" };
+    // Telegram serves photos as application/octet-stream. Identify the bytes
+    // rather than passing that unsupported MIME type to the Images API.
+    const bytes = Buffer.from(await source.arrayBuffer());
+    const isJpeg = bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+    const isPng = bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+    const isWebp = bytes.toString("ascii", 0, 4) === "RIFF" && bytes.toString("ascii", 8, 12) === "WEBP";
+    const type = isJpeg ? "image/jpeg" : isPng ? "image/png" : isWebp ? "image/webp" : null;
+    if (!type) return { error: "Unsupported reference image format" };
+    const extension = isJpeg ? "jpg" : isPng ? "png" : "webp";
     const form = new FormData();
     for (const [key, value] of Object.entries(body)) form.set(key, String(value));
-    form.set("image[]", await source.blob(), "reference.jpg");
+    form.set("image[]", new Blob([bytes], { type }), `reference.${extension}`);
     payload = form;
   } else {
     headers["Content-Type"] = "application/json";
@@ -268,7 +277,11 @@ async function generateImage(prompt, size, quality = "pro", referenceUrl = null)
     method: "POST", headers, body: payload, signal,
   });
   if (!res.ok) {
-    console.error("[image] request failed", { status: res.status, model: IMAGE_MODEL, reference: Boolean(referenceUrl) });
+    const failure = await res.json().catch(() => ({}));
+    console.error("[image] request failed", {
+      status: res.status, model: IMAGE_MODEL, reference: Boolean(referenceUrl),
+      code: failure.error?.code, param: failure.error?.param, type: failure.error?.type,
+    });
     return { error: `Image request failed: ${res.status}` };
   }
   const image = (await res.json()).data?.[0];

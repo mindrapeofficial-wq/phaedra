@@ -11,6 +11,7 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
   const originalFetch = globalThis.fetch;
   const edits = [], sentPhotos = [], sentTexts = [], resolvedIds = [];
   const memories = new Map();
+  const originalPhoto = Buffer.concat([Buffer.from([255, 216, 255]), Buffer.from("original-photo-bytes")]);
   let hasFace = false;
   let failEdit = false, generations = 0;
   const json = body => new Response(JSON.stringify(body), { headers: { "Content-Type": "application/json" } });
@@ -29,7 +30,7 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
       resolvedIds.push(JSON.parse(options.body).file_id);
       return json({ result: { file_path: "photos/ref.jpg" } });
     }
-    if (url.includes("/file/bot")) return new Response("original-photo-bytes", { headers: { "Content-Type": "image/jpeg" } });
+    if (url.includes("/file/bot")) return new Response(originalPhoto, { headers: { "Content-Type": "application/octet-stream" } });
     if (url.endsWith("/chat/completions")) {
       const request = JSON.parse(options.body);
       if (request.response_format) return json({ choices: [{ message: { content: JSON.stringify({ hasFace }) } }] });
@@ -41,7 +42,9 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
       return json({ choices: [{ message }] });
     }
     if (url.endsWith("/images/edits")) {
-      edits.push({ bytes: await options.body.get("image[]").text(), quality: options.body.get("quality"), model: options.body.get("model"), prompt: options.body.get("prompt") });
+      const photo = options.body.get("image[]");
+      assert.equal(photo.type, "image/jpeg", "Telegram's generic MIME must be corrected");
+      edits.push({ bytes: Buffer.from(await photo.arrayBuffer()), quality: options.body.get("quality"), model: options.body.get("model"), prompt: options.body.get("prompt") });
       assert.ok(options.signal);
       return failEdit ? new Response("edit unavailable", { status: 400 }) : json({ data: [{ b64_json: Buffer.from("edited-photo").toString("base64") }] });
     }
@@ -69,7 +72,7 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
     await send({ text: "pro" });
     assert.equal(edits.length, 2);
     for (const edit of edits) {
-      assert.equal(edit.bytes, "original-photo-bytes");
+      assert.deepEqual(edit.bytes, originalPhoto);
       assert.equal(edit.quality, "max");
       assert.equal(edit.model, "gpt-image-2.5-sunburst");
     }
