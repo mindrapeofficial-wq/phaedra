@@ -302,7 +302,8 @@ RULES:
     return { error: `Claude failed: ${res.status}` };
   }
   const data = await res.json();
-  const text = data.content?.[0]?.text || "No response";
+  console.log("[claude raw]", JSON.stringify(data).slice(0, 500));
+  const text = data.content?.[0]?.text || data.content?.map(b => b.text).filter(Boolean).join("\n") || "No response";
   console.log("[claude response]", text.slice(0, 200));
   return { response: text };
 }
