@@ -2,41 +2,44 @@ import { sendMessage, sendTyping } from "./telegram.js";
 import { gatherStatus } from "./postzen.js";
 import { chat } from "./ai.js";
 
-const GROUP_CHAT_ID = Number(process.env.TELEGRAM_GROUP_CHAT_ID) || -1004319265595;
 const OWNER_ID = Number(process.env.TELEGRAM_OWNER_ID) || 1661812916;
 
 export async function handleUpdate(update) {
   const msg = update.message;
   if (!msg?.text) return;
 
-  // Only respond in the target group or to the owner in private
   const chatId = msg.chat.id;
-  const isGroup = chatId === GROUP_CHAT_ID;
+  const isGroup = msg.chat.type === "group" || msg.chat.type === "supergroup";
   const isOwner = msg.from?.id === OWNER_ID;
 
+  // In private, only respond to the owner
   if (!isGroup && !isOwner) return;
 
-  // In groups, only respond when mentioned or replied to, or with /commands
+  // In groups, only respond when triggered
   if (isGroup && !isBotTriggered(msg)) return;
 
   const text = cleanMessage(msg.text);
   if (!text) return;
 
-  console.log(`[${new Date().toISOString()}] ${msg.from?.username || "?"}: ${text}`);
+  console.log(`[${new Date().toISOString()}] chat=${chatId} ${msg.from?.username || "?"}: ${text}`);
 
-  await sendTyping(chatId);
-
-  // Gather Instagram data for context
-  let context = null;
   try {
-    context = await gatherStatus();
-  } catch (e) {
-    console.error("PostZen gather failed:", e.message);
-  }
+    await sendTyping(chatId);
 
-  // Let ChatGPT handle the response with Instagram context
-  const reply = await chat(text, context);
-  await sendMessage(chatId, reply);
+    let context = null;
+    try {
+      context = await gatherStatus();
+    } catch (e) {
+      console.error("PostZen gather failed:", e.message);
+    }
+
+    const reply = await chat(text, context);
+    await sendMessage(chatId, reply);
+    console.log(`[${new Date().toISOString()}] reply sent to ${chatId}`);
+  } catch (e) {
+    console.error("handleUpdate error:", e);
+    await sendMessage(chatId, "Uf, algo fallo por mi lado. Dame un momento.").catch(() => {});
+  }
 }
 
 function isBotTriggered(msg) {
