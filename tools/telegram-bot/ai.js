@@ -18,7 +18,7 @@ CAPACIDADES (SIEMPRE usa function calling para ejecutarlas, NO digas que no pued
 - PUEDES ver y responder DMs de Instagram (get_open_conversations, get_conversation_messages, send_dm)
 - Ver analytics y mejores horarios (get_analytics, get_best_time_to_post)
 - Sincronizar posts externos de Instagram (sync_external_posts)
-- Generar imagenes con DALL-E 3 (generate_image) - portadas, diseños, thumbnails
+- Generar imagenes con GPT Image (generate_image) - portadas, diseños, thumbnails. Pregunta al usuario si quiere calidad "normal" (rapida) o "pro" (alta calidad) cuando no lo especifique
 - Pedir analisis profundo a Claude AI (ask_claude) - estrategia, scripts, auditorias
 
 IMPORTANTE:
@@ -173,12 +173,13 @@ const TOOLS = [
     type: "function",
     function: {
       name: "generate_image",
-      description: "Generate an image with DALL-E. Use for music covers, post designs, carousel visuals, reel thumbnails. Style: minimalist, dark, modern, DAW aesthetic.",
+      description: "Generate an image with GPT Image / DALL-E. Use for music covers, post designs, carousel visuals, reel thumbnails. Style: minimalist, dark, modern, DAW aesthetic. Ask the user if they want normal or pro quality when not specified.",
       parameters: {
         type: "object",
         properties: {
           prompt: { type: "string", description: "Image description in English, detailed" },
           size: { type: "string", enum: ["1024x1024", "1024x1792", "1792x1024"], default: "1024x1024" },
+          quality: { type: "string", enum: ["normal", "pro"], default: "normal", description: "normal = fast & cheaper, pro = high detail & slower" },
         },
         required: ["prompt"],
       },
@@ -230,7 +231,7 @@ async function executeTool(name, args) {
     case "sync_external_posts":
       return pz.syncExternalPosts();
     case "generate_image":
-      return generateImage(args.prompt, args.size || "1024x1024");
+      return generateImage(args.prompt, args.size || "1024x1024", args.quality || "normal");
     case "ask_claude":
       return askClaude(args.task, args.context || "");
     default:
@@ -238,17 +239,17 @@ async function executeTool(name, args) {
   }
 }
 
-async function generateImage(prompt, size) {
+async function generateImage(prompt, size, quality = "normal") {
   if (!OPENAI_KEY) return { error: "OPENAI_API_KEY not configured" };
-  // Try gpt-image-1 first, fall back to dall-e-2
+  const isPro = quality === "pro";
   for (const model of ["gpt-image-1", "dall-e-3", "dall-e-2"]) {
     const body = { model, prompt, n: 1 };
     if (model === "gpt-image-1") {
-      body.size = size === "1024x1024" ? "1024x1024" : "1024x1024";
-      body.quality = "medium";
+      body.size = size;
+      body.quality = isPro ? "high" : "medium";
     } else {
       body.size = size;
-      body.quality = "hd";
+      body.quality = isPro ? "hd" : "standard";
     }
     const res = await fetch("https://api.openai.com/v1/images/generations", {
       method: "POST",
@@ -259,7 +260,7 @@ async function generateImage(prompt, size) {
       const data = await res.json();
       const url = data.data?.[0]?.url;
       const revised = data.data?.[0]?.revised_prompt;
-      return { imageUrl: url, revisedPrompt: revised };
+      return { imageUrl: url, revisedPrompt: revised, model, quality: isPro ? "pro" : "normal" };
     }
     const err = await res.text();
     console.error(`Image gen (${model}) error: ${res.status}`, err);
