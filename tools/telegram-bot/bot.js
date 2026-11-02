@@ -4,7 +4,9 @@ import { chat, detectFace } from "./ai.js";
 import { checkAccess, incrementUsage, getUser, getTierInfo } from "./tiers.js";
 import { runEngagementSession } from "./engage.js";
 
-import { memoryRequest } from "./memory.js";
+import { resolveCoverBrief } from "./cover-brief.js";
+import { archiveCover } from "./drive.js";
+import { memoryRequest, groupConversationContext } from "./memory.js";
 
 const OWNER_ID = Number(process.env.TELEGRAM_OWNER_ID) || 1661812916;
 const GROUP_CHAT = String(process.env.TELEGRAM_GROUP_CHAT_ID || "-1004319265595");
@@ -31,15 +33,24 @@ export async function handleUpdate(update) {
 
 async function handleMessage(update) {
   const msg = update.message;
-  if (!msg || msg.from?.is_bot) return;
+  if (!msg) return;
   if (String(msg.chat.id) === GROUP_CHAT && msg.new_chat_members?.length) {
     const members = msg.new_chat_members.filter(member => !member.is_bot);
-    if (members.length) {
-      const names = members.map(member => member.first_name || member.username || "colega").join(", ");
-      await sendMessage(msg.chat.id, `¡Bienvenidos, ${names}! Soy Banana, el asistente creativo del grupo. Contadme: ¿qué creáis y qué os gustaría conseguir ahora?`);
+    const newcomers = [];
+    for (const member of members) {
+      const state = await memoryRequest(msg.chat.id, member.id);
+      if (state.profile?.welcomedAt) continue;
+      state.profile = { ...state.profile, telegramName: member.first_name || member.username || "", welcomedAt: new Date().toISOString() };
+      await memoryRequest(msg.chat.id, member.id, "POST", state);
+      newcomers.push(member.first_name || member.username || "colega");
+    }
+    if (newcomers.length) {
+      const single = newcomers.length === 1;
+      await sendMessage(msg.chat.id, `¡${newcomers.join(", ")}, ${single ? "qué bien tenerte por aquí" : "bienvenidos"}! Soy Banana, el asistente creativo de la comunidad. ¿Qué tipo de contenido ${single ? "creas o te gustaría crear" : "creáis o queréis crear"}?\n\nPodemos hablar aquí o por privado: https://t.me/SocialBananaBot?start=welcome\nIré recordando lo que ${single ? "me cuentes" : "me contéis"} para ayudar mejor; podéis consultar o borrar lo guardado.`);
     }
     return;
   }
+  if (msg.from?.is_bot) return;
   if (!msg.text && !msg.caption && !msg.photo?.length) return;
   if (!msg.text) msg.text = msg.caption || "Usa esta foto como referencia para mi próxima petición.";
 
@@ -50,8 +61,8 @@ async function handleMessage(update) {
 
   // Handle commands first
   const cmd = msg.text.trim().toLowerCase();
-  if (cmd === "/start") {
-    await sendMessage(chatId, `Hola! Soy Social Banana, el agente de Instagram de @phaedrasound.\n\nComandos:\n/plan - ver tu plan actual\n/upgrade - desbloquear todas las herramientas\n\nEscribeme lo que necesites sobre Instagram y te ayudo.`);
+  if (/^\/start(?:@socialbananabot)?(?:\s|$)/i.test(cmd)) {
+    await sendMessage(chatId, `¡Hola${msg.from?.first_name ? ", " + msg.from.first_name : ""}! Aquí podemos hablar de tu proyecto con calma. ¿Qué tipo de contenido creas, o te gustaría empezar a crear?\n\nIré recordando tus preferencias para ayudarte mejor. Puedes consultar lo guardado con /mimemoria o borrarlo con /olvidame.`);
     return;
   }
   if (cmd === "/plan" || cmd === "/miplan") {
@@ -97,7 +108,10 @@ async function handleMessage(update) {
   }
 
   let text = ["/olvidame", "/mimemoria"].includes(cmd) ? cmd : cleanMessage(msg.text);
-  if (!text) return;
+  if (!text) {
+    if (/@socialbananabot/i.test(msg.text)) await sendMessage(chatId, "Aquí estoy 🙂 ¿Qué tienes entre manos? Cuéntame y nos ponemos con ello.");
+    return;
+  }
 
   await sendTyping(chatId);
   let state;
@@ -120,6 +134,15 @@ async function handleMessage(update) {
   state.history ||= [];
   state.profile ||= {};
   state.profile.telegramName = msg.from?.first_name || username || "";
+  if (isGroup && !state.profile.welcomedAt && /^(?:hola|buenas|hey+|hi|hello|buenos días|buenas tardes|buenas noches)[!., 🙂👋]*$/iu.test(text)) {
+    const name = state.profile.name || state.profile.telegramName;
+    const welcome = `¡Hola${name ? ", " + name : ""}! Qué bien tenerte por aquí. ¿Qué creas o qué te gustaría empezar a crear?\n\nPodemos hablar aquí o por privado: https://t.me/SocialBananaBot?start=welcome\nIré recordando lo que me cuentes para ayudarte con tu proyecto; puedes consultar o borrar lo guardado.`;
+    await sendMessage(chatId, welcome);
+    state.profile.welcomedAt = new Date().toISOString();
+    state.history = [...state.history, { role: "user", content: text }, { role: "assistant", content: welcome }].slice(-40);
+    await memoryRequest(chatId, userId, "POST", state);
+    return;
+  }
   const typingTimer = setInterval(() => sendTyping(chatId).catch(() => {}), 4500);
   const progressTimer = setTimeout(() => sendMessage(chatId, "Sigo trabajando en ello. Te aviso aquí cuando esté listo o si surge algún problema.").catch(() => {}), 45_000);
   const record = (role, content) => {
@@ -133,6 +156,7 @@ async function handleMessage(update) {
       state.reference = { fileId: newFileId, hasFace: null, photorealistic: null, identity: null };
       state.pendingPrompt = msg.caption || (msg.photo ? null : text);
       state.lastPrompt = null;
+      state.coverDraft = null;
     }
     let imageUrl = null;
     if (state.reference) {
@@ -153,8 +177,8 @@ async function handleMessage(update) {
     }
     if (state.awaitingFaceAnswer) {
       const answer = text.toLowerCase();
-      if (/soy yo|es mi cara|soy el de|soy la de/.test(answer)) state.reference.identity = "El usuario declara que es él/ella en esta foto";
-      else if (/otra persona|no soy yo|es mi (amig|herman|pareja|cliente)/.test(answer)) state.reference.identity = text;
+      if (/otra persona|no soy yo|es mi (amig|herman|pareja|cliente)/.test(answer)) state.reference.identity = text;
+      else if (/soy yo|es mi cara|soy el de|soy la de/.test(answer)) state.reference.identity = "El usuario declara que es él/ella en esta foto";
       if (/no (?:la quiero |quiero )?fotorreal|estilizad|ilustraci|anime|caricatura/.test(answer)) state.reference.photorealistic = false;
       else if (/fotorreal|realista|^s[ií][.! ]*$/.test(answer)) state.reference.photorealistic = true;
       else if (/^no[.! ]*$/.test(answer)) state.reference.photorealistic = false;
@@ -179,14 +203,23 @@ async function handleMessage(update) {
     let directPrompt = /^(?:\/imagen(?:@\w+)?\s+|prompt\s*:\s*)/i.test(msg.text)
       ? msg.text.replace(/^(?:\/imagen(?:@\w+)?\s+|prompt\s*:\s*)/i, "") : null;
     if (/^(?:calidad\s+)?pro[.! ]*$/i.test(text) && state.lastPrompt) directPrompt = state.lastPrompt;
+    if (state.coverDraft?.pending) directPrompt = text;
     if (directPrompt) directPrompt += "\n" + photoStyle;
     let context = null;
-    if (userId === OWNER_ID && !directPrompt) {
+    if (userId === OWNER_ID && !directPrompt && /phaedra|instagram|analytics|estad[ií]stic|m[eé]trica|publicacion|programad|comentarios|\bdms?\b/i.test(text)) {
       try { context = await gatherStatus(); } catch { /* proceed with conversation */ }
     }
+    const community = isGroup ? await groupConversationContext(chatId).catch(() => []) : [];
     record("user", text);
     const reply = await chat(text, context, imageUrl, state.history, {
-      directPrompt, photoStyle, profile: state.profile, isOwner: userId === OWNER_ID,
+      directPrompt, photoStyle, profile: state.profile, isOwner: userId === OWNER_ID, isGroup, community,
+      prepareImage: async prompt => {
+        const brief = await resolveCoverBrief(text, state.coverDraft);
+        if (brief.unrelated) return { chatInstead: true };
+        state.coverDraft = { ...brief.draft, pending: Boolean(brief.text) };
+        if (brief.text) return { text: brief.text };
+        return { prompt: brief.prompt + "\n" + photoStyle };
+      },
       onProgress: async kind => sendMessage(chatId, kind === "image"
         ? "Me pongo con tu portada en calidad PRO máxima" + (imageUrl ? ", usando tu foto original" : "") + ". Puede tardar aproximadamente 1–4 minutos. Te la envío aquí en cuanto termine."
         : "Voy a revisar los datos y preparar una propuesta con contexto. Puede llevar aproximadamente 1–2 minutos."),
@@ -197,6 +230,16 @@ async function handleMessage(update) {
     await memoryRequest(chatId, userId, "POST", state);
     if (reply.image) {
       await sendPhoto(chatId, Buffer.from(reply.image.imageBase64, "base64"), reply.text);
+      try {
+        const archived = await archiveCover(userId, reply.image.imageBase64);
+        if (archived?.id) {
+          state.lastDriveFile = { id: archived.id, url: archived.webViewLink };
+          await memoryRequest(chatId, userId, "POST", state);
+          await sendMessage(chatId, "He guardado también la portada en tu carpeta de contenido.");
+        }
+      } catch {
+        await sendMessage(chatId, "La portada está entregada aquí. No he podido guardar la copia en Drive; tendrás que conservar esta descarga por ahora.");
+      }
     } else await sendMessage(chatId, reply.text);
     if (userId !== OWNER_ID) await incrementUsage(userId);
     console.log(`[bot] reply delivered chat=${chatId} image=${Boolean(reply.image)}`);

@@ -12,3 +12,19 @@
 - Memory begins with messages received after deployment; Telegram cannot supply the bot's full previous chat history through the Bot API.
 
 Verification: `node --test tools/telegram-bot/reference-image.test.js`. It mocks external services and checks original bytes, Pro quality, face gate, follow-ups, prompt preservation, error handling, isolation, and forgetting. Real model availability and output quality require an actual provider request.
+
+## Community onboarding and cover briefs
+
+- Social Banana is a creator community, not a default Phaedra account assistant. Owner account details are only passed to the owner's chat. Strategy follows the actual client's project.
+- A first join event welcomes human members by name and offers a user-initiated private chat (`/start welcome`). A first greeting also handles members whose join event was missed. `profile.welcomedAt` prevents repeated welcomes. The bot never starts an unsolicited DM.
+- Only messages written by users in the same group are included as recent community context; private chat profiles are not included. Legacy assistant claims associating every client with the owner are explicitly treated as mistakes.
+- Cover generation first collects artist, title, label, optional graphic elements and a visual prompt. Clients may omit all text and extras explicitly. The original photo remains the editing input, always at Pro/max quality.
+- Proactive suggestions can follow up on recent public group goals, with a 90-minute minimum interval and an 8-minute quiet period. It can skip when there is nothing useful to add.
+
+## Optional Google Drive archive
+
+The private destination folder is `1HMbGsfaj7vDyF7QkyWgTTqSJ06JJr2Dr`. Uploads are disabled until Render has `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `GOOGLE_REFRESH_TOKEN`. Set credentials through Render's secret environment settings, never source control or chat. The OAuth identity must have Drive API enabled, offline authorization and access to the destination folder. A `drive.file` grant needs this existing folder explicitly authorized for that application, for example through Google Picker; access by a separate connector alone is insufficient.
+
+`GOOGLE_DRIVE_FOLDER_ID` optionally overrides the destination. Finished PNGs are copied to `Cliente <telegram_id>` folders without changing sharing permissions. Original reference photos, private profiles and chat histories are not uploaded. Missing credentials leave Telegram delivery working; upload failure is reported after delivery. This is ready for configuration, not an active Drive connection.
+
+Verification: `node --test tools/telegram-bot/reference-image.test.js tools/telegram-bot/drive.test.js`. Drive requests are mocked; live OAuth authorization is still required.

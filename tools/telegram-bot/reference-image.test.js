@@ -33,6 +33,15 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
     if (url.includes("/file/bot")) return new Response(originalPhoto, { headers: { "Content-Type": "application/octet-stream" } });
     if (url.endsWith("/chat/completions")) {
       const request = JSON.parse(options.body);
+      if (request.messages[0].content.startsWith("Extract a cover design brief")) {
+        const input = JSON.parse(request.messages[1].content);
+        const brief = input.message === "quiero preparar una portada"
+          ? { artist: null, title: null, label: null, graphics: null, visualPrompt: null }
+          : input.message.startsWith("Artista: Luna")
+            ? { artist: "Luna", title: "Neon Rain", label: "", graphics: "", visualPrompt: "Cabina violeta con lluvia" }
+            : { artist: "", title: "", label: "", graphics: "", ...input.previous, visualPrompt: input.message.replace(/^prompt:\s*/i, "") };
+        return json({ choices: [{ message: { content: JSON.stringify(brief) } }] });
+      }
       if (request.response_format) return json({ choices: [{ message: { content: JSON.stringify({ hasFace }) } }] });
       const content = request.messages.findLast(m => m.role === "user").content;
       const text = typeof content === "string" ? content : content[0].text;
@@ -105,12 +114,35 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
     await send({ text: "/olvidame" }, 300);
     assert.equal(memories.has("300:1"), false);
     await send({ text: "heyyy", reply_to_message: undefined, from: { id: 2 } }, -1004319265595);
-    assert.equal(sentTexts.at(-1), "¡Hey! ¿Qué estás creando hoy?");
+    assert.match(sentTexts.at(-1), /Qué bien tenerte/);
+    assert.match(sentTexts.at(-1), /start=welcome/);
+    assert.doesNotMatch(sentTexts.at(-1), /phaedra/i);
     const afterGreeting = sentTexts.length;
     await send({ text: "heyyy", reply_to_message: undefined, from: { id: 2, is_bot: true } }, -1004319265595);
     assert.equal(sentTexts.length, afterGreeting, "ignore bots to prevent reply loops");
     await send({ new_chat_members: [{ id: 3, first_name: "Emil" }], reply_to_message: undefined }, -1004319265595);
-    assert.match(sentTexts.at(-1), /Bienvenidos, Emil/);
+    assert.match(sentTexts.at(-1), /Emil, qué bien tenerte/);
+    assert.match(sentTexts.at(-1), /start=welcome/);
+    const afterWelcome = sentTexts.length;
+    await send({ new_chat_members: [{ id: 3, first_name: "Emil" }], reply_to_message: undefined }, -1004319265595);
+    assert.equal(sentTexts.length, afterWelcome, "welcome only on first entry");
+    await send({ text: "/start welcome" }, 700);
+    assert.match(sentTexts.at(-1), /tipo de contenido creas/);
+    await send({ text: "@SocialBananaBot", reply_to_message: undefined }, -1004319265595);
+    assert.match(sentTexts.at(-1), /Aquí estoy/);
+    const beforeBrief = generations;
+    await send({ text: "quiero preparar una portada" }, 500);
+    assert.equal(generations, beforeBrief, "ask for the brief before generating");
+    assert.match(sentTexts.at(-1), /nombre del artista.*título.*sello discográfico/);
+    assert.equal(memories.get("500:1").coverDraft.pending, true);
+    await send({ text: "Artista: Luna; título: Neon Rain; sin sello ni extras. Cabina violeta con lluvia" }, 500);
+    assert.equal(generations, beforeBrief, "require final visual prompt after collecting details");
+    assert.match(sentTexts.at(-1), /Ahora escribe el prompt/);
+    await send({ text: "Cabina violeta con lluvia y luz cinematográfica" }, 500);
+    assert.equal(generations, beforeBrief + 1);
+    assert.equal(memories.get("500:1").coverDraft.pending, false);
+    assert.match(memories.get("500:1").lastPrompt, /Artist: Luna/);
+    assert.match(memories.get("500:1").lastPrompt, /Title: Neon Rain/);
 
   } finally {
     globalThis.fetch = originalFetch;
