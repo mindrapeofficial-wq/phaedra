@@ -303,7 +303,8 @@ RULES:
   }
   const data = await res.json();
   console.log("[claude raw]", JSON.stringify(data).slice(0, 500));
-  const text = data.content?.[0]?.text || data.content?.map(b => b.text).filter(Boolean).join("\n") || "No response";
+  const textBlock = data.content?.find(b => b.type === "text");
+  const text = textBlock?.text || "No response";
   console.log("[claude response]", text.slice(0, 200));
   return { response: text };
 }
