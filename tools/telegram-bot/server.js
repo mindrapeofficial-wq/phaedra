@@ -2,6 +2,7 @@ import http from "node:http";
 import { handleUpdate } from "./bot.js";
 import { handleStripeWebhook } from "./stripe.js";
 import { runEngagementSession } from "./engage.js";
+import { startProactiveLoop } from "./proactive.js";
 
 const PORT = process.env.PORT || 3000;
 
@@ -59,4 +60,7 @@ const server = http.createServer(async (req, res) => {
   res.end("not found");
 });
 
-server.listen(PORT, () => console.log(`Social Banana listening on :${PORT}`));
+server.listen(PORT, () => {
+  console.log(`Social Banana listening on :${PORT}`);
+  startProactiveLoop();
+});
