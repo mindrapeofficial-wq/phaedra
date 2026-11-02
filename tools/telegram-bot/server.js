@@ -63,4 +63,8 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`Social Banana listening on :${PORT}`);
   startProactiveLoop();
+  // Keep-alive: ping ourselves every 14 min so Render free tier doesn't sleep
+  setInterval(() => {
+    fetch(`https://social-banana-bot.onrender.com/health`).catch(() => {});
+  }, 14 * 60 * 1000);
 });
