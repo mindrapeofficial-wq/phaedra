@@ -1,13 +1,21 @@
 import http from "node:http";
+import { createHash, timingSafeEqual } from "node:crypto";
 import { handleUpdate } from "./bot.js";
 import { handleStripeWebhook } from "./stripe.js";
 import { runEngagementSession } from "./engage.js";
 import { startProactiveLoop } from "./proactive.js";
+import { memoryRequest } from "./memory.js";
 
 const PORT = process.env.PORT || 3000;
+const webhookSecret = process.env.TELEGRAM_WEBHOOK_SECRET || createHash("sha256").update(`social-banana-webhook:${process.env.TELEGRAM_BOT_TOKEN}`).digest("hex");
 
 const server = http.createServer(async (req, res) => {
   if (req.method === "POST" && req.url === "/webhook") {
+    const received = Buffer.from(String(req.headers["x-telegram-bot-api-secret-token"] || ""));
+    const expected = Buffer.from(webhookSecret);
+    if (received.length !== expected.length || !timingSafeEqual(received, expected)) {
+      res.writeHead(401); res.end("unauthorized"); return;
+    }
     let body = "";
     for await (const chunk of req) body += chunk;
     try {
@@ -91,6 +99,23 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`Social Banana listening on :${PORT}`);
   startProactiveLoop();
+  async function configureWebhook() {
+    try {
+      const response = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/setWebhook`, {
+        method: "POST", signal: AbortSignal.timeout(20_000),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: "https://social-banana-bot.onrender.com/webhook", secret_token: webhookSecret }),
+      });
+      if (!response.ok || !(await response.json()).ok) throw new Error("Webhook registration failed");
+      console.log("[webhook] authenticated webhook configured");
+    } catch {
+      console.error("[webhook] registration failed; retrying in 30 seconds");
+      setTimeout(configureWebhook, 30_000);
+    }
+  }
+  void configureWebhook();
+  memoryRequest(0, 0).then(() => console.log("[memory] persistent store reachable"))
+    .catch(() => console.error("[memory] persistent store unavailable"));
   // Keep-alive: ping ourselves every 14 min so Render free tier doesn't sleep
   setInterval(() => {
     fetch(`https://social-banana-bot.onrender.com/health`).catch(() => {});

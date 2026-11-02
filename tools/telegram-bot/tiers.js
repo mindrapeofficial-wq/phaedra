@@ -1,3 +1,4 @@
+const timedFetch = (url, options = {}) => fetch(url, { ...options, signal: options.signal || AbortSignal.timeout(20_000) });
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://mfylkalarzuhivhmvzbm.supabase.co";
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
@@ -12,7 +13,7 @@ async function supabase(path, method = "GET", body = null) {
     },
   };
   if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(`${SUPABASE_URL}/rest/v1${path}`, opts);
+  const res = await timedFetch(`${SUPABASE_URL}/rest/v1${path}`, opts);
   if (!res.ok) throw new Error(`Supabase ${res.status}: ${await res.text()}`);
   const text = await res.text();
   return text ? JSON.parse(text) : null;

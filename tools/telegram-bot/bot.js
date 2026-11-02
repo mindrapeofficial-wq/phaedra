@@ -1,28 +1,34 @@
 import { sendMessage, sendTyping, sendPhoto, getFileUrl } from "./telegram.js";
 import { gatherStatus } from "./postzen.js";
-import { chat } from "./ai.js";
+import { chat, detectFace } from "./ai.js";
 import { checkAccess, incrementUsage, getUser, getTierInfo } from "./tiers.js";
 import { runEngagementSession } from "./engage.js";
+
+import { memoryRequest } from "./memory.js";
 
 const OWNER_ID = Number(process.env.TELEGRAM_OWNER_ID) || 1661812916;
 const STRIPE_LINK = process.env.STRIPE_PAYMENT_LINK || "https://buy.stripe.com/8x2dR8ez45JG85s4e504800";
 
-// Conversation memory: last 20 messages per chat
-const chatHistory = new Map();
-const MAX_HISTORY = 20;
-
-function addToHistory(chatId, role, content, referenceFileId = null) {
-  if (!chatHistory.has(chatId)) chatHistory.set(chatId, []);
-  const history = chatHistory.get(chatId);
-  history.push({ role, content, referenceFileId });
-  if (history.length > MAX_HISTORY) history.splice(0, history.length - MAX_HISTORY);
-}
-
-function getHistory(chatId) {
-  return chatHistory.get(chatId) || [];
-}
+const activeChats = new Set();
+const FACE_QUESTION = "Veo un rostro en la foto. ¿Eres tú o es otra persona? ¿Quieres que la portada sea fotorrealista? Puedes decirme, por ejemplo: ‘soy yo, sí, fotorrealista’. Siempre la haré en calidad Pro.";
 
 export async function handleUpdate(update) {
+  const chatId = update.message?.chat?.id;
+  if (!chatId) return;
+  const requestKey = `${chatId}:${update.message.from?.id}`;
+  if (activeChats.has(requestKey)) {
+    await sendMessage(chatId, "Sigo con el encargo anterior. Te aviso en cuanto termine; después seguimos con ese detalle.").catch(() => {});
+    return;
+  }
+  activeChats.add(requestKey);
+  try { await handleMessage(update); }
+  catch (e) {
+    console.error("[bot] request failed", e.name);
+    await sendMessage(chatId, "Esta vez se ha cortado la conexión con uno de los servicios. No he completado el encargo; puedes volver a intentarlo.").catch(() => {});
+  } finally { activeChats.delete(requestKey); }
+}
+
+async function handleMessage(update) {
   const msg = update.message;
   if (!msg) return;
   if (!msg.text && !msg.caption && !msg.photo?.length) return;
@@ -77,65 +83,117 @@ export async function handleUpdate(update) {
   // In groups, only respond when triggered and only owner has access
   if (isGroup) {
     if (!isBotTriggered(msg)) return;
-    if (userId !== OWNER_ID) {
-      await sendMessage(chatId, "Solo el admin puede usar el bot en el grupo.");
-      return;
-    }
+    const access = await checkAccess(userId, username);
+    if (!access.allowed) { await sendMessage(chatId, access.reason); return; }
   }
 
-  const text = cleanMessage(msg.text);
+  let text = ["/olvidame", "/mimemoria"].includes(cmd) ? cmd : cleanMessage(msg.text);
   if (!text) return;
 
-  // Keep the Telegram file ID, not an expiring URL or image bytes, in history.
-  const photos = msg.photo || msg.reply_to_message?.photo;
-  const referenceFileId = photos?.at(-1)?.file_id
-    || getHistory(chatId).findLast(h => h.referenceFileId)?.referenceFileId;
-  let imageUrl = null;
-  if (referenceFileId) {
-    try {
-      imageUrl = await getFileUrl(referenceFileId);
-    } catch (e) {
-      console.error("Failed to resolve reference photo");
-    }
-    if (!imageUrl) {
-      await sendMessage(chatId, "No pude recuperar tu foto de referencia. Vuelve a enviarla para crear la portada con ella.");
-      return;
-    }
+  await sendTyping(chatId);
+  let state;
+  try { state = await memoryRequest(chatId, userId); }
+  catch {
+    await sendMessage(chatId, "Ahora no puedo recuperar tu memoria privada. Prefiero que lo intentemos de nuevo en un momento para no perder tu foto ni tu encargo.");
+    return;
   }
-
-  console.log(`[${new Date().toISOString()}] chat=${chatId} user=${userId} ${username || "?"}: ${text}${imageUrl ? " [+image]" : ""}`);
-
+  if (cmd === "/olvidame") {
+    await memoryRequest(chatId, userId, "DELETE");
+    await sendMessage(chatId, "He borrado tu memoria de esta conversación, incluida la referencia de tu foto.");
+    return;
+  }
+  if (cmd === "/mimemoria") {
+    if (isGroup) { await sendMessage(chatId, "Tu ficha es privada. Consúltala por mensaje privado conmigo usando /mimemoria."); return; }
+    const profile = JSON.stringify(state.profile || {}, null, 2);
+    await sendMessage(chatId, `Esto es lo que tengo anotado para atenderte:\n${profile}\nFoto de referencia: ${state.reference ? "sí" : "no"}. Puedes corregirme o usar /olvidame.`);
+    return;
+  }
+  state.history ||= [];
+  state.profile ||= {};
+  state.profile.telegramName = msg.from?.first_name || username || "";
+  const typingTimer = setInterval(() => sendTyping(chatId).catch(() => {}), 4500);
+  const progressTimer = setTimeout(() => sendMessage(chatId, "Sigo trabajando en ello. Te aviso aquí cuando esté listo o si surge algún problema.").catch(() => {}), 45_000);
+  const record = (role, content) => {
+    state.history.push({ role, content });
+    state.history = state.history.slice(-40);
+  };
   try {
-    await sendTyping(chatId);
-
+    const photos = msg.photo || msg.reply_to_message?.photo;
+    const newFileId = photos?.at(-1)?.file_id;
+    if (newFileId && newFileId !== state.reference?.fileId) {
+      state.reference = { fileId: newFileId, hasFace: null, photorealistic: null, identity: null };
+      state.pendingPrompt = msg.caption || (msg.photo ? null : text);
+      state.lastPrompt = null;
+    }
+    let imageUrl = null;
+    if (state.reference) {
+      imageUrl = await getFileUrl(state.reference.fileId);
+      if (!imageUrl) throw new Error("Reference unavailable");
+      if (state.reference.hasFace === null) {
+        await sendMessage(chatId, "Estoy mirando tu foto para preparar bien la referencia. Esto suele llevar unos segundos.");
+        state.reference.hasFace = await detectFace(imageUrl);
+        if (state.reference.hasFace) {
+          state.awaitingFaceAnswer = true;
+          record("user", text);
+          record("assistant", FACE_QUESTION);
+          await memoryRequest(chatId, userId, "POST", state);
+          await sendMessage(chatId, FACE_QUESTION);
+          return;
+        }
+      }
+    }
+    if (state.awaitingFaceAnswer) {
+      const answer = text.toLowerCase();
+      if (/soy yo|es mi cara|soy el de|soy la de/.test(answer)) state.reference.identity = "El usuario declara que es él/ella en esta foto";
+      else if (/otra persona|no soy yo|es mi (amig|herman|pareja|cliente)/.test(answer)) state.reference.identity = text;
+      if (/no (?:la quiero |quiero )?fotorreal|estilizad|ilustraci|anime|caricatura/.test(answer)) state.reference.photorealistic = false;
+      else if (/fotorreal|realista|^s[ií][.! ]*$/.test(answer)) state.reference.photorealistic = true;
+      else if (/^no[.! ]*$/.test(answer)) state.reference.photorealistic = false;
+      record("user", text);
+      if (state.reference.photorealistic === null) {
+        await memoryRequest(chatId, userId, "POST", state);
+        await sendMessage(chatId, "¿La quieres fotorrealista o prefieres otro estilo? Puedes añadir cómo te gustaría que fuese la portada.");
+        return;
+      }
+      state.awaitingFaceAnswer = false;
+      if (!state.pendingPrompt) {
+        await memoryRequest(chatId, userId, "POST", state);
+        await sendMessage(chatId, "Perfecto, tengo tu referencia y esa preferencia. Escríbeme el prompt: qué quieres crear, el ambiente, los colores y cualquier texto que deba aparecer.");
+        return;
+      }
+      text = state.pendingPrompt + "\nPreferencias del usuario: " + text;
+      state.pendingPrompt = null;
+    }
+    const photoStyle = state.reference?.photorealistic === true
+      ? "El usuario pide fotorrealismo. Usa la foto ORIGINAL adjunta, conserva su identidad, rasgos y escena salvo cambios expresamente pedidos."
+      : state.reference?.photorealistic === false ? "El usuario NO quiere fotorrealismo. Sigue el estilo artístico solicitado usando su foto original." : "";
+    let directPrompt = /^(?:\/imagen(?:@\w+)?\s+|prompt\s*:\s*)/i.test(msg.text)
+      ? msg.text.replace(/^(?:\/imagen(?:@\w+)?\s+|prompt\s*:\s*)/i, "") : null;
+    if (/^(?:calidad\s+)?pro[.! ]*$/i.test(text) && state.lastPrompt) directPrompt = state.lastPrompt;
+    if (directPrompt) directPrompt += "\n" + photoStyle;
     let context = null;
-    try {
-      context = await gatherStatus();
-    } catch (e) {
-      console.error("PostZen gather failed:", e.message);
+    if (userId === OWNER_ID && !directPrompt) {
+      try { context = await gatherStatus(); } catch { /* proceed with conversation */ }
     }
-
-    addToHistory(chatId, "user", text, referenceFileId);
-    const reply = await chat(text, context, imageUrl, getHistory(chatId));
-
-    // Track usage for non-owners
-    if (userId !== OWNER_ID) {
-      await incrementUsage(userId);
-    }
-
-    addToHistory(chatId, "assistant", reply.text);
+    record("user", text);
+    const reply = await chat(text, context, imageUrl, state.history, {
+      directPrompt, photoStyle, profile: state.profile, isOwner: userId === OWNER_ID,
+      onProgress: async kind => sendMessage(chatId, kind === "image"
+        ? "Me pongo con tu portada en calidad PRO máxima" + (imageUrl ? ", usando tu foto original" : "") + ". Puede tardar aproximadamente 1–4 minutos. Te la envío aquí en cuanto termine."
+        : "Voy a revisar los datos y preparar una propuesta con contexto. Puede llevar aproximadamente 1–2 minutos."),
+    });
+    if (reply.profile) state.profile = { ...state.profile, ...reply.profile };
+    if (reply.image) state.lastPrompt = reply.image.prompt;
+    record("assistant", reply.text);
+    await memoryRequest(chatId, userId, "POST", state);
     if (reply.image) {
-      await sendPhoto(chatId, reply.image.imageBase64
-        ? Buffer.from(reply.image.imageBase64, "base64")
-        : reply.image.imageUrl, reply.text.slice(0, 1024));
-    } else {
-      await sendMessage(chatId, reply.text);
-    }
-
-    console.log(`[${new Date().toISOString()}] reply sent to ${chatId}`);
-  } catch (e) {
-    console.error("handleUpdate error:", e);
-    await sendMessage(chatId, "Uf, algo fallo por mi lado. Dame un momento.").catch(() => {});
+      await sendPhoto(chatId, Buffer.from(reply.image.imageBase64, "base64"), reply.text);
+    } else await sendMessage(chatId, reply.text);
+    if (userId !== OWNER_ID) await incrementUsage(userId);
+    console.log(`[bot] reply delivered chat=${chatId} image=${Boolean(reply.image)}`);
+  } finally {
+    clearInterval(typingTimer);
+    clearTimeout(progressTimer);
   }
 }
 

@@ -1,3 +1,4 @@
+const timedFetch = (url, options = {}) => fetch(url, { ...options, signal: options.signal || AbortSignal.timeout(20_000) });
 const BASE = "https://api.postzen.dev/v1";
 const ACCOUNT_ID = process.env.POSTZEN_ACCOUNT_ID || "j9728s2139w1qrqdte0fynrjf98hbg4j";
 
@@ -9,13 +10,13 @@ function headers() {
 }
 
 async function get(path) {
-  const res = await fetch(`${BASE}${path}`, { headers: headers() });
+  const res = await timedFetch(`${BASE}${path}`, { headers: headers() });
   if (!res.ok) throw new Error(`PostZen ${res.status}: ${await res.text()}`);
   return res.json();
 }
 
 async function post(path, body) {
-  const res = await fetch(`${BASE}${path}`, {
+  const res = await timedFetch(`${BASE}${path}`, {
     method: "POST",
     headers: headers(),
     body: JSON.stringify(body),
@@ -25,7 +26,7 @@ async function post(path, body) {
 }
 
 async function patch(path, body) {
-  const res = await fetch(`${BASE}${path}`, {
+  const res = await timedFetch(`${BASE}${path}`, {
     method: "PATCH",
     headers: headers(),
     body: JSON.stringify(body),
@@ -63,7 +64,7 @@ export async function updatePost(postId, updates) {
 }
 
 export async function deletePost(postId) {
-  const res = await fetch(`${BASE}/posts/${postId}`, {
+  const res = await timedFetch(`${BASE}/posts/${postId}`, {
     method: "DELETE",
     headers: headers(),
   });
