@@ -11,10 +11,10 @@ const STRIPE_LINK = process.env.STRIPE_PAYMENT_LINK || "https://buy.stripe.com/8
 const chatHistory = new Map();
 const MAX_HISTORY = 20;
 
-function addToHistory(chatId, role, content) {
+function addToHistory(chatId, role, content, referenceFileId = null) {
   if (!chatHistory.has(chatId)) chatHistory.set(chatId, []);
   const history = chatHistory.get(chatId);
-  history.push({ role, content });
+  history.push({ role, content, referenceFileId });
   if (history.length > MAX_HISTORY) history.splice(0, history.length - MAX_HISTORY);
 }
 
@@ -25,8 +25,8 @@ function getHistory(chatId) {
 export async function handleUpdate(update) {
   const msg = update.message;
   if (!msg) return;
-  if (!msg.text && !msg.caption) return;
-  if (!msg.text) msg.text = msg.caption;
+  if (!msg.text && !msg.caption && !msg.photo?.length) return;
+  if (!msg.text) msg.text = msg.caption || "Usa esta foto como referencia para mi próxima petición.";
 
   const chatId = msg.chat.id;
   const isGroup = msg.chat.type === "group" || msg.chat.type === "supergroup";
@@ -86,14 +86,20 @@ export async function handleUpdate(update) {
   const text = cleanMessage(msg.text);
   if (!text) return;
 
-  // Extract photo URL if present
+  // Keep the Telegram file ID, not an expiring URL or image bytes, in history.
+  const photos = msg.photo || msg.reply_to_message?.photo;
+  const referenceFileId = photos?.at(-1)?.file_id
+    || getHistory(chatId).findLast(h => h.referenceFileId)?.referenceFileId;
   let imageUrl = null;
-  if (msg.photo && msg.photo.length > 0) {
-    const largest = msg.photo[msg.photo.length - 1];
+  if (referenceFileId) {
     try {
-      imageUrl = await getFileUrl(largest.file_id);
+      imageUrl = await getFileUrl(referenceFileId);
     } catch (e) {
-      console.error("Failed to get photo URL:", e.message);
+      console.error("Failed to resolve reference photo");
+    }
+    if (!imageUrl) {
+      await sendMessage(chatId, "No pude recuperar tu foto de referencia. Vuelve a enviarla para crear la portada con ella.");
+      return;
     }
   }
 
@@ -109,7 +115,7 @@ export async function handleUpdate(update) {
       console.error("PostZen gather failed:", e.message);
     }
 
-    addToHistory(chatId, "user", text);
+    addToHistory(chatId, "user", text, referenceFileId);
     const reply = await chat(text, context, imageUrl, getHistory(chatId));
 
     // Track usage for non-owners

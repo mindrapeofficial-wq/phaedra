@@ -23,7 +23,7 @@ CAPACIDADES (SIEMPRE usa function calling para ejecutarlas, NO digas que no pued
 
 IMPORTANTE:
 - NUNCA digas "no puedo". SIEMPRE usa una herramienta.
-- IMAGENES: Cuando el usuario pida CUALQUIER imagen, portada, diseño, cover, thumbnail, promo, cartel, banner, arte, visual, o diga "hazme", "creame", "genera" seguido de algo visual → LLAMA A generate_image EN TU PRIMERA RESPUESTA con calidad "normal". PROHIBIDO responder solo con texto. Despues de enviar la imagen, pregunta si quieren que la regenere en calidad "pro" (mas detalle, mas lenta). No preguntes tema ni nada mas. Si el usuario manda una foto de referencia, usa generate_image describiendo EXACTAMENTE lo que ves: rasgos faciales, ropa, pose, iluminacion, fondo, estilo. El objetivo es que la imagen generada sea FOTORREALISTA y la persona se vea identica a la foto original. Describe con el maximo detalle posible para que el resultado sea fiel a la referencia. Estilo: portada de musica profesional, cinematografica.
+- IMAGENES: Cuando el usuario pida crear una imagen o portada, llama a generate_image. Usa calidad normal salvo que pida pro. Con foto de referencia, redacta instrucciones para editar la foto original según su petición, preservando su identidad y rasgos; la herramienta recibe la foto real. Si solo adjunta una foto sin pedir crear nada, confirma su recepción. Nunca afirmes que has generado o enviado una imagen sin que la herramienta tenga éxito.
 - Para tareas de engagement (comentar reels/posts de otros, generar comentarios, planificar contenido, escribir scripts de reels, auditorias, estrategia): USA ask_claude.
 - Para datos y acciones directas en tu cuenta (ver posts, analytics, crear borradores, responder TUS comentarios/DMs): USA las herramientas de PostZen.
 - Si alguien pide "comenta reels", usa ask_claude para generar los comentarios on-brand y presentalos listos para copiar y pegar.
@@ -38,7 +38,7 @@ REGLAS:
 - No uses emojis excesivos, maximo 2-3 por mensaje
 - Cuando te den datos de Instagram, analiza y sugiere acciones concretas
 - Todos los posts de @phaedrasound deben ser en INGLES como idioma base
-- Las portadas y diseños deben seguir la estetica de Phaedra: minimalista, oscuro, moderno, DAW vibes
+- Para diseños de Phaedra sin otra dirección visual, usa estética minimalista, oscura y moderna. La foto de referencia y las instrucciones del usuario tienen prioridad.
 - Maximo 20 comentarios/hora, minimo 10 palabras por comentario
 - NUNCA hagas pitch de Phaedra en comentarios de otras cuentas`;
 
@@ -173,13 +173,14 @@ const TOOLS = [
     type: "function",
     function: {
       name: "generate_image",
-      description: "Generate an image with GPT Image / DALL-E. Use for music covers, post designs, carousel visuals, reel thumbnails. Style: minimalist, dark, modern, DAW aesthetic. Ask the user if they want normal or pro quality when not specified.",
+      description: "Create a requested image or cover. Automatically edits the actual reference photo when available. Follow the user visual direction and preserve the reference subject. Default quality normal unless pro is requested.",
       parameters: {
         type: "object",
         properties: {
           prompt: { type: "string", description: "Image description in English, detailed" },
           size: { type: "string", enum: ["1024x1024", "1024x1792", "1792x1024"], default: "1024x1024" },
           quality: { type: "string", enum: ["normal", "pro"], default: "normal", description: "normal = fast & cheaper, pro = high detail & slower" },
+          use_reference: { type: "boolean", default: true, description: "Use the attached or remembered reference photo. Set false only when the user explicitly wants a new image unrelated to it." },
         },
         required: ["prompt"],
       },
@@ -204,7 +205,7 @@ const TOOLS = [
 
 import * as pz from "./postzen.js";
 
-async function executeTool(name, args) {
+async function executeTool(name, args, referenceUrl = null) {
   switch (name) {
     case "get_recent_posts":
       return pz.getRecentPosts(args.limit || 5);
@@ -231,7 +232,7 @@ async function executeTool(name, args) {
     case "sync_external_posts":
       return pz.syncExternalPosts();
     case "generate_image":
-      return generateImage(args.prompt, args.size || "1024x1024", args.quality || "normal");
+      return generateImage(args.prompt, args.size || "1024x1024", args.quality || "normal", args.use_reference === false ? null : referenceUrl);
     case "ask_claude":
       return askClaude(args.task, args.context || "");
     default:
@@ -239,8 +240,33 @@ async function executeTool(name, args) {
   }
 }
 
-async function generateImage(prompt, size, quality = "normal") {
+async function generateImage(prompt, size, quality = "normal", referenceUrl = null) {
   if (!OPENAI_KEY) return { error: "OPENAI_API_KEY not configured" };
+  if (referenceUrl) {
+    const source = await fetch(referenceUrl);
+    if (!source.ok) return { error: "Reference photo could not be downloaded" };
+    const photo = await source.blob();
+    const form = new FormData();
+    form.set("model", "gpt-image-2");
+    form.set("image[]", photo, "reference.jpg");
+    form.set("prompt", `Edit the supplied reference photo into the requested cover. Preserve the subject's identity and recognizable features. Follow these requested changes: ${prompt}`);
+    form.set("size", size);
+    form.set("quality", quality === "pro" ? "high" : "medium");
+    form.set("output_format", "png");
+    const res = await fetch("https://api.openai.com/v1/images/edits", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${OPENAI_KEY}` },
+      body: form,
+    });
+    if (!res.ok) {
+      console.error("Reference image edit failed:", res.status);
+      return { error: `Reference image edit failed: ${res.status}` };
+    }
+    const image = (await res.json()).data?.[0];
+    if (!image?.b64_json) return { error: "Image edit returned no image" };
+    console.log("[image] reference edit completed");
+    return { imageBase64: image.b64_json, model: "gpt-image-2" };
+  }
   const isPro = quality === "pro";
   for (const model of ["gpt-image-2", "gpt-image-1", "dall-e-3", "dall-e-2"]) {
     const body = { model, prompt, n: 1 };
@@ -326,9 +352,12 @@ RULES:
 export { askClaude };
 
 export async function chat(userMessage, context, imageUrl = null, history = []) {
-  if (!OPENAI_KEY) return "No tengo la API key de ChatGPT configurada.";
+  if (!OPENAI_KEY) return { text: "No tengo la API key de ChatGPT configurada." };
 
   const messages = [{ role: "system", content: SYSTEM_PROMPT }];
+  messages.push({ role: "system", content: imageUrl
+    ? "Hay una foto de referencia adjunta, conservada de este chat. generate_image recibe la foto ORIGINAL y la edita automáticamente: redacta instrucciones para transformarla según el usuario, conservando su identidad. No sustituyas el sujeto por motivos DAW ni impongas la marca Phaedra si no la pide. Si el usuario solo envía la foto, confirma que la usarás en su siguiente petición."
+    : "No hay foto de referencia disponible. Si el usuario pide usar una foto anterior o su imagen, pide que la vuelva a enviar; no generes una portada genérica en su lugar." });
   if (context) {
     messages.push({ role: "system", content: `Datos actuales de Instagram @phaedrasound:\n${JSON.stringify(context, null, 2)}` });
   }
@@ -362,9 +391,14 @@ export async function chat(userMessage, context, imageUrl = null, history = []) 
       console.log(`[tool] ${tc.function.name}(${JSON.stringify(args)})`);
       let result;
       try {
-        result = await executeTool(tc.function.name, args);
+        result = await executeTool(tc.function.name, args, imageUrl);
       } catch (e) {
         result = { error: e.message };
+      }
+      if (tc.function.name === "generate_image" && result.error) {
+        return { text: imageUrl
+          ? "No pude crear la portada con tu foto. La edición ha fallado; vuelve a intentarlo en un momento."
+          : "La generación de la imagen ha fallado. Vuelve a intentarlo en un momento." };
       }
       if (tc.function.name === "generate_image" && (result.imageBase64 || result.imageUrl)) {
         generatedImage = result;
