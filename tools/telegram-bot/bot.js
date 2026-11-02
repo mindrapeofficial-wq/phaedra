@@ -1,10 +1,11 @@
 import { transcribeVoice } from "./voice.js";
 import { createAccountLink } from "./account-link.js";
+import { checkAiServices } from "./ai-health.js";
 import { privateProfile, saveProfileChanges, forgetCreativeMemory } from "./profiles.js";
 import { reserveImage, finishImage } from "./image-credits.js";
 import { beginConnection, verifyConnection, disableConnection, connection } from "./instagram.js";
 import { runInstagramAgent } from "./instagram-agent.js";
-import { sendMessage, sendTyping, sendPhoto, getFileUrl } from "./telegram.js";
+import { sendMessage, sendTyping, sendPhoto, sendImageDocument, getFileUrl } from "./telegram.js";
 import { chat, detectFace } from "./ai.js";
 import { checkAccess, incrementUsage, getUser, getTierInfo } from "./tiers.js";
 import { runEngagementSession } from "./engage.js";
@@ -73,7 +74,8 @@ async function handleMessage(update) {
     try { msg.text = await transcribeVoice(msg.voice); }
     catch (error) { await sendMessage(msg.chat.id, error.message); return; }
   }
-  if (!msg.text && !msg.caption && !msg.photo?.length) return;
+  const imageDocument = /^(?:image\/(?:png|jpeg|webp))$/.test(msg.document?.mime_type || '') || /\.(?:png|jpe?g|webp)$/i.test(msg.document?.file_name || '');
+  if (!msg.text && !msg.caption && !msg.photo?.length && !imageDocument) return;
   if (!msg.text) msg.text = msg.caption || "Usa esta foto como referencia para mi próxima petición.";
 
   const chatId = msg.chat.id;
@@ -83,6 +85,13 @@ async function handleMessage(update) {
 
   // Handle commands first
   const cmd = msg.text.trim().toLowerCase();
+  if (/^\/estadoia(?:@socialbananabot)?$/.test(cmd)) {
+    if (userId !== OWNER_ID) { await sendMessage(chatId, 'La comprobación técnica está reservada al administrador. Si una petición te ha fallado, cuéntame cuál para retomarla.'); return; }
+    if (isGroup) { await sendMessage(chatId, 'Escríbeme /estadoia por privado y compruebo las conexiones.'); return; }
+    await sendMessage(chatId, 'Compruebo las conexiones. Puede tardar hasta 15 segundos.');
+    await sendMessage(chatId, await checkAiServices(userId));
+    return;
+  }
   if (/^\/cuenta(?:@socialbananabot)?$/.test(cmd)) {
     if (isGroup) await sendMessage(chatId, "Vinculamos tu cuenta por privado: https://t.me/SocialBananaBot?start=cuenta");
     else await sendMessage(chatId, await createAccountLink(userId, username));
@@ -207,12 +216,14 @@ async function handleMessage(update) {
   };
   try {
     const photos = msg.photo || msg.reply_to_message?.photo;
-    const newFileId = photos?.at(-1)?.file_id;
+    const repliedDocument = msg.reply_to_message?.document;
+    const newFileId = photos?.at(-1)?.file_id || (imageDocument ? msg.document.file_id : /image\/(png|jpeg|webp)/.test(repliedDocument?.mime_type || '') ? repliedDocument.file_id : null);
     if (newFileId && newFileId !== state.reference?.fileId) {
       state.reference = { fileId: newFileId, hasFace: null, photorealistic: null, identity: null };
       state.pendingPrompt = msg.caption || (msg.photo ? null : text);
       state.lastPrompt = null;
       state.coverDraft = null;
+      state.awaitingFaceAnswer = false;
     }
     let imageUrl = null;
     if (state.reference) {
@@ -259,6 +270,7 @@ async function handleMessage(update) {
     let directPrompt = /^(?:\/imagen(?:@\w+)?\s+|prompt\s*:\s*)/i.test(msg.text)
       ? msg.text.replace(/^(?:\/imagen(?:@\w+)?\s+|prompt\s*:\s*)/i, "") : null;
     if (/^(?:calidad\s+)?pro[.! ]*$/i.test(text) && state.lastPrompt) directPrompt = state.lastPrompt;
+    if (imageUrl && /^(?:por favor[, ]+)?(?:qu[ií]ta(?:le|me)?\s+(?:el\s+)?fondo|elimina\s+(?:el\s+)?fondo|cambia\s+(?:el\s+)?fondo|haz(?:lo)?\s+transparente)/i.test(text)) directPrompt = text;
     if (state.coverDraft?.pending) directPrompt = text;
     if (directPrompt) directPrompt += "\n" + photoStyle;
     const context = null;
@@ -278,14 +290,14 @@ async function handleMessage(update) {
         catch (error) { return error.message; }
       },
       prepareImage: async prompt => {
-        const brief = await resolveCoverBrief(text, state.coverDraft);
-        if (brief.unrelated) return { chatInstead: true };
-        state.coverDraft = { ...brief.draft, pending: Boolean(brief.text) };
+        const brief = await resolveCoverBrief(text, state.coverDraft, { history: state.history, hasReference: Boolean(imageUrl) });
+        if (brief.unrelated) { state.coverDraft = null; return { chatInstead: true }; }
+        state.coverDraft = brief.draft ? { ...brief.draft, pending: Boolean(brief.text) } : null;
         if (brief.text) return { text: brief.text };
-        return { prompt: brief.prompt + "\n" + photoStyle };
+        return { prompt: brief.prompt + "\n" + photoStyle, kind: brief.kind, background: brief.background };
       },
-      onProgress: async kind => sendMessage(chatId, kind === "image"
-        ? "Me pongo con tu portada en calidad PRO máxima" + (imageUrl ? ", usando tu foto original" : "") + ". Puede tardar aproximadamente 1–4 minutos. Te la envío aquí en cuanto termine."
+      onProgress: async (kind, details) => sendMessage(chatId, kind === "image"
+        ? (details?.background === 'transparent' ? "Voy a quitar el fondo y entregarte un PNG con transparencia, en calidad PRO máxima" : "Me pongo con " + (details?.kind === 'music_cover' ? "tu portada" : "el diseño") + " en calidad PRO máxima") + (imageUrl ? ", usando tu imagen original" : "") + ". Puede tardar aproximadamente 1–4 minutos. Te la envío aquí en cuanto termine."
         : "Voy a revisar los datos y preparar una propuesta con contexto. Puede llevar aproximadamente 1–2 minutos."),
     });
     if (reply.profile) {
@@ -296,13 +308,18 @@ async function handleMessage(update) {
     record("assistant", reply.text);
     await memoryRequest(chatId, userId, "POST", state);
     if (reply.image) {
-      const delivered = await sendPhoto(chatId, Buffer.from(reply.image.imageBase64, "base64"), reply.text);
+      const deliverImage = reply.image.background === 'transparent' ? sendImageDocument : sendPhoto;
+      const delivered = await deliverImage(chatId, Buffer.from(reply.image.imageBase64, "base64"), reply.text);
       imageDelivered = true;
       try { await finishImage(userId, imageReservation, true); imageReservation = null; }
       catch { console.error("[image] credit settlement pending retry"); }
       const delivery = await delivered.json();
       if (delivery.result?.photo?.length) {
         state.generatedFileId = delivery.result.photo.at(-1).file_id;
+        await memoryRequest(chatId, userId, "POST", state);
+      }
+      if (delivery.result?.document?.file_id) {
+        state.generatedFileId = delivery.result.document.file_id;
         await memoryRequest(chatId, userId, "POST", state);
       }
       try {

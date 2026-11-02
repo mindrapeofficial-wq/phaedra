@@ -13,6 +13,7 @@ CONVERSACIÓN:
 - Ejemplo: usuario "te presento nuevos miembros del grupo" → "¡Venga, presentámelos! ¿Cómo se llaman?". Si dice "son Emil y Ary" → "¡Emil, Ary, bienvenidos! ¿Qué os gusta crear?". Adapta el tono y evita repetir literalmente estos ejemplos en cada saludo.
 - Español cercano, claro y directo. Normalmente 1–3 frases; más detalle solo para trabajo sustantivo. Nada de menús de capacidades, tono de formulario, "indícame", "¿deseas registrar?", "entiendo/¡perfecto!" automáticos ni enumerar post/reel/carrousel sin que lo pidan. No termines todas las respuestas con una pregunta.
 - Si el usuario te corrige, adopta la corrección inmediatamente. No vuelvas a la interpretación equivocada. No conviertas toda conversación en marketing.
+- Recoge las instrucciones a lo largo de varios mensajes. No pidas de nuevo datos ni un prompt que ya están en la conversación. Una corrección cambia el encargo vigente; no obliga al usuario a empezar de cero.
 - Sé alentador y concreto. Pregunta una cosa útil cada vez: qué crea, su estilo, audiencia, metas, recursos o disponibilidad. Si pregunta por qué, explica que ese contexto permite personalizar el trabajo y evitar resultados genéricos; él decide qué compartir. No exijas conocerlo todo ni prometas perfección o fama.
 
 MEMORIA Y CONTEXTO:
@@ -24,6 +25,8 @@ MEMORIA Y CONTEXTO:
 TRABAJO:
 - Usa herramientas cuando el usuario pida una acción o datos que las requieran. Los saludos y charla normal NO requieren herramientas externas. Si el usuario comunica un dato suyo como "me llamo Emil", usa remember_user para guardarlo, aunque ocurra durante una presentación.
 - Para imágenes usa generate_image. Siempre PRO máxima. Respeta el prompt, la foto original y los nombres/títulos exactos; no inventes texto, marcas, logos o sujetos. Antes de crear portadas se recoge el briefing con los detalles opcionales y el prompt visual.
+- generate_image también puede EDITAR: quitar fondos (PNG transparente), cambiar luz o colores y diseñar posts de marcas. No digas que no puedes hacerlo sin usar la herramienta. Si el cliente da una instrucción completa como «quítale fondo», ejecútala; no la conviertas en una portada ni preguntes por artista, título o sello. Si pide que redactes un agradecimiento en inglés, puedes redactar ese texto sin exigir la frase exacta.
+- Un diseño para un DAW o una empresa no es una portada de un lanzamiento musical aunque lo llamen «portada». Aplica la corrección del usuario y usa su proyecto real.
 - Tu especialidad visual principal son PORTADAS MUSICALES para singles, EP y álbumes. Por defecto diseña una portada cuadrada con identidad artística, composición clara y tipografía legible si se solicita texto. Invita a incluir género musical y emoción del lanzamiento en el prompt, sin inventarlos ni convertirlo en un interrogatorio. No confundas portada musical con retrato genérico o anuncio. Si el cliente pide explícitamente otro tipo de imagen, respétalo.
 - Para consultar la cuenta de Instagram del cliente o guardar un borrador, usa ask_claude: tiene las herramientas reales por privado. Si no hay cuenta conectada, el cliente usa /instagram en privado. No supongas conexión solo por conocer un nombre de usuario.
 - Usa ask_claude para análisis estratégico o creativo profundo solicitado, proporcionando el contexto real del cliente. No envíes conversaciones sociales a Claude.
@@ -170,7 +173,7 @@ const TOOLS = [
     type: "function",
     function: {
       name: "generate_image",
-      description: "Primarily create music cover artwork for singles, EPs and albums, square by default. Automatically edits the actual original reference photo when available. Follow the client's visual direction, exact lettering and reference subjects. Always Pro maximum quality. Respect explicit requests for other image types.",
+      description: "Generate designs AND EDIT the original reference image: remove backgrounds to transparent PNG, change lighting/colors, make brand posts and music covers. Use this for explicit image-edit requests; do not claim those edits are unavailable. Always Pro maximum quality. Respect the requested deliverable and exact reference subjects.",
       parameters: {
         type: "object",
         properties: {
@@ -229,7 +232,7 @@ async function executeTool(name, args, referenceUrl = null, options = {}) {
     case "sync_external_posts":
       return pz.syncExternalPosts();
     case "generate_image":
-      return generateImage(args.prompt, args.size || "1024x1024", "pro", args.use_reference === false ? null : referenceUrl);
+      return generateImage(args.prompt, args.size || "1024x1024", "pro", args.use_reference === false ? null : referenceUrl, args.imageOptions);
     case "ask_claude":
       return askClaude(args.task, args.context || "", options);
     default:
@@ -237,10 +240,14 @@ async function executeTool(name, args, referenceUrl = null, options = {}) {
   }
 }
 
-async function generateImage(prompt, size, quality = "pro", referenceUrl = null) {
+async function generateImage(prompt, size, quality = "pro", referenceUrl = null, imageOptions = {}) {
   if (!OPENAI_KEY) return { error: "OPENAI_API_KEY not configured" };
   const signal = AbortSignal.timeout(240_000);
-  const body = { model: IMAGE_MODEL, prompt: `${prompt}\n\nArt direction defaults (subordinate to the client's explicit instructions):\n${IMAGE_ART_DIRECTION}`, size, quality: "max", output_format: "png", n: 1 };
+  const kind = imageOptions.kind || 'music_cover';
+  const direction = kind === 'music_cover' ? IMAGE_ART_DIRECTION : kind === 'photo_edit'
+    ? 'Edit the original image only as requested. Preserve the actual subject, logo shapes, existing lettering and identity. Add no music-cover conventions, badges or unrequested elements. For background removal, output true alpha transparency, never a painted checkerboard.'
+    : 'Create the requested brand or graphic design. Respect the client project, original logo, requested message and composition. Do not impose music-release conventions, artist names, record labels or advisory stickers. No unverified product claims.';
+  const body = { model: IMAGE_MODEL, prompt: `${prompt}\n\nArt direction (subordinate to the client instructions):\n${direction}`, size, quality: "max", output_format: "png", background: imageOptions.background || 'auto', n: 1 };
   let payload = JSON.stringify(body);
   const headers = { Authorization: `Bearer ${OPENAI_KEY}` };
   if (referenceUrl) {
@@ -276,7 +283,7 @@ async function generateImage(prompt, size, quality = "pro", referenceUrl = null)
   const image = (await res.json()).data?.[0];
   if (!image?.b64_json) return { error: "Image request returned no image" };
   console.log("[image] completed", { model: IMAGE_MODEL, quality: "max", reference: Boolean(referenceUrl) });
-  return { imageBase64: image.b64_json, model: IMAGE_MODEL, quality: "pro", prompt };
+  return { imageBase64: image.b64_json, model: IMAGE_MODEL, quality: "pro", prompt, kind, background: body.background };
 }
 
 export async function detectFace(imageUrl) {
@@ -298,7 +305,8 @@ export async function detectFace(imageUrl) {
 
 function imageReply(image) {
   if (image.error) return { text: "No pude completar la imagen Pro. El servicio falló o superó el tiempo de espera. Puedes volver a intentarlo con tu foto original." };
-  return { text: "Portada lista · Calidad PRO (máxima) · GPT Image 2.5 Sunburst", image };
+  const label = image.kind === 'photo_edit' ? 'Edición lista' : image.kind === 'brand_design' || image.kind === 'image' ? 'Diseño listo' : 'Portada lista';
+  return { text: `${label} · Calidad PRO (máxima) · GPT Image 2.5 Sunburst${image.background === 'transparent' ? ' · PNG con transparencia' : ''}`, image };
 }
 
 async function askClaude(task, context, options = {}) {
@@ -342,8 +350,8 @@ export async function chat(userMessage, context, imageUrl = null, history = [], 
     if (!prepared?.chatInstead) {
       const denied = await options.beforeImage?.();
       if (denied) return { text: denied };
-      await options.onProgress?.("image");
-      try { return imageReply(await generateImage(prepared?.prompt || options.directPrompt, "1024x1024", "pro", imageUrl)); }
+      await options.onProgress?.("image", prepared);
+      try { return imageReply(await generateImage(prepared?.prompt || options.directPrompt, "1024x1024", "pro", imageUrl, prepared || {})); }
       catch { return imageReply({ error: "Image timeout or service failure" }); }
     }
   }
@@ -404,7 +412,9 @@ export async function chat(userMessage, context, imageUrl = null, history = [], 
           if (prepared?.prompt) args.prompt = prepared.prompt;
           const denied = await options.beforeImage?.();
           if (denied) return { text: denied, profile };
-          await options.onProgress?.("image");
+          args.imageOptions = { kind: prepared?.kind, background: prepared?.background };
+          if (prepared?.kind === 'photo_edit') args.use_reference = true;
+          await options.onProgress?.("image", prepared);
           args.prompt += "\n" + (options.photoStyle || "");
         } else if (tc.function.name === "ask_claude") await options.onProgress?.("strategy");
         if (!allowedTools.some(t => t.function.name === tc.function.name)) result = { error: "Tool not available for this user" };

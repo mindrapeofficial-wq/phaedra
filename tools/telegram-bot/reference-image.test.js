@@ -9,7 +9,7 @@ const { handleUpdate } = await import("./bot.js");
 
 test("photo-only upload survives follow-ups and reaches image edits and Telegram", async () => {
   const originalFetch = globalThis.fetch;
-  const edits = [], sentPhotos = [], sentTexts = [], resolvedIds = [];
+  const edits = [], sentPhotos = [], sentDocuments = [], sentTexts = [], resolvedIds = [];
   const memories = new Map();
   const originalPhoto = Buffer.concat([Buffer.from([255, 216, 255]), Buffer.from("original-photo-bytes")]);
   let hasFace = false;
@@ -42,7 +42,9 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
       const request = JSON.parse(options.body);
       if (request.messages[0].content.startsWith("Extract a cover design brief")) {
         const input = JSON.parse(request.messages[1].content);
-        const brief = input.message === "quiero preparar una portada"
+        const brief = input.message === "quitale fondo"
+          ? { kind: 'photo_edit', visualPrompt: 'Remove the background of the original logo only', background: 'transparent', lettering: '' }
+          : input.message === "quiero preparar una portada"
           ? { artist: null, title: null, label: null, graphics: null, visualPrompt: null }
           : input.message.startsWith("Artista: Luna")
             ? { artist: "Luna", title: "Neon Rain", label: "", graphics: "", visualPrompt: "Cabina violeta con lluvia" }
@@ -60,7 +62,7 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
     if (url.endsWith("/images/edits")) {
       const photo = options.body.get("image[]");
       assert.equal(photo.type, "image/jpeg", "Telegram's generic MIME must be corrected");
-      edits.push({ bytes: Buffer.from(await photo.arrayBuffer()), quality: options.body.get("quality"), model: options.body.get("model"), prompt: options.body.get("prompt") });
+      edits.push({ bytes: Buffer.from(await photo.arrayBuffer()), quality: options.body.get("quality"), model: options.body.get("model"), prompt: options.body.get("prompt"), background: options.body.get('background') });
       assert.ok(options.signal);
       return failEdit ? new Response("edit unavailable", { status: 400 }) : json({ data: [{ b64_json: Buffer.from("edited-photo").toString("base64") }] });
     }
@@ -75,6 +77,10 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
     if (url.endsWith("/sendMessage")) {
       sentTexts.push(JSON.parse(options.body).text);
       return json({ ok: true });
+    }
+    if (url.endsWith('/sendDocument')) {
+      sentDocuments.push(await options.body.get('document').text());
+      return json({ok:true,result:{document:{file_id:'transparent-output'}}});
     }
     if (url.endsWith("/sendChatAction")) return json({ ok: true });
     throw new Error("Unexpected request in test");
@@ -143,10 +149,9 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
     assert.match(sentTexts.at(-1), /nombre del artista.*título.*sello discográfico/);
     assert.equal(memories.get("500:1").coverDraft.pending, true);
     await send({ text: "Artista: Luna; título: Neon Rain; sin sello ni extras. Cabina violeta con lluvia" }, 500);
-    assert.equal(generations, beforeBrief, "require final visual prompt after collecting details");
-    assert.match(sentTexts.at(-1), /Ahora escribe el prompt/);
+    assert.equal(generations, beforeBrief + 1, "the visual prompt already supplied with the details is sufficient");
     await send({ text: "Cabina violeta con lluvia y luz cinematográfica" }, 500);
-    assert.equal(generations, beforeBrief + 1);
+    assert.equal(generations, beforeBrief + 2);
     assert.equal(memories.get("500:1").coverDraft.pending, false);
     assert.match(memories.get("500:1").lastPrompt, /Artist: Luna/);
     assert.match(memories.get("500:1").lastPrompt, /Title: Neon Rain/);
@@ -155,6 +160,14 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
     assert.ok(sentTexts.some(t => t.includes("mensaje en cola")));
     await send({ text: "/instagram", reply_to_message: undefined, from: { id: 3 } }, -1004319265595);
     assert.match(sentTexts.at(-1), /por privado/);
+    hasFace = false;
+    await send({ photo: [{file_id:'logo-original'}] },1200);
+    await send({ text:'quitale fondo' },1200);
+    assert.equal(edits.at(-1).background,'transparent');
+    assert.doesNotMatch(edits.at(-1).prompt,/Primary purpose: create music cover/);
+    assert.equal(sentDocuments.at(-1),'edited-photo');
+    assert.equal(memories.get('1200:1').generatedFileId,'transparent-output');
+    assert.equal(memories.get('1200:1').reference.fileId,'logo-original');
 
   } finally {
     globalThis.fetch = originalFetch;
