@@ -1,0 +1,33 @@
+import http from "node:http";
+import { handleUpdate } from "./bot.js";
+
+const PORT = process.env.PORT || 3000;
+
+const server = http.createServer(async (req, res) => {
+  if (req.method === "POST" && req.url === "/webhook") {
+    let body = "";
+    for await (const chunk of req) body += chunk;
+    try {
+      const update = JSON.parse(body);
+      // Fire and forget — Telegram expects 200 quickly
+      handleUpdate(update).catch((e) => console.error("handler error:", e));
+      res.writeHead(200);
+      res.end("ok");
+    } catch {
+      res.writeHead(400);
+      res.end("bad json");
+    }
+    return;
+  }
+
+  if (req.method === "GET" && req.url === "/health") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ status: "ok", bot: "Social Banana" }));
+    return;
+  }
+
+  res.writeHead(404);
+  res.end("not found");
+});
+
+server.listen(PORT, () => console.log(`Social Banana listening on :${PORT}`));

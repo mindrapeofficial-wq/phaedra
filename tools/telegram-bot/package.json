@@ -1,0 +1,14 @@
+{
+  "name": "social-banana-bot",
+  "version": "1.0.0",
+  "description": "Telegram webhook bot for Phaedra Instagram agent — receives orders, queries PostZen, responds via ChatGPT",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
