@@ -1,4 +1,4 @@
-import { sendMessage, sendTyping, sendPhoto } from "./telegram.js";
+import { sendMessage, sendTyping, sendPhoto, getFileUrl } from "./telegram.js";
 import { gatherStatus } from "./postzen.js";
 import { chat } from "./ai.js";
 import { checkAccess, incrementUsage, getUser, getTierInfo } from "./tiers.js";
@@ -71,7 +71,18 @@ export async function handleUpdate(update) {
   const text = cleanMessage(msg.text);
   if (!text) return;
 
-  console.log(`[${new Date().toISOString()}] chat=${chatId} user=${userId} ${username || "?"}: ${text}`);
+  // Extract photo URL if present
+  let imageUrl = null;
+  if (msg.photo && msg.photo.length > 0) {
+    const largest = msg.photo[msg.photo.length - 1];
+    try {
+      imageUrl = await getFileUrl(largest.file_id);
+    } catch (e) {
+      console.error("Failed to get photo URL:", e.message);
+    }
+  }
+
+  console.log(`[${new Date().toISOString()}] chat=${chatId} user=${userId} ${username || "?"}: ${text}${imageUrl ? " [+image]" : ""}`);
 
   try {
     await sendTyping(chatId);
@@ -83,7 +94,7 @@ export async function handleUpdate(update) {
       console.error("PostZen gather failed:", e.message);
     }
 
-    const reply = await chat(text, context);
+    const reply = await chat(text, context, imageUrl);
 
     // Track usage for non-owners
     if (userId !== OWNER_ID) {

@@ -27,6 +27,19 @@ export async function sendPhoto(chatId, photoUrl, caption) {
   return res;
 }
 
+export async function getFileUrl(fileId) {
+  const res = await fetch(`${API}/getFile`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ file_id: fileId }),
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  const filePath = data.result?.file_path;
+  if (!filePath) return null;
+  return `https://api.telegram.org/file/bot${TOKEN}/${filePath}`;
+}
+
 export async function sendTyping(chatId) {
   await fetch(`${API}/sendChatAction`, {
     method: "POST",

@@ -324,14 +324,24 @@ RULES:
 
 export { askClaude };
 
-export async function chat(userMessage, context) {
+export async function chat(userMessage, context, imageUrl = null) {
   if (!OPENAI_KEY) return "No tengo la API key de ChatGPT configurada.";
 
   const messages = [{ role: "system", content: SYSTEM_PROMPT }];
   if (context) {
     messages.push({ role: "system", content: `Datos actuales de Instagram @phaedrasound:\n${JSON.stringify(context, null, 2)}` });
   }
-  messages.push({ role: "user", content: userMessage });
+  if (imageUrl) {
+    messages.push({
+      role: "user",
+      content: [
+        { type: "text", text: userMessage },
+        { type: "image_url", image_url: { url: imageUrl, detail: "high" } },
+      ],
+    });
+  } else {
+    messages.push({ role: "user", content: userMessage });
+  }
 
   let response = await callOpenAI(messages);
 
