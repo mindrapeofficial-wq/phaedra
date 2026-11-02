@@ -307,7 +307,7 @@ RULES:
       "anthropic-version": "2023-06-01",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ model: "claude-sonnet-5-5", max_tokens: 1024, system: systemMsg, messages }),
+    body: JSON.stringify({ model: "claude-opus-5-5", max_tokens: 1024, system: systemMsg, messages }),
   });
   if (!res.ok) {
     const err = await res.text();
@@ -368,7 +368,7 @@ async function callOpenAI(messages) {
     method: "POST",
     headers: { Authorization: `Bearer ${OPENAI_KEY}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "gpt-4o-mini",
+      model: "gpt-4.1",
       messages,
       tools: TOOLS,
       tool_choice: "auto",
