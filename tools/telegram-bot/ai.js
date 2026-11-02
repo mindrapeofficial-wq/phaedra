@@ -242,9 +242,9 @@ async function executeTool(name, args) {
 async function generateImage(prompt, size, quality = "normal") {
   if (!OPENAI_KEY) return { error: "OPENAI_API_KEY not configured" };
   const isPro = quality === "pro";
-  for (const model of ["gpt-image-1", "dall-e-3", "dall-e-2"]) {
+  for (const model of ["gpt-image-2", "gpt-image-1", "dall-e-3", "dall-e-2"]) {
     const body = { model, prompt, n: 1 };
-    if (model === "gpt-image-1") {
+    if (model.startsWith("gpt-image")) {
       body.size = size;
       body.quality = isPro ? "high" : "medium";
     } else {
