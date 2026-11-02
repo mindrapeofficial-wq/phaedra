@@ -5,6 +5,7 @@ import { handleStripeWebhook } from "./stripe.js";
 import { runEngagementSession } from "./engage.js";
 import { startProactiveLoop, stopProactiveLoop } from "./proactive.js";
 import { memoryRequest } from "./memory.js";
+import { webhookRegistration } from "./webhook-config.js";
 
 const PORT = process.env.PORT || 3000;
 const webhookSecret = process.env.TELEGRAM_WEBHOOK_SECRET || createHash("sha256").update(`social-banana-webhook:${process.env.TELEGRAM_BOT_TOKEN}`).digest("hex");
@@ -116,7 +117,7 @@ server.listen(PORT, () => {
       const response = await fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/setWebhook`, {
         method: "POST", signal: AbortSignal.timeout(20_000),
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: "https://social-banana-bot.onrender.com/webhook", secret_token: webhookSecret }),
+        body: JSON.stringify(webhookRegistration(webhookSecret)),
       });
       if (!response.ok || !(await response.json()).ok) throw new Error("Webhook registration failed");
       console.log("[webhook] authenticated webhook configured");
