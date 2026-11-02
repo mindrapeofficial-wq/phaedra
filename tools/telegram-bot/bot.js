@@ -9,7 +9,9 @@ const STRIPE_LINK = process.env.STRIPE_PAYMENT_LINK || "https://buy.stripe.com/8
 
 export async function handleUpdate(update) {
   const msg = update.message;
-  if (!msg?.text) return;
+  if (!msg) return;
+  if (!msg.text && !msg.caption) return;
+  if (!msg.text) msg.text = msg.caption;
 
   const chatId = msg.chat.id;
   const isGroup = msg.chat.type === "group" || msg.chat.type === "supergroup";
