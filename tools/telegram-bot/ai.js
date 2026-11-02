@@ -324,12 +324,16 @@ RULES:
 
 export { askClaude };
 
-export async function chat(userMessage, context, imageUrl = null) {
+export async function chat(userMessage, context, imageUrl = null, history = []) {
   if (!OPENAI_KEY) return "No tengo la API key de ChatGPT configurada.";
 
   const messages = [{ role: "system", content: SYSTEM_PROMPT }];
   if (context) {
     messages.push({ role: "system", content: `Datos actuales de Instagram @phaedrasound:\n${JSON.stringify(context, null, 2)}` });
+  }
+  // Add conversation history (exclude the current message which is last)
+  for (const h of history.slice(0, -1)) {
+    messages.push({ role: h.role, content: h.content });
   }
   if (imageUrl) {
     messages.push({

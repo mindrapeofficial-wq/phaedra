@@ -7,6 +7,21 @@ import { runEngagementSession } from "./engage.js";
 const OWNER_ID = Number(process.env.TELEGRAM_OWNER_ID) || 1661812916;
 const STRIPE_LINK = process.env.STRIPE_PAYMENT_LINK || "https://buy.stripe.com/8x2dR8ez45JG85s4e504800";
 
+// Conversation memory: last 20 messages per chat
+const chatHistory = new Map();
+const MAX_HISTORY = 20;
+
+function addToHistory(chatId, role, content) {
+  if (!chatHistory.has(chatId)) chatHistory.set(chatId, []);
+  const history = chatHistory.get(chatId);
+  history.push({ role, content });
+  if (history.length > MAX_HISTORY) history.splice(0, history.length - MAX_HISTORY);
+}
+
+function getHistory(chatId) {
+  return chatHistory.get(chatId) || [];
+}
+
 export async function handleUpdate(update) {
   const msg = update.message;
   if (!msg) return;
@@ -94,13 +109,15 @@ export async function handleUpdate(update) {
       console.error("PostZen gather failed:", e.message);
     }
 
-    const reply = await chat(text, context, imageUrl);
+    addToHistory(chatId, "user", text);
+    const reply = await chat(text, context, imageUrl, getHistory(chatId));
 
     // Track usage for non-owners
     if (userId !== OWNER_ID) {
       await incrementUsage(userId);
     }
 
+    addToHistory(chatId, "assistant", reply);
     const imageMatch = reply.match(/https:\/\/[^\s)]+\.(png|jpg|jpeg|webp)(\?[^\s)]*)?/i)
       || reply.match(/https:\/\/oaidalleapiprodscus\.blob\.core\.windows\.net[^\s)]+/)
       || reply.match(/https:\/\/[^\s)]*openai[^\s)]*\.(png|jpg|jpeg|webp|blob)[^\s)]*/i);
