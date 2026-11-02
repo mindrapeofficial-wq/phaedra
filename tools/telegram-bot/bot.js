@@ -1,8 +1,10 @@
 import { sendMessage, sendTyping, sendPhoto } from "./telegram.js";
 import { gatherStatus } from "./postzen.js";
 import { chat } from "./ai.js";
+import { checkAccess, incrementUsage, getUser, getTierInfo } from "./tiers.js";
 
 const OWNER_ID = Number(process.env.TELEGRAM_OWNER_ID) || 1661812916;
+const STRIPE_LINK = process.env.STRIPE_PAYMENT_LINK || "https://buy.stripe.com/test_placeholder";
 
 export async function handleUpdate(update) {
   const msg = update.message;
@@ -10,15 +12,54 @@ export async function handleUpdate(update) {
 
   const chatId = msg.chat.id;
   const isGroup = msg.chat.type === "group" || msg.chat.type === "supergroup";
-  const isOwner = msg.from?.id === OWNER_ID;
+  const userId = msg.from?.id;
+  const username = msg.from?.username;
 
-  if (!isGroup && !isOwner) return;
-  if (isGroup && !isBotTriggered(msg)) return;
+  // Handle commands first
+  const cmd = msg.text.trim().toLowerCase();
+  if (cmd === "/start") {
+    await sendMessage(chatId, `Hola! Soy Social Banana, el agente de Instagram de @phaedrasound.\n\nComandos:\n/plan - ver tu plan actual\n/upgrade - desbloquear todas las herramientas\n\nEscribeme lo que necesites sobre Instagram y te ayudo.`);
+    return;
+  }
+  if (cmd === "/plan" || cmd === "/miplan") {
+    const user = await getUser(userId, username);
+    const info = getTierInfo(user.tier);
+    const used = user.last_request_date === new Date().toISOString().split("T")[0] ? user.daily_requests : 0;
+    await sendMessage(chatId, `Tu plan: <b>${info.name}</b>\nConsultas: ${used}/${info.limit}\nHerramientas: ${info.tools}`);
+    return;
+  }
+  if (cmd === "/upgrade") {
+    const user = await getUser(userId, username);
+    if (user.tier === "owner" || user.tier === "pro") {
+      await sendMessage(chatId, `Ya tienes el plan ${user.tier === "owner" ? "Owner" : "Pro"} activo.`);
+    } else {
+      await sendMessage(chatId, `Plan Pro - Todas las herramientas desbloqueadas:\n\n- Crear borradores de posts\n- Responder comentarios y DMs\n- Generar imagenes con DALL-E\n- Analisis con Claude AI\n- 50 consultas/dia\n\n<a href="${STRIPE_LINK}">Suscribirse al Plan Pro</a>`);
+    }
+    return;
+  }
+
+  // In private, check access
+  if (!isGroup) {
+    const access = await checkAccess(userId, username);
+    if (!access.allowed) {
+      await sendMessage(chatId, access.reason);
+      return;
+    }
+  }
+
+  // In groups, only respond when triggered and only owner has access
+  if (isGroup) {
+    if (!isBotTriggered(msg)) return;
+    if (userId !== OWNER_ID) {
+      await sendMessage(chatId, "Solo el admin puede usar el bot en el grupo.");
+      return;
+    }
+  }
 
   const text = cleanMessage(msg.text);
   if (!text) return;
 
-  console.log(`[${new Date().toISOString()}] chat=${chatId} ${msg.from?.username || "?"}: ${text}`);
+  console.log(`[${new Date().toISOString()}] chat=${chatId} user=${userId} ${username || "?"}: ${text}`);
 
   try {
     await sendTyping(chatId);
@@ -32,7 +73,11 @@ export async function handleUpdate(update) {
 
     const reply = await chat(text, context);
 
-    // If the reply contains a DALL-E image URL, send it as a photo
+    // Track usage for non-owners
+    if (userId !== OWNER_ID) {
+      await incrementUsage(userId);
+    }
+
     const imageMatch = reply.match(/https:\/\/oaidalleapiprodscus\.blob\.core\.windows\.net[^\s)]+/);
     if (imageMatch) {
       const caption = reply.replace(imageMatch[0], "").trim().slice(0, 1024);
