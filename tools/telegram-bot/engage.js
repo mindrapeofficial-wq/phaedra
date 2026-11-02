@@ -1,27 +1,40 @@
 /**
- * Auto-engagement module — Playwright-based Instagram commenter.
- * Navigates to target accounts' reels, generates comments via Claude,
- * and posts them with human-like randomization.
+ * Auto-engagement module — generates ready-to-paste comments via Claude
+ * and sends them to Telegram with direct links to target accounts' reels.
+ * No browser needed.
  */
 
 import { askClaude } from "./ai.js";
 import { sendMessage } from "./telegram.js";
 
-const OWNER_CHAT = process.env.TELEGRAM_OWNER_ID || "1661812916";
 const GROUP_CHAT = process.env.TELEGRAM_GROUP_CHAT_ID || "-1004319265595";
-const REPORT_CHAT = GROUP_CHAT;
+const OWNER_CHAT = process.env.TELEGRAM_OWNER_ID || "1661812916";
+const REPORT_CHAT = OWNER_CHAT;
 
-// Target accounts — music production niche, rotated each session
 const TARGET_POOLS = [
-  // Reach accounts (bigger, comment early for visibility)
-  "output", "spliceapp", "izotopeaudio", "ablofficialapp", "native_instruments",
-  "waves_audio", "image.line", "fl_studio", "steinbergmedia", "reabornemusic",
-  // Peer accounts (similar size, reciprocal engagement)
-  "ardabornemusic", "audaciousmusic", "linuxmusicians", "opensourcemusic",
-  "bedroomproducers", "indieproducertips", "homestudiosetup",
-  // Producer/creator accounts
-  "producergrind", "musicproducerlife", "beatmakerlife", "sounddesignorg",
-  "synthmania", "samplegod", "drumbroker", "loopmasters",
+  // Reach — bigger accounts, comment early for visibility
+  { handle: "output", niche: "sample packs and production tools" },
+  { handle: "spliceapp", niche: "samples, plugins, DAW tutorials" },
+  { handle: "izotopeaudio", niche: "mixing, mastering, audio repair" },
+  { handle: "native_instruments", niche: "synths, samplers, production" },
+  { handle: "waves_audio", niche: "mixing plugins and processing" },
+  { handle: "fl_studio", niche: "beat making and FL Studio workflows" },
+  { handle: "steinbergmedia", niche: "Cubase, recording, MIDI" },
+  { handle: "ablofficialapp", niche: "Ableton Live, live performance, sound design" },
+  // Peers — similar size, reciprocal engagement
+  { handle: "bedroomproducers", niche: "home studio production tips" },
+  { handle: "homestudiosetup", niche: "studio gear and acoustic treatment" },
+  { handle: "reabornemusic", niche: "Reaper DAW tips and production" },
+  // Creators — producers and beatmakers
+  { handle: "producergrind", niche: "producer culture and motivation" },
+  { handle: "musicproducerlife", niche: "daily producer life and tips" },
+  { handle: "beatmakerlife", niche: "beatmaking and hip hop production" },
+  { handle: "sounddesignorg", niche: "sound design for film and games" },
+  { handle: "synthmania", niche: "synthesizers and sound design" },
+  { handle: "loopmasters", niche: "loops, samples, production resources" },
+  { handle: "drumbroker", niche: "drum kits and sampling" },
+  { handle: "recordingrevolution", niche: "home recording and mixing" },
+  { handle: "musicianonamission", niche: "mixing tips for home studios" },
 ];
 
 function random(min, max) {
@@ -33,201 +46,84 @@ function pickTargets(pool, count) {
   return shuffled.slice(0, count);
 }
 
-function sleep(ms) {
-  return new Promise((r) => setTimeout(r, ms));
-}
-
-// Human-like delay between 45-120 seconds
-function humanDelay() {
-  return sleep(random(45000, 120000));
-}
-
-// Short scroll/browse delay
-function browseDelay() {
-  return sleep(random(3000, 8000));
-}
-
-async function generateComment(accountName, reelDescription) {
-  const result = await askClaude(
-    `Generate ONE single comment (in English) for a reel by @${accountName}. The reel is about: ${reelDescription}.
-Rules:
-- Minimum 10 words
-- Ask a genuine question about their content
-- Never mention Phaedra, DAWs, or anything promotional
-- Sound like a real person, not a brand
-- Be specific to what you see described
-- No emojis or very few (max 1)
-- Just output the comment text, nothing else`,
-    ""
-  );
-  return result.response || result.error || null;
-}
-
 export async function runEngagementSession() {
-  let browser, context, page;
-
   try {
-    // Dynamic import — Playwright may not be installed in all environments
-    const pw = await import("playwright");
-
-    const shouldSkip = Math.random() < 0.15; // 15% chance to skip (no pattern)
+    const shouldSkip = Math.random() < 0.15;
     if (shouldSkip) {
       console.log("[engage] Skipping this session (random skip)");
-      await notify("🍌 Sesión de engagement saltada (patrón aleatorio)");
+      await notify("Sesion de engagement saltada (patron aleatorio). Proximo intento en unas horas.");
       return { skipped: true };
     }
 
-    const commentCount = random(3, 8);
+    const commentCount = random(4, 7);
     const targets = pickTargets(TARGET_POOLS, commentCount);
 
-    console.log(`[engage] Starting session: ${commentCount} targets: ${targets.join(", ")}`);
-    await notify(`🍌 Empezando engagement: ${commentCount} cuentas`);
+    console.log(`[engage] Generating comments for ${commentCount} accounts`);
 
-    browser = await pw.chromium.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    const prompt = `Generate ${commentCount} unique, engaging comments for Instagram reels. One comment per account listed below.
 
-    // Load saved session if available
-    const storagePath = process.env.IG_SESSION_PATH || "./ig-session.json";
-    try {
-      context = await browser.newContext({
-        storageState: storagePath,
-        userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-        viewport: { width: 1280, height: 900 },
-        locale: "en-US",
-      });
-    } catch {
-      console.error("[engage] No saved session, need manual login first");
-      await notify("⚠️ No hay sesión de Instagram guardada. Necesito login manual primero.");
-      await browser.close();
-      return { error: "no_session" };
+ACCOUNTS:
+${targets.map((t, i) => `${i + 1}. @${t.handle} — their content is about: ${t.niche}`).join("\n")}
+
+RULES:
+- Each comment minimum 12 words, maximum 30 words
+- Ask a genuine question about their specific content/niche
+- Sound like a real music producer, not a brand or AI
+- Never mention Phaedra, open-source, DAWs you sell, or anything promotional
+- No generic compliments like "great content!" — be specific to their niche
+- Maximum 1 emoji per comment, most should have zero
+- Use casual English, contractions allowed
+- Each comment must be completely different in structure
+
+FORMAT (strictly follow this, one per line):
+@handle | comment text here`;
+
+    const result = await askClaude(prompt, "");
+
+    if (result.error) {
+      console.error("[engage] Claude failed:", result.error);
+      await notify("Error generando comentarios: " + result.error);
+      return { error: result.error };
     }
 
-    page = await context.newPage();
+    const lines = result.response
+      .split("\n")
+      .filter((l) => l.includes("|") && l.includes("@"))
+      .map((l) => {
+        const [handlePart, ...commentParts] = l.split("|");
+        const handle = handlePart.trim().replace("@", "").replace(/^\d+\.\s*/, "");
+        const comment = commentParts.join("|").trim();
+        return { handle, comment };
+      })
+      .filter((r) => r.handle && r.comment);
 
-    // Check if logged in
-    await page.goto("https://www.instagram.com/", { waitUntil: "domcontentloaded" });
-    await sleep(3000);
-    const loginButton = await page.$('a[href="/accounts/login/"]');
-    if (loginButton) {
-      console.error("[engage] Session expired, not logged in");
-      await notify("⚠️ La sesión de Instagram expiró. Necesito re-login.");
-      await browser.close();
-      return { error: "session_expired" };
+    if (lines.length === 0) {
+      console.error("[engage] No comments parsed from Claude response");
+      await notify("No pude parsear los comentarios. Respuesta de Claude:\n" + result.response.slice(0, 300));
+      return { error: "parse_failed" };
     }
 
-    const results = [];
+    // Build the Telegram message with links and ready-to-copy comments
+    const header = `ENGAGEMENT (${lines.length} comentarios listos)
 
-    for (let i = 0; i < targets.length; i++) {
-      const account = targets[i];
-      console.log(`[engage] ${i + 1}/${targets.length} Visiting @${account}`);
+Abre cada link, busca el reel mas reciente, y pega el comentario:\n`;
 
-      try {
-        // Navigate to account's reels tab
-        await page.goto(`https://www.instagram.com/${account}/reels/`, {
-          waitUntil: "domcontentloaded",
-        });
-        await browseDelay();
+    const body = lines
+      .map(
+        (r, i) =>
+          `${i + 1}. <a href="https://www.instagram.com/${r.handle}/reels/">@${r.handle}</a>\n<code>${r.comment}</code>`
+      )
+      .join("\n\n");
 
-        // Find the first reel link
-        const reelLink = await page.$('a[href*="/reel/"]');
-        if (!reelLink) {
-          console.log(`[engage] No reels found for @${account}`);
-          results.push({ account, status: "no_reels" });
-          continue;
-        }
+    const footer = "\n\nToca el comentario para copiarlo. Deja 30-60 seg entre cada uno.";
 
-        // Click on the first reel
-        await reelLink.click();
-        await sleep(random(2000, 4000));
+    await notify(header + body + footer);
+    console.log("[engage] Sent", lines.length, "comments to Telegram");
 
-        // Try to get reel description/caption
-        const caption = await page
-          .$eval('div[class*="Caption"] span, span[class*="caption"], h1 + div span', (el) => el.textContent?.trim())
-          .catch(() => "music production content");
-
-        const reelDesc = (caption || "").slice(0, 200) || "music production content";
-
-        // Generate a comment via Claude
-        const comment = await generateComment(account, reelDesc);
-        if (!comment || comment.includes("error")) {
-          console.log(`[engage] Failed to generate comment for @${account}`);
-          results.push({ account, status: "comment_gen_failed" });
-          await humanDelay();
-          continue;
-        }
-
-        // Find and click the comment input
-        const commentInput = await page.$(
-          'textarea[aria-label*="comment" i], textarea[placeholder*="comment" i], textarea[aria-label*="comentario" i]'
-        );
-        if (!commentInput) {
-          console.log(`[engage] No comment input found for @${account}`);
-          results.push({ account, status: "no_comment_input" });
-          await humanDelay();
-          continue;
-        }
-
-        await commentInput.click();
-        await sleep(random(500, 1500));
-
-        // Type comment character by character (human-like)
-        for (const char of comment) {
-          await page.keyboard.type(char, { delay: random(30, 80) });
-        }
-        await sleep(random(1000, 2500));
-
-        // Submit
-        const postButton = await page.$(
-          'button:has-text("Post"), button:has-text("Publicar"), div[role="button"]:has-text("Post")'
-        );
-        if (postButton) {
-          await postButton.click();
-          await sleep(random(2000, 4000));
-          console.log(`[engage] Commented on @${account}: ${comment.slice(0, 50)}...`);
-          results.push({ account, status: "commented", comment: comment.slice(0, 80) });
-        } else {
-          // Try pressing Enter as fallback
-          await page.keyboard.press("Enter");
-          await sleep(random(2000, 4000));
-          console.log(`[engage] Commented (Enter) on @${account}: ${comment.slice(0, 50)}...`);
-          results.push({ account, status: "commented", comment: comment.slice(0, 80) });
-        }
-      } catch (e) {
-        console.error(`[engage] Error with @${account}:`, e.message);
-        results.push({ account, status: "error", error: e.message });
-      }
-
-      // Human delay between accounts (skip after last one)
-      if (i < targets.length - 1) {
-        await humanDelay();
-      }
-    }
-
-    // Save session state for next time
-    try {
-      await context.storageState({ path: storagePath });
-    } catch (e) {
-      console.error("[engage] Failed to save session:", e.message);
-    }
-
-    await browser.close();
-
-    // Report results
-    const commented = results.filter((r) => r.status === "commented");
-    const report = `🍌 Engagement completado:
-${commented.length}/${targets.length} comentarios publicados
-
-${results.map((r) => `• @${r.account}: ${r.status}${r.comment ? ` — "${r.comment}"` : ""}`).join("\n")}`;
-
-    await notify(report);
-    console.log("[engage] Session complete:", JSON.stringify(results));
-    return { results };
+    return { results: lines };
   } catch (e) {
     console.error("[engage] Session error:", e);
-    await notify(`⚠️ Error en engagement: ${e.message}`);
-    if (browser) await browser.close().catch(() => {});
+    await notify("Error en engagement: " + e.message);
     return { error: e.message };
   }
 }
@@ -239,6 +135,3 @@ async function notify(text) {
     console.error("[engage] Notify failed:", e.message);
   }
 }
-
-// Export askClaude so it can be imported from ai.js
-export { generateComment };
