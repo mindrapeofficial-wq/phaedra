@@ -20,6 +20,7 @@ const server = http.createServer(async (req, res) => {
     for await (const chunk of req) body += chunk;
     try {
       const update = JSON.parse(body);
+      console.log("[webhook] update received", { chat: update.message?.chat?.id, type: update.message?.chat?.type, hasMessage: Boolean(update.message) });
       handleUpdate(update).catch((e) => console.error("handler error:", e));
       res.writeHead(200);
       res.end("ok");

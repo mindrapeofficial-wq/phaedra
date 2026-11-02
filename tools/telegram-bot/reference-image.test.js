@@ -35,7 +35,7 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
       if (request.response_format) return json({ choices: [{ message: { content: JSON.stringify({ hasFace }) } }] });
       const content = request.messages.findLast(m => m.role === "user").content;
       const text = typeof content === "string" ? content : content[0].text;
-      const message = text.includes("próxima petición") ? { content: "Foto recibida." } : {
+      const message = text === "heyyy" ? { content: "¡Hey! ¿Qué estás creando hoy?" } : text.includes("próxima petición") ? { content: "Foto recibida." } : {
         tool_calls: [{ id: "image-call", function: { name: "generate_image", arguments: JSON.stringify({ prompt: "Create a cinematic cover", quality: text.includes("pro") ? "pro" : "normal" }) } }],
       };
       return json({ choices: [{ message }] });
@@ -101,6 +101,13 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
     assert.equal(resolvedIds.at(-1), "client-original");
     await send({ text: "/olvidame" }, 300);
     assert.equal(memories.has("300:1"), false);
+    await send({ text: "heyyy", reply_to_message: undefined, from: { id: 2 } }, -1004319265595);
+    assert.equal(sentTexts.at(-1), "¡Hey! ¿Qué estás creando hoy?");
+    const afterGreeting = sentTexts.length;
+    await send({ text: "heyyy", reply_to_message: undefined, from: { id: 2, is_bot: true } }, -1004319265595);
+    assert.equal(sentTexts.length, afterGreeting, "ignore bots to prevent reply loops");
+    await send({ new_chat_members: [{ id: 3, first_name: "Emil" }], reply_to_message: undefined }, -1004319265595);
+    assert.match(sentTexts.at(-1), /Bienvenidos, Emil/);
 
   } finally {
     globalThis.fetch = originalFetch;

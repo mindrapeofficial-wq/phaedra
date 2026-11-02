@@ -7,6 +7,7 @@ import { runEngagementSession } from "./engage.js";
 import { memoryRequest } from "./memory.js";
 
 const OWNER_ID = Number(process.env.TELEGRAM_OWNER_ID) || 1661812916;
+const GROUP_CHAT = String(process.env.TELEGRAM_GROUP_CHAT_ID || "-1004319265595");
 const STRIPE_LINK = process.env.STRIPE_PAYMENT_LINK || "https://buy.stripe.com/8x2dR8ez45JG85s4e504800";
 
 const activeChats = new Set();
@@ -30,7 +31,15 @@ export async function handleUpdate(update) {
 
 async function handleMessage(update) {
   const msg = update.message;
-  if (!msg) return;
+  if (!msg || msg.from?.is_bot) return;
+  if (String(msg.chat.id) === GROUP_CHAT && msg.new_chat_members?.length) {
+    const members = msg.new_chat_members.filter(member => !member.is_bot);
+    if (members.length) {
+      const names = members.map(member => member.first_name || member.username || "colega").join(", ");
+      await sendMessage(msg.chat.id, `¡Bienvenidos, ${names}! Soy Banana, el asistente creativo del grupo. Contadme: ¿qué creáis y qué os gustaría conseguir ahora?`);
+    }
+    return;
+  }
   if (!msg.text && !msg.caption && !msg.photo?.length) return;
   if (!msg.text) msg.text = msg.caption || "Usa esta foto como referencia para mi próxima petición.";
 
@@ -80,7 +89,7 @@ async function handleMessage(update) {
     }
   }
 
-  // In groups, only respond when triggered and only owner has access
+  // Our creator group is conversational; other groups still require a mention/reply.
   if (isGroup) {
     if (!isBotTriggered(msg)) return;
     const access = await checkAccess(userId, username);
@@ -198,6 +207,7 @@ async function handleMessage(update) {
 }
 
 function isBotTriggered(msg) {
+  if (String(msg.chat.id) === GROUP_CHAT) return true;
   const text = (msg.text || "").toLowerCase();
   if (text.startsWith("/")) return true;
   if (text.includes("@socialbananabot")) return true;
