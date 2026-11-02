@@ -294,7 +294,7 @@ RULES:
       "anthropic-version": "2023-06-01",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1024, system: systemMsg, messages }),
+    body: JSON.stringify({ model: "claude-3-5-sonnet-20241022", max_tokens: 1024, system: systemMsg, messages }),
   });
   if (!res.ok) {
     const err = await res.text();
