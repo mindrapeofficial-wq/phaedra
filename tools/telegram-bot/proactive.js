@@ -10,9 +10,14 @@ import * as pz from "./postzen.js";
 const OWNER_CHAT = process.env.TELEGRAM_OWNER_ID || "1661812916";
 const GROUP_CHAT = process.env.TELEGRAM_GROUP_CHAT_ID || "-1004319265595";
 const INTERVAL_MS = 30 * 60 * 1000; // 30 min
+const ENGAGE_INTERVAL_MS = 2.5 * 60 * 1000; // 2.5 min
 
 let timer = null;
+let engageTimer = null;
 let lastAction = null;
+let lastSeenCommentIds = new Set();
+let lastSeenConvoIds = new Set();
+let engageInitialized = false;
 
 const PROACTIVE_TYPES = [
   "status_report",
@@ -149,13 +154,64 @@ async function runProactiveTick() {
   }
 }
 
+async function engagementMonitorTick() {
+  try {
+    const actions = [];
+
+    // Check for new comments on our recent posts
+    const posts = await pz.getRecentPosts(5);
+    for (const p of posts.data || []) {
+      try {
+        const comments = await pz.getPostComments(p._id);
+        for (const c of comments.data || []) {
+          if (!lastSeenCommentIds.has(c._id)) {
+            if (engageInitialized) {
+              const author = c.author?.username || c.author?.name || "alguien";
+              const snippet = (c.text || "").slice(0, 80);
+              actions.push(`💬 Nuevo comentario de <b>@${author}</b>: "${snippet}"`);
+            }
+            lastSeenCommentIds.add(c._id);
+          }
+        }
+      } catch {}
+    }
+
+    // Check for new/updated DM conversations
+    const convos = await pz.getOpenConversations();
+    for (const c of convos.data || []) {
+      if (!lastSeenConvoIds.has(c._id)) {
+        if (engageInitialized) {
+          const who = c.participant?.username || c.participant?.name || "alguien";
+          actions.push(`📩 Nueva conversacion DM con <b>@${who}</b>`);
+        }
+        lastSeenConvoIds.add(c._id);
+      }
+    }
+
+    engageInitialized = true;
+
+    if (actions.length > 0) {
+      const msg = "🔔 <b>Engagement Activity</b>\n\n" + actions.join("\n");
+      await sendMessage(GROUP_CHAT, msg);
+      console.log(`[engage-monitor] Reported ${actions.length} new actions`);
+    } else {
+      console.log("[engage-monitor] No new activity");
+    }
+  } catch (e) {
+    console.error("[engage-monitor] tick error:", e.message);
+  }
+}
+
 export function startProactiveLoop() {
   if (timer) return;
   console.log("[proactive] Starting loop (every 30 min)");
+  console.log("[engage-monitor] Starting loop (every 2.5 min)");
   // First tick after 2 min (let the server warm up)
   setTimeout(() => {
     runProactiveTick();
     timer = setInterval(runProactiveTick, INTERVAL_MS);
+    engagementMonitorTick();
+    engageTimer = setInterval(engagementMonitorTick, ENGAGE_INTERVAL_MS);
   }, 2 * 60 * 1000);
 }
 
@@ -163,5 +219,9 @@ export function stopProactiveLoop() {
   if (timer) {
     clearInterval(timer);
     timer = null;
+  }
+  if (engageTimer) {
+    clearInterval(engageTimer);
+    engageTimer = null;
   }
 }
