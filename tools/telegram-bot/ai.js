@@ -308,6 +308,8 @@ RULES:
   return { response: text };
 }
 
+export { askClaude };
+
 export async function chat(userMessage, context) {
   if (!OPENAI_KEY) return "No tengo la API key de ChatGPT configurada.";
 

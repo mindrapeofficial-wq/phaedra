@@ -1,6 +1,7 @@
 import http from "node:http";
 import { handleUpdate } from "./bot.js";
 import { handleStripeWebhook } from "./stripe.js";
+import { runEngagementSession } from "./engage.js";
 
 const PORT = process.env.PORT || 3000;
 
@@ -32,6 +33,19 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(400);
       res.end("error");
     }
+    return;
+  }
+
+  if (req.method === "POST" && req.url === "/engage") {
+    const authHeader = req.headers["authorization"];
+    if (authHeader !== `Bearer ${process.env.ENGAGE_SECRET}`) {
+      res.writeHead(401);
+      res.end("unauthorized");
+      return;
+    }
+    res.writeHead(200);
+    res.end("engagement started");
+    runEngagementSession().catch((e) => console.error("engage error:", e));
     return;
   }
 

@@ -2,6 +2,7 @@ import { sendMessage, sendTyping, sendPhoto } from "./telegram.js";
 import { gatherStatus } from "./postzen.js";
 import { chat } from "./ai.js";
 import { checkAccess, incrementUsage, getUser, getTierInfo } from "./tiers.js";
+import { runEngagementSession } from "./engage.js";
 
 const OWNER_ID = Number(process.env.TELEGRAM_OWNER_ID) || 1661812916;
 const STRIPE_LINK = process.env.STRIPE_PAYMENT_LINK || "https://buy.stripe.com/8x2dR8ez45JG85s4e504800";
@@ -26,6 +27,15 @@ export async function handleUpdate(update) {
     const info = getTierInfo(user.tier);
     const used = user.last_request_date === new Date().toISOString().split("T")[0] ? user.daily_requests : 0;
     await sendMessage(chatId, `Tu plan: <b>${info.name}</b>\nConsultas: ${used}/${info.limit}\nHerramientas: ${info.tools}`);
+    return;
+  }
+  if (cmd === "/engage") {
+    if (userId !== OWNER_ID) {
+      await sendMessage(chatId, "Solo el owner puede ejecutar engagement.");
+      return;
+    }
+    await sendMessage(chatId, "🍌 Lanzando sesión de engagement...");
+    runEngagementSession().catch((e) => console.error("engage cmd error:", e));
     return;
   }
   if (cmd === "/upgrade") {
