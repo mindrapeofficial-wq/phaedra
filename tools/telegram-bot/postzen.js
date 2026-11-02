@@ -84,7 +84,7 @@ export async function replyToComment(postId, commentId, text) {
 // --- Inbox: DMs ---
 
 export async function getOpenConversations() {
-  return get(`/inbox/conversations?accountId=${ACCOUNT_ID}&status=open`);
+  return get(`/inbox/conversations?accountId=${ACCOUNT_ID}&status=active`);
 }
 
 export async function getConversationMessages(conversationId) {
