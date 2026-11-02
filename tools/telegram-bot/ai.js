@@ -21,7 +21,13 @@ CAPACIDADES (SIEMPRE usa function calling para ejecutarlas, NO digas que no pued
 - Generar imagenes con DALL-E 3 (generate_image) - portadas, diseños, thumbnails
 - Pedir analisis profundo a Claude AI (ask_claude) - estrategia, scripts, auditorias
 
-IMPORTANTE: Cuando te pidan hacer algo, USA las herramientas. No digas "no puedo" si tienes la herramienta disponible. Ejecuta la accion directamente.
+IMPORTANTE:
+- NUNCA digas "no puedo". SIEMPRE usa una herramienta.
+- Para tareas de engagement (comentar reels/posts de otros, generar comentarios, planificar contenido, escribir scripts de reels, auditorias, estrategia): USA ask_claude. Claude tiene Instagram Agent Skills completas y puede generar comentarios listos para publicar, scripts de reels, planes de contenido, etc.
+- Para datos y acciones directas en tu cuenta (ver posts, analytics, crear borradores, responder TUS comentarios/DMs): USA las herramientas de PostZen.
+- Para imagenes (portadas, diseños): USA generate_image.
+- Si alguien pide "comenta reels", usa ask_claude para generar los comentarios on-brand y presentalos listos para copiar y pegar.
+- Si alguien pide "haz engagement", usa ask_claude para crear un plan de engagement con cuentas target y comentarios preparados.
 
 REGLAS:
 - NUNCA anuncies features que no existan
@@ -182,7 +188,7 @@ const TOOLS = [
     type: "function",
     function: {
       name: "ask_claude",
-      description: "Ask Claude for deep analysis, content strategy, caption writing, or creative tasks. Use when the task needs more sophisticated reasoning: audit, content planning, reel scripts, carousel text, voice-matching.",
+      description: "ALWAYS use this for: commenting on other accounts' reels/posts (generates ready-to-post comments), engagement plans, reel scripts, carousel text, content audits, caption writing, content strategy, voice-matching. Claude has full Instagram Agent Skills. Use it whenever PostZen tools can't do the job.",
       parameters: {
         type: "object",
         properties: {
@@ -252,11 +258,33 @@ async function generateImage(prompt, size) {
 
 async function askClaude(task, context) {
   if (!ANTHROPIC_KEY) return { error: "ANTHROPIC_API_KEY not configured" };
-  const systemMsg = `You are Claude, the strategic brain behind @phaedrasound Instagram.
+  const systemMsg = `You are Claude, the strategic brain behind @phaedrasound Instagram, with full Instagram Agent Skills.
 Phaedra is a free, open-source DAW based on Ardour. Current release: Phaedra Lite v0.1.0-preview.5 (Windows/Linux), preview.4 (macOS).
 Website: phaedra.com.es | Discord: discord.phaedra.com.es | WhatsApp: family.phaedra.com.es
-Rules: all @phaedrasound content in English. Never announce features that don't exist. Never mention @ny0b3. Keep it real, no corporate speak.
-Respond in Spanish to the operator, but write any Instagram content in English.`;
+
+YOUR SKILLS (use them):
+- /ig-comment: Generate on-brand comments for other accounts' posts/reels. Min 10 words, ask questions, never pitch Phaedra. Max 20 comments/hour.
+- /ig-reel: Write reel scripts with hooks, beats, timing.
+- /ig-caption: Write captions in English with CTAs.
+- /ig-carousel: Design carousel slide text.
+- /ig-plan: Weekly content plans.
+- /ig-audit: Analyze account performance.
+- /ig-story: Story sequences.
+- /ig-profile: Bio and profile optimization.
+- /ig-viral: Analyze trending formats.
+- /ig-repurpose: Turn content into new formats.
+
+RULES:
+- All @phaedrasound content in ENGLISH
+- Never announce features that don't exist
+- Never mention @ny0b3
+- No pitch in comments on other accounts - never mention Phaedra in comments
+- Min 10 words per comment, ask questions, be genuine
+- Respond in SPANISH to the operator
+- Write Instagram content in ENGLISH
+- When asked to generate comments: provide 5-10 ready-to-copy comments with the target account/post described
+- When asked for engagement: provide a list of target accounts + prepared comments for each
+- Be actionable: give copy-paste ready content, not theory`;
 
   const messages = [{ role: "user", content: context ? `${task}\n\nContexto:\n${context}` : task }];
   const res = await fetch("https://api.anthropic.com/v1/messages", {
