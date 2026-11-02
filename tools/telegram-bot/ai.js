@@ -240,20 +240,32 @@ async function executeTool(name, args) {
 
 async function generateImage(prompt, size) {
   if (!OPENAI_KEY) return { error: "OPENAI_API_KEY not configured" };
-  const res = await fetch("https://api.openai.com/v1/images/generations", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${OPENAI_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "dall-e-3", prompt, size, quality: "hd", n: 1 }),
-  });
-  if (!res.ok) {
+  // Try gpt-image-1 first, fall back to dall-e-2
+  for (const model of ["gpt-image-1", "dall-e-3", "dall-e-2"]) {
+    const body = { model, prompt, n: 1 };
+    if (model === "gpt-image-1") {
+      body.size = size === "1024x1024" ? "1024x1024" : "1024x1024";
+      body.quality = "medium";
+    } else {
+      body.size = size;
+      body.quality = "hd";
+    }
+    const res = await fetch("https://api.openai.com/v1/images/generations", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${OPENAI_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const url = data.data?.[0]?.url;
+      const revised = data.data?.[0]?.revised_prompt;
+      return { imageUrl: url, revisedPrompt: revised };
+    }
     const err = await res.text();
-    console.error("DALL-E error:", res.status, err);
-    return { error: `DALL-E failed: ${res.status}` };
+    console.error(`Image gen (${model}) error: ${res.status}`, err);
+    if (res.status !== 400) return { error: `Image generation failed: ${res.status}` };
   }
-  const data = await res.json();
-  const url = data.data?.[0]?.url;
-  const revised = data.data?.[0]?.revised_prompt;
-  return { imageUrl: url, revisedPrompt: revised };
+  return { error: "No image model available on this API key" };
 }
 
 async function askClaude(task, context) {
