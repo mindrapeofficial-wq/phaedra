@@ -14,15 +14,26 @@ export async function sendMessage(chatId, text) {
   return res;
 }
 
-export async function sendPhoto(chatId, photoUrl, caption) {
-  const res = await fetch(`${API}/sendPhoto`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: chatId, photo: photoUrl, caption, parse_mode: "HTML" }),
-  });
+export async function sendPhoto(chatId, photo, caption) {
+  let options;
+  if (Buffer.isBuffer(photo)) {
+    const form = new FormData();
+    form.set("chat_id", String(chatId));
+    form.set("photo", new Blob([photo], { type: "image/png" }), "image.png");
+    form.set("caption", caption || "");
+    options = { method: "POST", body: form };
+  } else {
+    options = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, photo, caption }),
+    };
+  }
+  const res = await fetch(`${API}/sendPhoto`, options);
   if (!res.ok) {
     const err = await res.text();
     console.error("telegram sendPhoto failed:", res.status, err);
+    throw new Error(`Telegram sendPhoto failed: ${res.status}`);
   }
   return res;
 }

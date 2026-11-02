@@ -258,9 +258,10 @@ async function generateImage(prompt, size, quality = "normal") {
     });
     if (res.ok) {
       const data = await res.json();
-      const url = data.data?.[0]?.url;
-      const revised = data.data?.[0]?.revised_prompt;
-      return { imageUrl: url, revisedPrompt: revised, model, quality: isPro ? "pro" : "normal" };
+      const image = data.data?.[0];
+      if (image?.b64_json) return { imageBase64: image.b64_json, model };
+      if (image?.url) return { imageUrl: image.url, model };
+      return { error: `Image generation returned no image (${model})` };
     }
     const err = await res.text();
     console.error(`Image gen (${model}) error: ${res.status}`, err);
@@ -348,6 +349,7 @@ export async function chat(userMessage, context, imageUrl = null, history = []) 
   }
 
   let response = await callOpenAI(messages);
+  let generatedImage = null;
 
   // Function calling loop (max 5 rounds)
   let rounds = 0;
@@ -364,6 +366,10 @@ export async function chat(userMessage, context, imageUrl = null, history = []) 
       } catch (e) {
         result = { error: e.message };
       }
+      if (tc.function.name === "generate_image" && (result.imageBase64 || result.imageUrl)) {
+        generatedImage = result;
+        result = { success: true, model: result.model };
+      }
       messages.push({
         role: "tool",
         tool_call_id: tc.id,
@@ -371,10 +377,11 @@ export async function chat(userMessage, context, imageUrl = null, history = []) 
       });
     }
 
+    if (generatedImage) return { text: "Aquí tienes la imagen.", image: generatedImage };
     response = await callOpenAI(messages);
   }
 
-  return response.content || "No se que decirte, algo fallo.";
+  return { text: response.content || "No se que decirte, algo fallo." };
 }
 
 async function callOpenAI(messages) {

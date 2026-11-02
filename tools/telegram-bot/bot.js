@@ -117,20 +117,13 @@ export async function handleUpdate(update) {
       await incrementUsage(userId);
     }
 
-    addToHistory(chatId, "assistant", reply);
-    const imageMatch = reply.match(/https:\/\/[^\s)]+\.(png|jpg|jpeg|webp)(\?[^\s)]*)?/i)
-      || reply.match(/https:\/\/oaidalleapiprodscus\.blob\.core\.windows\.net[^\s)]+/)
-      || reply.match(/https:\/\/[^\s)]*openai[^\s)]*\.(png|jpg|jpeg|webp|blob)[^\s)]*/i);
-    if (imageMatch) {
-      const caption = reply.replace(imageMatch[0], "").trim().slice(0, 1024);
-      try {
-        await sendPhoto(chatId, imageMatch[0], caption);
-      } catch (photoErr) {
-        console.error("sendPhoto failed, sending as text:", photoErr.message);
-        await sendMessage(chatId, reply);
-      }
+    addToHistory(chatId, "assistant", reply.text);
+    if (reply.image) {
+      await sendPhoto(chatId, reply.image.imageBase64
+        ? Buffer.from(reply.image.imageBase64, "base64")
+        : reply.image.imageUrl, reply.text.slice(0, 1024));
     } else {
-      await sendMessage(chatId, reply);
+      await sendMessage(chatId, reply.text);
     }
 
     console.log(`[${new Date().toISOString()}] reply sent to ${chatId}`);
