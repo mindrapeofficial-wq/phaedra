@@ -188,7 +188,7 @@ const TOOLS = [
     type: "function",
     function: {
       name: "ask_claude",
-      description: "ALWAYS use this for: commenting on other accounts' reels/posts (generates ready-to-post comments), engagement plans, reel scripts, carousel text, content audits, caption writing, content strategy, voice-matching. Claude has full Instagram Agent Skills. Use it whenever PostZen tools can't do the job.",
+      description: "ALWAYS use this for: commenting on other accounts' reels/posts, engagement plans, reel scripts, carousel text, content audits, caption writing, content strategy, voice-matching. Claude has full Instagram Agent Skills. IMPORTANT: When Claude returns a response, present it DIRECTLY to the user as-is. Do NOT rephrase, summarize, or replace Claude's response with your own version.",
       parameters: {
         type: "object",
         properties: {
@@ -302,7 +302,9 @@ RULES:
     return { error: `Claude failed: ${res.status}` };
   }
   const data = await res.json();
-  return { response: data.content?.[0]?.text || "No response" };
+  const text = data.content?.[0]?.text || "No response";
+  console.log("[claude response]", text.slice(0, 200));
+  return { response: text };
 }
 
 export async function chat(userMessage, context) {
