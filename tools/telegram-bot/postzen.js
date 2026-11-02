@@ -1,4 +1,4 @@
-const BASE = "https://app.postzen.dev/api/v1";
+const BASE = "https://api.postzen.dev/v1";
 const ACCOUNT_ID = process.env.POSTZEN_ACCOUNT_ID || "j9728s2139w1qrqdte0fynrjf98hbg4j";
 
 function headers() {
@@ -15,7 +15,7 @@ async function get(path) {
 }
 
 export async function getRecentPosts(limit = 5) {
-  return get(`/posts?platform=instagram&accountId=${ACCOUNT_ID}&status=published&sortBy=date&limit=${limit}`);
+  return get(`/posts?platform=instagram&accountId=${ACCOUNT_ID}&status=published&sortBy=createdAt&limit=${limit}`);
 }
 
 export async function getScheduledPosts() {
@@ -28,13 +28,6 @@ export async function getPostComments(postId) {
 
 export async function getOpenConversations() {
   return get(`/inbox/conversations?accountId=${ACCOUNT_ID}&status=open`);
-}
-
-export async function getFollowerStats() {
-  const now = new Date();
-  const from = new Date(now - 30 * 86400000);
-  const fmt = (d) => d.toISOString().split("T")[0];
-  return get(`/analytics/followers?accountIds=${ACCOUNT_ID}&fromDate=${fmt(from)}&toDate=${fmt(now)}`);
 }
 
 export async function getAnalytics() {
@@ -86,10 +79,15 @@ export async function gatherStatus() {
   }
 
   try {
-    const followers = await getFollowerStats();
-    results.followers = followers;
+    const analytics = await getAnalytics();
+    results.topPosts = (analytics.data || []).slice(0, 5).map((p) => ({
+      content: (p.content || "").slice(0, 60),
+      views: p.analytics?.views || 0,
+      likes: p.analytics?.likes || 0,
+      engagement: p.analytics?.engagementRate || 0,
+    }));
   } catch (e) {
-    results.followersError = e.message;
+    results.analyticsError = e.message;
   }
 
   return results;
