@@ -14,6 +14,28 @@ async function get(path) {
   return res.json();
 }
 
+async function post(path, body) {
+  const res = await fetch(`${BASE}${path}`, {
+    method: "POST",
+    headers: headers(),
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`PostZen ${res.status}: ${await res.text()}`);
+  return res.json();
+}
+
+async function patch(path, body) {
+  const res = await fetch(`${BASE}${path}`, {
+    method: "PATCH",
+    headers: headers(),
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`PostZen ${res.status}: ${await res.text()}`);
+  return res.json();
+}
+
+// --- Posts ---
+
 export async function getRecentPosts(limit = 5) {
   return get(`/posts?platform=instagram&accountId=${ACCOUNT_ID}&status=published&sortBy=createdAt&limit=${limit}`);
 }
@@ -22,30 +44,100 @@ export async function getScheduledPosts() {
   return get(`/posts?platform=instagram&accountId=${ACCOUNT_ID}&status=scheduled&sortBy=scheduledFor`);
 }
 
+export async function getDraftPosts() {
+  return get(`/posts?platform=instagram&accountId=${ACCOUNT_ID}&status=draft&sortBy=createdAt&limit=10`);
+}
+
+export async function createDraftPost(content, postType = "post") {
+  return post("/posts", {
+    accountIds: [ACCOUNT_ID],
+    platform: "instagram",
+    content,
+    postType,
+    status: "draft",
+  });
+}
+
+export async function updatePost(postId, updates) {
+  return patch(`/posts/${postId}`, updates);
+}
+
+export async function deletePost(postId) {
+  const res = await fetch(`${BASE}/posts/${postId}`, {
+    method: "DELETE",
+    headers: headers(),
+  });
+  if (!res.ok) throw new Error(`PostZen delete ${res.status}`);
+  return { ok: true };
+}
+
+// --- Inbox: Comments ---
+
 export async function getPostComments(postId) {
   return get(`/inbox/posts/${postId}/comments`);
 }
+
+export async function replyToComment(postId, commentId, text) {
+  return post(`/inbox/posts/${postId}/reply`, { commentId, text });
+}
+
+// --- Inbox: DMs ---
 
 export async function getOpenConversations() {
   return get(`/inbox/conversations?accountId=${ACCOUNT_ID}&status=open`);
 }
 
-export async function getAnalytics() {
+export async function getConversationMessages(conversationId) {
+  return get(`/inbox/conversations/${conversationId}/messages`);
+}
+
+export async function sendDM(conversationId, text) {
+  return post(`/inbox/conversations/${conversationId}/messages`, { text });
+}
+
+// --- Analytics ---
+
+export async function getAnalytics(days = 30) {
   const now = new Date();
-  const from = new Date(now - 30 * 86400000);
+  const from = new Date(now - days * 86400000);
   const fmt = (d) => d.toISOString().split("T")[0];
   return get(`/analytics?platform=instagram&accountId=${ACCOUNT_ID}&source=all&sortBy=engagement&fromDate=${fmt(from)}&toDate=${fmt(now)}&limit=10`);
 }
 
-export async function replyToComment(postId, commentId, text) {
-  const res = await fetch(`${BASE}/inbox/posts/${postId}/reply`, {
-    method: "POST",
-    headers: headers(),
-    body: JSON.stringify({ commentId, text }),
-  });
-  if (!res.ok) throw new Error(`PostZen reply ${res.status}`);
-  return res.json();
+export async function getBestTimeToPost() {
+  return get(`/best-time-to-post?platform=instagram&accountId=${ACCOUNT_ID}`);
 }
+
+export async function getFollowerStats(days = 30) {
+  const now = new Date();
+  const from = new Date(now - days * 86400000);
+  const fmt = (d) => d.toISOString().split("T")[0];
+  return get(`/analytics/followers?accountIds=${ACCOUNT_ID}&fromDate=${fmt(from)}&toDate=${fmt(now)}`);
+}
+
+// --- Comment Automations ---
+
+export async function listCommentAutomations() {
+  return get(`/comment-automations?accountId=${ACCOUNT_ID}`);
+}
+
+// --- Sync ---
+
+export async function syncExternalPosts() {
+  return post(`/posts/sync`, { accountId: ACCOUNT_ID });
+}
+
+// --- Profiles & Queue ---
+
+export async function listProfiles() {
+  return get(`/profiles?accountId=${ACCOUNT_ID}`);
+}
+
+export async function listQueueSlots(profileId) {
+  return get(`/profiles/${profileId}/queue-slots?all=true`);
+}
+
+// --- Gather Status (comprehensive) ---
 
 export async function gatherStatus() {
   const results = {};
@@ -69,6 +161,13 @@ export async function gatherStatus() {
     results.nextScheduled = (sched.data || [])[0]?.scheduledFor || null;
   } catch (e) {
     results.scheduledError = e.message;
+  }
+
+  try {
+    const drafts = await getDraftPosts();
+    results.draftCount = (drafts.data || []).length;
+  } catch (e) {
+    results.draftsError = e.message;
   }
 
   try {

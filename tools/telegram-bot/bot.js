@@ -1,4 +1,4 @@
-import { sendMessage, sendTyping } from "./telegram.js";
+import { sendMessage, sendTyping, sendPhoto } from "./telegram.js";
 import { gatherStatus } from "./postzen.js";
 import { chat } from "./ai.js";
 
@@ -12,10 +12,7 @@ export async function handleUpdate(update) {
   const isGroup = msg.chat.type === "group" || msg.chat.type === "supergroup";
   const isOwner = msg.from?.id === OWNER_ID;
 
-  // In private, only respond to the owner
   if (!isGroup && !isOwner) return;
-
-  // In groups, only respond when triggered
   if (isGroup && !isBotTriggered(msg)) return;
 
   const text = cleanMessage(msg.text);
@@ -34,7 +31,16 @@ export async function handleUpdate(update) {
     }
 
     const reply = await chat(text, context);
-    await sendMessage(chatId, reply);
+
+    // If the reply contains a DALL-E image URL, send it as a photo
+    const imageMatch = reply.match(/https:\/\/oaidalleapiprodscus\.blob\.core\.windows\.net[^\s)]+/);
+    if (imageMatch) {
+      const caption = reply.replace(imageMatch[0], "").trim().slice(0, 1024);
+      await sendPhoto(chatId, imageMatch[0], caption);
+    } else {
+      await sendMessage(chatId, reply);
+    }
+
     console.log(`[${new Date().toISOString()}] reply sent to ${chatId}`);
   } catch (e) {
     console.error("handleUpdate error:", e);
@@ -44,12 +50,9 @@ export async function handleUpdate(update) {
 
 function isBotTriggered(msg) {
   const text = (msg.text || "").toLowerCase();
-  // Slash commands
   if (text.startsWith("/")) return true;
-  // Mentioned by name
   if (text.includes("@socialbananabot")) return true;
   if (text.includes("banana")) return true;
-  // Reply to the bot
   if (msg.reply_to_message?.from?.is_bot) return true;
   return false;
 }
