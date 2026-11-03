@@ -2,6 +2,8 @@ import { sendMessage } from './telegram.js';
 import { askClaude } from './ai.js';
 import { memoryRequest, groupConversationContext } from './memory.js';
 import { PRODUCT_CONTEXT } from './product-context.js';
+import { database } from './database.js';
+import { proPromoActive, PROMO_MESSAGE } from './promo.js';
 const GROUP_CHAT = process.env.TELEGRAM_GROUP_CHAT_ID || '-1004319265595';
 const ANNOUNCEMENT = 'instagram-extension-10eur-preparation-v1';
 let timer, starting, running = false;
@@ -17,6 +19,25 @@ export function communityTiming(state, community, now = Date.now()) {
     && now - latest > 2 * 60_000 && now - (state.lastSent || 0) > 15 * 60_000 && now - (state.lastAttempt || 0) > 30 * 60_000
     && (freshConversation || (sentToday < 4 && now - (state.lastSent || 0) > 3 * 3600_000)) };
 }
+export async function announcePromo(state) {
+  if (!proPromoActive()) return false;
+  let changed = false;
+  if (!state.promoGroupNotified) {
+    await sendMessage(GROUP_CHAT, PROMO_MESSAGE);
+    state.promoGroupNotified = true; changed = true;
+  }
+  const done = new Set(state.promoNotified || []);
+  const users = await database('sb_telegram_users?tier=eq.free&select=telegram_id');
+  for (const { telegram_id: id } of users || []) {
+    if (done.has(id)) continue;
+    done.add(id); changed = true;
+    state.promoNotified = [...done];
+    await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+    try { await sendMessage(id, PROMO_MESSAGE); console.log('[promo] private notice delivered'); }
+    catch { console.log('[promo] private notice not delivered'); }
+  }
+  return changed;
+}
 export async function runProactiveTick() {
   if (running) return;
   running = true;
@@ -24,6 +45,7 @@ export async function runProactiveTick() {
     const state = await memoryRequest(GROUP_CHAT, 0);
     const community = await groupConversationContext(GROUP_CHAT);
     const timing = communityTiming(state, community);
+    if (await announcePromo(state)) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (state.productAnnouncement !== ANNOUNCEMENT) {
       const message = 'Os cuento lo que estamos preparando para Social Banana 🍌: una suscripción de 10 €/mes que incluirá conectar un Instagram y un mes de acceso a la extensión. Los cobros reales aún no están activados; cuando estén listos os explicaré cómo hacerlo.\n\nMientras tanto podemos trabajar en vuestra identidad y vuestras portadas: cada cuenta gratuita tendrá una imagen PRO para probar. Si ya tenéis una canción en marcha, contadme qué queréis transmitir y os ayudo a aterrizar la idea. También puedo guiaros para instalar Banana.';
       await sendMessage(GROUP_CHAT, message);

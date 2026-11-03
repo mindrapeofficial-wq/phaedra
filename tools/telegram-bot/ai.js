@@ -1,6 +1,7 @@
 import { PRODUCT_CONTEXT } from "./product-context.js";
 import { runInstagramAgent } from "./instagram-agent.js";
 import { createReleasePlan } from "./releases.js";
+import { proPromoActive, PROMO_CONTEXT } from "./promo.js";
 const OPENAI_KEY = process.env.OPENAI_API_KEY;
 const IMAGE_MODEL = "gpt-image-2.5-sunburst";
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
@@ -362,6 +363,7 @@ export async function chat(userMessage, context, imageUrl = null, history = [], 
     }
   }
   const messages = [{ role: "system", content: SYSTEM_PROMPT + "\n\n" + PRODUCT_CONTEXT }];
+  if (proPromoActive()) messages.push({ role: "system", content: PROMO_CONTEXT });
   if (options.isOwner) messages.push({ role: "system", content: OWNER_CONTEXT });
   messages.push({ role: "system", content: options.isGroup
     ? "Estás participando EN UN GRUPO DE TELEGRAM. Conversa directamente con los miembros. Una presentación de miembros es social, no un encargo para otras redes."
