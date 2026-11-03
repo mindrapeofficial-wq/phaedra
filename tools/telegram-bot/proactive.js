@@ -3,6 +3,7 @@ import { askClaude } from './ai.js';
 import { memoryRequest, groupConversationContext } from './memory.js';
 import { PRODUCT_CONTEXT } from './product-context.js';
 import { database } from './database.js';
+import { runUsageTick } from './usage.js';
 import { postzen, connection } from './instagram.js';
 import { TRIAL_MESSAGE, instagramTrialClaimed, expireInstagramTrial } from './instagram-trial.js';
 import { proPromoActive, PROMO_MESSAGE } from './promo.js';
@@ -77,6 +78,7 @@ export async function runProactiveTick() {
     await runSupervisorOrders(state).catch(() => console.error('[supervisor] orders unavailable'));
     await expireInstagramTrial({ api: postzen, connection }).catch(() => console.error('[trial] expiry failed, will retry'));
     await announceInstagramTrial(state).catch(() => console.error('[trial] announcement failed'));
+    if (await runUsageTick(state).catch(() => { console.error('[usage] tick failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     const timing = communityTiming(state, community);
     if (await announcePromo(state)) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (state.productAnnouncement !== ANNOUNCEMENT) {

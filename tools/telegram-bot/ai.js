@@ -1,6 +1,7 @@
 import { PRODUCT_CONTEXT } from "./product-context.js";
 import { runInstagramAgent } from "./instagram-agent.js";
 import { createReleasePlan } from "./releases.js";
+import { meterTokens, notifyAction } from "./usage.js";
 import { proPromoActive, PROMO_CONTEXT } from "./promo.js";
 const OPENAI_KEY = process.env.OPENAI_API_KEY;
 const IMAGE_MODEL = "gpt-image-2.5-sunburst";
@@ -239,6 +240,7 @@ async function executeTool(name, args, referenceUrl = null, options = {}) {
       return generateImage(args.prompt, args.size || "1024x1024", "pro", args.use_reference === false ? null : referenceUrl, args.imageOptions);
     case "create_release_plan":
       if (!options.userId || options.isGroup) return { error: "Release plans are created in private chat" };
+      notifyAction("release_plan");
       return createReleasePlan(options.userId, args.title, args.release_date);
     case "ask_claude":
       return askClaude(args.task, args.context || "", options);
@@ -289,6 +291,7 @@ async function generateImage(prompt, size, quality = "pro", referenceUrl = null,
   }
   const image = (await res.json()).data?.[0];
   if (!image?.b64_json) return { error: "Image request returned no image" };
+  notifyAction("image");
   console.log("[image] completed", { model: IMAGE_MODEL, quality: "max", reference: Boolean(referenceUrl) });
   return { imageBase64: image.b64_json, model: IMAGE_MODEL, quality: "pro", prompt, kind, background: body.background };
 }
@@ -305,6 +308,7 @@ export async function detectFace(imageUrl) {
   });
   if (!res.ok) throw new Error("Face inspection failed");
   const data = await res.json();
+  meterTokens("gpt-4.1", data.usage);
   const result = JSON.parse(data.choices?.[0]?.message?.content || "{}");
   if (typeof result.hasFace !== "boolean") throw new Error("Invalid face inspection result");
   return result.hasFace;
@@ -340,6 +344,7 @@ async function askClaude(task, context, options = {}) {
   }
   const data = await res.json();
 
+  meterTokens("claude-opus-5-5", data.usage);
   const textBlock = data.content?.find(b => b.type === "text");
   const text = textBlock?.text || "No response";
 
@@ -477,6 +482,7 @@ async function callOpenAI(messages, allowedTools = TOOLS, requiredTool = null) {
     return { content: "Uf, no me pude conectar con el cerebro." };
   }
   const data = await res.json();
+  meterTokens("gpt-4.1", data.usage);
   const msg = data.choices?.[0]?.message;
   return {
     content: msg?.content,

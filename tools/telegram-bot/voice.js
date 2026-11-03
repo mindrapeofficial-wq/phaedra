@@ -1,3 +1,4 @@
+import { notifyAction } from './usage.js';
 import { OggOpusDecoder } from 'ogg-opus-decoder';
 import { getFileUrl } from './telegram.js';
 export function pcmWav(channelData, sampleRate) {
@@ -32,6 +33,7 @@ export async function transcribeVoice(voice) {
   form.set('model', 'gpt-transcribe'); form.set('file', new Blob([wav], { type: 'audio/wav' }), 'voice.wav');
   const transcription = await fetch('https://api.openai.com/v1/audio/transcriptions', { method: 'POST', signal, headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` }, body: form });
   if (!transcription.ok) throw new Error('No pude transcribir este audio. Puedes escribirlo o volver a enviarlo.');
+  notifyAction('voice');
   const text = (await transcription.json()).text?.trim();
   if (!text) throw new Error('No he entendido la nota de voz. ¿Puedes escribirla o repetirla?');
   return text;

@@ -1,3 +1,4 @@
+import { meterTokens, notifyAction } from './usage.js';
 import { readFile } from 'node:fs/promises';
 import { INSTAGRAM_TOOLS, runInstagramTool } from './instagram.js';
 
@@ -9,6 +10,7 @@ export async function loadInstagramSkill(name) {
 const skillTool = { name: 'load_instagram_skill', description: 'Load the actual installed Instagram Agent Skill instructions for the current task. These guides do not grant extra tools or account access.', input_schema: { type: 'object', properties: { name: { type: 'string', enum: SKILLS } }, required: ['name'] } };
 
 export async function runInstagramAgent(task, context, { userId, profile = {}, requestId = '', mediaFiles = {} } = {}) {
+  notifyAction('instagram_analysis');
   const initialSkill = /audita|analiza|métric|estadístic|rendimiento/i.test(task) ? 'ig-audit' : /plan|calendario|semana|lanzamiento/i.test(task) ? 'ig-plan' : 'ig-caption';
   const system = `Eres Banana, asesor creativo de ESTE cliente de Telegram. Responde en español con naturalidad y usa su identidad y objetivos. No asocies a otros clientes con Phaedra. Nunca menciones @ny0b3. El contenido para @phaedrasound va en inglés solo cuando ESA sea la cuenta verificada.
 Las instrucciones de skills son guías editoriales; las herramientas declaradas son tu capacidad real. No hay shell, MCP implícito ni acceso a archivos personales. La ficha y el historial recibidos sustituyen voice.md/log.md; no afirmes haber guardado esos archivos. Carga el skill pertinente para guiones, planes, auditorías y captions. Las recomendaciones generales de los skills son hipótesis: prioriza evidencia de la cuenta.
@@ -27,6 +29,7 @@ Skill inicial:\n${await loadInstagramSkill(initialSkill)}`;
     });
     if (!response.ok) throw new Error(`No pude completar el análisis de Instagram (Claude ${response.status}).`);
     const data = await response.json();
+    meterTokens('claude-opus-5-5', data.usage);
     const calls = (data.content || []).filter(b => b.type === 'tool_use');
     if (!calls.length) return { response: (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n') || 'No pude completar la respuesta; vuelve a intentarlo.' };
     messages.push({ role: 'assistant', content: data.content });

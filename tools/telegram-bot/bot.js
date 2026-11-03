@@ -15,6 +15,7 @@ import { archiveCover } from "./drive.js";
 import { memoryRequest, groupConversationContext } from "./memory.js";
 import { referralSummary, claimReferral } from "./referrals.js";
 import { claimInstagramTrial } from "./instagram-trial.js";
+import { withUsageContext, notifyAction, activityReport, spendReport, PRIVACY_NOTICE } from "./usage.js";
 import { releasePlanSummary, completeReleaseTask, setReleaseReminders } from "./releases.js";
 
 const OWNER_ID = Number(process.env.TELEGRAM_OWNER_ID) || 1661812916;
@@ -34,7 +35,10 @@ export async function handleUpdate(update) {
   }
   const slot = { count: (pending?.count || 0) + 1 };
   slot.task = (pending?.task || Promise.resolve()).then(async () => {
-    try { await handleMessage(update); }
+    try {
+      const from = update.message.from;
+      await withUsageContext({ userId: from?.id, username: from?.username, isPrivate: update.message.chat?.type === "private" }, () => handleMessage(update));
+    }
     catch (e) {
       console.error("[bot] request failed", e.name);
       await sendMessage(chatId, "Esta vez se ha cortado la conexión con uno de los servicios. No he completado el encargo; puedes volver a intentarlo.").catch(() => {});
@@ -88,6 +92,15 @@ async function handleMessage(update) {
 
   // Handle commands first
   const cmd = msg.text.trim().toLowerCase();
+  const ownerReport = cmd.match(/^\/(actividad|gasto)(?:@socialbananabot)?$/);
+  if (ownerReport) {
+    if (userId !== OWNER_ID) await sendMessage(chatId, "Este comando está reservado al administrador.");
+    else if (isGroup) await sendMessage(chatId, "Te lo paso solo por privado: escríbeme el comando allí.");
+    else await sendMessage(chatId, await (ownerReport[1] === "gasto" ? spendReport() : activityReport()));
+    return;
+  }
+  const trackedCommand = [[/^\/reclamar|^\/start\s+reclamar/, "claim"], [/^\/referir|^\/start\s+referir/, "referral"], [/^\/cuenta|^\/start\s+cuenta/, "account"], [/^\/plan/, "plan_view"], [/^\/hecho/, "task_done"], [/^\/recordatorios/, "reminders"], [/^\/(?:instagram|conectarinstagram|desconectarinstagram)/, "instagram"]].find(([pattern]) => pattern.test(cmd));
+  notifyAction(trackedCommand ? trackedCommand[1] : "chat");
   if (/^\/estadoia(?:@socialbananabot)?$/.test(cmd)) {
     if (userId !== OWNER_ID) { await sendMessage(chatId, 'La comprobación técnica está reservada al administrador. Si una petición te ha fallado, cuéntame cuál para retomarla.'); return; }
     if (isGroup) { await sendMessage(chatId, 'Escríbeme /estadoia por privado y compruebo las conexiones.'); return; }
@@ -155,7 +168,7 @@ async function handleMessage(update) {
     return;
   }
   if (/^\/start(?:@socialbananabot)?(?:\s|$)/i.test(cmd)) {
-    await sendMessage(chatId, `¡Hola${msg.from?.first_name ? ", " + msg.from.first_name : ""}! Aquí podemos hablar de tu proyecto con calma. ¿Qué tipo de contenido creas, o te gustaría empezar a crear?\n\nIré recordando tus preferencias para ayudarte mejor. Puedes consultar lo guardado con /mimemoria o borrarlo con /olvidame.`);
+    await sendMessage(chatId, `¡Hola${msg.from?.first_name ? ", " + msg.from.first_name : ""}! Aquí podemos hablar de tu proyecto con calma. ${PRIVACY_NOTICE} ¿Qué tipo de contenido creas, o te gustaría empezar a crear?\n\nIré recordando tus preferencias para ayudarte mejor. Puedes consultar lo guardado con /mimemoria o borrarlo con /olvidame.`);
     return;
   }
   if (cmd === "/plan" || cmd === "/miplan") {

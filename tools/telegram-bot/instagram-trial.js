@@ -2,6 +2,7 @@ import { database } from './database.js';
 import { sendMessage } from './telegram.js';
 
 const OWNER = Number(process.env.TELEGRAM_OWNER_ID || 1661812916);
+const GROUP_CHAT = process.env.TELEGRAM_GROUP_CHAT_ID || '-1004319265595';
 const PHAEDRA_ACCOUNT = 'j9728s2139w1qrqdte0fynrjf98hbg4j';
 export const TRIAL_MESSAGE = '🍌 Hay 1 hueco gratis para conectar tu Instagram a Banana durante 3 días. Es para el primero que lo reclame.\n\nEscríbeme /reclamar por privado: https://t.me/SocialBananaBot?start=reclamar\n\nNecesitas una cuenta Creator o Business y tu cuenta de Social Banana vinculada con /cuenta. Cuando termine, se desconecta sola y sin ningún cobro.';
 const REPLIES = {
@@ -15,6 +16,7 @@ export async function claimInstagramTrial(userId) {
   if (Number(userId) === OWNER) return 'Tu cuenta de propietario ya tiene acceso. El hueco queda para la comunidad.';
   const result = await database('rpc/sb_claim_instagram_trial', 'POST', { p_user: userId });
   if (result === 'claimed') await sendMessage(OWNER, 'Alguien ha reclamado el hueco gratis de Instagram. Termina en 3 días y se cerrará solo.').catch(() => console.error('[trial] owner notice failed'));
+  if (result === 'claimed') await sendMessage(GROUP_CHAT, '🍌 Alguien acaba de reclamar el hueco gratis de Instagram. ¡Ya no queda libre!').catch(() => console.error('[trial] group notice failed'));
   return REPLIES[result] || REPLIES.taken;
 }
 export async function hasActiveInstagramTrial(userId, now = Date.now()) {
