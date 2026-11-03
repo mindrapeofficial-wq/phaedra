@@ -2,6 +2,7 @@ import { PRODUCT_CONTEXT } from "./product-context.js";
 import { runInstagramAgent } from "./instagram-agent.js";
 import { createReleasePlan } from "./releases.js";
 import { meterTokens, notifyAction } from "./usage.js";
+import { openAiChat, LIGHT_MODEL } from "./openai-chat.js";
 import { proPromoActive, PROMO_CONTEXT } from "./promo.js";
 const OPENAI_KEY = process.env.OPENAI_API_KEY;
 const IMAGE_MODEL = "gpt-image-2.5-sunburst";
@@ -297,18 +298,13 @@ async function generateImage(prompt, size, quality = "pro", referenceUrl = null,
 }
 
 export async function detectFace(imageUrl) {
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${OPENAI_KEY}`, "Content-Type": "application/json" },
-    signal: AbortSignal.timeout(30_000),
-    body: JSON.stringify({ model: "gpt-4.1", response_format: { type: "json_object" }, max_tokens: 60,
+  const { response: res, model } = await openAiChat({ response_format: { type: "json_object" }, max_completion_tokens: 60,
       messages: [{ role: "system", content: 'Return JSON {"hasFace":true} if a human face or any visible part of a human face (including masked/hooded faces) appears in this image, otherwise {"hasFace":false}. Do not identify anyone.' },
         { role: "user", content: [{ type: "image_url", image_url: { url: imageUrl } }] }],
-    }),
-  });
+    }, { model: LIGHT_MODEL, signal: AbortSignal.timeout(30_000) });
   if (!res.ok) throw new Error("Face inspection failed");
   const data = await res.json();
-  meterTokens("gpt-4.1", data.usage);
+  meterTokens(model, data.usage);
   const result = JSON.parse(data.choices?.[0]?.message?.content || "{}");
   if (typeof result.hasFace !== "boolean") throw new Error("Invalid face inspection result");
   return result.hasFace;
@@ -463,26 +459,20 @@ export async function chat(userMessage, context, imageUrl = null, history = [], 
 }
 
 async function callOpenAI(messages, allowedTools = TOOLS, requiredTool = null) {
-  const res = await fetch("https://api.openai.com/v1/chat/completions", {
-    signal: AbortSignal.timeout(45_000),
-    method: "POST",
-    headers: { Authorization: `Bearer ${OPENAI_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "gpt-4.1",
+  const { response: res, model } = await openAiChat({
       messages,
       tools: allowedTools,
       tool_choice: requiredTool ? { type: "function", function: { name: requiredTool } } : "auto",
-      max_tokens: 800,
+      max_completion_tokens: 800,
       temperature: 0.7,
-    }),
-  });
+  }, { signal: AbortSignal.timeout(45_000) });
   if (!res.ok) {
     const err = await res.text();
     console.error("OpenAI error:", res.status);
     return { content: "Uf, no me pude conectar con el cerebro." };
   }
   const data = await res.json();
-  meterTokens("gpt-4.1", data.usage);
+  meterTokens(model, data.usage);
   const msg = data.choices?.[0]?.message;
   return {
     content: msg?.content,

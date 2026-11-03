@@ -9,7 +9,7 @@ const IMAGE_ALERT = Number(process.env.BANANA_DAILY_IMAGE_ALERT || 20);
 const CHAT_WINDOW_MS = 10 * 60_000;
 const GROUP_GAP_MS = 60 * 60_000;
 // USD per million tokens from the providers' public pricing pages. Image models are counted, not priced.
-const PRICES = { 'gpt-4.1': [2, 8], 'claude-opus-5-5': [4, 20] };
+const PRICES = { 'gpt-6.1-terra': [1, 5], 'gpt-6-luna': [0.1, 0.5], 'gpt-4.1': [2, 8], 'claude-opus-5-5': [4, 20] };
 export const ACTIONS = {
   chat: 'escribió al bot', image: 'generó una imagen PRO', voice: 'envió una nota de voz', release_plan: 'creó un plan de lanzamiento',
   instagram: 'usó las herramientas de Instagram', instagram_analysis: 'pidió un análisis de Instagram', claim: 'usó /reclamar', referral: 'usó /referir',
