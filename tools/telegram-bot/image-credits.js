@@ -1,4 +1,5 @@
 import { getUser } from './tiers.js';
+import { REFERRAL_NOTE } from './referrals.js';
 const BASE = process.env.SUPABASE_URL || 'https://mfylkalarzuhivhmvzbm.supabase.co';
 async function rpc(name, body) {
   const key = process.env.SUPABASE_SERVICE_KEY;
@@ -11,7 +12,7 @@ export async function reserveImage(userId, username) {
   const user = await getUser(userId, username);
   if (user.tier === 'owner' || user.tier === 'pro') return null;
   const token = await rpc('sb_reserve_free_image', { p_user: userId });
-  if (!token) throw new Error('La cuenta gratuita incluye una imagen PRO en total. Ya está utilizada o hay una generación en curso. Puedes seguir preparando ideas y prompts conmigo.');
+  if (!token) throw new Error(`La cuenta gratuita incluye una imagen PRO en total. Ya está utilizada o hay una generación en curso. Puedes seguir preparando ideas y prompts conmigo.\n\n${REFERRAL_NOTE}`);
   return token;
 }
 export async function finishImage(userId, token, success) {

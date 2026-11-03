@@ -13,6 +13,7 @@ import { runEngagementSession } from "./engage.js";
 import { resolveCoverBrief } from "./cover-brief.js";
 import { archiveCover } from "./drive.js";
 import { memoryRequest, groupConversationContext } from "./memory.js";
+import { referralSummary, claimReferral } from "./referrals.js";
 
 const OWNER_ID = Number(process.env.TELEGRAM_OWNER_ID) || 1661812916;
 const GROUP_CHAT = String(process.env.TELEGRAM_GROUP_CHAT_ID || "-1004319265595");
@@ -96,6 +97,16 @@ async function handleMessage(update) {
     if (isGroup) await sendMessage(chatId, "Vinculamos tu cuenta por privado: https://t.me/SocialBananaBot?start=cuenta");
     else await sendMessage(chatId, await createAccountLink(userId, username));
     return;
+  }
+  if (/^\/referir(?:@socialbananabot)?$/.test(cmd) || /^\/start(?:@socialbananabot)?\s+referir$/.test(cmd)) {
+    if (isGroup) await sendMessage(chatId, "Te paso tu enlace de invitación por privado: https://t.me/SocialBananaBot?start=referir");
+    else await sendMessage(chatId, await referralSummary(userId, username));
+    return;
+  }
+  const referralStart = cmd.match(/^\/start(?:@socialbananabot)?\s+ref_([a-f0-9]{10})$/);
+  if (referralStart) {
+    if (!isGroup) await sendMessage(chatId, await claimReferral(referralStart[1], userId, username));
+    if (isGroup) return;
   }
   if (/^\/start(?:@socialbananabot)?\s+cuenta$/.test(cmd)) {
     if (!isGroup) await sendMessage(chatId, await createAccountLink(userId, username));

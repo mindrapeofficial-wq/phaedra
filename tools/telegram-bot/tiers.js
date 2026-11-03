@@ -1,3 +1,4 @@
+import { REFERRAL_NOTE } from './referrals.js';
 const timedFetch = (url, options = {}) => fetch(url, { ...options, signal: options.signal || AbortSignal.timeout(20_000) });
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://mfylkalarzuhivhmvzbm.supabase.co";
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -64,7 +65,7 @@ export async function checkAccess(telegramId, username, toolName) {
       allowed: false,
       user,
       reason: user.tier === "free"
-        ? `Has llegado al limite de ${FREE_DAILY_LIMIT} consultas gratis por dia. Usa /upgrade para desbloquear mas.`
+        ? `Has llegado al limite de ${FREE_DAILY_LIMIT} consultas gratis por dia. Usa /upgrade para desbloquear mas.\n\n${REFERRAL_NOTE}`
         : `Has llegado al limite de ${PRO_DAILY_LIMIT} consultas pro por dia.`,
     };
   }
