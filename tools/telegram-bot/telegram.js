@@ -77,3 +77,8 @@ export async function sendTyping(chatId) {
     body: JSON.stringify({ chat_id: chatId, action: "typing" }),
   }).catch(() => {});
 }
+
+export async function setBotCommands(commands) {
+  const res = await timedFetch(`${API}/setMyCommands`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ commands }) });
+  if (!res.ok) throw new Error(`Telegram setMyCommands failed: ${res.status}`);
+}

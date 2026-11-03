@@ -15,6 +15,7 @@ import { archiveCover } from "./drive.js";
 import { memoryRequest, groupConversationContext } from "./memory.js";
 import { referralSummary, claimReferral } from "./referrals.js";
 import { claimInstagramTrial } from "./instagram-trial.js";
+import { helpMessage } from "./help.js";
 import { withUsageContext, notifyAction, userLimitReached, USER_LIMIT_MESSAGE, activityReport, spendReport, PRIVACY_NOTICE } from "./usage.js";
 import { releasePlanSummary, completeReleaseTask, setReleaseReminders } from "./releases.js";
 
@@ -97,6 +98,11 @@ async function handleMessage(update) {
     if (userId !== OWNER_ID) await sendMessage(chatId, "Este comando está reservado al administrador.");
     else if (isGroup) await sendMessage(chatId, "Te lo paso solo por privado: escríbeme el comando allí.");
     else await sendMessage(chatId, await (ownerReport[1] === "gasto" ? spendReport() : activityReport()));
+    return;
+  }
+  const helpCommand = msg.text.trim().match(/^\/(?:help|ayuda)(?:@socialbananabot)?(?:\s+(.+))?$/i) || (/^\/start(?:@socialbananabot)?\s+help$/.test(cmd) ? [] : null);
+  if (helpCommand) {
+    await sendMessage(chatId, await helpMessage({ argument: helpCommand[1] || "", isGroup, isOwner: userId === OWNER_ID }));
     return;
   }
   const trackedCommand = [[/^\/reclamar|^\/start\s+reclamar/, "claim"], [/^\/referir|^\/start\s+referir/, "referral"], [/^\/cuenta|^\/start\s+cuenta/, "account"], [/^\/plan/, "plan_view"], [/^\/hecho/, "task_done"], [/^\/recordatorios/, "reminders"], [/^\/(?:instagram|conectarinstagram|desconectarinstagram)/, "instagram"]].find(([pattern]) => pattern.test(cmd));

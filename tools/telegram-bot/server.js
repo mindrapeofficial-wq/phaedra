@@ -5,6 +5,8 @@ import { handleStripeWebhook } from "./stripe.js";
 import { runEngagementSession } from "./engage.js";
 import { startProactiveLoop, stopProactiveLoop } from "./proactive.js";
 import { startReminderLoop, stopReminderLoop } from "./releases.js";
+import { MENU_COMMANDS } from "./help.js";
+import { setBotCommands } from "./telegram.js";
 import { memoryRequest } from "./memory.js";
 import { webhookRegistration } from "./webhook-config.js";
 
@@ -129,6 +131,7 @@ server.listen(PORT, () => {
     }
   }
   void configureWebhook();
+  void setBotCommands(MENU_COMMANDS).catch(() => console.error("[bot] command menu not updated"));
   memoryRequest(0, 0).then(() => console.log("[memory] persistent store reachable"))
     .catch(() => console.error("[memory] persistent store unavailable"));
 });
