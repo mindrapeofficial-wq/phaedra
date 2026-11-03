@@ -71,3 +71,19 @@ test('the spend alert fires once a day', async () => {
     assert.equal(sent.filter(m => /Alerta de gasto/.test(m.text)).length, 1);
   } finally { restore(); }
 });
+
+test('the per-user limit counts today in Madrid, including images, and exempts the owner', async () => {
+  const { userSpendToday, userLimitReached } = await import('./usage.js');
+  const now = Date.parse('2026-11-03T12:00:00Z');
+  const today = '2026-11-03T10:00:00Z', yesterday = '2026-11-02T22:00:00Z';
+  assert.equal(userSpendToday([{ images: 2, created_at: today }, { images: 8, created_at: yesterday }], now), 0.5);
+  const { sent, restore } = capture(Array.from({ length: 8 }, () => ({ images: 1, created_at: today })));
+  try {
+    assert.equal(await userLimitReached(7, now), true);
+    assert.equal(await userLimitReached(7, now), true);
+    assert.equal(sent.length, 1);
+    assert.equal(await userLimitReached(1, now), false);
+  } finally { restore(); }
+  const low = capture(Array.from({ length: 7 }, () => ({ images: 1, created_at: today })));
+  try { assert.equal(await userLimitReached(9, now), false); } finally { low.restore(); }
+});

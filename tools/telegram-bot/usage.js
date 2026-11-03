@@ -109,3 +109,29 @@ export async function runUsageTick(state, now = Date.now()) {
   }
   return changed;
 }
+
+const USER_DAILY_LIMIT_USD = Number(process.env.BANANA_USER_DAILY_LIMIT_USD || 2);
+// Estimate: the image model has no verified public price, so this errs high.
+const IMAGE_COST_USD = Number(process.env.BANANA_IMAGE_COST_USD || 0.25);
+const madridDay = time => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid' }).format(new Date(time));
+export const USER_LIMIT_MESSAGE = 'Has llegado a tu límite de uso de IA por hoy. Vuelve mañana y seguimos. Mientras tanto siguen disponibles /plan, /hecho y /referir.';
+export function userSpendToday(rows, now = Date.now()) {
+  const today = madridDay(now);
+  return rows.filter(row => madridDay(row.created_at) === today)
+    .reduce((total, row) => total + costOf(row.model, row.input_tokens || 0, row.output_tokens || 0) + (row.images || 0) * IMAGE_COST_USD, 0);
+}
+const limitNotified = new Set();
+export async function userLimitReached(userId, now = Date.now()) {
+  if (Number(userId) === OWNER) return false;
+  try {
+    const from = new Date(now - 25 * 3600_000).toISOString();
+    const rows = await database(`sb_usage_events?telegram_id=eq.${Number(userId)}&created_at=gte.${from}&select=model,input_tokens,output_tokens,images,created_at&limit=5000`);
+    if (userSpendToday(rows || [], now) < USER_DAILY_LIMIT_USD) return false;
+    const key = `${userId}:${madridDay(now)}`;
+    if (!limitNotified.has(key)) {
+      limitNotified.add(key);
+      await sendMessage(OWNER, `⚠️ El usuario ${userId} ha llegado a su límite diario de IA.`).catch(() => console.error('[usage] owner notice failed'));
+    }
+    return true;
+  } catch { console.error('[usage] limit check failed'); return false; }
+}

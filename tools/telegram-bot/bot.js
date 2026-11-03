@@ -15,7 +15,7 @@ import { archiveCover } from "./drive.js";
 import { memoryRequest, groupConversationContext } from "./memory.js";
 import { referralSummary, claimReferral } from "./referrals.js";
 import { claimInstagramTrial } from "./instagram-trial.js";
-import { withUsageContext, notifyAction, activityReport, spendReport, PRIVACY_NOTICE } from "./usage.js";
+import { withUsageContext, notifyAction, userLimitReached, USER_LIMIT_MESSAGE, activityReport, spendReport, PRIVACY_NOTICE } from "./usage.js";
 import { releasePlanSummary, completeReleaseTask, setReleaseReminders } from "./releases.js";
 
 const OWNER_ID = Number(process.env.TELEGRAM_OWNER_ID) || 1661812916;
@@ -318,6 +318,7 @@ async function handleMessage(update) {
     const community = isGroup ? await groupConversationContext(chatId).catch(() => []) : [];
     record("user", text);
     await memoryRequest(chatId, userId, "POST", state);
+    if (await userLimitReached(userId)) { await sendMessage(chatId, USER_LIMIT_MESSAGE); return; }
     const instagramTask = /^(?:\/ig[-_]|analiza mi instagram|audita mi instagram)/i.test(msg.text);
     const reply = instagramTask ? await (async () => {
       if (isGroup) return { text: "Seguimos con tu cuenta por privado: https://t.me/SocialBananaBot?start=instagram" };
