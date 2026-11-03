@@ -6,7 +6,7 @@ const { activeSubscription, requireInstagramAccess } = await import('./entitleme
 const { reserveImage, finishImage } = await import('./image-credits.js');
 const { enqueueUpdate, processJob } = await import('./jobs.js');
 const { pcmWav, transcribeVoice } = await import('./voice.js');
-const { communityTiming } = await import('./proactive.js');
+const { communityTiming, applySupervisorOrder } = await import('./proactive.js');
 
 test('live paid access excludes trials, expired, disputed and sandbox subscriptions', async () => {
   const valid = { livemode: true, status: 'active', risk_hold: false, paid_until: '2030-01-01' };
@@ -98,4 +98,17 @@ test('voice produces valid mono PCM and rejects excessive audio before any downl
   assert.equal(wav.readUInt16LE(22),1); assert.equal(wav.readInt16LE(44),-32768); assert.equal(wav.readInt16LE(48),32767);
   assert.throws(()=>pcmWav([],48000));
   await assert.rejects(transcribeVoice({duration:181,file_id:'unread'}),/3 minutos/);
+});
+
+test('supervisor orders pause, resume and nudge within limits',()=>{
+  const now=Date.parse('2026-11-02T12:00:00Z');
+  const context=[{updated_at:new Date(now-600000).toISOString()}];
+  const paused=applySupervisorOrder({},{action:'pause_initiative',pause_hours:500},now);
+  assert.equal(paused.pausedUntil,now+24*3600000);
+  assert.equal(communityTiming(paused,context,now).allowed,false);
+  assert.equal(communityTiming(applySupervisorOrder(paused,{action:'resume_initiative'},now),context,now).allowed,true);
+  const quiet={day:'2026-11-02',sentToday:5,lastContextAt:now,lastSent:now-3600000};
+  assert.equal(communityTiming(quiet,context,now).allowed,false);
+  assert.equal(communityTiming(applySupervisorOrder(quiet,{action:'nudge_group'},now),context,now).allowed,true);
+  assert.equal(communityTiming({...quiet,nudge:true,sentToday:12},context,now).allowed,false);
 });
