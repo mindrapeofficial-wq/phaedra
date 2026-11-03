@@ -72,9 +72,11 @@ test('community follows fresh conversations without interrupting, overnight mess
   assert.equal(communityTiming({},context,now).allowed,true);
   assert.equal(communityTiming({},[{updated_at:new Date(now-1000).toISOString()}],now).allowed,false);
   assert.equal(communityTiming({lastSent:now-60000},context,now).allowed,false);
-  assert.equal(communityTiming({day:'2026-11-02',sentToday:8},context,now).allowed,false);
+  assert.equal(communityTiming({day:'2026-11-02',sentToday:12},context,now).allowed,false);
+  assert.equal(communityTiming({lastAttempt:now-60000},context,now).allowed,false);
+  assert.equal(communityTiming({day:'2026-11-02',sentToday:3,lastContextAt:now,lastSent:now-4*3600000},context,now).allowed,true);
   assert.equal(communityTiming({},context,Date.parse('2026-11-02T23:00:00Z')).allowed,false);
-  assert.equal(communityTiming({day:'2026-11-02',sentToday:2,lastContextAt:now,lastSent:now-4*3600000},context,now).allowed,false);
+  assert.equal(communityTiming({day:'2026-11-02',sentToday:4,lastContextAt:now,lastSent:now-4*3600000},context,now).allowed,false);
 });
 test('a queued message gets one receipt, while a duplicate update gets none',async()=>{
   const native=fetch;let exists=false,receipts=0;
