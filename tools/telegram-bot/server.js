@@ -4,6 +4,7 @@ import { enqueueUpdate, startJobWorker, stopJobWorker, pumpJobs } from "./jobs.j
 import { handleStripeWebhook } from "./stripe.js";
 import { runEngagementSession } from "./engage.js";
 import { startProactiveLoop, stopProactiveLoop } from "./proactive.js";
+import { startReminderLoop, stopReminderLoop } from "./releases.js";
 import { memoryRequest } from "./memory.js";
 import { webhookRegistration } from "./webhook-config.js";
 
@@ -111,6 +112,7 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
   console.log(`Social Banana listening on :${PORT}`);
   startProactiveLoop();
+  startReminderLoop();
   startJobWorker();
   async function configureWebhook() {
     try {
@@ -133,6 +135,7 @@ server.listen(PORT, () => {
 
 process.on('SIGTERM', () => {
   stopJobWorker(); stopProactiveLoop();
+  stopReminderLoop();
   server.close();
   // Unfinished work remains leased in the database and is reported on recovery.
   setTimeout(() => process.exit(0), 25_000).unref();

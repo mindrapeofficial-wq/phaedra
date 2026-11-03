@@ -14,6 +14,7 @@ import { resolveCoverBrief } from "./cover-brief.js";
 import { archiveCover } from "./drive.js";
 import { memoryRequest, groupConversationContext } from "./memory.js";
 import { referralSummary, claimReferral } from "./referrals.js";
+import { releasePlanSummary, completeReleaseTask, setReleaseReminders } from "./releases.js";
 
 const OWNER_ID = Number(process.env.TELEGRAM_OWNER_ID) || 1661812916;
 const GROUP_CHAT = String(process.env.TELEGRAM_GROUP_CHAT_ID || "-1004319265595");
@@ -96,6 +97,16 @@ async function handleMessage(update) {
   if (/^\/cuenta(?:@socialbananabot)?$/.test(cmd)) {
     if (isGroup) await sendMessage(chatId, "Vinculamos tu cuenta por privado: https://t.me/SocialBananaBot?start=cuenta");
     else await sendMessage(chatId, await createAccountLink(userId, username));
+    return;
+  }
+  const releaseCommand = cmd.match(/^\/(plan|hecho|recordatorios)(?:@socialbananabot)?(?:\s+(\S+))?$/);
+  if (releaseCommand) {
+    if (isGroup) { await sendMessage(chatId, "Tu plan es privado. Seguimos aquí: https://t.me/SocialBananaBot?start=welcome"); return; }
+    const [, action, value] = releaseCommand;
+    if (action === "plan") await sendMessage(chatId, await releasePlanSummary(userId));
+    else if (action === "hecho") await sendMessage(chatId, /^\d+$/.test(value || "") ? await completeReleaseTask(userId, Number(value)) : "Dime el número de la tarea, por ejemplo: /hecho 2");
+    else if (value === "on" || value === "off") await sendMessage(chatId, await setReleaseReminders(userId, value === "on"));
+    else await sendMessage(chatId, "Usa /recordatorios on o /recordatorios off.");
     return;
   }
   if (/^\/referir(?:@socialbananabot)?$/.test(cmd) || /^\/start(?:@socialbananabot)?\s+referir$/.test(cmd)) {
