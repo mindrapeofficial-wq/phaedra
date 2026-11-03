@@ -3,6 +3,8 @@ import { askClaude } from './ai.js';
 import { memoryRequest, groupConversationContext } from './memory.js';
 import { PRODUCT_CONTEXT } from './product-context.js';
 import { database } from './database.js';
+import { postzen, connection } from './instagram.js';
+import { TRIAL_MESSAGE, instagramTrialClaimed, expireInstagramTrial } from './instagram-trial.js';
 import { proPromoActive, PROMO_MESSAGE } from './promo.js';
 const GROUP_CHAT = process.env.TELEGRAM_GROUP_CHAT_ID || '-1004319265595';
 const OWNER = process.env.TELEGRAM_OWNER_ID || '1661812916';
@@ -55,6 +57,17 @@ export async function announcePromo(state) {
   }
   return changed;
 }
+async function announceInstagramTrial(state) {
+  if (state.trialAnnounced) return;
+  state.trialAnnounced = true;
+  await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+  if (await instagramTrialClaimed()) return;
+  await sendMessage(GROUP_CHAT, TRIAL_MESSAGE);
+  for (const { telegram_id: id } of await database('sb_telegram_users?tier=eq.free&select=telegram_id') || []) {
+    await sendMessage(id, TRIAL_MESSAGE).catch(() => console.log('[trial] private notice not delivered'));
+  }
+  console.log('[trial] announced');
+}
 export async function runProactiveTick() {
   if (running) return;
   running = true;
@@ -62,6 +75,8 @@ export async function runProactiveTick() {
     const state = await memoryRequest(GROUP_CHAT, 0);
     const community = await groupConversationContext(GROUP_CHAT);
     await runSupervisorOrders(state).catch(() => console.error('[supervisor] orders unavailable'));
+    await expireInstagramTrial({ api: postzen, connection }).catch(() => console.error('[trial] expiry failed, will retry'));
+    await announceInstagramTrial(state).catch(() => console.error('[trial] announcement failed'));
     const timing = communityTiming(state, community);
     if (await announcePromo(state)) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (state.productAnnouncement !== ANNOUNCEMENT) {

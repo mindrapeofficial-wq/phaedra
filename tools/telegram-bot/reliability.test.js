@@ -14,6 +14,7 @@ test('live paid access excludes trials, expired, disputed and sandbox subscripti
   for (const override of [{livemode:false},{status:'trialing'},{risk_hold:true},{paid_until:'2020-01-01'}]) assert.equal(activeSubscription([{...valid,...override}]), null);
   const native = fetch;
   globalThis.fetch = async url => {
+    if (String(url).includes('sb_instagram_trial')) return Response.json([]);
     if (url.includes('sb_telegram_users')) return Response.json([{user_id:'linked-user'}]);
     if (url.includes('sb_subscriptions')) return Response.json([{...valid,livemode:false}]);
     throw Error('Unpaid user reached Instagram');

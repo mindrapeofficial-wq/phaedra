@@ -10,6 +10,7 @@ test('client accounts are isolated; revoked connections and arbitrary tool paths
   const requests = [];
   let moved = false;
   globalThis.fetch = async (url, options = {}) => {
+    if (String(url).includes('sb_instagram_trial')) return Response.json([]);
     if (url.includes('sb_telegram_users')) return Response.json([{ user_id: 'client-uuid' }]);
     if (url.includes('sb_claim_instagram_slot')) return Response.json(1);
     if (url.includes('sb_subscriptions')) return Response.json([{ livemode: true, status: 'active', risk_hold: false, paid_until: new Date(Date.now()+86400000).toISOString() }]);
@@ -49,6 +50,7 @@ test('private OAuth link binds to provisioned profile; verification requires exa
   const original = globalThis.fetch;
   let row = null, accountProfile = 'profile_new';
   globalThis.fetch = async (url, options = {}) => {
+    if (String(url).includes('sb_instagram_trial')) return Response.json([]);
     if (url.includes('sb_telegram_users')) return Response.json([{ user_id: 'client-uuid' }]);
     if (url.includes('sb_claim_instagram_slot')) return Response.json(1);
     if (url.includes('sb_subscriptions')) return Response.json([{ livemode: true, status: 'active', risk_hold: false, paid_until: new Date(Date.now()+86400000).toISOString() }]);
@@ -84,6 +86,7 @@ test('Claude loads installed skills and executes a scoped tool roundtrip', async
   const original = globalThis.fetch;
   let calls = 0;
   globalThis.fetch = async (url, options = {}) => {
+    if (String(url).includes('sb_instagram_trial')) return Response.json([]);
     if (url.includes('sb_telegram_users')) return Response.json([{ user_id: 'client-uuid' }]);
     if (url.includes('sb_claim_instagram_slot')) return Response.json(1);
     if (url.includes('sb_subscriptions')) return Response.json([{ livemode: true, status: 'active', risk_hold: false, paid_until: new Date(Date.now()+86400000).toISOString() }]);

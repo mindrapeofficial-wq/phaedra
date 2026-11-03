@@ -14,6 +14,7 @@ import { resolveCoverBrief } from "./cover-brief.js";
 import { archiveCover } from "./drive.js";
 import { memoryRequest, groupConversationContext } from "./memory.js";
 import { referralSummary, claimReferral } from "./referrals.js";
+import { claimInstagramTrial } from "./instagram-trial.js";
 import { releasePlanSummary, completeReleaseTask, setReleaseReminders } from "./releases.js";
 
 const OWNER_ID = Number(process.env.TELEGRAM_OWNER_ID) || 1661812916;
@@ -97,6 +98,11 @@ async function handleMessage(update) {
   if (/^\/cuenta(?:@socialbananabot)?$/.test(cmd)) {
     if (isGroup) await sendMessage(chatId, "Vinculamos tu cuenta por privado: https://t.me/SocialBananaBot?start=cuenta");
     else await sendMessage(chatId, await createAccountLink(userId, username));
+    return;
+  }
+  if (/^\/reclamar(?:@socialbananabot)?$/.test(cmd) || /^\/start(?:@socialbananabot)?\s+reclamar$/.test(cmd)) {
+    if (isGroup) await sendMessage(chatId, "Se reclama por privado: https://t.me/SocialBananaBot?start=reclamar");
+    else await sendMessage(chatId, await claimInstagramTrial(userId));
     return;
   }
   const releaseCommand = cmd.match(/^\/(plan|hecho|recordatorios)(?:@socialbananabot)?(?:\s+(\S+))?$/);
