@@ -8,6 +8,7 @@ Pídelo con tus palabras, por ejemplo: «Hazme una portada oscura para mi single
 • Mándame una foto para usarla de referencia. Puedo mantener tu cara si me lo pides.
 • También quito fondos y cambio luz o colores.
 • /imagen seguido de tu idea va directo al encargo.
+• Mándame varias fotos y dime si las guardo; /fotos te las enseña.
 
 La cuenta gratuita incluye una imagen PRO en total.`,
   lanzamiento: `🚀 Plan de lanzamiento
@@ -83,6 +84,7 @@ Comandos:
 /cuenta: vincular tu cuenta
 /miplan: tu plan y tus consultas
 /referir: invitar y conseguir meses gratis
+/fotos: tus fotos guardadas
 /mimemoria y /olvidame: tus datos
 
 Más detalle: /help seguido de ${Object.keys(TOPICS).join(', ')}.
@@ -92,5 +94,5 @@ Ejemplo: /help portadas${extras.length ? `\n\n${extras.join('\n')}` : ''}${isOwn
 export const MENU_COMMANDS = [
   ['help', 'Qué puedo hacer y cómo'], ['plan', 'Tu plan de lanzamiento'], ['hecho', 'Marcar una tarea: /hecho 2'],
   ['recordatorios', 'Avisos: /recordatorios on u off'], ['instagram', 'Conectar tu Instagram'], ['cuenta', 'Vincular tu cuenta'],
-  ['miplan', 'Tu plan y tus consultas'], ['referir', 'Invitar y conseguir meses gratis'], ['mimemoria', 'Ver lo que recuerdo de ti'], ['olvidame', 'Borrar lo que recuerdo de ti'],
+  ['miplan', 'Tu plan y tus consultas'], ['fotos', 'Tus fotos guardadas'], ['referir', 'Invitar y conseguir meses gratis'], ['mimemoria', 'Ver lo que recuerdo de ti'], ['olvidame', 'Borrar lo que recuerdo de ti'],
 ].map(([command, description]) => ({ command, description }));

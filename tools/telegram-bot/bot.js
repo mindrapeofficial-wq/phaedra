@@ -16,6 +16,7 @@ import { memoryRequest, groupConversationContext } from "./memory.js";
 import { referralSummary, claimReferral } from "./referrals.js";
 import { claimInstagramTrial } from "./instagram-trial.js";
 import { helpMessage } from "./help.js";
+import { isPhotoOnly, addUpload, saveUploads, scheduleUploadQuestion, wantsToSave, wantsToDiscard, wantsNewImage, answersFaceQuestion } from "./photo-uploads.js";
 import { withUsageContext, notifyAction, userLimitReached, USER_LIMIT_MESSAGE, activityReport, spendReport, PRIVACY_NOTICE } from "./usage.js";
 import { releasePlanSummary, completeReleaseTask, setReleaseReminders } from "./releases.js";
 
@@ -50,7 +51,7 @@ export async function handleUpdate(update) {
     else if (current) current.count--;
   });
   activeChats.set(requestKey, slot);
-  if (pending) await sendMessage(chatId, "Te he leído. Tengo este mensaje en cola y lo atenderé cuando termine el encargo en curso.").catch(() => {});
+  if (pending && !isPhotoOnly(update.message)) await sendMessage(chatId, "Te he leído. Tengo este mensaje en cola y lo atenderé cuando termine el encargo en curso.").catch(() => {});
   await slot.task;
 }
 
@@ -98,6 +99,14 @@ async function handleMessage(update) {
     if (userId !== OWNER_ID) await sendMessage(chatId, "Este comando está reservado al administrador.");
     else if (isGroup) await sendMessage(chatId, "Te lo paso solo por privado: escríbeme el comando allí.");
     else await sendMessage(chatId, await (ownerReport[1] === "gasto" ? spendReport() : activityReport()));
+    return;
+  }
+  if (/^\/fotos(?:@socialbananabot)?$/.test(cmd)) {
+    if (isGroup) { await sendMessage(chatId, "Tus fotos son privadas. Pídemelas aquí: https://t.me/SocialBananaBot?start=welcome"); return; }
+    const library = (await memoryRequest(chatId, userId)).library || [];
+    if (!library.length) { await sendMessage(chatId, "Aún no tienes fotos guardadas. Mándamelas y dime que las guarde."); return; }
+    await sendMessage(chatId, `Tienes ${library.length} ${library.length === 1 ? "foto guardada" : "fotos guardadas"}.${library.length > 10 ? " Te enseño las 10 más recientes." : ""}`);
+    for (const fileId of library.slice(-10)) await sendPhoto(chatId, fileId);
     return;
   }
   const helpCommand = msg.text.trim().match(/^\/(?:help|ayuda)(?:@socialbananabot)?(?:\s+(.+))?$/i) || (/^\/start(?:@socialbananabot)?\s+help$/.test(cmd) ? [] : null);
@@ -272,12 +281,38 @@ async function handleMessage(update) {
       state.coverDraft = null;
       state.awaitingFaceAnswer = false;
     }
+    if (isPhotoOnly(msg) && newFileId) {
+      const count = addUpload(state, newFileId);
+      await memoryRequest(chatId, userId, "POST", state);
+      scheduleUploadQuestion(`${chatId}:${userId}`, count, question => sendMessage(chatId, question));
+      return;
+    }
+    if (state.pendingUploads?.length && wantsToSave(text)) {
+      const saved = saveUploads(state);
+      record("user", text);
+      const reply = `Hecho, ${saved === 1 ? "foto guardada" : `${saved} fotos guardadas`} para tus publicaciones. Tienes ${state.library.length} en total; míralas cuando quieras con /fotos.`;
+      record("assistant", reply);
+      await memoryRequest(chatId, userId, "POST", state);
+      await sendMessage(chatId, reply);
+      return;
+    }
+    if (state.pendingUploads?.length && wantsToDiscard(text)) {
+      state.pendingUploads = [];
+      record("user", text);
+      record("assistant", "De acuerdo, no las guardo.");
+      await memoryRequest(chatId, userId, "POST", state);
+      await sendMessage(chatId, "De acuerdo, no las guardo.");
+      return;
+    }
+    if (state.awaitingFaceAnswer && !answersFaceQuestion(text)) {
+      state.awaitingFaceAnswer = false;
+      state.pendingPrompt = null;
+    }
     let imageUrl = null;
     if (state.reference) {
       imageUrl = await getFileUrl(state.reference.fileId);
       if (!imageUrl) throw new Error("Reference unavailable");
-      if (state.reference.hasFace === null) {
-        await sendMessage(chatId, "Estoy mirando tu foto para preparar bien la referencia. Esto suele llevar unos segundos.");
+      if (state.reference.hasFace === null && wantsNewImage(text)) {
         state.reference.hasFace = await detectFace(imageUrl);
         if (state.reference.hasFace) {
           state.awaitingFaceAnswer = true;

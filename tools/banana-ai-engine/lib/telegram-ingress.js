@@ -46,7 +46,7 @@ export async function wakeTelegramWorker(message,{env=process.env,fetchImpl=fetc
       const response=await fetchImpl(STORE+`/rest/v1/sb_bot_jobs?update_id=lt.${message.updateId}&status=in.(pending,processing)&select=telegram_id&limit=2`,{headers:{apikey:env.SUPABASE_SERVICE_KEY,Authorization:'Bearer '+env.SUPABASE_SERVICE_KEY},signal:AbortSignal.timeout(8000)});
       if(!response.ok)return;
       const waiting=await response.json();
-      if(Array.isArray(waiting)&&(waiting.length>=2||waiting.some(job=>job.telegram_id===message.from?.id)))notify('Tengo tu mensaje. Estoy terminando un encargo anterior; después sigo con este.');
+      if(!((message.photo?.length||/^image//.test(message.document?.mime_type||''))&&!message.caption)&&Array.isArray(waiting)&&(waiting.length>=2||waiting.some(job=>job.telegram_id===message.from?.id)))notify('Tengo tu mensaje. Estoy terminando un encargo anterior; después sigo con este.');
     }catch{/* The durable job remains available even if this optional notice fails. */}
   })():Promise.resolve();
   try{
