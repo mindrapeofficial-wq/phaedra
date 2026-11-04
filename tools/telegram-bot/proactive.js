@@ -5,7 +5,7 @@ import { PRODUCT_CONTEXT } from './product-context.js';
 import { database } from './database.js';
 import { runUsageTick } from './usage.js';
 import { postzen, connection } from './instagram.js';
-import { TRIAL_MESSAGE, instagramTrialClaimed, expireInstagramTrial } from './instagram-trial.js';
+import { TRIAL_MESSAGE, instagramTrialClaimed, expireInstagramTrial, notifyNewAccountLinks } from './instagram-trial.js';
 import { proPromoActive, PROMO_MESSAGE } from './promo.js';
 const GROUP_CHAT = process.env.TELEGRAM_GROUP_CHAT_ID || '-1004319265595';
 const OWNER = process.env.TELEGRAM_OWNER_ID || '1661812916';
@@ -92,6 +92,7 @@ export async function runProactiveTick() {
     await announceInstagramTrial(state).catch(() => console.error('[trial] announcement failed'));
     if (await runUsageTick(state).catch(() => { console.error('[usage] tick failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (await announceNewSubscribers(state).catch(() => { console.error('[community] subscriber check failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+    if (await notifyNewAccountLinks(state).catch(() => { console.error('[account] link check failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     const timing = communityTiming(state, community);
     if (await announcePromo(state)) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (state.productAnnouncement !== ANNOUNCEMENT) {

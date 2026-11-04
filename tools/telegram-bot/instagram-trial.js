@@ -9,7 +9,7 @@ const REPLIES = {
   claimed: '¡Es tuyo! Tienes 3 días desde ahora para usar Banana con tu Instagram.\n\nEscribe /instagram para conectarlo. Podré analizar tu cuenta y preparar borradores, pero no publicaré ni enviaré mensajes. Al terminar, se desconectará sola y sin cobros.',
   yours: 'Este hueco ya es tuyo. Usa /instagram para conectar o revisar tu cuenta.',
   taken: 'Este hueco ya lo ha reclamado otra persona. Si se libera otro, lo avisaré en el grupo.',
-  not_linked: 'Antes necesito tu cuenta de Social Banana vinculada: escribe /cuenta y sigue los pasos. Después vuelve a escribir /reclamar. El hueco no queda reservado hasta entonces.',
+  not_linked: 'Tu cuenta aún no está vinculada. Escribe /cuenta y pega el código en la web. Cuando termines te avisaré aquí, y entonces vuelve a escribir /reclamar. Hasta ese momento el hueco no queda reservado.',
 };
 
 export async function claimInstagramTrial(userId) {
@@ -22,6 +22,20 @@ export async function claimInstagramTrial(userId) {
 export async function hasActiveInstagramTrial(userId, now = Date.now()) {
   const rows = await database(`sb_instagram_trial?telegram_id=eq.${Number(userId)}&ended_at=is.null&ends_at=gt.${new Date(now).toISOString()}&select=telegram_id`);
   return !!rows?.length;
+}
+// Linking finishes on the website, so the bot detects it to tell the user what comes next.
+export async function notifyNewAccountLinks(state) {
+  const rows = await database('sb_telegram_users?user_id=not.is.null&select=telegram_id');
+  const ids = (rows || []).map(row => row.telegram_id);
+  if (!state.linkedNotified) { state.linkedNotified = ids; return true; }
+  const fresh = ids.filter(id => !state.linkedNotified.includes(id));
+  if (!fresh.length) return false;
+  state.linkedNotified = ids;
+  const next = await instagramTrialClaimed().catch(() => true)
+    ? 'Ya puedes gestionar tu suscripción desde la web y seguir trabajando conmigo aquí.'
+    : 'Siguiente paso: escribe /reclamar para intentar conseguir el hueco gratis de Instagram y después /instagram.';
+  for (const id of fresh) await sendMessage(id, `✅ Tu cuenta de Social Banana ya está vinculada. ${next}`).catch(() => console.error('[account] link notice failed'));
+  return true;
 }
 export async function instagramTrialClaimed() {
   return !!(await database('sb_instagram_trial?select=telegram_id'))?.length;

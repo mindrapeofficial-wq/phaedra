@@ -72,3 +72,26 @@ test('an active trial grants access without any subscription lookup', async () =
   });
   try { assert.equal((await requireInstagramAccess(7)).trial, true); } finally { restore(); }
 });
+
+test('a new account link is announced once with the next step, and old links are not', async () => {
+  const { notifyNewAccountLinks } = await import('./instagram-trial.js');
+  const sent = [];
+  let linked = [{ telegram_id: 7 }];
+  const native = fetch;
+  globalThis.fetch = async (url, options = {}) => {
+    if (String(url).endsWith('/sendMessage')) { sent.push(JSON.parse(options.body)); return Response.json({ ok: true }); }
+    if (String(url).includes('sb_instagram_trial')) return Response.json([]);
+    return Response.json(linked);
+  };
+  try {
+    const state = {};
+    await notifyNewAccountLinks(state);
+    assert.equal(sent.length, 0);
+    linked = [{ telegram_id: 7 }, { telegram_id: 8 }];
+    await notifyNewAccountLinks(state);
+    await notifyNewAccountLinks(state);
+    assert.equal(sent.length, 1);
+    assert.equal(sent[0].chat_id, 8);
+    assert.match(sent[0].text, /\/reclamar/);
+  } finally { globalThis.fetch = native; }
+});
