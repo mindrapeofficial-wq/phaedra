@@ -54,7 +54,8 @@ const OWNER = `\n\n🛠 Solo para ti
 • /actividad: uso de los usuarios
 • /gasto: consumo estimado
 • /estadoia: comprobar las IA
-• /engage: ideas de conversación`;
+• /engage: ideas de conversación
+• /soporte off: salir del modo ayuda en el grupo`;
 
 export function helpTopic(argument = '') {
   const key = argument.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');

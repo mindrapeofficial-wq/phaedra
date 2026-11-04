@@ -16,6 +16,7 @@ import { memoryRequest, groupConversationContext } from "./memory.js";
 import { referralSummary, claimReferral } from "./referrals.js";
 import { claimInstagramTrial } from "./instagram-trial.js";
 import { helpMessage } from "./help.js";
+import { resolveOwnerMessage, activeMembers, repliedMember, supportQuestion } from "./owner-support.js";
 import { congratulateInstagramConnection } from "./instagram-congrats.js";
 import { sendVoiceReply } from "./speech.js";
 import { isPhotoOnly, addUpload, saveUploads, scheduleUploadQuestion, wantsToSave, wantsToDiscard, wantsNewImage, answersFaceQuestion } from "./photo-uploads.js";
@@ -90,7 +91,7 @@ async function handleMessage(update) {
 
   const chatId = msg.chat.id;
   const isGroup = msg.chat.type === "group" || msg.chat.type === "supergroup";
-  const userId = msg.from?.id;
+  let userId = msg.from?.id;
   const username = msg.from?.username;
 
   // Handle commands first
@@ -227,6 +228,27 @@ async function handleMessage(update) {
     }
   }
 
+  if (isGroup && userId === OWNER_ID && (!cmd.startsWith("/") || /^\/soporte/.test(cmd))) {
+    const ownerState = await memoryRequest(chatId, OWNER_ID);
+    const replied = repliedMember(msg, OWNER_ID);
+    const members = activeMembers(await groupConversationContext(chatId).catch(() => []), OWNER_ID);
+    const candidates = replied ? [replied] : members.slice(0, 3);
+    const decision = resolveOwnerMessage(ownerState, cleanMessage(msg.text) || msg.text, candidates);
+    if (decision.action === "ask") {
+      ownerState.pendingOwnerAsk = { candidates, message: { text: msg.text, caption: msg.caption, photo: msg.photo, voiceText: Boolean(msg.voice) } };
+      await memoryRequest(chatId, OWNER_ID, "POST", ownerState);
+      await sendMessage(chatId, supportQuestion(candidates));
+      return;
+    }
+    await memoryRequest(chatId, OWNER_ID, "POST", ownerState);
+    if (decision.action === "ended") { await sendMessage(chatId, "Hecho, ya no estás en modo ayuda."); return; }
+    if (decision.restore) { msg.text = decision.restore.text; msg.caption = decision.restore.caption; msg.photo = decision.restore.photo; }
+    if (decision.action === "support") {
+      // Everything below reads and saves the artist's order, so help joins their work instead of starting the owner's.
+      userId = decision.target.id;
+      if (decision.confirmed) await sendMessage(chatId, `Perfecto, seguimos con el encargo de ${decision.target.name}. Te tengo en modo ayuda durante 2 horas; /soporte off para salir.`);
+    }
+  }
   let text = ["/olvidame", "/mimemoria"].includes(cmd) ? cmd : cleanMessage(msg.text);
   if (!text) {
     if (/@socialbananabot/i.test(msg.text)) await sendMessage(chatId, "Aquí estoy 🙂 ¿Qué tienes entre manos? Cuéntame y nos ponemos con ello.");
