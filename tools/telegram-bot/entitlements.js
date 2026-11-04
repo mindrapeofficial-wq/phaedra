@@ -10,6 +10,6 @@ export async function requireInstagramAccess(userId) {
   if (await hasActiveInstagramTrial(userId)) return { userId: user.user_id, trial: true };
   const rows = await database(`sb_subscriptions?user_id=eq.${encodeURIComponent(user.user_id)}&livemode=eq.true&select=livemode,status,risk_hold,paid_until`);
   const subscription = activeSubscription(rows);
-  if (!subscription) throw new Error('No consta una suscripción de pago activa para conectar Instagram. El mes de prueba de la extensión y los pagos de prueba no activan esta conexión. Puedes seguir preparando tu contenido conmigo.');
+  if (!subscription) throw new Error('No consta una suscripción de pago activa para conectar Instagram. Si aún queda el hueco gratis, escribe primero /reclamar y después /instagram. El mes de prueba de la extensión y los pagos de prueba no activan esta conexión. Puedes seguir preparando tu contenido conmigo.');
   return { userId: user.user_id, subscription };
 }

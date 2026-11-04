@@ -12,8 +12,8 @@ export async function enqueueUpdate(update) {
     telegram_id: update.message.from?.id || 0, payload: update,
   }, 'resolution=ignore-duplicates,return=representation');
   if (inserted?.length) {
-    const waiting = await database(`sb_bot_jobs?update_id=lt.${update.update_id}&status=in.(pending,processing)&select=telegram_id&limit=2`);
-    if (waiting.length >= 2 || waiting.some(job => job.telegram_id === update.message.from?.id)) {
+    const waiting = await database(`sb_bot_jobs?update_id=lt.${update.update_id}&chat_id=eq.${Number(update.message.chat.id)}&telegram_id=eq.${Number(update.message.from?.id || 0)}&status=in.(pending,processing)&select=telegram_id&limit=1`);
+    if (waiting.length) {
       await sendMessage(update.message.chat.id, 'Te he leído. Tu mensaje está en cola; lo atenderé cuando termine el trabajo que está en curso.').catch(() => {});
     }
   }
@@ -36,7 +36,7 @@ export async function pumpJobs() {
   if (pumping || stopped) return;
   pumping = true;
   try {
-    while (!stopped && active < 2) {
+    while (!stopped && active < 5) {
       const lease = randomUUID();
       const job = await database('rpc/sb_claim_bot_job', 'POST', { p_lease: lease });
       if (!job) break;

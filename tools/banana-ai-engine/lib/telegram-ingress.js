@@ -43,10 +43,10 @@ export async function wakeTelegramWorker(message,{env=process.env,fetchImpl=fetc
   const timer=message?setTimeout(()=>notify('Te he leído. El servicio está tardando en despertar; tu mensaje ya está guardado. Suele tardar alrededor de un minuto en retomar el trabajo.'),noticeDelay):null;
   const queued=message&&Number.isSafeInteger(message.updateId)?(async()=>{
     try{
-      const response=await fetchImpl(STORE+`/rest/v1/sb_bot_jobs?update_id=lt.${message.updateId}&status=in.(pending,processing)&select=telegram_id&limit=2`,{headers:{apikey:env.SUPABASE_SERVICE_KEY,Authorization:'Bearer '+env.SUPABASE_SERVICE_KEY},signal:AbortSignal.timeout(8000)});
+      const response=await fetchImpl(STORE+`/rest/v1/sb_bot_jobs?update_id=lt.${message.updateId}&chat_id=eq.${Number(message.chat?.id)}&telegram_id=eq.${Number(message.from?.id||0)}&status=in.(pending,processing)&select=telegram_id&limit=1`,{headers:{apikey:env.SUPABASE_SERVICE_KEY,Authorization:'Bearer '+env.SUPABASE_SERVICE_KEY},signal:AbortSignal.timeout(8000)});
       if(!response.ok)return;
       const waiting=await response.json();
-      if(!((message.photo?.length||String(message.document?.mime_type||'').startsWith('image/'))&&!message.caption)&&Array.isArray(waiting)&&(waiting.length>=2||waiting.some(job=>job.telegram_id===message.from?.id)))notify('Tengo tu mensaje. Estoy terminando un encargo anterior; después sigo con este.');
+      if(!((message.photo?.length||String(message.document?.mime_type||'').startsWith('image/'))&&!message.caption)&&Array.isArray(waiting)&&waiting.length)notify('Tengo tu mensaje. Estoy terminando un encargo anterior; después sigo con este.');
     }catch{/* The durable job remains available even if this optional notice fails. */}
   })():Promise.resolve();
   try{
