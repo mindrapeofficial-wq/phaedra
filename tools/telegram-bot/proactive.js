@@ -4,6 +4,7 @@ import { memoryRequest, groupConversationContext } from './memory.js';
 import { PRODUCT_CONTEXT } from './product-context.js';
 import { database } from './database.js';
 import { runUsageTick } from './usage.js';
+import { sendVoiceReply } from './speech.js';
 import { ACCOUNT_TYPE_GUIDE } from './help.js';
 import { postzen, connection } from './instagram.js';
 import { TRIAL_MESSAGE, instagramTrialClaimed, expireInstagramTrial, notifyNewAccountLinks } from './instagram-trial.js';
@@ -94,6 +95,15 @@ async function sendAccountTypeGuide(state) {
   }
   console.log('[guide] account type guide sent');
 }
+async function sendLoyaltyJoke(state) {
+  if (state.loyaltyJokeSent) return;
+  state.loyaltyJokeSent = true;
+  await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+  const joke = 'Ey, Loyal-T, soy Banana. Te cuento un chiste: ¿qué le dice un bombo a su productor? Deja de comprimirme, que me estás quitando la vida. ¡Un abrazo!';
+  const spoke = await sendVoiceReply(8632206647, joke, { disclose: true }).catch(() => false);
+  if (!spoke) await sendMessage(GROUP_CHAT, joke);
+  console.log('[joke] delivered', { voice: spoke });
+}
 export async function runProactiveTick() {
   if (running) return;
   running = true;
@@ -107,6 +117,7 @@ export async function runProactiveTick() {
     if (await announceNewSubscribers(state).catch(() => { console.error('[community] subscriber check failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (await notifyNewAccountLinks(state).catch(() => { console.error('[account] link check failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     await sendAccountTypeGuide(state).catch(() => console.error('[guide] failed'));
+    await sendLoyaltyJoke(state).catch(() => console.error('[joke] failed'));
     const timing = communityTiming(state, community);
     if (await announcePromo(state)) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (state.productAnnouncement !== ANNOUNCEMENT) {
