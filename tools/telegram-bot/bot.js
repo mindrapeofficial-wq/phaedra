@@ -16,6 +16,7 @@ import { memoryRequest, groupConversationContext } from "./memory.js";
 import { referralSummary, claimReferral } from "./referrals.js";
 import { claimInstagramTrial } from "./instagram-trial.js";
 import { helpMessage } from "./help.js";
+import { sendVoiceReply } from "./speech.js";
 import { isPhotoOnly, addUpload, saveUploads, scheduleUploadQuestion, wantsToSave, wantsToDiscard, wantsNewImage, answersFaceQuestion } from "./photo-uploads.js";
 import { withUsageContext, notifyAction, userLimitReached, USER_LIMIT_MESSAGE, activityReport, spendReport, PRIVACY_NOTICE } from "./usage.js";
 import { releasePlanSummary, completeReleaseTask, setReleaseReminders } from "./releases.js";
@@ -79,7 +80,6 @@ async function handleMessage(update) {
     if (msg.chat.type !== "private" && String(msg.chat.id) !== GROUP_CHAT && !isBotTriggered(msg)) return;
     const access = await checkAccess(msg.from.id, msg.from.username);
     if (!access.allowed) { await sendMessage(msg.chat.id, access.reason); return; }
-    await sendMessage(msg.chat.id, "Te escucho; estoy pasando tu nota de voz a texto para responderte.");
     try { msg.text = await transcribeVoice(msg.voice); }
     catch (error) { await sendMessage(msg.chat.id, error.message); return; }
   }
@@ -415,7 +415,8 @@ async function handleMessage(update) {
       } catch {
         await sendMessage(chatId, "La portada está entregada aquí. No he podido guardar la copia en Drive; tendrás que conservar esta descarga por ahora.");
       }
-    } else await sendMessage(chatId, reply.text);
+    } else if (msg.voice) await sendVoiceReply(chatId, reply.text);
+    else await sendMessage(chatId, reply.text);
     if (userId !== OWNER_ID) await incrementUsage(userId).catch(() => console.error("[usage] increment failed"));
     console.log(`[bot] reply delivered chat=${chatId} image=${Boolean(reply.image)}`);
   } catch (error) {

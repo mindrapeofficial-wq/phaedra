@@ -9,7 +9,8 @@ const IMAGE_ALERT = Number(process.env.BANANA_DAILY_IMAGE_ALERT || 20);
 const CHAT_WINDOW_MS = 10 * 60_000;
 const GROUP_GAP_MS = 60 * 60_000;
 // USD per million tokens from the providers' public pricing pages. Image models are counted, not priced.
-const PRICES = { 'gpt-6.1-terra': [1, 5], 'gpt-6-luna': [0.1, 0.5], 'gpt-4.1': [2, 8], 'claude-opus-5-5': [4, 20] };
+// The speech rate is per character, estimated from OpenAI's published per-minute speech cost.
+const PRICES = { 'gpt-4o-mini-tts': [17, 0], 'gpt-6.1-terra': [1, 5], 'gpt-6-luna': [0.1, 0.5], 'gpt-4.1': [2, 8], 'claude-opus-5-5': [4, 20] };
 export const ACTIONS = {
   chat: 'escribió al bot', image: 'generó una imagen PRO', voice: 'envió una nota de voz', release_plan: 'creó un plan de lanzamiento',
   instagram: 'usó las herramientas de Instagram', instagram_analysis: 'pidió un análisis de Instagram', claim: 'usó /reclamar', referral: 'usó /referir',
@@ -86,7 +87,7 @@ export async function spendReport() {
   const [day, week] = await Promise.all([fetchRows(24), fetchRows(168)]);
   const a = summarize(day), b = summarize(week);
   const line = s => `Texto estimado: ${s.cost.toFixed(2)} $ (${s.input + s.output} tokens)\nImágenes PRO: ${s.images}, sin precio incluido`;
-  return `Gasto estimado\n\n24 horas:\n${line(a)}\n\n7 días:\n${line(b)}\n\nAviso a partir de ${BUDGET_USD} $ de texto o ${IMAGE_ALERT} imágenes al día. No bloquea a nadie. No incluye notas de voz. La factura real está en los paneles de OpenAI y Anthropic.`;
+  return `Gasto estimado\n\n24 horas:\n${line(a)}\n\n7 días:\n${line(b)}\n\nAviso a partir de ${BUDGET_USD} $ de texto o ${IMAGE_ALERT} imágenes al día. No bloquea a nadie. Las notas de voz recibidas no están incluidas. La factura real está en los paneles de OpenAI y Anthropic.`;
 }
 
 export async function runUsageTick(state, now = Date.now()) {

@@ -74,7 +74,7 @@ Empieza por aquí:
 • «Hazme una portada para mi single»
 • «Saco un tema el 15 de enero de 2027, prepárame el plan»
 • «Escríbeme una biografía de artista»
-También entiendo notas de voz y fotos.
+También entiendo fotos, y si me mandas una nota de voz te respondo con otra.
 
 Comandos:
 /plan: tu plan de lanzamiento

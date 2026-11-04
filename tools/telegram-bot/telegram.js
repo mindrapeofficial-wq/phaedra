@@ -82,3 +82,12 @@ export async function setBotCommands(commands) {
   const res = await timedFetch(`${API}/setMyCommands`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ commands }) });
   if (!res.ok) throw new Error(`Telegram setMyCommands failed: ${res.status}`);
 }
+
+export async function sendVoice(chatId, audio, caption) {
+  const form = new FormData();
+  form.set("chat_id", String(chatId));
+  form.set("voice", new Blob([audio], { type: "audio/ogg" }), "banana.ogg");
+  form.set("caption", caption || "");
+  const res = await timedFetch(`${API}/sendVoice`, { method: "POST", body: form });
+  if (!res.ok) throw new Error(`Telegram sendVoice failed: ${res.status}`);
+}
