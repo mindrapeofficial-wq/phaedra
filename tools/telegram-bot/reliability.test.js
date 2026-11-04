@@ -101,6 +101,13 @@ test('voice produces valid mono PCM and rejects excessive audio before any downl
   await assert.rejects(transcribeVoice({duration:181,file_id:'unread'}),/3 minutos/);
 });
 
+test('a group silent for more than a day still gets initiative, at a limited pace',()=>{
+  const now=Date.parse('2026-11-02T12:00:00Z');
+  assert.equal(communityTiming({},[],now).allowed,true);
+  assert.equal(communityTiming({lastAttempt:now-3600000},[],now).allowed,false);
+  assert.equal(communityTiming({day:'2026-11-02',sentToday:4},[],now).allowed,false);
+  assert.equal(communityTiming({},[],Date.parse('2026-11-02T23:00:00Z')).allowed,false);
+});
 test('supervisor orders pause, resume and nudge within limits',()=>{
   const now=Date.parse('2026-11-02T12:00:00Z');
   const context=[{updated_at:new Date(now-600000).toISOString()}];

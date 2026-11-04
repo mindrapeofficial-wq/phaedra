@@ -19,9 +19,9 @@ export function communityTiming(state, community, now = Date.now()) {
   const latest = Math.max(0, ...community.map(p => Date.parse(p.updated_at) || 0));
   const sentToday = state.day === day ? state.sentToday || 0 : 0;
   const freshConversation = latest > (state.lastContextAt || 0);
-  return { day, latest, sentToday, allowed: !(state.pausedUntil > now) && hour >= 9 && hour < 23 && sentToday < 12 && latest > 0
+  return { day, latest, sentToday, allowed: !(state.pausedUntil > now) && hour >= 9 && hour < 23 && sentToday < 12
     && now - latest > 2 * 60_000 && now - (state.lastSent || 0) > 15 * 60_000 && now - (state.lastAttempt || 0) > 30 * 60_000
-    && (state.nudge || freshConversation || (sentToday < 4 && now - (state.lastSent || 0) > 3 * 3600_000)) };
+    && (state.nudge || freshConversation || (sentToday < 4 && now - (state.lastSent || 0) > 3 * 3600_000 && now - (state.lastAttempt || 0) > 3 * 3600_000)) };
 }
 export function applySupervisorOrder(state, order, now = Date.now()) {
   if (order.action === 'pause_initiative') state.pausedUntil = now + Math.min(Math.max(order.pause_hours || 1, 1), 24) * 3600_000;
@@ -94,7 +94,7 @@ export async function runProactiveTick() {
     state.lastAttempt = Date.now(); state.lastContextAt = timing.latest; state.nudge = false;
     await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     const result = await askClaude(
-      'Write one natural Spanish message as Banana, the AI artist manager who leads this community. Take the initiative like a demanding, caring manager: follow up on a release, deadline or goal a member stated, propose one concrete next action with a date, connect two members whose goals fit, or start a short practical challenge about releases, identity, covers or content. If the goal of a member is unknown, ask ONE question. Vary the format and address different members over time; do not keep singling out the same person. Never claim to be human. Use their supplied name where helpful. Be a participant, not a service menu. If a concrete need fits the product, explain that benefit and offer one easy next step; do not repeatedly pitch subscriptions. Respect refusals. Never invent metrics, research, completed actions, identity, testimony or capabilities. Do not disclose private profiles, DMs or individual billing. Avoid repeating the previous suggestions. Return exactly SKIP if there is no useful new contribution. Maximum 70 words.',
+      'Write one natural Spanish message as Banana, the AI artist manager who leads this community. Take the initiative like a demanding, caring manager: follow up on a release, deadline or goal a member stated, propose one concrete next action with a date, connect two members whose goals fit, or start a short practical challenge about releases, identity, covers or content. If the goal of a member is unknown, ask ONE question. Vary the format and address different members over time; do not keep singling out the same person. Never claim to be human. Use their supplied name where helpful. Be a participant, not a service menu. If a concrete need fits the product, explain that benefit and offer one easy next step; do not repeatedly pitch subscriptions. Respect refusals. Never invent metrics, research, completed actions, identity, testimony or capabilities. Do not disclose private profiles, DMs or individual billing. Avoid repeating the previous suggestions. If the conversation data is empty because the group has been quiet, do not stay silent: open with one short practical challenge or question for artists about releases, identity, covers or content, without naming anyone or implying that anyone said something. Otherwise return exactly SKIP if there is no useful new contribution. Maximum 70 words.',
       JSON.stringify({ product: PRODUCT_CONTEXT, community, previousSuggestions: state.suggestions || [] })
     );
     const message = result.response?.trim();
