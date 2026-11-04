@@ -417,7 +417,13 @@ async function handleMessage(update) {
       } catch {
         await sendMessage(chatId, "La portada está entregada aquí. No he podido guardar la copia en Drive; tendrás que conservar esta descarga por ahora.");
       }
-    } else if (msg.voice) await sendVoiceReply(chatId, reply.text);
+    } else if (msg.voice) {
+      const spoke = await sendVoiceReply(chatId, reply.text, { disclose: !state.voiceDisclosed });
+      if (spoke && !state.voiceDisclosed) {
+        state.voiceDisclosed = true;
+        await memoryRequest(chatId, userId, "POST", state);
+      }
+    }
     else await sendMessage(chatId, reply.text);
     if (userId !== OWNER_ID) await incrementUsage(userId).catch(() => console.error("[usage] increment failed"));
     console.log(`[bot] reply delivered chat=${chatId} image=${Boolean(reply.image)}`);

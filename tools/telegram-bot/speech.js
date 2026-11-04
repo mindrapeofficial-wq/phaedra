@@ -5,7 +5,7 @@ import { meterTokens } from './usage.js';
 export const SPEECH_MODEL = 'gpt-4o-mini-tts';
 const MAX_SPOKEN_CHARS = 900;
 const URL_PATTERN = /https?:\/\/\S+/g;
-export const VOICE_DISCLOSURE = '🍌 Voz generada por IA';
+export const VOICE_DISCLOSURE = '🍌 Te respondo con una voz generada por IA.';
 
 export function spokenText(text) {
   const clean = String(text).replace(URL_PATTERN, 'el enlace que te dejo por escrito').replace(/[*_`#]/g, '').trim();
@@ -23,14 +23,15 @@ async function synthesize(input) {
 }
 
 // Text is the fallback, so a failed voice note never loses the answer.
-export async function sendVoiceReply(chatId, text) {
+export async function sendVoiceReply(chatId, text, { disclose = false } = {}) {
   const input = spokenText(text);
-  if (!input) return sendMessage(chatId, text);
+  if (!input) { await sendMessage(chatId, text); return false; }
   let voiceSent = false;
   try {
-    await sendVoice(chatId, await synthesize(input), VOICE_DISCLOSURE);
+    await sendVoice(chatId, await synthesize(input), disclose ? VOICE_DISCLOSURE : '');
     voiceSent = true;
     meterTokens(SPEECH_MODEL, { input_tokens: input.length });
   } catch { console.error('[voice] reply fell back to text'); }
   if (!voiceSent || URL_PATTERN.test(text)) { URL_PATTERN.lastIndex = 0; await sendMessage(chatId, text); }
+  return voiceSent;
 }

@@ -17,12 +17,14 @@ function mock({ speechStatus = 200 } = {}) {
   return { calls, restore: () => { globalThis.fetch = native; } };
 }
 
-test('a short answer goes only as a voice note disclosed as AI', async () => {
+test('a short answer goes only as a voice note, disclosed as AI only when requested', async () => {
   const { calls, restore } = mock();
   try {
-    await sendVoiceReply(1, 'Vamos con tu single.');
-    assert.equal(calls.voice.length, 1);
+    assert.equal(await sendVoiceReply(1, 'Vamos con tu single.', { disclose: true }), true);
+    await sendVoiceReply(1, 'Seguimos.');
+    assert.equal(calls.voice.length, 2);
     assert.match(calls.voice[0], /IA/);
+    assert.equal(calls.voice[1], '');
     assert.equal(calls.text.length, 0);
     assert.equal(calls.speech[0].response_format, 'opus');
   } finally { restore(); }
