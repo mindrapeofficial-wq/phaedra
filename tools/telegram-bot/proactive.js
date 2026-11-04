@@ -4,6 +4,7 @@ import { memoryRequest, groupConversationContext } from './memory.js';
 import { PRODUCT_CONTEXT } from './product-context.js';
 import { database } from './database.js';
 import { runUsageTick } from './usage.js';
+import { ACCOUNT_TYPE_GUIDE } from './help.js';
 import { postzen, connection } from './instagram.js';
 import { TRIAL_MESSAGE, instagramTrialClaimed, expireInstagramTrial, notifyNewAccountLinks } from './instagram-trial.js';
 import { proPromoActive, PROMO_MESSAGE } from './promo.js';
@@ -81,6 +82,18 @@ export async function announceNewSubscribers(state) {
   await sendMessage(GROUP_CHAT, fresh.length === 1 ? '🎉 ¡Alguien acaba de unirse a Social Banana con la suscripción mensual! Bienvenido al equipo 🍌' : `🎉 ¡${fresh.length} personas acaban de unirse a Social Banana con la suscripción mensual! Bienvenidos al equipo 🍌`);
   return true;
 }
+async function sendAccountTypeGuide(state) {
+  if (state.accountTypeGuideSent) return;
+  state.accountTypeGuideSent = true;
+  await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+  await sendMessage(GROUP_CHAT, ACCOUNT_TYPE_GUIDE);
+  const since = new Date(Date.now() - 24 * 3600_000).toISOString();
+  const rows = await database(`sb_usage_events?action=eq.claim&created_at=gte.${since}&select=telegram_id`);
+  for (const id of new Set((rows || []).map(row => row.telegram_id))) {
+    await sendMessage(id, ACCOUNT_TYPE_GUIDE).catch(() => console.log('[guide] private notice not delivered'));
+  }
+  console.log('[guide] account type guide sent');
+}
 export async function runProactiveTick() {
   if (running) return;
   running = true;
@@ -93,6 +106,7 @@ export async function runProactiveTick() {
     if (await runUsageTick(state).catch(() => { console.error('[usage] tick failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (await announceNewSubscribers(state).catch(() => { console.error('[community] subscriber check failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (await notifyNewAccountLinks(state).catch(() => { console.error('[account] link check failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+    await sendAccountTypeGuide(state).catch(() => console.error('[guide] failed'));
     const timing = communityTiming(state, community);
     if (await announcePromo(state)) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (state.productAnnouncement !== ANNOUNCEMENT) {
