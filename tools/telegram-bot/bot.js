@@ -16,6 +16,7 @@ import { memoryRequest, groupConversationContext } from "./memory.js";
 import { referralSummary, claimReferral } from "./referrals.js";
 import { claimInstagramTrial } from "./instagram-trial.js";
 import { helpMessage } from "./help.js";
+import { congratulateInstagramConnection } from "./instagram-congrats.js";
 import { sendVoiceReply } from "./speech.js";
 import { isPhotoOnly, addUpload, saveUploads, scheduleUploadQuestion, wantsToSave, wantsToDiscard, wantsNewImage, answersFaceQuestion } from "./photo-uploads.js";
 import { withUsageContext, notifyAction, userLimitReached, USER_LIMIT_MESSAGE, activityReport, spendReport, PRIVACY_NOTICE } from "./usage.js";
@@ -170,6 +171,7 @@ async function handleMessage(update) {
       } else if (/verificar|instagram_check/.test(cmd)) {
         const linked = await verifyConnection(userId);
         await sendMessage(chatId, `Cuenta conectada: ${linked.username}. Ya puedes pedirme que analice tu Instagram o prepare borradores para tu próximo lanzamiento. No publicaré por mi cuenta.`);
+        await congratulateInstagramConnection(chatId, msg.from).catch(() => console.error("[instagram] group congratulation failed"));
       } else {
         const linked = await connection(userId);
         if (linked?.status === "active") {
