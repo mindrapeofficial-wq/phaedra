@@ -69,6 +69,18 @@ async function announceInstagramTrial(state) {
   }
   console.log('[trial] announced');
 }
+// Billing is private, so new subscribers are celebrated without naming them.
+export async function announceNewSubscribers(state) {
+  const rows = await database('sb_paid_instagram_clients?select=user_id');
+  const ids = (rows || []).map(row => row.user_id);
+  if (!state.paidAnnounced) { state.paidAnnounced = ids; return true; }
+  const fresh = ids.filter(id => !state.paidAnnounced.includes(id));
+  if (!fresh.length) return false;
+  state.paidAnnounced = ids;
+  await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+  await sendMessage(GROUP_CHAT, fresh.length === 1 ? '🎉 ¡Alguien acaba de unirse a Social Banana con la suscripción mensual! Bienvenido al equipo 🍌' : `🎉 ¡${fresh.length} personas acaban de unirse a Social Banana con la suscripción mensual! Bienvenidos al equipo 🍌`);
+  return true;
+}
 export async function runProactiveTick() {
   if (running) return;
   running = true;
@@ -79,6 +91,7 @@ export async function runProactiveTick() {
     await expireInstagramTrial({ api: postzen, connection }).catch(() => console.error('[trial] expiry failed, will retry'));
     await announceInstagramTrial(state).catch(() => console.error('[trial] announcement failed'));
     if (await runUsageTick(state).catch(() => { console.error('[usage] tick failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+    if (await announceNewSubscribers(state).catch(() => { console.error('[community] subscriber check failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     const timing = communityTiming(state, community);
     if (await announcePromo(state)) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (state.productAnnouncement !== ANNOUNCEMENT) {

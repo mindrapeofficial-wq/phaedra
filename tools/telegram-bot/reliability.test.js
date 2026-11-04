@@ -6,7 +6,7 @@ const { activeSubscription, requireInstagramAccess } = await import('./entitleme
 const { reserveImage, finishImage } = await import('./image-credits.js');
 const { enqueueUpdate, processJob } = await import('./jobs.js');
 const { pcmWav, transcribeVoice } = await import('./voice.js');
-const { communityTiming, applySupervisorOrder } = await import('./proactive.js');
+const { communityTiming, applySupervisorOrder, announceNewSubscribers } = await import('./proactive.js');
 
 test('live paid access excludes trials, expired, disputed and sandbox subscriptions', async () => {
   const valid = { livemode: true, status: 'active', risk_hold: false, paid_until: '2030-01-01' };
@@ -119,4 +119,24 @@ test('supervisor orders pause, resume and nudge within limits',()=>{
   assert.equal(communityTiming(quiet,context,now).allowed,false);
   assert.equal(communityTiming(applySupervisorOrder(quiet,{action:'nudge_group'},now),context,now).allowed,true);
   assert.equal(communityTiming({...quiet,nudge:true,sentToday:12},context,now).allowed,false);
+});
+
+test('new subscribers are announced once and anonymously, and existing ones are not',async()=>{
+  const native=fetch,sent=[];let ids=[{user_id:'a'}];
+  globalThis.fetch=async(url,opts={})=>{
+    if(String(url).endsWith('/sendMessage')){sent.push(JSON.parse(opts.body).text);return Response.json({ok:true});}
+    if(String(url).includes('sb_paid_instagram_clients'))return Response.json(ids);
+    return new Response(null,{status:204});
+  };
+  try{
+    const state={};
+    await announceNewSubscribers(state);
+    assert.equal(sent.length,0);
+    ids=[{user_id:'a'},{user_id:'b'}];
+    await announceNewSubscribers(state);
+    await announceNewSubscribers(state);
+    assert.equal(sent.length,1);
+    assert.match(sent[0],/Alguien/);
+    assert.doesNotMatch(sent[0],/\bb\b/);
+  }finally{globalThis.fetch=native;}
 });
