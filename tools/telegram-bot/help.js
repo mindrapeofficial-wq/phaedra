@@ -25,7 +25,19 @@ Conecta una cuenta Creator o Business para analizarla y preparar borradores. No 
 • /instagram reconectar: renovar permisos
 • /desconectarinstagram: desactivar el acceso
 
-Requiere una suscripción de pago, que todavía no está disponible.`,
+Requiere una suscripción de pago, que todavía no está disponible.
+
+Para pasar de Creator a Business en la app de Instagram:
+1. Abre tu perfil y toca Más (☰).
+2. Entra en Configuración y actividad.
+3. Toca Tipo de cuenta y herramientas, y después Tipo de cuenta.
+4. Toca Cambiar tipo de cuenta, elige Empresa (Business) y confirma con Cambiar.
+
+Desde instagram.com: Más, Configuración, Herramientas y controles para creadores, Cambiar tipo de cuenta.
+
+Los nombres pueden variar un poco según la versión. Puedes volver a cambiarlo cuando quieras.
+
+Para conectarla a Banana sirven tanto Creator como Business: no hace falta cambiarla solo por eso.`,
   cuenta: `👤 Tu cuenta y tus datos
 
 • /cuenta: vincular tu Telegram con tu cuenta de Social Banana
