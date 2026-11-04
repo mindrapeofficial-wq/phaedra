@@ -4,6 +4,7 @@ const ACTIVE_MS = 2 * 3600_000;
 
 export const wantsOwnWork = text => /\bm[ií][oa]s?\b|para m[ií]\b|m[ií] (?:encargo|portada|proyecto)/i.test(text);
 export const wantsToSupport = text => /ayud|apoy|soport|support|su encargo|\bpara\s+\S+/i.test(text) && !wantsOwnWork(text);
+export const isRetouch = text => /retoqu|retoca|ret[oó]cal|ajust|corrig|arregl|mejora|cambia|qu[ií]ta|pon(?:le|la|lo)\b|m[aá]s (?:luz|brillo|contraste|oscur)/i.test(text);
 export const endsSupport = text => /^\/soporte(?:@\w+)?(?:\s+off)?$/i.test(text.trim()) || /^(?:ya\s+)?(?:termin[eé]|acab[eé]) de ayudar|deja de ayudar/i.test(text.trim());
 
 export function activeMembers(community, ownerId, now = Date.now()) {

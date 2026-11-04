@@ -39,6 +39,18 @@ test('the owner and group chats generate no notices', async () => {
   } finally { restore(); }
 });
 
+test('group images still count toward the daily limit, charged to whoever pays', async () => {
+  const native = fetch, rows = [];
+  globalThis.fetch = async (url, options = {}) => { if (options.method === 'POST' && String(url).includes('sb_usage_events')) rows.push(JSON.parse(options.body)); return new Response(''); };
+  const { chargeUsageTo } = await import('./usage.js');
+  try {
+    withUsageContext({ userId: 1, isPrivate: false }, () => { chargeUsageTo(7); notifyAction('image'); });
+    withUsageContext({ userId: 1, isPrivate: false }, () => notifyAction('image'));
+    await settle();
+    assert.deepEqual(rows.map(row => [row.telegram_id, row.images]), [[7, 1]]);
+  } finally { globalThis.fetch = native; }
+});
+
 test('chat messages are grouped instead of notified one by one', async () => {
   const { sent, restore } = capture();
   try {

@@ -24,6 +24,7 @@ const chatBursts = new Map();
 let lastGroupNotice = 0, timer;
 
 export function withUsageContext(context, task) { return storage.run(context, task); }
+export function chargeUsageTo(userId) { const context = storage.getStore(); if (context) context.userId = userId; }
 const save = row => database('sb_usage_events', 'POST', row, 'return=minimal').catch(() => console.error('[usage] event not saved'));
 export const costOf = (model, input, output) => {
   const price = PRICES[model];
@@ -39,8 +40,9 @@ export function meterTokens(model, usage = {}) {
 
 export function notifyAction(action) {
   const context = storage.getStore();
-  if (!context?.isPrivate || Number(context.userId) === OWNER || !ACTIONS[action]) return;
+  if (!context?.userId || Number(context.userId) === OWNER || !ACTIONS[action]) return;
   void save({ telegram_id: context.userId, action, images: action === 'image' ? 1 : 0 });
+  if (!context.isPrivate) return;
   const who = context.username ? `@${context.username}` : `Usuario ${context.userId}`;
   if (action === 'chat') {
     const burst = chatBursts.get(context.userId) || { who, count: 0, since: Date.now() };

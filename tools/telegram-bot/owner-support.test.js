@@ -1,6 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { resolveOwnerMessage, activeMembers, repliedMember, supportQuestion } from './owner-support.js';
+import { resolveOwnerMessage, activeMembers, repliedMember, supportQuestion, isRetouch } from './owner-support.js';
+
+test('retouches are told apart from new requests', () => {
+  for (const text of ['retócala', 'ponle fondo morado', 'quítale el texto', 'más luz']) assert.equal(isRetouch(text), true, text);
+  for (const text of ['haz una portada nueva', 'genera otra imagen']) assert.equal(isRetouch(text), false, text);
+});
 
 const now = Date.parse('2026-11-04T12:00:00Z');
 const ary = { id: 2, name: 'Ary' };

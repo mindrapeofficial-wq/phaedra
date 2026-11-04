@@ -16,11 +16,11 @@ import { memoryRequest, groupConversationContext } from "./memory.js";
 import { referralSummary, claimReferral } from "./referrals.js";
 import { claimInstagramTrial } from "./instagram-trial.js";
 import { helpMessage } from "./help.js";
-import { resolveOwnerMessage, activeMembers, repliedMember, supportQuestion } from "./owner-support.js";
+import { resolveOwnerMessage, activeMembers, repliedMember, supportQuestion, isRetouch } from "./owner-support.js";
 import { congratulateInstagramConnection } from "./instagram-congrats.js";
 import { sendVoiceReply } from "./speech.js";
 import { isPhotoOnly, addUpload, saveUploads, scheduleUploadQuestion, wantsToSave, wantsToDiscard, wantsNewImage, answersFaceQuestion } from "./photo-uploads.js";
-import { withUsageContext, notifyAction, userLimitReached, USER_LIMIT_MESSAGE, activityReport, spendReport, PRIVACY_NOTICE } from "./usage.js";
+import { withUsageContext, notifyAction, chargeUsageTo, userLimitReached, USER_LIMIT_MESSAGE, activityReport, spendReport, PRIVACY_NOTICE } from "./usage.js";
 import { releasePlanSummary, completeReleaseTask, setReleaseReminders } from "./releases.js";
 
 const OWNER_ID = Number(process.env.TELEGRAM_OWNER_ID) || 1661812916;
@@ -92,6 +92,7 @@ async function handleMessage(update) {
   const chatId = msg.chat.id;
   const isGroup = msg.chat.type === "group" || msg.chat.type === "supergroup";
   let userId = msg.from?.id;
+  let ownerPays = false;
   const username = msg.from?.username;
 
   // Handle commands first
@@ -246,6 +247,8 @@ async function handleMessage(update) {
     if (decision.action === "support") {
       // Everything below reads and saves the artist's order, so help joins their work instead of starting the owner's.
       userId = decision.target.id;
+      ownerPays = isRetouch(msg.text || msg.caption || "");
+      if (!ownerPays) chargeUsageTo(userId);
       if (decision.confirmed) await sendMessage(chatId, `Perfecto, seguimos con el encargo de ${decision.target.name}. Te tengo en modo ayuda durante 2 horas; /soporte off para salir.`);
     }
   }
@@ -383,7 +386,7 @@ async function handleMessage(update) {
     const community = isGroup ? await groupConversationContext(chatId).catch(() => []) : [];
     record("user", text);
     await memoryRequest(chatId, userId, "POST", state);
-    if (await userLimitReached(userId)) { await sendMessage(chatId, USER_LIMIT_MESSAGE); return; }
+    if (!ownerPays && await userLimitReached(userId)) { await sendMessage(chatId, USER_LIMIT_MESSAGE); return; }
     const instagramTask = /^(?:\/ig[-_]|analiza mi instagram|audita mi instagram)/i.test(msg.text);
     const reply = instagramTask ? await (async () => {
       if (isGroup) return { text: "Seguimos con tu cuenta por privado: https://t.me/SocialBananaBot?start=instagram" };
@@ -393,7 +396,7 @@ async function handleMessage(update) {
     })() : await chat(text, context, imageUrl, state.history, {
       mediaFiles: { generated: state.generatedFileId, reference: state.reference?.fileId }, userId, requestId: String(update.update_id || msg.message_id || ""), directPrompt, photoStyle, profile: state.profile, isOwner: userId === OWNER_ID, isGroup, community,
       beforeImage: async () => {
-        try { imageReservation = await reserveImage(userId, username); return null; }
+        try { if (!ownerPays) imageReservation = await reserveImage(userId, username); return null; }
         catch (error) { return error.message; }
       },
       prepareImage: async prompt => {
@@ -447,7 +450,7 @@ async function handleMessage(update) {
       }
     }
     else await sendMessage(chatId, reply.text);
-    if (userId !== OWNER_ID) await incrementUsage(userId).catch(() => console.error("[usage] increment failed"));
+    if (userId !== OWNER_ID && !ownerPays) await incrementUsage(userId).catch(() => console.error("[usage] increment failed"));
     console.log(`[bot] reply delivered chat=${chatId} image=${Boolean(reply.image)}`);
   } catch (error) {
     if (!imageDelivered) throw error;
