@@ -74,7 +74,7 @@ async function handleMessage(update) {
     }
     if (newcomers.length) {
       const single = newcomers.length === 1;
-      await sendMessage(msg.chat.id, `¡${newcomers.join(", ")}, ${single ? "qué bien tenerte por aquí" : "bienvenidos"}! Soy Banana, la IA manager de esta comunidad. ¿Qué tipo de contenido ${single ? "creas o te gustaría crear" : "creáis o queréis crear"}?\n\nPodemos hablar aquí o por privado: https://t.me/SocialBananaBot?start=welcome\nIré recordando lo que ${single ? "me cuentes" : "me contéis"} para ayudar mejor; podéis consultar o borrar lo guardado.`);
+      await sendMessage(msg.chat.id, `¡${newcomers.join(", ")}, ${single ? "qué bien tenerte por aquí" : "bienvenidos"}! Soy Emil, la IA manager de esta comunidad. ¿Qué tipo de contenido ${single ? "creas o te gustaría crear" : "creáis o queréis crear"}?\n\nPodemos hablar aquí o por privado: https://t.me/SocialBananaBot?start=welcome\nIré recordando lo que ${single ? "me cuentes" : "me contéis"} para ayudar mejor; podéis consultar o borrar lo guardado.`);
     }
     return;
   }
@@ -182,7 +182,7 @@ async function handleMessage(update) {
     try {
       if (cmd.startsWith("/desconectarinstagram")) {
         await disableConnection(userId);
-        await sendMessage(chatId, "He desactivado el acceso de Banana a tu Instagram. Esto no borra publicaciones ni cancela contenido programado. Puedes revocar también PostZen desde las aplicaciones autorizadas de Instagram.");
+        await sendMessage(chatId, "He desactivado el acceso de Emil a tu Instagram. Esto no borra publicaciones ni cancela contenido programado. Puedes revocar también PostZen desde las aplicaciones autorizadas de Instagram.");
       } else if (/verificar|instagram_check/.test(cmd)) {
         const linked = await verifyConnection(userId);
         await sendMessage(chatId, `Cuenta conectada: ${linked.username}. Ya puedes pedirme que analice tu Instagram o prepare borradores para tu próximo lanzamiento. No publicaré por mi cuenta.`);
@@ -514,7 +514,7 @@ function isBotTriggered(msg) {
   const text = (msg.text || "").toLowerCase();
   if (text.startsWith("/")) return true;
   if (text.includes("@socialbananabot")) return true;
-  if (text.includes("banana")) return true;
+  if (text.includes("banana") || /\bemil\b/.test(text)) return true;
   if (msg.reply_to_message?.from?.is_bot) return true;
   return false;
 }

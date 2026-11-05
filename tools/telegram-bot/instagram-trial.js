@@ -4,9 +4,9 @@ import { sendMessage } from './telegram.js';
 const OWNER = Number(process.env.TELEGRAM_OWNER_ID || 1661812916);
 const GROUP_CHAT = process.env.TELEGRAM_GROUP_CHAT_ID || '-1004319265595';
 const PHAEDRA_ACCOUNT = 'j9728s2139w1qrqdte0fynrjf98hbg4j';
-export const TRIAL_MESSAGE = '🍌 Hay 1 hueco gratis para conectar tu Instagram a Banana durante 3 días. Es para el primero que lo reclame.\n\nEscríbeme /reclamar por privado: https://t.me/SocialBananaBot?start=reclamar\n\nNecesitas una cuenta Creator o Business y tu cuenta de Social Banana vinculada con /cuenta. Cuando termine, se desconecta sola y sin ningún cobro.';
+export const TRIAL_MESSAGE = '🍌 Hay 1 hueco gratis para conectar tu Instagram a Emil durante 3 días. Es para el primero que lo reclame.\n\nEscríbeme /reclamar por privado: https://t.me/SocialBananaBot?start=reclamar\n\nNecesitas una cuenta Creator o Business y tu cuenta de Social Banana vinculada con /cuenta. Cuando termine, se desconecta sola y sin ningún cobro.';
 const REPLIES = {
-  claimed: '¡Es tuyo! Tienes 3 días desde ahora para usar Banana con tu Instagram.\n\nEscribe /instagram para conectarlo. Podré analizar tu cuenta y preparar borradores, pero no publicaré ni enviaré mensajes. Al terminar, se desconectará sola y sin cobros.',
+  claimed: '¡Es tuyo! Tienes 3 días desde ahora para usar Emil con tu Instagram.\n\nEscribe /instagram para conectarlo. Podré analizar tu cuenta y preparar borradores, pero no publicaré ni enviaré mensajes. Al terminar, se desconectará sola y sin cobros.',
   yours: 'Este hueco ya es tuyo. Usa /instagram para conectar o revisar tu cuenta.',
   taken: 'Este hueco ya lo ha reclamado otra persona. Si se libera otro, lo avisaré en el grupo.',
   not_linked: 'Tu cuenta aún no está vinculada. Escribe /cuenta y pega el código en la web. Cuando termines te avisaré aquí, y entonces vuelve a escribir /reclamar. Hasta ese momento el hueco no queda reservado.',

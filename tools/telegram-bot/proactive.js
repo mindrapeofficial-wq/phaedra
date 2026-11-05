@@ -35,7 +35,7 @@ async function runSupervisorOrders(state) {
   const orders = await database(`sb_supervisor_orders?applied_at=is.null&expires_at=gt.${new Date().toISOString()}&select=*&order=created_at.asc&limit=10`);
   for (const order of orders || []) {
     await database(`sb_supervisor_orders?id=eq.${Number(order.id)}`, 'PATCH', { applied_at: new Date().toISOString() }, 'return=minimal');
-    if (order.action === 'notify_owner') await sendMessage(OWNER, `Supervisor de Banana: ${String(order.note || 'revisa el bot').slice(0, 300)}`).catch(() => console.error('[supervisor] owner notice failed'));
+    if (order.action === 'notify_owner') await sendMessage(OWNER, `Supervisor de Emil: ${String(order.note || 'revisa el bot').slice(0, 300)}`).catch(() => console.error('[supervisor] owner notice failed'));
     else applySupervisorOrder(state, order);
     console.log('[supervisor] order applied', order.action);
   }
@@ -99,12 +99,12 @@ async function sendLoyaltyJoke(state) {
   if (state.loyaltyJokeSent) return;
   state.loyaltyJokeSent = true;
   await memoryRequest(GROUP_CHAT, 0, 'POST', state);
-  const joke = 'Ey, Loyal-T, soy Banana. Te cuento un chiste: ¿qué le dice un bombo a su productor? Deja de comprimirme, que me estás quitando la vida. ¡Un abrazo!';
+  const joke = 'Ey, Loyal-T, soy Emil. Te cuento un chiste: ¿qué le dice un bombo a su productor? Deja de comprimirme, que me estás quitando la vida. ¡Un abrazo!';
   const spoke = await sendVoiceReply(8632206647, joke, { disclose: true }).catch(() => false);
   if (!spoke) await sendMessage(GROUP_CHAT, joke);
   console.log('[joke] delivered', { voice: spoke });
 }
-const FEATURE_NEWS = "🍌 Novedades en Banana:\n\n🎙️ Mándame una nota de voz y te respondo con otra.\n📸 Súbeme varias fotos a la vez y dime qué hacemos: guardarlas, usarlas en redes o trabajar una portada. Las guardadas las ves con /fotos.\n🚀 Dime el título y la fecha de tu lanzamiento y te preparo un plan con tareas y recordatorios: /plan.\n🎨 Imágenes con un modelo más nuevo.\n🎁 Invita con /referir: por cada persona que pague una suscripción, 1 mes gratis cuando los pagos estén activos.\n🎧 Muy pronto, bases musicales para suscriptores.\n\nTodo lo que puedo hacer está en /help.";
+const FEATURE_NEWS = "🍌 Novedades en Emil:\n\n🎙️ Mándame una nota de voz y te respondo con otra.\n📸 Súbeme varias fotos a la vez y dime qué hacemos: guardarlas, usarlas en redes o trabajar una portada. Las guardadas las ves con /fotos.\n🚀 Dime el título y la fecha de tu lanzamiento y te preparo un plan con tareas y recordatorios: /plan.\n🎨 Imágenes con un modelo más nuevo.\n🎁 Invita con /referir: por cada persona que pague una suscripción, 1 mes gratis cuando los pagos estén activos.\n🎧 Muy pronto, bases musicales para suscriptores.\n\nTodo lo que puedo hacer está en /help.";
 async function announceFeatures(state) {
   if (state.featureNewsSent) return;
   state.featureNewsSent = true;
@@ -130,7 +130,7 @@ export async function runProactiveTick() {
     const timing = communityTiming(state, community);
     if (await announcePromo(state)) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (state.productAnnouncement !== ANNOUNCEMENT) {
-      const message = 'Os cuento lo que estamos preparando para Social Banana 🍌: una suscripción de 10 €/mes que incluirá conectar un Instagram y un mes de acceso a la extensión. Los cobros reales aún no están activados; cuando estén listos os explicaré cómo hacerlo.\n\nMientras tanto podemos trabajar en vuestra identidad y vuestras portadas: cada cuenta gratuita tendrá una imagen PRO para probar. Si ya tenéis una canción en marcha, contadme qué queréis transmitir y os ayudo a aterrizar la idea. También puedo guiaros para instalar Banana.';
+      const message = 'Os cuento lo que estamos preparando para Social Banana 🍌: una suscripción de 10 €/mes que incluirá conectar un Instagram y un mes de acceso a la extensión. Los cobros reales aún no están activados; cuando estén listos os explicaré cómo hacerlo.\n\nMientras tanto podemos trabajar en vuestra identidad y vuestras portadas: cada cuenta gratuita tendrá una imagen PRO para probar. Si ya tenéis una canción en marcha, contadme qué queréis transmitir y os ayudo a aterrizar la idea. También puedo guiaros para instalar Emil.';
       await sendMessage(GROUP_CHAT, message);
       state.productAnnouncement = ANNOUNCEMENT;
       state.lastSent = Date.now(); state.day = timing.day; state.sentToday = timing.sentToday + 1;
@@ -142,7 +142,7 @@ export async function runProactiveTick() {
     state.lastAttempt = Date.now(); state.lastContextAt = timing.latest; state.nudge = false;
     await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     const result = await askClaude(
-      'Write one natural Spanish message as Banana, the AI artist manager who leads this community. Take the initiative like a demanding, caring manager: follow up on a release, deadline or goal a member stated, propose one concrete next action with a date, connect two members whose goals fit, or start a short practical challenge about releases, identity, covers or content. If the goal of a member is unknown, ask ONE question. Vary the format and address different members over time; do not keep singling out the same person. Never claim to be human. Use their supplied name where helpful. Be a participant, not a service menu. If a concrete need fits the product, explain that benefit and offer one easy next step; do not repeatedly pitch subscriptions. Respect refusals. Never invent metrics, research, completed actions, identity, testimony or capabilities. Do not disclose private profiles, DMs or individual billing. Avoid repeating the previous suggestions. If the conversation data is empty because the group has been quiet, do not stay silent: open with one short practical challenge or question for artists about releases, identity, covers or content, without naming anyone or implying that anyone said something. Otherwise return exactly SKIP if there is no useful new contribution. Maximum 70 words.',
+      'Write one natural Spanish message as Emil, the AI artist manager who leads this community. Take the initiative like a demanding, caring manager: follow up on a release, deadline or goal a member stated, propose one concrete next action with a date, connect two members whose goals fit, or start a short practical challenge about releases, identity, covers or content. If the goal of a member is unknown, ask ONE question. Vary the format and address different members over time; do not keep singling out the same person. Never claim to be human. Use their supplied name where helpful. Be a participant, not a service menu. If a concrete need fits the product, explain that benefit and offer one easy next step; do not repeatedly pitch subscriptions. Respect refusals. Never invent metrics, research, completed actions, identity, testimony or capabilities. Do not disclose private profiles, DMs or individual billing. Avoid repeating the previous suggestions. If the conversation data is empty because the group has been quiet, do not stay silent: open with one short practical challenge or question for artists about releases, identity, covers or content, without naming anyone or implying that anyone said something. Otherwise return exactly SKIP if there is no useful new contribution. Maximum 70 words.',
       JSON.stringify({ product: PRODUCT_CONTEXT, community, previousSuggestions: state.suggestions || [] })
     );
     const message = result.response?.trim();

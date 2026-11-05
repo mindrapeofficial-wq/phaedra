@@ -97,7 +97,7 @@ export async function sendAudio(chatId, audio, caption) {
   form.set("chat_id", String(chatId));
   form.set("audio", new Blob([audio], { type: "audio/mpeg" }), "banana-base.mp3");
   form.set("caption", caption || "");
-  form.set("title", "Base de Banana");
+  form.set("title", "Base de Emil");
   const res = await timedFetch(`${API}/sendAudio`, { method: "POST", body: form, signal: AbortSignal.timeout(120_000) });
   if (!res.ok) throw new Error(`Telegram sendAudio failed: ${res.status}`);
   return res;
