@@ -8,6 +8,8 @@ Pídelo con tus palabras, por ejemplo: «Hazme una portada oscura para mi single
 • Mándame una foto para usarla de referencia. Puedo mantener tu cara si me lo pides.
 • También quito fondos y cambio luz o colores.
 • /imagen seguido de tu idea va directo al encargo.
+
+🎧 Bases: pídeme una PRO (te pregunto todos los detalles, hasta 3 minutos) o Lite (rápida e instrumental, hasta 1 minuto). Gratis: 1 PRO y 5 Lite en total. Suscripción: 5 PRO y 25 Lite al mes.
 • Mándame varias fotos y dime si las guardo; /fotos te las enseña.
 • Si el administrador te da acceso a una ficha compartida, la verás con /fichas.
 

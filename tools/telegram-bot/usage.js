@@ -12,11 +12,11 @@ const GROUP_GAP_MS = 60 * 60_000;
 // The speech rate is per character, estimated from OpenAI's published per-minute speech cost.
 const PRICES = { 'gpt-4o-mini-tts': [17, 0], 'gpt-6.1-terra': [1, 5], 'gpt-6-luna': [0.1, 0.5], 'gpt-4.1': [2, 8], 'claude-opus-5-5': [4, 20] };
 export const ACTIONS = {
-  chat: 'escribió al bot', image: 'generó una imagen PRO', music: 'generó una base musical', voice: 'envió una nota de voz', release_plan: 'creó un plan de lanzamiento',
+  chat: 'escribió al bot', image: 'generó una imagen PRO', music: 'generó una base musical', music_pro: 'generó una base PRO', music_lite: 'generó una base Lite', voice: 'envió una nota de voz', release_plan: 'creó un plan de lanzamiento',
   instagram: 'usó las herramientas de Instagram', instagram_analysis: 'pidió un análisis de Instagram', claim: 'usó /reclamar', referral: 'usó /referir',
   account: 'usó /cuenta', plan_view: 'consultó su plan', task_done: 'marcó una tarea', reminders: 'cambió sus recordatorios',
 };
-const GROUP_ACTIONS = { image: 'crear una imagen PRO', music: 'crear una base musical', release_plan: 'preparar un plan de lanzamiento', instagram_analysis: 'analizar su Instagram' };
+const GROUP_ACTIONS = { image: 'crear una imagen PRO', music_pro: 'crear una base PRO', music_lite: 'crear una base Lite', release_plan: 'preparar un plan de lanzamiento', instagram_analysis: 'analizar su Instagram' };
 export const PRIVACY_NOTICE = 'El administrador recibe avisos de las acciones que realizas aquí, sin su contenido, para operar el servicio y controlar costes. En el grupo pueden aparecer avisos anónimos del tipo «alguien usó…».';
 
 const storage = new AsyncLocalStorage();
@@ -88,7 +88,7 @@ export async function activityReport() {
 export async function spendReport() {
   const [day, week] = await Promise.all([fetchRows(24), fetchRows(168)]);
   const a = summarize(day), b = summarize(week);
-  const line = s => `Texto estimado: ${s.cost.toFixed(2)} $ (${s.input + s.output} tokens)\nImágenes PRO: ${s.images}, sin precio incluido\nBases musicales: ${s.actions.get('music') || 0}, sin precio incluido`;
+  const line = s => `Texto estimado: ${s.cost.toFixed(2)} $ (${s.input + s.output} tokens)\nImágenes PRO: ${s.images}, sin precio incluido\nBases PRO: ${(s.actions.get('music') || 0) + (s.actions.get('music_pro') || 0)} y Lite: ${s.actions.get('music_lite') || 0}, sin precio incluido`;
   return `Gasto estimado\n\n24 horas:\n${line(a)}\n\n7 días:\n${line(b)}\n\nAviso a partir de ${BUDGET_USD} $ de texto o ${IMAGE_ALERT} imágenes al día. No bloquea a nadie. Las notas de voz recibidas no están incluidas. La factura real está en los paneles de OpenAI y Anthropic.`;
 }
 
