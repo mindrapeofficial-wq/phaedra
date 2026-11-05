@@ -11,6 +11,8 @@ Pídelo con tus palabras, por ejemplo: «Hazme una portada oscura para mi single
 
 🎚️ Separar pistas: mándame un audio por privado con /separar. Gratis: 1 en total. Suscripción: 10 al mes.
 
+💬 Engagement: pégame una publicación y te propongo 3 comentarios para que publiques el que quieras. También preparo tu ronda diaria con las cuentas que me des.
+
 🎧 Bases: pídeme una PRO (te pregunto todos los detalles, hasta 3 minutos) o Lite (rápida e instrumental, hasta 1 minuto). Gratis: 1 PRO y 5 Lite en total. Suscripción: 5 PRO y 25 Lite al mes.
 • Mándame varias fotos y dime si las guardo; /fotos te las enseña.
 • Si el administrador te da acceso a una ficha compartida, la verás con /fichas.
