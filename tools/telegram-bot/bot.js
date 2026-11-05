@@ -23,14 +23,13 @@ import { congratulateInstagramConnection } from "./instagram-congrats.js";
 import { sendVoiceReply } from "./speech.js";
 import { mentionPeople } from "./mentions.js";
 import { voiceDenial } from "./voice-limit.js";
-import { consumptionBlocked } from "./consumption-limit.js";
+import { consumptionGate } from "./consumption-limit.js";
 import { wantsLite, imageLiteDenial } from "./image-lite.js";
 import { audioFile, wantsStems, handleStems } from "./stems.js";
 import { isPhotoOnly, addUpload, saveUploads, scheduleUploadQuestion, wantsNewImage, answersFaceQuestion } from "./photo-uploads.js";
 import { withUsageContext, notifyAction, chargeUsageTo, userLimitReached, USER_LIMIT_MESSAGE, activityReport, spendReport, PRIVACY_NOTICE } from "./usage.js";
 import { releasePlanSummary, completeReleaseTask, setReleaseReminders } from "./releases.js";
 
-const CONSUMPTION_LIMIT_MESSAGE = "Has llegado al 100% de tu límite de consumo, así que no puedo atender esta petición. Siguen disponibles /plan, /hecho y /referir.";
 const OWNER_ID = Number(process.env.TELEGRAM_OWNER_ID) || 1661812916;
 const GROUP_CHAT = String(process.env.TELEGRAM_GROUP_CHAT_ID || "-1004319265595");
 
@@ -91,8 +90,8 @@ async function handleMessage(update) {
     if (msg.chat.type !== "private" && String(msg.chat.id) !== GROUP_CHAT && !isBotTriggered(msg)) return;
     const access = await checkAccess(msg.from.id, msg.from.username);
     if (!access.allowed) { await sendMessage(msg.chat.id, access.reason); return; }
-    const voiceTier = (await getUser(msg.from.id, msg.from.username)).tier;
-    if (await consumptionBlocked(msg.from.id, voiceTier)) { await sendMessage(msg.chat.id, CONSUMPTION_LIMIT_MESSAGE); return; }
+    const voiceStop = await consumptionGate(msg.from.id);
+    if (voiceStop) { await sendMessage(msg.chat.id, voiceStop); return; }
     try { msg.text = await transcribeVoice(msg.voice); }
     catch (error) { await sendMessage(msg.chat.id, error.message); return; }
   }
@@ -103,7 +102,8 @@ async function handleMessage(update) {
     const access = await checkAccess(msg.from.id, msg.from.username);
     if (!access.allowed) { await sendMessage(msg.chat.id, access.reason); return; }
     if (!stemsText) { await sendMessage(msg.chat.id, "Tengo tu audio. Si quieres separar sus pistas, responde a ese audio con /separar."); return; }
-    if (await consumptionBlocked(msg.from.id, (await getUser(msg.from.id, msg.from.username)).tier)) { await sendMessage(msg.chat.id, CONSUMPTION_LIMIT_MESSAGE); return; }
+    const stemsStop = await consumptionGate(msg.from.id);
+    if (stemsStop) { await sendMessage(msg.chat.id, stemsStop); return; }
     await handleStems({ chatId: msg.chat.id, userId: msg.from.id, isGroup: msg.chat.type !== "private", file: stemsFile });
     return;
   }
@@ -492,7 +492,8 @@ async function handleMessage(update) {
     record("user", text);
     await memoryRequest(chatId, userId, "POST", state);
     if (!ownerPays && await userLimitReached(userId)) { await sendMessage(chatId, USER_LIMIT_MESSAGE); return; }
-    if (!ownerPays && await consumptionBlocked(userId, (await getUser(userId, username)).tier)) { await sendMessage(chatId, CONSUMPTION_LIMIT_MESSAGE); return; }
+    const consumptionStop = ownerPays ? null : await consumptionGate(userId);
+    if (consumptionStop) { await sendMessage(chatId, consumptionStop); return; }
     const instagramTask = /^(?:\/ig[-_]|analiza mi instagram|audita mi instagram)/i.test(msg.text);
     const reply = instagramTask ? await (async () => {
       if (isGroup) return { text: "Seguimos con tu cuenta por privado: https://t.me/SocialBananaBot?start=instagram" };

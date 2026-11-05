@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 process.env.SUPABASE_SERVICE_KEY = 'test-key';
 process.env.TELEGRAM_BOT_TOKEN = 'test-token';
 process.env.TELEGRAM_OWNER_ID = '1';
-const { percentUsed, levelFor, noticeFor, consumptionLimit, notifyConsumption, consumptionBlocked } = await import('./consumption-limit.js');
+const { percentUsed, levelFor, noticeFor, consumptionLimit, notifyConsumption, consumptionGate } = await import('./consumption-limit.js');
 const now = Date.parse('2026-11-20T12:00:00Z');
 
 function mock(rows, state = {}) {
@@ -56,8 +56,21 @@ test('free spending is cumulative, Pro restarts each month', async () => {
 test('100% blocks and warns, the owner is exempt', async () => {
   const full = mock(images(4));
   try {
-    assert.equal(await consumptionBlocked(7, 'free', now), true);
+    assert.match(await consumptionGate(7, now), /100%/);
     assert.deepEqual(full.log.sent, [noticeFor(100)]);
-    assert.equal(await consumptionBlocked(1, 'free', now), false);
+    assert.equal(await consumptionGate(1, now), null);
   } finally { full.restore(); }
+});
+
+test('an unreadable limit stops the request', async () => {
+  const native = fetch, error = console.error;
+  globalThis.fetch = async () => new Response('', { status: 500 });
+  console.error = () => {};
+  try { assert.match(await consumptionGate(7, now), /no puedo comprobar/); }
+  finally { globalThis.fetch = native; console.error = error; }
+});
+
+test('a promotion does not raise the limit: without a payment 1 € applies', async () => {
+  const free = mock(images(4));
+  try { assert.match(await consumptionGate(7, now), /100%/); } finally { free.restore(); }
 });

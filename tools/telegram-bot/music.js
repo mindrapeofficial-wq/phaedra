@@ -1,6 +1,7 @@
 import { database } from './database.js';
 import { activeSubscription } from './entitlements.js';
 import { notifyAction } from './usage.js';
+import { runExclusive } from './paid-tier.js';
 
 const OWNER = Number(process.env.TELEGRAM_OWNER_ID || 1661812916);
 export const MUSIC_MODEL = 'music_v2_5';
@@ -58,6 +59,10 @@ export async function generateMusic({ userId, quality, brief = {} }) {
   const missing = missingBrief(brief, quality);
   if (missing.length) return { needsBrief: missing };
   if (quality === 'pro' && brief.confirmed !== true) return { needsConfirmation: true, summary: musicPrompt(brief, quality) };
+  return runExclusive(userId, () => renderMusic(quality, brief), () => ({ denied: 'Ya tengo un encargo de audio tuyo en marcha. Cuando termine, pídeme el siguiente.' }));
+}
+
+async function renderMusic(quality, brief) {
   const response = await fetch('https://api.elevenlabs.io/v1/music?output_format=mp3_44100_128', {
     method: 'POST', signal: AbortSignal.timeout(240_000),
     headers: { 'xi-api-key': process.env.ELEVENLABS_API_KEY, 'Content-Type': 'application/json' },

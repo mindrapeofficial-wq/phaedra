@@ -2,6 +2,7 @@ import { database } from './database.js';
 import { activeSubscription } from './entitlements.js';
 import { notifyAction } from './usage.js';
 import { getFileUrl, sendDocument, sendMessage } from './telegram.js';
+import { runExclusive } from './paid-tier.js';
 
 const OWNER = Number(process.env.TELEGRAM_OWNER_ID || 1661812916);
 const MAX_BYTES = 20 * 1024 * 1024; // Telegram bots cannot download larger files.
@@ -48,6 +49,10 @@ export async function handleStems({ chatId, userId, isGroup, file }) {
   if (isGroup) return sendMessage(chatId, 'La separación de pistas se hace por privado: https://t.me/SocialBananaBot?start=welcome');
   if ((file.file_size || 0) > MAX_BYTES) return sendMessage(chatId, 'Ese archivo pasa de 20 MB, el máximo que puedo recibir. Mándamelo en MP3.');
   if ((file.duration || 0) > MAX_SECONDS) return sendMessage(chatId, 'Puedo separar audios de hasta 6 minutos. Mándame una versión más corta.');
+  return runExclusive(userId, () => processStems(chatId, userId, file), () => sendMessage(chatId, 'Ya tengo un encargo de audio tuyo en marcha. Cuando termine, pídeme el siguiente.'));
+}
+
+async function processStems(chatId, userId, file) {
   const denied = await denial(userId);
   if (denied) return sendMessage(chatId, denied);
   await sendMessage(chatId, 'Me pongo a separar las pistas. Puede tardar unos minutos.');
