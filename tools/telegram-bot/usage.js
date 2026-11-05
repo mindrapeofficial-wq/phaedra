@@ -23,7 +23,9 @@ const storage = new AsyncLocalStorage();
 const chatBursts = new Map();
 let lastGroupNotice = 0, timer;
 
-export function withUsageContext(context, task) { return storage.run(context, task); }
+export function withUsageContext(context, task) { return storage.run({ ...context, actorId: context.userId }, task); }
+// Who actually wrote the message, even when the owner's support work is charged to an artist.
+export const isOwnerRequest = () => Number(storage.getStore()?.actorId) === OWNER;
 export function chargeUsageTo(userId) { const context = storage.getStore(); if (context) context.userId = userId; }
 const save = row => database('sb_usage_events', 'POST', row, 'return=minimal').catch(() => console.error('[usage] event not saved'));
 export const costOf = (model, input, output) => {

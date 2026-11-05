@@ -505,7 +505,7 @@ async function callOpenAI(messages, allowedTools = TOOLS, requiredTool = null) {
       tool_choice: requiredTool ? { type: "function", function: { name: requiredTool } } : "auto",
       max_completion_tokens: 800,
       temperature: 0.7,
-  }, { signal: AbortSignal.timeout(45_000) });
+  }, { signal: AbortSignal.timeout(120_000) });
   if (!res.ok) {
     const err = await res.text();
     console.error("OpenAI error:", res.status);

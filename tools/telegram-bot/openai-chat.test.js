@@ -1,37 +1,38 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { openAiChat, CHAT_MODEL } from './openai-chat.js';
+process.env.SUPABASE_SERVICE_KEY = 'test-key';
+process.env.TELEGRAM_BOT_TOKEN = 'test-token';
+process.env.TELEGRAM_OWNER_ID = '1';
+const { openAiChat } = await import('./openai-chat.js');
+const { withUsageContext, chargeUsageTo } = await import('./usage.js');
 
-function mock(statuses) {
+function mock(statuses = []) {
   const native = fetch, bodies = [];
-  globalThis.fetch = async (_, options) => { bodies.push(JSON.parse(options.body)); return new Response('{}', { status: statuses[bodies.length - 1] }); };
+  globalThis.fetch = async (url, options) => { bodies.push(JSON.parse(options.body)); return new Response('{}', { status: statuses.shift() || 200 }); };
   return { bodies, restore: () => { globalThis.fetch = native; } };
 }
+const quiet = async task => { const log = console.log, error = console.error; console.log = console.error = () => {}; try { return await task(); } finally { console.log = log; console.error = error; } };
 
-test('the new model is sent with reasoning off so tools keep working', async () => {
-  const { bodies, restore } = mock([200]);
+test('only the owner gets reasoning, also while helping an artist', async () => {
+  const { bodies, restore } = mock();
   try {
-    const { model } = await openAiChat({ messages: [] });
-    assert.equal(model, CHAT_MODEL);
-    assert.equal(bodies[0].reasoning_effort, 'none');
+    await quiet(() => withUsageContext({ userId: 1 }, () => openAiChat({ messages: [], max_completion_tokens: 800 })));
+    await quiet(() => withUsageContext({ userId: 1 }, () => { chargeUsageTo(7); return openAiChat({ messages: [] }); }));
+    await quiet(() => withUsageContext({ userId: 7 }, () => openAiChat({ messages: [], max_completion_tokens: 800 })));
+    assert.equal(bodies[0].reasoning_effort, 'medium');
+    assert.equal(bodies[0].max_completion_tokens, 4000);
+    assert.equal(bodies[1].reasoning_effort, 'medium');
+    assert.equal(bodies[2].reasoning_effort, 'none');
+    assert.equal(bodies[2].max_completion_tokens, 800);
   } finally { restore(); }
 });
 
-test('a rejected model falls back without the unsupported parameter', async () => {
-  const { bodies, restore } = mock([404, 200]);
-  const error = console.error; console.error = () => {};
+test('if the API refuses reasoning, the request repeats without it', async () => {
+  const { bodies, restore } = mock([400]);
   try {
-    const { model, response } = await openAiChat({ messages: [] });
-    assert.equal(model, 'gpt-4.1');
-    assert.equal(response.status, 200);
-    assert.equal('reasoning_effort' in bodies[1], false);
-  } finally { globalThis.console.error = error; restore(); }
-});
-
-test('rate limits and outages are not retried on another model', async () => {
-  const { bodies, restore } = mock([429]);
-  try {
-    assert.equal((await openAiChat({ messages: [] })).response.status, 429);
-    assert.equal(bodies.length, 1);
+    const { model } = await quiet(() => withUsageContext({ userId: 1 }, () => openAiChat({ messages: [] })));
+    assert.equal(bodies.length, 2);
+    assert.equal(bodies[1].reasoning_effort, 'none');
+    assert.equal(model, 'gpt-6.1-terra');
   } finally { restore(); }
 });
