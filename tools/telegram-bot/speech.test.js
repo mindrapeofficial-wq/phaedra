@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 process.env.SUPABASE_SERVICE_KEY = 'test-key';
 process.env.TELEGRAM_BOT_TOKEN = 'test-token';
 process.env.OPENAI_API_KEY = 'test-key';
+delete process.env.ELEVENLABS_API_KEY;
 const { sendVoiceReply, spokenText } = await import('./speech.js');
 
 function mock({ speechStatus = 200 } = {}) {
