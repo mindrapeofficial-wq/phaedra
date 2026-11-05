@@ -16,6 +16,11 @@ export function audioFile(msg) {
   if (isAudio(msg.document)) return msg.document;
   return msg.reply_to_message?.audio || (isAudio(msg.reply_to_message?.document) ? msg.reply_to_message.document : null);
 }
+// The bot cannot listen to music, so a track only reaches the conversation as its details.
+export function audioNote(file) {
+  const name = [file.title || file.file_name, file.performer].filter(Boolean).join(' de ') || 'sin título';
+  return `[Audio adjunto: «${name}», ${file.duration || '?'} s. No puedes escucharlo. Si es una referencia para una base, dilo con claridad y pide que describa qué le gusta de cómo suena. Nunca digas que no lo ves.]`;
+}
 export const wantsStems = text => REQUEST.test(String(text || ''));
 
 async function denial(userId) {

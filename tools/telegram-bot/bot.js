@@ -25,7 +25,7 @@ import { mentionPeople } from "./mentions.js";
 import { voiceDenial } from "./voice-limit.js";
 import { consumptionGate } from "./consumption-limit.js";
 import { wantsLite, imageLiteDenial } from "./image-lite.js";
-import { audioFile, wantsStems, handleStems } from "./stems.js";
+import { audioFile, audioNote, wantsStems, handleStems } from "./stems.js";
 import { isPhotoOnly, addUpload, saveUploads, scheduleUploadQuestion, wantsNewImage, answersFaceQuestion } from "./photo-uploads.js";
 import { withUsageContext, notifyAction, chargeUsageTo, userLimitReached, USER_LIMIT_MESSAGE, activityReport, spendReport, PRIVACY_NOTICE } from "./usage.js";
 import { releasePlanSummary, completeReleaseTask, setReleaseReminders } from "./releases.js";
@@ -98,15 +98,15 @@ async function handleMessage(update) {
   const stemsFile = audioFile(msg);
   const stemsText = msg.text || msg.caption || "";
   const inScope = msg.chat.type === "private" || String(msg.chat.id) === GROUP_CHAT;
-  if (stemsFile && inScope && (wantsStems(stemsText) || (msg.chat.type === "private" && !stemsText && !msg.reply_to_message))) {
+  if (stemsFile && inScope && wantsStems(stemsText)) {
     const access = await checkAccess(msg.from.id, msg.from.username);
     if (!access.allowed) { await sendMessage(msg.chat.id, access.reason); return; }
-    if (!stemsText) { await sendMessage(msg.chat.id, "Tengo tu audio. Si quieres separar sus pistas, responde a ese audio con /separar."); return; }
     const stemsStop = await consumptionGate(msg.from.id);
     if (stemsStop) { await sendMessage(msg.chat.id, stemsStop); return; }
     await handleStems({ chatId: msg.chat.id, userId: msg.from.id, isGroup: msg.chat.type !== "private", file: stemsFile });
     return;
   }
+  if (stemsFile && inScope) msg.text = `${stemsText}\n${audioNote(stemsFile)}`.trim();
   const imageDocument = /^(?:image\/(?:png|jpeg|webp))$/.test(msg.document?.mime_type || '') || /\.(?:png|jpe?g|webp)$/i.test(msg.document?.file_name || '');
   if (!msg.text && !msg.caption && !msg.photo?.length && !imageDocument) return;
   if (!msg.text) msg.text = msg.caption || "Usa esta foto como referencia para mi próxima petición.";

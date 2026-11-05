@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 process.env.SUPABASE_SERVICE_KEY = 'test-key';
 process.env.TELEGRAM_BOT_TOKEN = 'test-token';
 process.env.TELEGRAM_OWNER_ID = '1';
-const { handleStems, audioFile, wantsStems, stemsAllowance } = await import('./stems.js');
+const { handleStems, audioFile, audioNote, wantsStems, stemsAllowance } = await import('./stems.js');
 
 function mock({ used = 0, subs = [], status = 200 } = {}) {
   const native = fetch, log = { eleven: 0, messages: [], documents: 0 };
@@ -57,4 +57,10 @@ test('a provider failure is reported honestly', async () => {
   const error = console.error; console.error = () => {};
   try { await run(); assert.equal(log.documents, 0); assert.match(log.messages.at(-1), /no te lo he descontado/); }
   finally { console.error = error; restore(); }
+});
+
+test('a reference track reaches the conversation with its details and without pretending to hear it', () => {
+  const note = audioNote({ title: 'Memphis Nightmares', performer: 'nyob3', duration: 164 });
+  assert.match(note, /Memphis Nightmares/);
+  assert.match(note, /No puedes escucharlo/);
 });

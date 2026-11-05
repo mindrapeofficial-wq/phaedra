@@ -63,6 +63,13 @@ export async function getFileUrl(fileId) {
   return `https://api.telegram.org/file/bot${TOKEN}/${filePath}`;
 }
 
+export async function setBotDescription(description, shortDescription) {
+  for (const [method, body] of [['setMyDescription', { description }], ['setMyShortDescription', { short_description: shortDescription }]]) {
+    const res = await timedFetch(`${API}/${method}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!res.ok) throw new Error(`Telegram ${method} failed: ${res.status}`);
+  }
+}
+
 export async function sendDocument(chatId, bytes, filename, caption) {
   const form = new FormData();
   form.set('chat_id', String(chatId));

@@ -6,6 +6,7 @@ import { database } from './database.js';
 import { runUsageTick } from './usage.js';
 import { uploadQuestion } from './photo-uploads.js';
 import { mentionPeople } from './mentions.js';
+import { setBotDescription } from './telegram.js';
 import { runConsumptionNotices } from './consumption-limit.js';
 import { sendConsumptionReport } from './consumption-report.js';
 import { sendVoiceReply } from './speech.js';
@@ -160,6 +161,15 @@ async function correctVoiceLimits(state) {
   await memoryRequest(GROUP_CHAT, 0, 'POST', state);
   console.log('[news] voice correction delivered');
 }
+export const BOT_DESCRIPTION = "🍌 Social Banana: tu IA manager para artistas. Portadas, bases, planes de lanzamiento e Instagram.\n\nGratis: 1 imagen PRO y 5 Lite, 1 base PRO y 5 Lite y 1 separación de pistas en total; 1 respuesta de voz al día.\n\nSuscripción: 25 imágenes Lite, 5 bases PRO, 25 Lite y 10 separaciones al mes; 10 respuestas de voz al día.\n\nTodo dentro de tu límite de consumo. La suscripción estará disponible muy pronto.";
+const BOT_SHORT_DESCRIPTION = "Tu IA manager para artistas: portadas, bases y lanzamientos. Plan gratuito y suscripción.";
+async function updateBotDescription(state) {
+  if (state.botDescription === BOT_DESCRIPTION) return;
+  await setBotDescription(BOT_DESCRIPTION, BOT_SHORT_DESCRIPTION);
+  state.botDescription = BOT_DESCRIPTION;
+  await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+  console.log('[news] bot description updated');
+}
 const FILES_QUESTION = "🍌 Pregunta para el grupo sobre vuestros archivos:\n\nAhora guardo vuestras fotos en /fotos y el material compartido, como los logos de un sello, en /fichas. Quiero organizarlo mejor. ¿Cómo os resulta más útil?\n\n1. Todo junto en una ficha por artista\n2. Separado por lanzamiento o proyecto\n3. Separado por tipo: fotos, logos, portadas y bases\n\nRespondedme con el número o contadme cómo trabajáis. Cada persona seguirá viendo solo lo suyo y lo que le compartan.";
 async function askAboutFiles(state) {
   if (state.filesQuestionSent) return;
@@ -207,6 +217,7 @@ export async function runProactiveTick() {
     await announceReferralPass(state).catch(error => console.error('[news] referral pass failed', error.message));
     await announceVoiceLimits(state).catch(error => console.error('[news] voice limits failed', error.message));
     await correctVoiceLimits(state).catch(error => console.error('[news] voice correction failed', error.message));
+    await updateBotDescription(state).catch(error => console.error('[news] description failed', error.message));
     await announceInstagramCost(state).catch(error => console.error('[news] instagram cost failed', error.message));
     await askAboutFiles(state).catch(() => console.error('[files] failed'));
     await askAboutExistingPhotos(state).catch(() => console.error('[photos] review failed'));
