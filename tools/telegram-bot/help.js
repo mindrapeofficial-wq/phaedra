@@ -101,6 +101,7 @@ Comandos:
 /cuenta: vincular tu cuenta
 /miplan: tu plan y tus consultas
 /referir: invitar y conseguir meses gratis
+¿Tienes dudas? Escribe por privado a @PhaseREM.
 /ficha: tu ficha de artista, con contexto y archivos
 /fotos: tus fotos guardadas
 /fichas: fichas compartidas, como las de un sello

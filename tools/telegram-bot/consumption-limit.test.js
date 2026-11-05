@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 process.env.SUPABASE_SERVICE_KEY = 'test-key';
 process.env.TELEGRAM_BOT_TOKEN = 'test-token';
 process.env.TELEGRAM_OWNER_ID = '1';
-const { percentUsed, levelFor, noticeFor, consumptionLimit, notifyConsumption, consumptionGate } = await import('./consumption-limit.js');
+const { percentUsed, levelFor, noticeFor, consumptionLimit, notifyConsumption, consumptionGate, usageWithCredit } = await import('./consumption-limit.js');
 const now = Date.parse('2026-11-20T12:00:00Z');
 
 function mock(rows, state = {}) {
@@ -73,4 +73,14 @@ test('an unreadable limit stops the request', async () => {
 test('a promotion does not raise the limit: without a payment 1 € applies', async () => {
   const free = mock(images(4));
   try { assert.match(await consumptionGate(7, now), /100%/); } finally { free.restore(); }
+});
+
+test('recharges add to the limit, are used after the plan and do not expire', () => {
+  const at = (date, n) => Array.from({ length: n }, () => ({ action: 'image', created_at: date }));
+  assert.equal(usageWithCredit(at('2026-11-20', 4), 'free', 4, now), 20);
+  assert.equal(usageWithCredit(at('2026-11-20', 8), 'free', 4, now), 40);
+  assert.equal(usageWithCredit(at('2026-11-20', 40), 'pro', 8, now), 100 * 10 / 16 | 0);
+  const december = Date.parse('2026-12-02T12:00:00Z');
+  assert.equal(usageWithCredit(at('2026-11-20', 40), 'pro', 8, december), 12);
+  assert.equal(usageWithCredit(at('2026-12-01', 4), 'pro', 8, december), 6);
 });
