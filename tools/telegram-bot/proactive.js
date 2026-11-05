@@ -113,6 +113,14 @@ async function announceFeatures(state) {
   await sendMessage(GROUP_CHAT, FEATURE_NEWS);
   console.log('[news] feature update delivered');
 }
+const BEATS_NEWS = "🎧 Ya podéis pedirme bases musicales. Disculpad las molestias de antes.\n\nPRO: te pregunto todos los detalles antes de crearla, hasta 3 minutos.\nLite: rápida e instrumental, hasta 1 minuto.\n\nCuentas gratuitas: 1 PRO y 5 Lite en total.\nSuscripción: 5 PRO y 25 Lite al mes.\n\nEscríbeme por privado qué base quieres.";
+async function announceBeats(state) {
+  if (state.beatsNewsSent) return;
+  state.beatsNewsSent = true;
+  await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+  await sendMessage(GROUP_CHAT, BEATS_NEWS);
+  console.log('[news] beats notice delivered');
+}
 const FILES_QUESTION = "🍌 Pregunta para el grupo sobre vuestros archivos:\n\nAhora guardo vuestras fotos en /fotos y el material compartido, como los logos de un sello, en /fichas. Quiero organizarlo mejor. ¿Cómo os resulta más útil?\n\n1. Todo junto en una ficha por artista\n2. Separado por lanzamiento o proyecto\n3. Separado por tipo: fotos, logos, portadas y bases\n\nRespondedme con el número o contadme cómo trabajáis. Cada persona seguirá viendo solo lo suyo y lo que le compartan.";
 async function askAboutFiles(state) {
   if (state.filesQuestionSent) return;
@@ -153,6 +161,7 @@ export async function runProactiveTick() {
     await sendAccountTypeGuide(state).catch(() => console.error('[guide] failed'));
     await sendLoyaltyJoke(state).catch(() => console.error('[joke] failed'));
     await announceFeatures(state).catch(() => console.error('[news] failed'));
+    await announceBeats(state).catch(() => console.error('[news] beats notice failed'));
     await askAboutFiles(state).catch(() => console.error('[files] failed'));
     await askAboutExistingPhotos(state).catch(() => console.error('[photos] review failed'));
     const timing = communityTiming(state, community);
