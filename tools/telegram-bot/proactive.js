@@ -122,6 +122,14 @@ async function announceBeats(state) {
   await sendMessage(GROUP_CHAT, BEATS_NEWS);
   console.log('[news] beats notice delivered');
 }
+const COSTS_NEWS = "💸 Lo que cuesta aproximadamente cada petición al bot, redondeado al alza:\n\n• Mensaje de texto: 0,02 $\n• Mensaje con foto: 0,02 $\n• Nota de voz: 0,10 $\n• Consulta de estrategia: 0,03 $\n• Plan de lanzamiento: 0,02 $\n• Tarea de Instagram: 0,15 $\n• Imagen Lite: 0,05 $\n• Imagen PRO: 0,25 $\n• Base Lite: 0,15 $\n• Base PRO de 90 segundos: 0,20 $\n• Base PRO de 3 minutos: 0,40 $\n• Separar pistas: 0,50 $\n• Comandos como /plan o /help: 0 $\n\nSon estimaciones, no precios de factura. Este coste lo asume Social Banana.";
+async function announceCosts(state) {
+  if (state.costsNewsSent) return;
+  state.costsNewsSent = true;
+  await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+  await sendMessage(GROUP_CHAT, COSTS_NEWS);
+  console.log('[news] costs notice delivered');
+}
 const FILES_QUESTION = "🍌 Pregunta para el grupo sobre vuestros archivos:\n\nAhora guardo vuestras fotos en /fotos y el material compartido, como los logos de un sello, en /fichas. Quiero organizarlo mejor. ¿Cómo os resulta más útil?\n\n1. Todo junto en una ficha por artista\n2. Separado por lanzamiento o proyecto\n3. Separado por tipo: fotos, logos, portadas y bases\n\nRespondedme con el número o contadme cómo trabajáis. Cada persona seguirá viendo solo lo suyo y lo que le compartan.";
 async function askAboutFiles(state) {
   if (state.filesQuestionSent) return;
@@ -163,6 +171,7 @@ export async function runProactiveTick() {
     await sendLoyaltyJoke(state).catch(() => console.error('[joke] failed'));
     await announceFeatures(state).catch(() => console.error('[news] failed'));
     await announceBeats(state).catch(() => console.error('[news] beats notice failed'));
+    await announceCosts(state).catch(() => console.error('[news] costs notice failed'));
     await askAboutFiles(state).catch(() => console.error('[files] failed'));
     await askAboutExistingPhotos(state).catch(() => console.error('[photos] review failed'));
     const timing = communityTiming(state, community);
