@@ -93,8 +93,6 @@ async function handleMessage(update) {
     if (!access.allowed) { await sendMessage(msg.chat.id, access.reason); return; }
     const voiceTier = (await getUser(msg.from.id, msg.from.username)).tier;
     if (await consumptionBlocked(msg.from.id, voiceTier)) { await sendMessage(msg.chat.id, CONSUMPTION_LIMIT_MESSAGE); return; }
-    const voiceLimit = await voiceDenial(msg.from.id, voiceTier);
-    if (voiceLimit) { await sendMessage(msg.chat.id, voiceLimit); return; }
     try { msg.text = await transcribeVoice(msg.voice); }
     catch (error) { await sendMessage(msg.chat.id, error.message); return; }
   }
@@ -570,7 +568,13 @@ async function handleMessage(update) {
       const audioId = (await sentAudio.json().catch(() => ({}))).result?.audio?.file_id;
       await archiveFiles(userId, "beat", [audioId]).catch(() => console.error("[ficha] beat not archived"));
     } else if (msg.voice) {
-      const spoke = await sendVoiceReply(chatId, reply.text, { disclose: !state.voiceDisclosed });
+      const voiceLimit = await voiceDenial(userId, (await getUser(userId, username)).tier);
+      if (voiceLimit) {
+        await sendMessage(chatId, reply.text, isGroup ? { people: mentionPeople(community, OWNER_ID, msg.from) } : {});
+        await sendMessage(chatId, voiceLimit);
+      }
+      const spoke = voiceLimit ? false : await sendVoiceReply(chatId, reply.text, { disclose: !state.voiceDisclosed });
+      if (spoke) notifyAction("voice_reply");
       if (spoke && !state.voiceDisclosed) {
         state.voiceDisclosed = true;
         await memoryRequest(chatId, userId, "POST", state);

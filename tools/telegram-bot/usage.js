@@ -12,7 +12,7 @@ const GROUP_GAP_MS = 60 * 60_000;
 // The speech rate is per character, estimated from OpenAI's published per-minute speech cost.
 const PRICES = { 'gpt-4o-mini-tts': [17, 0], 'gpt-6.1-terra': [1, 5], 'gpt-6-luna': [0.1, 0.5], 'gpt-4.1': [2, 8], 'claude-opus-5-5': [4, 20] };
 export const ACTIONS = {
-  chat: 'escribió al bot', image: 'generó una imagen PRO', image_lite: 'generó una imagen Lite', music: 'generó una base musical', music_pro: 'generó una base PRO', music_lite: 'generó una base Lite', stems: 'separó las pistas de un audio', voice: 'envió una nota de voz', release_plan: 'creó un plan de lanzamiento',
+  chat: 'escribió al bot', image: 'generó una imagen PRO', image_lite: 'generó una imagen Lite', music: 'generó una base musical', music_pro: 'generó una base PRO', music_lite: 'generó una base Lite', stems: 'separó las pistas de un audio', voice: 'envió una nota de voz', voice_reply: 'recibió una respuesta de voz', release_plan: 'creó un plan de lanzamiento',
   instagram: 'usó las herramientas de Instagram', instagram_analysis: 'pidió un análisis de Instagram', claim: 'usó /reclamar', referral: 'usó /referir',
   account: 'usó /cuenta', plan_view: 'consultó su plan', task_done: 'marcó una tarea', reminders: 'cambió sus recordatorios',
 };
