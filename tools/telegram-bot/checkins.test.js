@@ -27,6 +27,7 @@ test('the route follows the task', () => {
   assert.equal(chooseRoute('gracias'), 'simple');
   assert.equal(chooseRoute('hazme una base'), 'normal');
   assert.equal(chooseRoute('hola', true), 'normal');
+  assert.equal(chooseRoute('que puedo hacer con 50€ de presupuesto', true), 'complex');
   assert.equal(chooseRoute('¿Qué harías con 50 € de presupuesto para mi lanzamiento?'), 'complex');
   assert.equal(chooseRoute('x'.repeat(300)), 'complex');
 });

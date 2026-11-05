@@ -16,8 +16,8 @@ const TASK_WORDS = /base|beat|m[uú]sica|imagen|foto|portada|logo|pista|instagra
 const COMPLEX_WORDS = /estrategia|presupuesto|analiza|compara|qu[eé] (?:har[ií]as|me recomiendas|opinas)|por qu[eé]|c[oó]mo (?:puedo|deber[ií]a)|lanzamiento/i;
 export function chooseRoute(text = '', hasImage = false) {
   const clean = String(text).trim();
-  if (hasImage) return 'normal';
   if (clean.length > 250 || COMPLEX_WORDS.test(clean)) return 'complex';
+  if (hasImage) return 'normal';
   return clean.split(/\s+/).length <= 6 && !TASK_WORDS.test(clean) ? 'simple' : 'normal';
 }
 const routedModel = model => process.env.BANANA_REASONING_EFFORT !== 'none' && model === CHAT_MODEL && isOwnerRequest() && currentRoute() === 'simple' ? LIGHT_MODEL : model;
