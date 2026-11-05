@@ -4,6 +4,8 @@ process.env.SUPABASE_SERVICE_KEY = 'test-key';
 process.env.OPENAI_API_KEY = 'test-key';
 const { interpretUploadRequest, saveToCollection, canAccess, collectionsFor, savedReply } = await import('./collections.js');
 
+const resolver = async names => ({ ids: names.filter(n => n === 'Loyal T').map(() => 5).concat(names.filter(n => n === 'Lunatico').map(() => 6)), unresolved: names.filter(n => !['Loyal T', 'Lunatico'].includes(n)) });
+
 function mock(llm) {
   const native = fetch;
   let state = null;
@@ -37,35 +39,35 @@ test('if the model fails, simple saving still works', async () => {
 test('files accumulate, and only the creator can change a file', async () => {
   const restore = mock();
   try {
-    await saveToCollection({ name: '2CB Records', files: ['a'], artists: ['Loyal T'], ownerId: 1 });
-    const { entry } = await saveToCollection({ name: '2cb records', files: ['a', 'b'], artists: ['Lunatico'], ownerId: 1 });
+    await saveToCollection({ name: '2CB Records', files: ['a'], artists: ['Loyal T'], ownerId: 1, resolver });
+    const { entry } = await saveToCollection({ name: '2cb records', files: ['a', 'b'], artists: ['Lunatico'], ownerId: 1, resolver });
     assert.deepEqual(entry.files, ['a', 'b']);
     assert.deepEqual(entry.artists, ['Loyal T', 'Lunatico']);
-    assert.equal((await saveToCollection({ name: '2CB Records', files: ['c'], artists: [], ownerId: 9 })).denied, true);
+    assert.equal((await saveToCollection({ name: '2CB Records', files: ['c'], artists: [], ownerId: 9, resolver })).denied, true);
     assert.match(savedReply(entry, 2), /«2CB Records».*Loyal T, Lunatico/);
     assert.equal((await collectionsFor({ id: 5, first_name: 'Loyal-T' })).length, 1);
-    assert.equal((await collectionsFor({ id: 6, first_name: 'Emil' })).length, 0);
-    assert.equal((await collectionsFor({ id: 6, first_name: 'Emil' }, true)).length, 1);
+    assert.equal((await collectionsFor({ id: 16, first_name: 'Emil' })).length, 0);
+    assert.equal((await collectionsFor({ id: 16, first_name: 'Emil' }, true)).length, 1);
   } finally { restore(); }
 });
 
-test('authorization matches names ignoring accents, case and symbols', () => {
-  const entry = { ownerId: 1, artists: ['Lunático', 'Loyal T'] };
-  assert.equal(canAccess(entry, { id: 2, first_name: 'LUNATICO' }), true);
-  assert.equal(canAccess(entry, { id: 3, username: 'loyal_t' }), true);
-  assert.equal(canAccess(entry, { id: 4, first_name: 'Ary' }), false);
+test('access follows Telegram IDs, so a changed name grants nothing', () => {
+  const entry = { ownerId: 1, artists: ['Loyal T'], artistIds: [5] };
+  assert.equal(canAccess(entry, { id: 5, first_name: 'Otro' }), true);
+  assert.equal(canAccess(entry, { id: 9, first_name: 'Loyal T' }), false);
+  assert.equal(canAccess(entry, { id: 9 }, true), true);
 });
 
 test('confirming membership records artists and exposes the label to them', async () => {
   const { confirmMembers, labelsFor, confirmsMembership, deniesMembership, membershipQuestion } = await import('./collections.js');
   const restore = mock();
   try {
-    const { entry } = await saveToCollection({ name: '2CB Records', files: ['logo'], artists: ['Loyal T', 'Lunatico'], ownerId: 1 });
+    const { entry } = await saveToCollection({ name: '2CB Records', files: ['logo'], artists: ['Loyal T', 'Lunatico'], ownerId: 1, resolver });
     assert.match(membershipQuestion(entry), /Loyal T, Lunatico son miembros de 2CB Records/);
     assert.deepEqual(await labelsFor({ id: 5, first_name: 'Loyal-T' }), []);
     await confirmMembers('2cb records');
     assert.equal((await labelsFor({ id: 5, first_name: 'Loyal-T' }))[0].sello, '2CB Records');
-    assert.deepEqual(await labelsFor({ id: 6, first_name: 'Emil' }), []);
+    assert.deepEqual(await labelsFor({ id: 16, first_name: 'Emil' }), []);
     assert.equal(confirmsMembership('sí, son del sello'), true);
     assert.equal(deniesMembership('no'), true);
     assert.equal(confirmsMembership('haz una portada'), false);

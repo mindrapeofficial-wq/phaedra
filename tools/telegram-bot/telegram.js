@@ -92,6 +92,11 @@ export async function sendVoice(chatId, audio, caption) {
   if (!res.ok) throw new Error(`Telegram sendVoice failed: ${res.status}`);
 }
 
+export async function sendAudioById(chatId, fileId, caption) {
+  const res = await timedFetch(`${API}/sendAudio`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ chat_id: chatId, audio: fileId, caption }) });
+  if (!res.ok) throw new Error(`Telegram sendAudio failed: ${res.status}`);
+  return res;
+}
 export async function sendAudio(chatId, audio, caption) {
   const form = new FormData();
   form.set("chat_id", String(chatId));

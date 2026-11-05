@@ -22,8 +22,8 @@ export function saveUploads(state) {
   return saved.length;
 }
 export const uploadQuestion = count => count === 1
-  ? 'Tengo tu foto. ¿Qué hacemos con ella? Puedo guardarla para tus publicaciones, usarla en un post o trabajar una portada a partir de ella.'
-  : `Tengo tus ${count} fotos. ¿Qué hacemos con ellas? Puedo guardarlas para tus publicaciones, elegir las mejores para redes o trabajar una portada a partir de alguna.`;
+  ? 'Tengo tu foto. ¿De qué es? ¿La guardo en tu ficha de artista? También puedo usarla en un post o trabajar una portada a partir de ella.'
+  : `Tengo tus ${count} fotos. ¿De qué son? ¿Las guardo en tu ficha de artista? También puedo elegir las mejores para redes o trabajar una portada a partir de alguna.`;
 
 // An album arrives as separate updates, so one question goes out once they stop arriving.
 export function scheduleUploadQuestion(key, count, send, delay = ACK_DELAY_MS) {

@@ -65,6 +65,7 @@ const OWNER = `\n\n🛠 Solo para ti
 • /gasto: consumo estimado
 • /estadoia: comprobar las IA
 • /engage: ideas de conversación
+• /ficha nombre: ver la ficha de un artista
 • /soporte off: salir del modo ayuda en el grupo
 • Fichas: sube fotos y di «guárdalas en la ficha 2CB Records para Loyal T». Solo tú puedes crearlas.`;
 
@@ -96,6 +97,7 @@ Comandos:
 /cuenta: vincular tu cuenta
 /miplan: tu plan y tus consultas
 /referir: invitar y conseguir meses gratis
+/ficha: tu ficha de artista, con contexto y archivos
 /fotos: tus fotos guardadas
 /fichas: fichas compartidas, como las de un sello
 /mimemoria y /olvidame: tus datos
@@ -109,5 +111,5 @@ export const ACCOUNT_TYPE_GUIDE = "📸 Para pasar tu cuenta normal de Instagram
 export const MENU_COMMANDS = [
   ['help', 'Qué puedo hacer y cómo'], ['plan', 'Tu plan de lanzamiento'], ['hecho', 'Marcar una tarea: /hecho 2'],
   ['recordatorios', 'Avisos: /recordatorios on u off'], ['instagram', 'Conectar tu Instagram'], ['cuenta', 'Vincular tu cuenta'],
-  ['miplan', 'Tu plan y tus consultas'], ['fotos', 'Tus fotos guardadas'], ['fichas', 'Fichas compartidas'], ['referir', 'Invitar y conseguir meses gratis'], ['mimemoria', 'Ver lo que recuerdo de ti'], ['olvidame', 'Borrar lo que recuerdo de ti'],
+  ['miplan', 'Tu plan y tus consultas'], ['ficha', 'Tu ficha de artista'], ['fotos', 'Tus fotos guardadas'], ['fichas', 'Fichas compartidas'], ['referir', 'Invitar y conseguir meses gratis'], ['mimemoria', 'Ver lo que recuerdo de ti'], ['olvidame', 'Borrar lo que recuerdo de ti'],
 ].map(([command, description]) => ({ command, description }));

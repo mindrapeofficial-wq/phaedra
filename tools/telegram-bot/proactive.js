@@ -4,6 +4,7 @@ import { memoryRequest, groupConversationContext } from './memory.js';
 import { PRODUCT_CONTEXT } from './product-context.js';
 import { database } from './database.js';
 import { runUsageTick } from './usage.js';
+import { uploadQuestion } from './photo-uploads.js';
 import { sendVoiceReply } from './speech.js';
 import { ACCOUNT_TYPE_GUIDE } from './help.js';
 import { postzen, connection } from './instagram.js';
@@ -120,6 +121,23 @@ async function askAboutFiles(state) {
   await sendMessage(GROUP_CHAT, FILES_QUESTION);
   console.log('[files] group question delivered');
 }
+// One pass over photos uploaded before artist files existed, asking each person in private.
+export async function askAboutExistingPhotos(state) {
+  if (state.photosSweepDone) return;
+  state.photosSweepDone = true;
+  await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+  const rows = await database('sb_bot_memory?telegram_id=gt.0&select=telegram_id,pending:state->pendingUploads,library:state->library') || [];
+  const byUser = new Map();
+  for (const row of rows) byUser.set(row.telegram_id, [...new Set([...(byUser.get(row.telegram_id) || []), ...(row.pending || []), ...(row.library || [])])]);
+  for (const [id, files] of byUser) {
+    if (!files.length) continue;
+    const privateState = await memoryRequest(id, id);
+    privateState.pendingUploads = [...new Set([...(privateState.pendingUploads || []), ...files])].slice(-100);
+    await memoryRequest(id, id, 'POST', privateState);
+    await sendMessage(id, uploadQuestion(privateState.pendingUploads.length)).catch(() => console.log('[photos] private question not delivered'));
+  }
+  console.log('[photos] existing uploads reviewed');
+}
 export async function runProactiveTick() {
   if (running) return;
   running = true;
@@ -136,6 +154,7 @@ export async function runProactiveTick() {
     await sendLoyaltyJoke(state).catch(() => console.error('[joke] failed'));
     await announceFeatures(state).catch(() => console.error('[news] failed'));
     await askAboutFiles(state).catch(() => console.error('[files] failed'));
+    await askAboutExistingPhotos(state).catch(() => console.error('[photos] review failed'));
     const timing = communityTiming(state, community);
     if (await announcePromo(state)) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (state.productAnnouncement !== ANNOUNCEMENT) {

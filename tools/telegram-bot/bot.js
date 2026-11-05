@@ -5,7 +5,7 @@ import { privateProfile, saveProfileChanges, forgetCreativeMemory } from "./prof
 import { reserveImage, finishImage } from "./image-credits.js";
 import { beginConnection, verifyConnection, disableConnection, connection } from "./instagram.js";
 import { runInstagramAgent } from "./instagram-agent.js";
-import { sendMessage, sendTyping, sendPhoto, sendImageDocument, getFileUrl, sendAudio } from "./telegram.js";
+import { sendMessage, sendTyping, sendPhoto, sendImageDocument, getFileUrl, sendAudio, sendAudioById } from "./telegram.js";
 import { chat, detectFace } from "./ai.js";
 import { checkAccess, incrementUsage, getUser, getTierInfo } from "./tiers.js";
 import { runEngagementSession } from "./engage.js";
@@ -16,6 +16,7 @@ import { memoryRequest, groupConversationContext } from "./memory.js";
 import { referralSummary, claimReferral } from "./referrals.js";
 import { claimInstagramTrial } from "./instagram-trial.js";
 import { helpMessage } from "./help.js";
+import { archiveFiles, artistFiles, artistSummary, fileCounts, resolveArtists } from "./artist-files.js";
 import { interpretUploadRequest, saveToCollection, collectionsFor, savedReply, filesForCollection, membershipQuestion, confirmMembers, confirmsMembership, deniesMembership, labelsFor } from "./collections.js";
 import { resolveOwnerMessage, activeMembers, repliedMember, supportQuestion, isRetouch } from "./owner-support.js";
 import { congratulateInstagramConnection } from "./instagram-congrats.js";
@@ -103,6 +104,24 @@ async function handleMessage(update) {
     if (userId !== OWNER_ID) await sendMessage(chatId, "Este comando está reservado al administrador.");
     else if (isGroup) await sendMessage(chatId, "Te lo paso solo por privado: escríbeme el comando allí.");
     else await sendMessage(chatId, await (ownerReport[1] === "gasto" ? spendReport() : activityReport()));
+    return;
+  }
+  const ficha = msg.text.trim().match(/^\/ficha(?:@socialbananabot)?(?:\s+(.+))?$/i);
+  if (ficha) {
+    if (isGroup) { await sendMessage(chatId, "Tu ficha es privada. Mírala aquí: https://t.me/SocialBananaBot?start=welcome"); return; }
+    let target = { id: userId, first_name: msg.from.first_name };
+    if (ficha[1]) {
+      if (userId !== OWNER_ID) { await sendMessage(chatId, "Cada artista solo puede ver su propia ficha."); return; }
+      const { ids } = await resolveArtists([ficha[1]]);
+      if (!ids.length) { await sendMessage(chatId, "No encuentro a ese artista. Tiene que haber escrito al bot alguna vez."); return; }
+      target = { id: ids[0], first_name: ficha[1] };
+    }
+    const files = await artistFiles(target.id);
+    await sendMessage(chatId, artistSummary(target.first_name || "artista", await privateProfile(target.id), await labelsFor(target), files));
+    for (const file of files.slice(-5)) {
+      const delivered = file.kind === "beat" ? sendAudioById(chatId, file.id, file.title || "") : sendPhoto(chatId, file.id, file.title || "");
+      await delivered.catch(() => console.error("[ficha] file not delivered"));
+    }
     return;
   }
   const fichas = msg.text.trim().match(/^\/fichas(?:@socialbananabot)?(?:\s+(.+))?$/i);
@@ -286,8 +305,10 @@ async function handleMessage(update) {
   // Only the user's private chat may load facts learned in other conversations.
   if (!isGroup) {
     state.profile = { ...state.profile, ...await privateProfile(userId) };
-    const labels = await labelsFor(msg.from).catch(() => []);
-    if (labels.length) state.profile = { ...state.profile, sellos: labels };
+    const labels = await labelsFor({ id: userId }).catch(() => []);
+    if (labels.length) state.profile = { ...state.profile, sellos: labels.map(({ logo, ...label }) => label) };
+    const stored = await artistFiles(userId).catch(() => []);
+    if (stored.length) state.profile = { ...state.profile, archivos: fileCounts(stored) };
   }
   if (cmd === "/mimemoria") {
     if (isGroup) { await sendMessage(chatId, "Tu ficha es privada. Consúltala por mensaje privado conmigo usando /mimemoria."); return; }
@@ -326,6 +347,16 @@ async function handleMessage(update) {
       state.awaitingFaceAnswer = false;
     }
     if (isPhotoOnly(msg) && newFileId) {
+      // Group uploads are followed up in private, where the answer lands in the same pending list.
+      const privately = isGroup && msg.from.id === userId;
+      if (privately) {
+        await memoryRequest(chatId, userId, "POST", state);
+        const privateState = await memoryRequest(userId, userId);
+        const count = addUpload(privateState, newFileId);
+        await memoryRequest(userId, userId, "POST", privateState);
+        scheduleUploadQuestion(`${userId}:${userId}`, count, question => sendMessage(userId, question).catch(() => sendMessage(chatId, "Tengo tus fotos. Escríbeme por privado para decirme de qué son y si las guardo en tu ficha: https://t.me/SocialBananaBot?start=welcome")));
+        return;
+      }
       const count = addUpload(state, newFileId);
       await memoryRequest(chatId, userId, "POST", state);
       scheduleUploadQuestion(`${chatId}:${userId}`, count, question => sendMessage(chatId, question));
@@ -359,6 +390,7 @@ async function handleMessage(update) {
       return;
     }
     if (uploadIntent?.action === "save") {
+      await archiveFiles(userId, "photo", state.pendingUploads, text.slice(0, 200)).catch(() => console.error("[ficha] photos not archived"));
       const saved = saveUploads(state);
       record("user", text);
       const reply = `Hecho, ${saved === 1 ? "foto guardada" : `${saved} fotos guardadas`} para tus publicaciones. Tienes ${state.library.length} en total; míralas cuando quieras con /fotos.`;
@@ -378,6 +410,11 @@ async function handleMessage(update) {
     if (state.awaitingFaceAnswer && !answersFaceQuestion(text)) {
       state.awaitingFaceAnswer = false;
       state.pendingPrompt = null;
+    }
+    // The label logo becomes the reference when asked for, so the artist need not resend it.
+    if (!newFileId && wantsNewImage(text) && /\blogo\b|\bsello\b/i.test(text)) {
+      const logo = (await labelsFor({ id: userId }).catch(() => []))[0]?.logo;
+      if (logo) state.reference = { fileId: logo, hasFace: false, photorealistic: null, identity: null };
     }
     let imageUrl = null;
     if (state.reference) {
@@ -479,10 +516,12 @@ async function handleMessage(update) {
       const delivery = await delivered.json();
       if (delivery.result?.photo?.length) {
         state.generatedFileId = delivery.result.photo.at(-1).file_id;
+        await archiveFiles(userId, "cover", [state.generatedFileId]).catch(() => console.error("[ficha] image not archived"));
         await memoryRequest(chatId, userId, "POST", state);
       }
       if (delivery.result?.document?.file_id) {
         state.generatedFileId = delivery.result.document.file_id;
+        await archiveFiles(userId, "cover", [state.generatedFileId]).catch(() => console.error("[ficha] image not archived"));
         await memoryRequest(chatId, userId, "POST", state);
       }
       try {
@@ -496,7 +535,9 @@ async function handleMessage(update) {
         await sendMessage(chatId, "La portada está entregada aquí. No he podido guardar la copia en Drive; tendrás que conservar esta descarga por ahora.");
       }
     } else if (reply.audio) {
-      await sendAudio(chatId, reply.audio, reply.text);
+      const sentAudio = await sendAudio(chatId, reply.audio, reply.text);
+      const audioId = (await sentAudio.json().catch(() => ({}))).result?.audio?.file_id;
+      await archiveFiles(userId, "beat", [audioId]).catch(() => console.error("[ficha] beat not archived"));
     } else if (msg.voice) {
       const spoke = await sendVoiceReply(chatId, reply.text, { disclose: !state.voiceDisclosed });
       if (spoke && !state.voiceDisclosed) {

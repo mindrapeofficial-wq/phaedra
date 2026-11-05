@@ -2,6 +2,7 @@ import { memoryRequest } from './memory.js';
 import { openAiChat, LIGHT_MODEL } from './openai-chat.js';
 import { meterTokens } from './usage.js';
 import { wantsToSave, wantsToDiscard } from './photo-uploads.js';
+import { resolveArtists } from './artist-files.js';
 
 const MAX_FILES = 200;
 // Shared across chats, in its own row so the group's state saves can't overwrite it.
@@ -31,7 +32,7 @@ export function filesForCollection(state) {
   if (state.library?.length) return [...state.library];
   return state.reference?.fileId ? [state.reference.fileId] : [];
 }
-export async function saveToCollection({ name, files, artists, ownerId }) {
+export async function saveToCollection({ name, files, artists, ownerId, resolver = resolveArtists }) {
   const store = await memoryRequest(...STORE);
   const collections = store.collections || {};
   const key = keyOf(name);
@@ -40,6 +41,9 @@ export async function saveToCollection({ name, files, artists, ownerId }) {
   const entry = existing || { name, ownerId, files: [], artists: [] };
   entry.files = [...new Set([...entry.files, ...files])].slice(-MAX_FILES);
   entry.artists = [...new Set([...entry.artists, ...artists])];
+  const resolved = await resolver(entry.artists);
+  entry.artistIds = resolved.ids;
+  entry.unresolved = resolved.unresolved;
   await memoryRequest(...STORE, 'POST', { ...store, collections: { ...collections, [key]: entry } });
   return { entry };
 }
@@ -54,27 +58,23 @@ export async function confirmMembers(name) {
   const entry = store.collections?.[keyOf(name)];
   if (!entry) return null;
   entry.members = [...entry.artists];
+  entry.memberIds = [...(entry.artistIds || [])];
   await memoryRequest(...STORE, 'POST', store);
   return entry;
 }
-const nameMatches = (list, user) => {
-  const names = [user.first_name, user.username, [user.first_name, user.last_name].filter(Boolean).join(' ')].map(normalize).filter(Boolean);
-  return (list || []).some(artist => names.includes(normalize(artist)));
-};
 export async function labelsFor(user) {
   const store = await memoryRequest(...STORE);
-  return Object.values(store.collections || {}).filter(entry => nameMatches(entry.members, user)).map(entry => ({ sello: entry.name, archivos: entry.files.length, verCon: `/fichas ${entry.name}` }));
+  return Object.values(store.collections || {}).filter(entry => (entry.memberIds || []).includes(Number(user.id))).map(entry => ({ sello: entry.name, archivos: entry.files.length, logo: entry.files[0] || null, verCon: `/fichas ${entry.name}` }));
 }
 export function canAccess(entry, user, isAdmin = false) {
-  if (isAdmin || Number(entry.ownerId) === Number(user.id)) return true;
-  const names = [user.first_name, user.username, [user.first_name, user.last_name].filter(Boolean).join(' ')].map(normalize).filter(Boolean);
-  return entry.artists.some(artist => names.includes(normalize(artist)));
+  return isAdmin || Number(entry.ownerId) === Number(user.id) || (entry.artistIds || []).includes(Number(user.id));
 }
 export async function collectionsFor(user, isAdmin = false) {
   const store = await memoryRequest(...STORE);
   return Object.values(store.collections || {}).filter(entry => canAccess(entry, user, isAdmin));
 }
 export function savedReply(entry, added) {
-  const who = entry.artists.length ? ` Pueden usarla ${entry.artists.join(', ')}, con /fichas.` : ' La ves con /fichas.';
-  return `Hecho: ${added === 1 ? 'he guardado la foto' : `he guardado las ${added} fotos`} en la ficha «${entry.name}», que ya tiene ${entry.files.length}.${who}`;
+  const who = entry.artists.length ? ` Pueden usarla ${entry.artists.filter(name => !(entry.unresolved || []).includes(name)).join(', ') || 'nadie todavía'}, con /fichas.` : ' La ves con /fichas.';
+  const missing = entry.unresolved?.length ? ` Aún no puedo identificar a ${entry.unresolved.join(', ')}: tienen que escribirme primero, y después vuelve a pedírmelo para darles acceso.` : '';
+  return `Hecho: ${added === 1 ? 'he guardado la foto' : `he guardado las ${added} fotos`} en la ficha «${entry.name}», que ya tiene ${entry.files.length}.${who}${missing}`;
 }
