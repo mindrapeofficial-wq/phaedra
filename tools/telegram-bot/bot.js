@@ -17,7 +17,7 @@ import { referralSummary, claimReferral } from "./referrals.js";
 import { claimInstagramTrial } from "./instagram-trial.js";
 import { helpMessage } from "./help.js";
 import { archiveFiles, artistFiles, artistSummary, fileCounts, resolveArtists } from "./artist-files.js";
-import { interpretUploadRequest, saveToCollection, collectionsFor, savedReply, filesForCollection, membershipQuestion, confirmMembers, confirmsMembership, deniesMembership, labelsFor } from "./collections.js";
+import { interpretUploadRequest, checkedUploadIntent, saveToCollection, collectionsFor, savedReply, filesForCollection, membershipQuestion, confirmMembers, confirmsMembership, deniesMembership, labelsFor } from "./collections.js";
 import { resolveOwnerMessage, activeMembers, repliedMember, supportQuestion, isRetouch } from "./owner-support.js";
 import { congratulateInstagramConnection } from "./instagram-congrats.js";
 import { sendVoiceReply } from "./speech.js";
@@ -396,7 +396,7 @@ async function handleMessage(update) {
         return;
       }
     }
-    const uploadIntent = state.pendingUploads?.length ? await interpretUploadRequest(text) : null;
+    const uploadIntent = state.pendingUploads?.length ? checkedUploadIntent(text, await interpretUploadRequest(text)) : null;
     if (uploadIntent?.action === "save" && uploadIntent.collection && msg.from.id === OWNER_ID) {
       const files = [...state.pendingUploads];
       const saved = await saveToCollection({ name: uploadIntent.collection, files, artists: uploadIntent.artists, ownerId: msg.from.id });

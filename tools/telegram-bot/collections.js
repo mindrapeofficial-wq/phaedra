@@ -2,6 +2,14 @@ import { memoryRequest } from './memory.js';
 import { openAiChat, LIGHT_MODEL } from './openai-chat.js';
 import { meterTokens } from './usage.js';
 import { wantsToSave, wantsToDiscard } from './photo-uploads.js';
+
+// The model can misread an unrelated message, so a save or discard also needs words about the files or a short yes or no.
+const ABOUT_FILES = /foto|imagen|imágen|ficha|carpeta|logo|sello|archiv|material|guard|gu[aá]rd|descart|b[oó]rr|olv[ií]d|tira/i;
+const SHORT_ANSWER = /^\s*(?:s[ií]|no|vale|ok|okay|dale|claro|perfecto|venga|adelante|todas?|ambas)(?!\p{L})[^]{0,25}$/iu;
+export function checkedUploadIntent(text, intent) {
+  if (!intent || !['save', 'discard'].includes(intent.action)) return intent;
+  return ABOUT_FILES.test(text) || SHORT_ANSWER.test(text) ? intent : { ...intent, action: 'other' };
+}
 import { resolveArtists } from './artist-files.js';
 
 const MAX_FILES = 200;

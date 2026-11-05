@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 process.env.SUPABASE_SERVICE_KEY = 'test-key';
 process.env.OPENAI_API_KEY = 'test-key';
-const { interpretUploadRequest, saveToCollection, canAccess, collectionsFor, savedReply } = await import('./collections.js');
+const { interpretUploadRequest, saveToCollection, canAccess, collectionsFor, savedReply , checkedUploadIntent } = await import('./collections.js');
 
 const resolver = async names => ({ ids: names.filter(n => n === 'Loyal T').map(() => 5).concat(names.filter(n => n === 'Lunatico').map(() => 6)), unresolved: names.filter(n => !['Loyal T', 'Lunatico'].includes(n)) });
 
@@ -80,4 +80,13 @@ test('a later request uses just uploaded photos first, then saved ones', async (
   assert.deepEqual(filesForCollection({ pendingUploads: [], library: ['a', 'b'] }), ['a', 'b']);
   assert.deepEqual(filesForCollection({ reference: { fileId: 'r' } }), ['r']);
   assert.deepEqual(filesForCollection({}), []);
+});
+
+test('an unrelated message never saves or discards pending photos', () => {
+  const save = { action: 'save' };
+  assert.equal(checkedUploadIntent('pero una de ellas es mi cuenta de ese limite, @ny0b3', save).action, 'other');
+  assert.equal(checkedUploadIntent('no se que hacer con mi cuenta', { action: 'discard' }).action, 'other');
+  assert.equal(checkedUploadIntent('guárdalas en mi ficha', save).action, 'save');
+  assert.equal(checkedUploadIntent('sí', save).action, 'save');
+  assert.equal(checkedUploadIntent('vale, dale', save).action, 'save');
 });
