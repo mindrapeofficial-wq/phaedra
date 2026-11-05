@@ -5,6 +5,7 @@ import { PRODUCT_CONTEXT } from './product-context.js';
 import { database } from './database.js';
 import { runUsageTick } from './usage.js';
 import { uploadQuestion } from './photo-uploads.js';
+import { mentionPeople } from './mentions.js';
 import { sendVoiceReply } from './speech.js';
 import { ACCOUNT_TYPE_GUIDE } from './help.js';
 import { postzen, connection } from './instagram.js';
@@ -168,7 +169,7 @@ export async function runProactiveTick() {
     if (await announcePromo(state)) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (state.productAnnouncement !== ANNOUNCEMENT) {
       const message = 'Os cuento lo que estamos preparando para Social Banana 🍌: una suscripción de 10 €/mes que incluirá conectar un Instagram y un mes de acceso a la extensión. Los cobros reales aún no están activados; cuando estén listos os explicaré cómo hacerlo.\n\nMientras tanto podemos trabajar en vuestra identidad y vuestras portadas: cada cuenta gratuita tendrá una imagen PRO para probar. Si ya tenéis una canción en marcha, contadme qué queréis transmitir y os ayudo a aterrizar la idea. También puedo guiaros para instalar Emil.';
-      await sendMessage(GROUP_CHAT, message);
+      await sendMessage(GROUP_CHAT, message, { people: mentionPeople(community, OWNER) });
       state.productAnnouncement = ANNOUNCEMENT;
       state.lastSent = Date.now(); state.day = timing.day; state.sentToday = timing.sentToday + 1;
       state.suggestions = [...(state.suggestions || []), message].slice(-12);
@@ -184,7 +185,7 @@ export async function runProactiveTick() {
     );
     const message = result.response?.trim();
     if (result.error || !message || message === 'SKIP') return;
-    await sendMessage(GROUP_CHAT, message);
+    await sendMessage(GROUP_CHAT, message, { people: mentionPeople(community, OWNER) });
     state.lastSent = Date.now(); state.lastContextAt = timing.latest;
     state.day = timing.day; state.sentToday = timing.sentToday + 1;
     state.suggestions = [...(state.suggestions || []), message].slice(-12);

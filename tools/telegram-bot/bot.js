@@ -21,6 +21,7 @@ import { interpretUploadRequest, saveToCollection, collectionsFor, savedReply, f
 import { resolveOwnerMessage, activeMembers, repliedMember, supportQuestion, isRetouch } from "./owner-support.js";
 import { congratulateInstagramConnection } from "./instagram-congrats.js";
 import { sendVoiceReply } from "./speech.js";
+import { mentionPeople } from "./mentions.js";
 import { isPhotoOnly, addUpload, saveUploads, scheduleUploadQuestion, wantsNewImage, answersFaceQuestion } from "./photo-uploads.js";
 import { withUsageContext, notifyAction, chargeUsageTo, userLimitReached, USER_LIMIT_MESSAGE, activityReport, spendReport, PRIVACY_NOTICE } from "./usage.js";
 import { releasePlanSummary, completeReleaseTask, setReleaseReminders } from "./releases.js";
@@ -465,6 +466,10 @@ async function handleMessage(update) {
     if (directPrompt) directPrompt += "\n" + photoStyle;
     const context = null;
     const community = isGroup ? await groupConversationContext(chatId).catch(() => []) : [];
+    if (isGroup && msg.from.id === userId) {
+      state.telegramUsername = msg.from.username || null;
+      if (msg.from.first_name) state.profile = { ...state.profile, telegramName: msg.from.first_name };
+    }
     record("user", text);
     await memoryRequest(chatId, userId, "POST", state);
     if (!ownerPays && await userLimitReached(userId)) { await sendMessage(chatId, USER_LIMIT_MESSAGE); return; }
@@ -545,7 +550,7 @@ async function handleMessage(update) {
         await memoryRequest(chatId, userId, "POST", state);
       }
     }
-    else await sendMessage(chatId, reply.text);
+    else await sendMessage(chatId, reply.text, isGroup ? { people: mentionPeople(community, OWNER_ID, msg.from) } : {});
     if (userId !== OWNER_ID && !ownerPays) await incrementUsage(userId).catch(() => console.error("[usage] increment failed"));
     console.log(`[bot] reply delivered chat=${chatId} image=${Boolean(reply.image)}`);
   } catch (error) {

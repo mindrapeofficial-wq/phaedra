@@ -1,8 +1,10 @@
+import { applyMentions } from "./mentions.js";
+
 const timedFetch = (url, options = {}) => fetch(url, { ...options, signal: options.signal || AbortSignal.timeout(20_000) });
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const API = `https://api.telegram.org/bot${TOKEN}`;
 
-export async function sendMessage(chatId, text, options = {}) {
+export async function sendMessage(chatId, text, { people, ...options } = {}) {
   text = String(text).replace(/<a href="([^"]+)">([^<]*)<\/a>/g, "$2: $1")
     .replace(/<\/?(?:b|i|strong|em|code|pre)>/g, "").replace(/\*\*/g, "");
   if (text.length > 4000) {
@@ -10,10 +12,11 @@ export async function sendMessage(chatId, text, options = {}) {
     for (let i = 0; i < text.length; i += 4000) result = await sendMessage(chatId, text.slice(i, i + 4000));
     return result;
   }
+  const mentioned = applyMentions(text, people);
   const res = await timedFetch(`${API}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: chatId, text, ...options }),
+    body: JSON.stringify({ chat_id: chatId, ...mentioned, ...options }),
   });
   if (!res.ok) {
     const err = await res.text();
