@@ -1,4 +1,4 @@
-import { isOwnerRequest } from './usage.js';
+import { isOwnerRequest, currentRoute } from './usage.js';
 
 export const CHAT_MODEL = 'gpt-6.1-terra';
 export const LIGHT_MODEL = 'gpt-6-luna';
@@ -11,7 +11,16 @@ const post = (body, signal) => fetch('https://api.openai.com/v1/chat/completions
 });
 
 // Reasoning is on trial for the owner only. If the API refuses it with tools, the request is repeated without it.
-const trialEffort = model => { const effort = process.env.BANANA_REASONING_EFFORT || 'medium'; return effort !== 'none' && model === CHAT_MODEL && isOwnerRequest() ? effort : null; };
+const trialEffort = model => { const effort = process.env.BANANA_REASONING_EFFORT || 'medium'; return effort !== 'none' && model === CHAT_MODEL && isOwnerRequest() && currentRoute() === 'complex' ? effort : null; };
+const TASK_WORDS = /base|beat|m[uú]sica|imagen|foto|portada|logo|pista|instagram|plan|ficha|guard|recarga|pago|cuenta|gener|crea|haz/i;
+const COMPLEX_WORDS = /estrategia|presupuesto|analiza|compara|qu[eé] (?:har[ií]as|me recomiendas|opinas)|por qu[eé]|c[oó]mo (?:puedo|deber[ií]a)|lanzamiento/i;
+export function chooseRoute(text = '', hasImage = false) {
+  const clean = String(text).trim();
+  if (hasImage) return 'normal';
+  if (clean.length > 250 || COMPLEX_WORDS.test(clean)) return 'complex';
+  return clean.split(/\s+/).length <= 6 && !TASK_WORDS.test(clean) ? 'simple' : 'normal';
+}
+const routedModel = model => process.env.BANANA_REASONING_EFFORT !== 'none' && model === CHAT_MODEL && isOwnerRequest() && currentRoute() === 'simple' ? LIGHT_MODEL : model;
 const withoutTrialItems = messages => messages?.map(({ _items, ...message }) => message);
 const responsesContent = content => Array.isArray(content) ? content.map(part => part.type === 'image_url' ? { type: 'input_image', image_url: part.image_url?.url } : { type: 'input_text', text: part.text }) : content;
 function responsesInput(messages = []) {
@@ -38,7 +47,8 @@ export function chatShaped(data) {
   const message = { content, ...(calls.length ? { tool_calls: calls.map(call => ({ id: call.call_id, type: 'function', function: { name: call.name, arguments: call.arguments } })), _items: output.filter(item => item.type !== 'message') } : {}) };
   return Response.json({ usage: data.usage, choices: [{ message }] });
 }
-export async function openAiChat(body, { model = CHAT_MODEL, signal } = {}) {
+export async function openAiChat(body, { model: requested = CHAT_MODEL, signal } = {}) {
+  const model = routedModel(requested);
   const effort = trialEffort(model);
   if (effort) {
     const trial = await fetch('https://api.openai.com/v1/responses', {

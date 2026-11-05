@@ -17,9 +17,9 @@ const tools = [{ type: 'function', function: { name: 'ping', description: 'd', p
 test('only the owner uses reasoning, also while helping an artist', async () => {
   const { calls, restore } = mock();
   try {
-    await quiet(() => withUsageContext({ userId: 1 }, () => openAiChat({ messages: [], tools, tool_choice: 'auto' })));
-    await quiet(() => withUsageContext({ userId: 1 }, () => { chargeUsageTo(7); return openAiChat({ messages: [] }); }));
-    await quiet(() => withUsageContext({ userId: 7 }, () => openAiChat({ messages: [] })));
+    await quiet(() => withUsageContext({ userId: 1, route: 'complex' }, () => openAiChat({ messages: [], tools, tool_choice: 'auto' })));
+    await quiet(() => withUsageContext({ userId: 1, route: 'complex' }, () => { chargeUsageTo(7); return openAiChat({ messages: [] }); }));
+    await quiet(() => withUsageContext({ userId: 7, route: 'complex' }, () => openAiChat({ messages: [] })));
     assert.ok(calls[0].url.endsWith('/responses'));
     assert.equal(calls[0].body.reasoning.effort, 'medium');
     assert.equal(calls[0].body.tools[0].name, 'ping');
@@ -33,7 +33,7 @@ test('only the owner uses reasoning, also while helping an artist', async () => 
 test('a refusal falls back to the normal request without trial data', async () => {
   const { calls, restore } = mock(400);
   try {
-    const { response } = await quiet(() => withUsageContext({ userId: 1 }, () => openAiChat({ messages: [{ role: 'assistant', tool_calls: [], _items: [{}] }] })));
+    const { response } = await quiet(() => withUsageContext({ userId: 1, route: 'complex' }, () => openAiChat({ messages: [{ role: 'assistant', tool_calls: [], _items: [{}] }] })));
     assert.equal(calls.length, 2);
     assert.equal(calls[1].body.messages[0]._items, undefined);
     assert.equal((await response.json()).choices[0].message.content, 'plain');

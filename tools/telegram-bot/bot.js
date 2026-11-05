@@ -23,6 +23,7 @@ import { congratulateInstagramConnection } from "./instagram-congrats.js";
 import { sendVoiceReply } from "./speech.js";
 import { mentionPeople } from "./mentions.js";
 import { voiceDenial } from "./voice-limit.js";
+import { accountStatus } from "./consumption-limit.js";
 import { consumptionGate } from "./consumption-limit.js";
 import { wantsLite, imageLiteDenial } from "./image-lite.js";
 import { audioFile, audioNote, wantsStems, handleStems } from "./stems.js";
@@ -194,7 +195,12 @@ async function handleMessage(update) {
     const [, action, value] = releaseCommand;
     if (action === "plan") await sendMessage(chatId, await releasePlanSummary(userId));
     else if (action === "hecho") await sendMessage(chatId, /^\d+$/.test(value || "") ? await completeReleaseTask(userId, Number(value)) : "Dime el número de la tarea, por ejemplo: /hecho 2");
-    else if (value === "on" || value === "off") await sendMessage(chatId, await setReleaseReminders(userId, value === "on"));
+    else if (value === "on" || value === "off") {
+      const reminderState = await memoryRequest(userId, userId);
+      reminderState.checkinsOff = value === "off";
+      await memoryRequest(userId, userId, "POST", reminderState);
+      await sendMessage(chatId, await setReleaseReminders(userId, value === "on"));
+    }
     else await sendMessage(chatId, "Usa /recordatorios on o /recordatorios off.");
     return;
   }
@@ -510,7 +516,7 @@ async function handleMessage(update) {
         if (needsAnswer) state.pendingMembership = entry.name;
         return { created: savedReply(entry, files.length), question: needsAnswer ? membershipQuestion(entry) : null };
       } : null,
-      mediaFiles: { generated: state.generatedFileId, reference: state.reference?.fileId }, userId, requestId: String(update.update_id || msg.message_id || ""), directPrompt, photoStyle, profile: state.profile, isOwner: userId === OWNER_ID, isGroup, community,
+      mediaFiles: { generated: state.generatedFileId, reference: state.reference?.fileId }, userId, requestId: String(update.update_id || msg.message_id || ""), directPrompt, photoStyle, profile: state.profile, isOwner: userId === OWNER_ID, isGroup, community, account: isGroup ? null : await accountStatus(userId).catch(() => null),
       liteRequested: wantsLite(text) || Boolean(state.coverDraft?.lite),
       beforeImage: async quality => {
         if (quality === "lite") return ownerPays ? null : imageLiteDenial(userId);

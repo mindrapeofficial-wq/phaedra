@@ -3,7 +3,8 @@ import { runInstagramAgent } from "./instagram-agent.js";
 import { createReleasePlan } from "./releases.js";
 import { meterTokens, notifyAction } from "./usage.js";
 import { generateMusic } from "./music.js";
-import { openAiChat, LIGHT_MODEL } from "./openai-chat.js";
+import { openAiChat, LIGHT_MODEL, chooseRoute } from "./openai-chat.js";
+import { setRoute } from "./usage.js";
 import { proPromoActive, PROMO_CONTEXT } from "./promo.js";
 const OPENAI_KEY = process.env.OPENAI_API_KEY;
 import { LITE_QUALITY } from "./image-lite.js";
@@ -42,6 +43,7 @@ TRABAJO:
 - Copiloto de engagement: si alguien pega una publicación o describe una cuenta y pide qué comentar, propón 3 comentarios breves y distintos, con su tono y referidos a algo concreto de esa publicación, sin elogios genéricos ni autopromoción. Si solo te da un enlace, pide que pegue el texto, porque no puedes abrirlo. Lo publica siempre la persona.
 - Ronda diaria: si pide a quién escribir hoy, trabaja con cuentas que te haya dado: propón hasta 10 con qué decir a cada una. Si no te ha dado ninguna, pídeselas. Nunca inventes cuentas ni datos sobre ellas. La ronda la hace la persona a mano.
 - Nunca comentas, reaccionas, sigues ni escribes en cuentas de otros de forma automática; si te lo piden, explica que pone la cuenta en riesgo y ofrece el copiloto.
+- Eres su manager: preocúpate por el grupo y por cada artista, recuerda lo que cada uno dijo y da seguimiento. En el grupo nunca menciones el plan ni el consumo de nadie, ni lo que te contaron en privado.
 - Las fotos subidas al grupo sin texto se atienden por privado: preguntas de qué son y si las guardas en su ficha.
 - Cada artista tiene una ficha con su contexto, su sello y sus archivos, que ve con /ficha. Las portadas y bases generadas y las fotos que pida guardar se archivan solas. Si la ficha indica un sello y pide una portada con su logo, se usa ese logo como referencia sin que tenga que enviarlo. Usa lo que sepas de la ficha antes de preguntar.
 - Has preguntado en el grupo cómo prefieren organizar sus archivos: 1 ficha por artista, 2 por lanzamiento o proyecto, 3 por tipo. Si alguien responde, agradéceselo y guarda su preferencia con remember_user. Todavía no has cambiado la organización, así que no digas que ya está aplicada.
@@ -401,7 +403,9 @@ export async function chat(userMessage, context, imageUrl = null, history = [], 
       catch { return imageReply({ error: "Image timeout or service failure" }); }
     }
   }
+  setRoute(chooseRoute(userMessage, Boolean(imageUrl)));
   const messages = [{ role: "system", content: SYSTEM_PROMPT + "\n\n" + PRODUCT_CONTEXT }];
+  if (options.account && !options.isGroup) messages.push({ role: "system", content: `Cuenta de esta persona (dato privado): plan ${options.account.tier}, ${options.account.percent}% de su límite de consumo usado. Cuenta gratuita: sé breve y, solo si encaja, explica qué aporta un plan, sin presionar. Con plan: ayúdale a aprovecharlo. Desde el 75%: prioriza lo importante y recomienda opciones Lite. Nunca des cifras en dinero.` });
   if (proPromoActive()) messages.push({ role: "system", content: PROMO_CONTEXT });
   if (options.createCollection) messages.push({ role: "system", content: "Quien te escribe es el administrador de la comunidad. Nunca le digas que se lo pida al administrador. Para crear fichas usa create_collection y comunica exactamente el resultado que devuelva, incluida su pregunta si la trae." });
   if (options.isOwner) messages.push({ role: "system", content: OWNER_CONTEXT });

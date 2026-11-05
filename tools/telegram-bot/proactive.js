@@ -6,6 +6,7 @@ import { database } from './database.js';
 import { runUsageTick } from './usage.js';
 import { uploadQuestion } from './photo-uploads.js';
 import { mentionPeople } from './mentions.js';
+import { runCheckins } from './checkins.js';
 import { setBotDescription } from './telegram.js';
 import { runConsumptionNotices } from './consumption-limit.js';
 import { sendConsumptionReport } from './consumption-report.js';
@@ -206,6 +207,7 @@ export async function runProactiveTick() {
     await announceInstagramTrial(state).catch(() => console.error('[trial] announcement failed'));
     if (await runUsageTick(state).catch(() => { console.error('[usage] tick failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     await runConsumptionNotices().catch(() => console.error('[consumption] notices failed'));
+    await runCheckins().catch(() => console.error('[checkin] run failed'));
     if (await sendConsumptionReport(state)) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (await announceNewSubscribers(state).catch(() => { console.error('[community] subscriber check failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (await notifyNewAccountLinks(state).catch(() => { console.error('[account] link check failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);

@@ -55,6 +55,12 @@ async function usage(userId, tier, now) {
   return { key: `${key}:${credit}`, percent: usageWithCredit(rows, tier, credit, now), today };
 }
 
+export async function accountStatus(userId, now = Date.now()) {
+  const tier = await paidTier(userId);
+  const { percent } = await usage(userId, tier, now);
+  return { tier, percent };
+}
+
 export async function notifyConsumption(userId, tier, now = Date.now()) {
   if (Number(userId) === OWNER || tier === 'owner') return 0;
   const { key, percent } = await usage(userId, tier, now);
