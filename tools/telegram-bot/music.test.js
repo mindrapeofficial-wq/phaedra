@@ -17,7 +17,7 @@ function mock(routes = {}) {
   };
   return { bodies, restore: () => { globalThis.fetch = native; } };
 }
-const brief = { genre: 'trap', mood: 'dark', bpm: '140', key: 'A minor', instruments: '808, hi-hats', structure: 'intro, drop, outro', seconds: 120, vocals: false, confirmed: true };
+const brief = { use: 'to rap over', references: 'heavy 808s, dark pads', avoid: 'none', genre: 'trap', mood: 'dark', bpm: '140', key: 'A minor', instruments: '808, hi-hats', structure: 'intro, drop, outro', seconds: 120, vocals: false, confirmed: true };
 const paid = [{ livemode: true, status: 'active', risk_hold: false, paid_until: '2099-01-01' }];
 
 test('without a key nothing is sent to the provider', async () => {
@@ -74,6 +74,8 @@ test('a PRO track needs every parameter and an explicit confirmation before any 
   try {
     const partial = await generateMusic({ userId: 1, brief: { genre: 'trap' } });
     assert.ok(partial.needsBrief.includes('BPM'));
+    assert.ok(partial.needsBrief.includes('para qué es la pista'));
+    assert.ok(partial.needsBrief.includes('qué quiere evitar'));
     assert.ok(partial.needsBrief.includes('si lleva voz o es instrumental'));
     assert.equal(partial.needsBrief.includes('género'), false);
     const unconfirmed = await generateMusic({ userId: 1, brief: { ...brief, confirmed: false } });

@@ -21,7 +21,7 @@ export async function musicDenial(userId) {
   return (used?.length || 0) >= MONTHLY_TRACKS ? `Ya has usado tus ${MONTHLY_TRACKS} bases de este mes. El mes que viene tendrás más.` : null;
 }
 
-const BRIEF_FIELDS = { genre: 'género', mood: 'ambiente o emoción', bpm: 'BPM', key: 'tonalidad', instruments: 'instrumentos', structure: 'estructura', seconds: 'duración' };
+const BRIEF_FIELDS = { use: 'para qué es la pista', references: 'sonido de referencia', avoid: 'qué quiere evitar', genre: 'género', mood: 'ambiente o emoción', bpm: 'BPM', key: 'tonalidad', instruments: 'instrumentos', structure: 'estructura', seconds: 'duración' };
 
 export function missingBrief(brief = {}) {
   const missing = Object.entries(BRIEF_FIELDS).filter(([field]) => !String(brief[field] ?? '').trim()).map(([, label]) => label);
@@ -29,7 +29,7 @@ export function missingBrief(brief = {}) {
   return missing;
 }
 export function musicPrompt(brief) {
-  return [`${brief.genre} track`, `mood: ${brief.mood}`, `${brief.bpm} BPM`, `key: ${brief.key}`, `instruments: ${brief.instruments}`, `structure: ${brief.structure}`, brief.lyrics && brief.vocals ? `lyrics: ${brief.lyrics}` : null, brief.notes ? `notes: ${brief.notes}` : null].filter(Boolean).join('. ');
+  return [`${brief.genre} track`, `intended use: ${brief.use}`, `sound reference: ${brief.references}`, `avoid: ${brief.avoid}`, `mood: ${brief.mood}`, `${brief.bpm} BPM`, `key: ${brief.key}`, `instruments: ${brief.instruments}`, `structure: ${brief.structure}`, brief.lyrics && brief.vocals ? `lyrics: ${brief.lyrics}` : null, brief.notes ? `notes: ${brief.notes}` : null].filter(Boolean).join('. ');
 }
 
 export async function generateMusic({ userId, brief = {} }) {
