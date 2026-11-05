@@ -7,7 +7,7 @@ export const REFERRAL_NOTE = 'Con /referir tienes tu enlace: por cada persona qu
 const CLAIM_REPLIES = {
   recorded: 'He registrado tu invitación. Quien te invitó recibirá su mes gratis si contratas y pagas una suscripción cuando estén activas.',
   self: 'Este enlace es tuyo, así que no cuenta como referido.',
-  invalid: 'Ese enlace de invitación no es válido, pero puedes usar Emil igualmente.',
+  invalid: 'Ese enlace de invitación no es válido, pero puedes usar Banana igualmente.',
   already_referred: 'Ya tenías una invitación registrada. Solo cuenta la primera.',
   existing_customer: 'Tu cuenta ya tiene una suscripción, así que esta invitación no cuenta.',
 };

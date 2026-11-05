@@ -51,7 +51,7 @@ export function notifyAction(action) {
   } else sendMessage(OWNER, `🔔 ${who} ${ACTIONS[action]}`).catch(() => console.error('[usage] owner notice failed'));
   if (GROUP_ACTIONS[action] && Date.now() - lastGroupNotice > GROUP_GAP_MS) {
     lastGroupNotice = Date.now();
-    sendMessage(GROUP_CHAT, `🍌 Alguien acaba de usar Emil para ${GROUP_ACTIONS[action]}.`).catch(() => console.error('[usage] group notice failed'));
+    sendMessage(GROUP_CHAT, `🍌 Alguien acaba de usar Banana para ${GROUP_ACTIONS[action]}.`).catch(() => console.error('[usage] group notice failed'));
   }
 }
 
@@ -108,7 +108,7 @@ export async function runUsageTick(state, now = Date.now()) {
     state.usageReportDay = date;
     await sendMessage(OWNER, `Resumen del día\n\n${today.users.size} usuarios activos\n${actionLines(today.actions)}\n\nTexto estimado: ${today.cost.toFixed(2)} $\nImágenes PRO: ${today.images}`);
     const count = today.actions.get('image') || 0, plans = today.actions.get('release_plan') || 0;
-    if (count + plans) await sendMessage(GROUP_CHAT, `🍌 Hoy en Emil: ${count} ${count === 1 ? 'imagen PRO creada' : 'imágenes PRO creadas'} y ${plans} ${plans === 1 ? 'plan de lanzamiento' : 'planes de lanzamiento'}.`);
+    if (count + plans) await sendMessage(GROUP_CHAT, `🍌 Hoy en Banana: ${count} ${count === 1 ? 'imagen PRO creada' : 'imágenes PRO creadas'} y ${plans} ${plans === 1 ? 'plan de lanzamiento' : 'planes de lanzamiento'}.`);
   }
   return changed;
 }

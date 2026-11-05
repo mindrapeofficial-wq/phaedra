@@ -202,7 +202,7 @@ async function handleMessage(update) {
     try {
       if (cmd.startsWith("/desconectarinstagram")) {
         await disableConnection(userId);
-        await sendMessage(chatId, "He desactivado el acceso de Emil a tu Instagram. Esto no borra publicaciones ni cancela contenido programado. Puedes revocar también PostZen desde las aplicaciones autorizadas de Instagram.");
+        await sendMessage(chatId, "He desactivado el acceso de Banana a tu Instagram. Esto no borra publicaciones ni cancela contenido programado. Puedes revocar también PostZen desde las aplicaciones autorizadas de Instagram.");
       } else if (/verificar|instagram_check/.test(cmd)) {
         const linked = await verifyConnection(userId);
         await sendMessage(chatId, `Cuenta conectada: ${linked.username}. Ya puedes pedirme que analice tu Instagram o prepare borradores para tu próximo lanzamiento. No publicaré por mi cuenta.`);

@@ -12,4 +12,4 @@ Si preguntan cómo pasar a Creator o Business, da estos pasos numerados: Para pa
 4. Toca Cambiar a cuenta profesional y sigue los pasos.
 5. Elige una categoría y después Creador o Empresa (Business).
 
-Los nombres pueden variar un poco según la versión. Puedes volver a cambiarla cuando quieras. Para Emil sirven las dos; si dudas entre ambas, para un artista suele encajar Creador. /help instagram también los muestra.`;
+Los nombres pueden variar un poco según la versión. Puedes volver a cambiarla cuando quieras. Para Banana sirven las dos; si dudas entre ambas, para un artista suele encajar Creador. /help instagram también los muestra.`;
