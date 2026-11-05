@@ -112,6 +112,14 @@ async function announceFeatures(state) {
   await sendMessage(GROUP_CHAT, FEATURE_NEWS);
   console.log('[news] feature update delivered');
 }
+const FILES_QUESTION = "🍌 Pregunta para el grupo sobre vuestros archivos:\n\nAhora guardo vuestras fotos en /fotos y el material compartido, como los logos de un sello, en /fichas. Quiero organizarlo mejor. ¿Cómo os resulta más útil?\n\n1. Todo junto en una ficha por artista\n2. Separado por lanzamiento o proyecto\n3. Separado por tipo: fotos, logos, portadas y bases\n\nRespondedme con el número o contadme cómo trabajáis. Cada persona seguirá viendo solo lo suyo y lo que le compartan.";
+async function askAboutFiles(state) {
+  if (state.filesQuestionSent) return;
+  state.filesQuestionSent = true;
+  await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+  await sendMessage(GROUP_CHAT, FILES_QUESTION);
+  console.log('[files] group question delivered');
+}
 export async function runProactiveTick() {
   if (running) return;
   running = true;
@@ -127,6 +135,7 @@ export async function runProactiveTick() {
     await sendAccountTypeGuide(state).catch(() => console.error('[guide] failed'));
     await sendLoyaltyJoke(state).catch(() => console.error('[joke] failed'));
     await announceFeatures(state).catch(() => console.error('[news] failed'));
+    await askAboutFiles(state).catch(() => console.error('[files] failed'));
     const timing = communityTiming(state, community);
     if (await announcePromo(state)) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (state.productAnnouncement !== ANNOUNCEMENT) {
