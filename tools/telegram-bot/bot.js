@@ -22,6 +22,7 @@ import { resolveOwnerMessage, activeMembers, repliedMember, supportQuestion, isR
 import { congratulateInstagramConnection } from "./instagram-congrats.js";
 import { sendVoiceReply } from "./speech.js";
 import { mentionPeople } from "./mentions.js";
+import { wantsLite, imageLiteDenial } from "./image-lite.js";
 import { audioFile, wantsStems, handleStems } from "./stems.js";
 import { isPhotoOnly, addUpload, saveUploads, scheduleUploadQuestion, wantsNewImage, answersFaceQuestion } from "./photo-uploads.js";
 import { withUsageContext, notifyAction, chargeUsageTo, userLimitReached, USER_LIMIT_MESSAGE, activityReport, spendReport, PRIVACY_NOTICE } from "./usage.js";
@@ -501,18 +502,22 @@ async function handleMessage(update) {
         return { created: savedReply(entry, files.length), question: needsAnswer ? membershipQuestion(entry) : null };
       } : null,
       mediaFiles: { generated: state.generatedFileId, reference: state.reference?.fileId }, userId, requestId: String(update.update_id || msg.message_id || ""), directPrompt, photoStyle, profile: state.profile, isOwner: userId === OWNER_ID, isGroup, community,
-      beforeImage: async () => {
+      liteRequested: wantsLite(text) || Boolean(state.coverDraft?.lite),
+      beforeImage: async quality => {
+        if (quality === "lite") return ownerPays ? null : imageLiteDenial(userId);
         try { if (!ownerPays) imageReservation = await reserveImage(userId, username); return null; }
         catch (error) { return error.message; }
       },
       prepareImage: async prompt => {
         const brief = await resolveCoverBrief(text, state.coverDraft, { history: state.history, hasReference: Boolean(imageUrl) });
         if (brief.unrelated) { state.coverDraft = null; return { chatInstead: true }; }
-        state.coverDraft = brief.draft ? { ...brief.draft, pending: Boolean(brief.text) } : null;
+        state.coverDraft = brief.draft ? { ...brief.draft, pending: Boolean(brief.text), lite: wantsLite(text) || Boolean(state.coverDraft?.lite) } : null;
         if (brief.text) return { text: brief.text };
         return { prompt: brief.prompt + "\n" + photoStyle, kind: brief.kind, background: brief.background };
       },
-      onProgress: async (kind, details) => sendMessage(chatId, kind === "image"
+      onProgress: async (kind, details) => sendMessage(chatId, kind === "image" && details?.quality === "lite"
+        ? "Me pongo con tu imagen Lite. Te la envío aquí en cuanto termine."
+        : kind === "image"
         ? (details?.background === 'transparent' ? "Voy a quitar el fondo y entregarte un PNG con transparencia, en calidad PRO máxima" : "Me pongo con " + (details?.kind === 'music_cover' ? "tu portada" : "el diseño") + " en calidad PRO máxima") + (imageUrl ? ", usando tu imagen original" : "") + ". Puede tardar aproximadamente 1–4 minutos. Te la envío aquí en cuanto termine."
         : "Voy a revisar los datos y preparar una propuesta con contexto. Puede llevar aproximadamente 1–2 minutos."),
     });

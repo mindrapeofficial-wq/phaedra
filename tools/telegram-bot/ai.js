@@ -6,6 +6,7 @@ import { generateMusic } from "./music.js";
 import { openAiChat, LIGHT_MODEL } from "./openai-chat.js";
 import { proPromoActive, PROMO_CONTEXT } from "./promo.js";
 const OPENAI_KEY = process.env.OPENAI_API_KEY;
+import { LITE_QUALITY } from "./image-lite.js";
 const IMAGE_MODEL = "gpt-image-2.6-sunburst";
 const IMAGE_FALLBACK_MODEL = "gpt-image-2.5-sunburst";
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
@@ -42,7 +43,7 @@ TRABAJO:
 - Una foto no implica portada: puede ser para redes, para guardar o para opinar sobre ella. Si piden otra cosa, atiende eso y no generes ni preguntes por portadas. Mira la foto adjunta y responde a lo que pregunten. savedPhotos en la ficha indica cuántas fotos guardadas tiene; las ve con /fotos. No digas que las has publicado o programado.
 - Si un artista por privado te da título y fecha de un lanzamiento y quiere organizarlo, usa create_release_plan y muéstrale el plan devuelto. Pide siempre la fecha exacta con día, mes y año; no calcules fechas relativas. En el grupo, invítale a seguir por privado. Los comandos son /plan, /hecho y /recordatorios.
 - Usa herramientas cuando el usuario pida una acción o datos que las requieran. Los saludos y charla normal NO requieren herramientas externas. Si el usuario comunica un dato suyo como "me llamo Marco", usa remember_user para guardarlo, aunque ocurra durante una presentación.
-- Para imágenes usa generate_image. Siempre PRO máxima. Respeta el prompt, la foto original y los nombres/títulos exactos; no inventes texto, marcas, logos o sujetos. Antes de crear portadas se recoge el briefing con los detalles opcionales y el prompt visual.
+- Para imágenes usa generate_image. Por defecto es PRO máxima; si el usuario elige Lite (rápida y más económica), usa quality lite. Cuentas gratuitas: 1 PRO y 5 Lite en total. Suscripción: 25 Lite al mes. Si no te dice la calidad y es una cuenta gratuita, pregúntale cuál prefiere antes de gastar su imagen PRO. Respeta el prompt, la foto original y los nombres/títulos exactos; no inventes texto, marcas, logos o sujetos. Antes de crear portadas se recoge el briefing con los detalles opcionales y el prompt visual.
 - generate_image también puede EDITAR: quitar fondos (PNG transparente), cambiar luz o colores y diseñar posts de marcas. No digas que no puedes hacerlo sin usar la herramienta. Si el cliente da una instrucción completa como «quítale fondo», ejecútala; no la conviertas en una portada ni preguntes por artista, título o sello. Si pide que redactes un agradecimiento en inglés, puedes redactar ese texto sin exigir la frase exacta.
 - Un diseño para un DAW o una empresa no es una portada de un lanzamiento musical aunque lo llamen «portada». Aplica la corrección del usuario y usa su proyecto real.
 - Tu especialidad visual principal son PORTADAS MUSICALES para singles, EP y álbumes. Por defecto diseña una portada cuadrada con identidad artística, composición clara y tipografía legible si se solicita texto. Invita a incluir género musical y emoción del lanzamiento en el prompt, sin inventarlos ni convertirlo en un interrogatorio. No confundas portada musical con retrato genérico o anuncio. Si el cliente pide explícitamente otro tipo de imagen, respétalo.
@@ -194,13 +195,13 @@ const TOOLS = [
     type: "function",
     function: {
       name: "generate_image",
-      description: "Generate designs AND EDIT the original reference image: remove backgrounds to transparent PNG, change lighting/colors, make brand posts and music covers. Use this for explicit image-edit requests; do not claim those edits are unavailable. Always Pro maximum quality. Respect the requested deliverable and exact reference subjects.",
+      description: "Generate designs AND EDIT the original reference image: remove backgrounds to transparent PNG, change lighting/colors, make brand posts and music covers. Use this for explicit image-edit requests; do not claim those edits are unavailable. Pro is maximum quality; Lite is quick and cheaper. Respect the requested deliverable and exact reference subjects.",
       parameters: {
         type: "object",
         properties: {
           prompt: { type: "string", description: "Image description in English, detailed" },
           size: { type: "string", enum: ["1024x1024", "1024x1792", "1792x1024"], default: "1024x1024" },
-          quality: { type: "string", enum: ["pro"], default: "pro", description: "Always Pro, maximum quality" },
+          quality: { type: "string", enum: ["pro", "lite"], default: "pro", description: "lite only if the user chose Lite" },
           use_reference: { type: "boolean", default: true, description: "Use the attached or remembered reference photo. Set false only when the user explicitly wants a new image unrelated to it." },
         },
         required: ["prompt"],
@@ -253,7 +254,7 @@ async function executeTool(name, args, referenceUrl = null, options = {}) {
     case "sync_external_posts":
       return pz.syncExternalPosts();
     case "generate_image":
-      return generateImage(args.prompt, args.size || "1024x1024", "pro", args.use_reference === false ? null : referenceUrl, args.imageOptions);
+      return generateImage(args.prompt, args.size || "1024x1024", args.quality === "lite" ? "lite" : "pro", args.use_reference === false ? null : referenceUrl, args.imageOptions);
     case "create_release_plan":
       if (!options.userId || options.isGroup) return { error: "Release plans are created in private chat" };
       notifyAction("release_plan");
@@ -277,7 +278,7 @@ async function generateImage(prompt, size, quality = "pro", referenceUrl = null,
   const direction = kind === 'music_cover' ? IMAGE_ART_DIRECTION : kind === 'photo_edit'
     ? 'Edit the original image only as requested. Preserve the actual subject, logo shapes, existing lettering and identity. Add no music-cover conventions, badges or unrequested elements. For background removal, output true alpha transparency, never a painted checkerboard.'
     : 'Create the requested brand or graphic design. Respect the client project, original logo, requested message and composition. Do not impose music-release conventions, artist names, record labels or advisory stickers. No unverified product claims.';
-  const body = { model: IMAGE_MODEL, prompt: `${prompt}\n\nArt direction (subordinate to the client instructions):\n${direction}`, size, quality: "max", output_format: "png", background: imageOptions.background || 'auto', n: 1 };
+  const body = { model: IMAGE_MODEL, prompt: `${prompt}\n\nArt direction (subordinate to the client instructions):\n${direction}`, size, quality: quality === "lite" ? LITE_QUALITY : "max", output_format: "png", background: imageOptions.background || 'auto', n: 1 };
   let payload = JSON.stringify(body);
   const headers = { Authorization: `Bearer ${OPENAI_KEY}` };
   if (referenceUrl) {
@@ -319,9 +320,9 @@ async function generateImage(prompt, size, quality = "pro", referenceUrl = null,
   }
   const image = (await res.json()).data?.[0];
   if (!image?.b64_json) return { error: "Image request returned no image" };
-  notifyAction("image");
-  console.log("[image] completed", { model: usedModel, quality: "max", reference: Boolean(referenceUrl) });
-  return { imageBase64: image.b64_json, model: usedModel, quality: "pro", prompt, kind, background: body.background };
+  notifyAction(quality === "lite" ? "image_lite" : "image");
+  console.log("[image] completed", { model: usedModel, quality: body.quality, reference: Boolean(referenceUrl) });
+  return { imageBase64: image.b64_json, model: usedModel, quality, prompt, kind, background: body.background };
 }
 
 export async function detectFace(imageUrl) {
@@ -383,10 +384,11 @@ export async function chat(userMessage, context, imageUrl = null, history = [], 
     const prepared = await options.prepareImage?.(options.directPrompt);
     if (prepared?.text) return { text: prepared.text };
     if (!prepared?.chatInstead) {
-      const denied = await options.beforeImage?.();
+      const quality = options.liteRequested ? "lite" : "pro";
+      const denied = await options.beforeImage?.(quality);
       if (denied) return { text: denied };
-      await options.onProgress?.("image", prepared);
-      try { return imageReply(await generateImage(prepared?.prompt || options.directPrompt, "1024x1024", "pro", imageUrl, prepared || {})); }
+      await options.onProgress?.("image", { ...prepared, quality });
+      try { return imageReply(await generateImage(prepared?.prompt || options.directPrompt, "1024x1024", quality, imageUrl, prepared || {})); }
       catch { return imageReply({ error: "Image timeout or service failure" }); }
     }
   }
@@ -447,11 +449,12 @@ export async function chat(userMessage, context, imageUrl = null, history = [], 
             continue;
           }
           if (prepared?.prompt) args.prompt = prepared.prompt;
-          const denied = await options.beforeImage?.();
+          if (options.liteRequested) args.quality = "lite";
+          const denied = await options.beforeImage?.(args.quality === "lite" ? "lite" : "pro");
           if (denied) return { text: denied, profile };
           args.imageOptions = { kind: prepared?.kind, background: prepared?.background };
           if (prepared?.kind === 'photo_edit') args.use_reference = true;
-          await options.onProgress?.("image", prepared);
+          await options.onProgress?.("image", { ...prepared, quality: args.quality });
           args.prompt += "\n" + (options.photoStyle || "");
         } else if (tc.function.name === "ask_claude") await options.onProgress?.("strategy");
         if (!allowedTools.some(t => t.function.name === tc.function.name)) result = { error: "Tool not available for this user" };

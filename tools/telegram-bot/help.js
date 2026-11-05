@@ -15,7 +15,7 @@ Pídelo con tus palabras, por ejemplo: «Hazme una portada oscura para mi single
 • Mándame varias fotos y dime si las guardo; /fotos te las enseña.
 • Si el administrador te da acceso a una ficha compartida, la verás con /fichas.
 
-La cuenta gratuita incluye una imagen PRO en total.`,
+Imágenes: PRO (máxima calidad) o Lite (rápida; dime «Lite»). Gratis: 1 PRO y 5 Lite en total. Suscripción: 25 Lite al mes.`,
   lanzamiento: `🚀 Plan de lanzamiento
 
 Dime el título y la fecha exacta, por ejemplo: «Saco mi single Noche el 15 de enero de 2027, prepárame el plan».
