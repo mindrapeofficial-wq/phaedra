@@ -328,11 +328,11 @@ async function handleMessage(update) {
       return;
     }
     const uploadIntent = state.pendingUploads?.length ? await interpretUploadRequest(text) : null;
-    if (uploadIntent?.action === "save" && uploadIntent.collection) {
+    if (uploadIntent?.action === "save" && uploadIntent.collection && msg.from.id === OWNER_ID) {
       const files = [...state.pendingUploads];
       const saved = await saveToCollection({ name: uploadIntent.collection, files, artists: uploadIntent.artists, ownerId: msg.from.id });
-      const reply = saved.denied ? `Ya existe una ficha llamada «${uploadIntent.collection}» de otra persona. Dime otro nombre.` : savedReply(saved.entry, files.length);
-      if (!saved.denied) state.pendingUploads = [];
+      const reply = savedReply(saved.entry, files.length);
+      state.pendingUploads = [];
       record("user", text);
       record("assistant", reply);
       await memoryRequest(chatId, userId, "POST", state);

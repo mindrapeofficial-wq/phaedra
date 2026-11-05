@@ -9,7 +9,7 @@ Pídelo con tus palabras, por ejemplo: «Hazme una portada oscura para mi single
 • También quito fondos y cambio luz o colores.
 • /imagen seguido de tu idea va directo al encargo.
 • Mándame varias fotos y dime si las guardo; /fotos te las enseña.
-• También puedo guardarlas en una ficha compartida: «guárdalas en la ficha 2CB Records para Loyal T». Se ven con /fichas.
+• Si el administrador te da acceso a una ficha compartida, la verás con /fichas.
 
 La cuenta gratuita incluye una imagen PRO en total.`,
   lanzamiento: `🚀 Plan de lanzamiento
@@ -65,7 +65,8 @@ const OWNER = `\n\n🛠 Solo para ti
 • /gasto: consumo estimado
 • /estadoia: comprobar las IA
 • /engage: ideas de conversación
-• /soporte off: salir del modo ayuda en el grupo`;
+• /soporte off: salir del modo ayuda en el grupo
+• Fichas: sube fotos y di «guárdalas en la ficha 2CB Records para Loyal T». Solo tú puedes crearlas.`;
 
 export function helpTopic(argument = '') {
   const key = argument.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
