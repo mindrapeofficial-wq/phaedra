@@ -145,6 +145,13 @@ async function announceReferralPass(state) {
   await memoryRequest(GROUP_CHAT, 0, 'POST', state);
   console.log('[news] referral pass delivered');
 }
+async function announceVoiceLimits(state) {
+  if (state.voiceLimitsDelivered) return;
+  await sendMessage(GROUP_CHAT, "🎙️ Hemos ajustado los límites de notas de voz que la IA escucha:\n\n• Versión gratuita: 1 cada 24 horas\n• Versión PRO: 10 cada 24 horas\n\nPor texto puedes seguir escribiéndome como siempre.");
+  state.voiceLimitsDelivered = true;
+  await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+  console.log('[news] voice limits delivered');
+}
 const FILES_QUESTION = "🍌 Pregunta para el grupo sobre vuestros archivos:\n\nAhora guardo vuestras fotos en /fotos y el material compartido, como los logos de un sello, en /fichas. Quiero organizarlo mejor. ¿Cómo os resulta más útil?\n\n1. Todo junto en una ficha por artista\n2. Separado por lanzamiento o proyecto\n3. Separado por tipo: fotos, logos, portadas y bases\n\nRespondedme con el número o contadme cómo trabajáis. Cada persona seguirá viendo solo lo suyo y lo que le compartan.";
 async function askAboutFiles(state) {
   if (state.filesQuestionSent) return;
@@ -189,6 +196,7 @@ export async function runProactiveTick() {
     await announceBeats(state).catch(() => console.error('[news] beats notice failed'));
     await announceCosts(state).catch(() => console.error('[news] costs notice failed'));
     await announceReferralPass(state).catch(error => console.error('[news] referral pass failed', error.message));
+    await announceVoiceLimits(state).catch(error => console.error('[news] voice limits failed', error.message));
     await announceInstagramCost(state).catch(error => console.error('[news] instagram cost failed', error.message));
     await askAboutFiles(state).catch(() => console.error('[files] failed'));
     await askAboutExistingPhotos(state).catch(() => console.error('[photos] review failed'));

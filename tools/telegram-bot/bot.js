@@ -22,6 +22,7 @@ import { resolveOwnerMessage, activeMembers, repliedMember, supportQuestion, isR
 import { congratulateInstagramConnection } from "./instagram-congrats.js";
 import { sendVoiceReply } from "./speech.js";
 import { mentionPeople } from "./mentions.js";
+import { voiceDenial } from "./voice-limit.js";
 import { wantsLite, imageLiteDenial } from "./image-lite.js";
 import { audioFile, wantsStems, handleStems } from "./stems.js";
 import { isPhotoOnly, addUpload, saveUploads, scheduleUploadQuestion, wantsNewImage, answersFaceQuestion } from "./photo-uploads.js";
@@ -88,6 +89,8 @@ async function handleMessage(update) {
     if (msg.chat.type !== "private" && String(msg.chat.id) !== GROUP_CHAT && !isBotTriggered(msg)) return;
     const access = await checkAccess(msg.from.id, msg.from.username);
     if (!access.allowed) { await sendMessage(msg.chat.id, access.reason); return; }
+    const voiceLimit = await voiceDenial(msg.from.id, (await getUser(msg.from.id, msg.from.username)).tier);
+    if (voiceLimit) { await sendMessage(msg.chat.id, voiceLimit); return; }
     try { msg.text = await transcribeVoice(msg.voice); }
     catch (error) { await sendMessage(msg.chat.id, error.message); return; }
   }

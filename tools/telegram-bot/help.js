@@ -91,7 +91,7 @@ Empieza por aquí:
 • «Hazme una portada para mi single»
 • «Saco un tema el 15 de enero de 2027, prepárame el plan»
 • «Escríbeme una biografía de artista»
-También entiendo fotos, y si me mandas una nota de voz te respondo con otra, con voz generada por IA.
+También entiendo fotos, y si me mandas una nota de voz te respondo con otra, con voz generada por IA (gratis: 1 cada 24 horas; PRO: 10).
 
 Comandos:
 /plan: tu plan de lanzamiento
