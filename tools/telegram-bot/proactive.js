@@ -138,6 +138,13 @@ async function announceInstagramCost(state) {
   await memoryRequest(GROUP_CHAT, 0, 'POST', state);
   console.log('[news] instagram cost delivered');
 }
+async function announceReferralPass(state) {
+  if (state.referralPassDelivered) return;
+  await sendMessage(GROUP_CHAT, "🎁 Novedad: por cada persona nueva que invites a Social Banana, consigues 1 día de funciones PRO.\n\nEscríbeme /referir por privado para tener tu enlace. Tu invitado tiene que entrar con él y ser nuevo en el bot. Los días se acumulan.\n\nNo incluye conectar Instagram ni más bases.");
+  state.referralPassDelivered = true;
+  await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+  console.log('[news] referral pass delivered');
+}
 const FILES_QUESTION = "🍌 Pregunta para el grupo sobre vuestros archivos:\n\nAhora guardo vuestras fotos en /fotos y el material compartido, como los logos de un sello, en /fichas. Quiero organizarlo mejor. ¿Cómo os resulta más útil?\n\n1. Todo junto en una ficha por artista\n2. Separado por lanzamiento o proyecto\n3. Separado por tipo: fotos, logos, portadas y bases\n\nRespondedme con el número o contadme cómo trabajáis. Cada persona seguirá viendo solo lo suyo y lo que le compartan.";
 async function askAboutFiles(state) {
   if (state.filesQuestionSent) return;
@@ -181,6 +188,7 @@ export async function runProactiveTick() {
     await announceFeatures(state).catch(() => console.error('[news] failed'));
     await announceBeats(state).catch(() => console.error('[news] beats notice failed'));
     await announceCosts(state).catch(() => console.error('[news] costs notice failed'));
+    await announceReferralPass(state).catch(error => console.error('[news] referral pass failed', error.message));
     await announceInstagramCost(state).catch(error => console.error('[news] instagram cost failed', error.message));
     await askAboutFiles(state).catch(() => console.error('[files] failed'));
     await askAboutExistingPhotos(state).catch(() => console.error('[photos] review failed'));

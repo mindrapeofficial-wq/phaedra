@@ -51,7 +51,7 @@ Cuenta y extensión: https://banana.phaedra.com.es/cuenta.html
 Nunca me envíes contraseñas.`,
   referidos: `🎁 Referidos
 
-Con /referir tienes tu enlace y tus recuentos. Por cada persona que invites y pague una suscripción, consigues 1 mes gratis.
+Con /referir tienes tu enlace y tus recuentos. Por cada persona nueva que invites, consigues 1 día de funciones PRO. Si además paga una suscripción, 1 mes gratis.
 
 Los cobros reales aún no están activos, así que de momento solo registramos a quién invitas.`,
   extension: `🧩 Extensión para Chrome

@@ -27,6 +27,13 @@ test('the owner, the bot name and ambiguous names are never mentioned', () => {
   assert.deepEqual(people.map(person => person.name), ['L']);
 });
 
+test('a first name alone also mentions the person, unless it is ambiguous', () => {
+  const people = mentionPeople([{ userId: 5, name: 'Weslie Snaips', username: 'weslie' }, { userId: 6, name: 'Ana Ruiz' }, { userId: 7, name: 'Ana Gil' }], 1);
+  assert.equal(applyMentions('Weslie, buenas.', people).text, '@weslie, buenas.');
+  assert.equal(applyMentions('¡Weslie Snaips!', people).text, '¡@weslie!');
+  assert.equal(applyMentions('Ana, hola', people).text, 'Ana, hola');
+});
+
 test('the sender wins over a member with the same name', () => {
   const people = mentionPeople([{ userId: 3, name: 'Ana' }], 1, { id: 9, first_name: 'Ana', username: 'ana9' });
   assert.equal(people[0].id, 9);

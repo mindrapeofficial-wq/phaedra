@@ -14,7 +14,16 @@ export function mentionPeople(community = [], ownerId, sender) {
   for (const name of ambiguous) byName.delete(name);
   const senderName = String(sender?.first_name || '').trim();
   if (senderName && Number(sender.id) !== Number(ownerId) && !RESERVED.test(senderName)) byName.set(senderName, { id: sender.id, name: senderName, username: sender.username });
-  return [...byName.values()];
+  // People are often addressed by their first name alone: "Weslie" for "Weslie Snaips".
+  const people = [...byName.values()];
+  const firstNames = new Map();
+  for (const person of people) {
+    const first = person.name.split(/\s+/)[0];
+    if (first === person.name || first.length < 3 || byName.has(first)) continue;
+    firstNames.set(first, firstNames.has(first) ? null : person);
+  }
+  for (const [name, person] of firstNames) if (person) people.push({ ...person, name });
+  return people;
 }
 
 // People with a username get a real @username. Without one, Telegram can still notify them through a linked @Name.

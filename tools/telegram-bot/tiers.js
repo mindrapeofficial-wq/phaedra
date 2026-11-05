@@ -1,5 +1,6 @@
 import { REFERRAL_NOTE } from './referrals.js';
 import { withPromoTier } from './promo.js';
+import { withReferralPass } from './referral-pass.js';
 const timedFetch = (url, options = {}) => fetch(url, { ...options, signal: options.signal || AbortSignal.timeout(20_000) });
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://mfylkalarzuhivhmvzbm.supabase.co";
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -38,7 +39,7 @@ const PRO_TOOLS = new Set([
 
 export async function getUser(telegramId, username) {
   const rows = await supabase(`/sb_telegram_users?telegram_id=eq.${telegramId}&select=*`);
-  if (rows && rows.length > 0) return withPromoTier(rows[0]);
+  if (rows && rows.length > 0) return withReferralPass(withPromoTier(rows[0]));
 
   // Auto-register as free
   const created = await supabase("/sb_telegram_users", "POST", {

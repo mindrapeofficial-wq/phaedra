@@ -73,12 +73,13 @@ async function handleMessage(update) {
       const state = await memoryRequest(msg.chat.id, member.id);
       if (state.profile?.welcomedAt) continue;
       state.profile = { ...state.profile, telegramName: member.first_name || member.username || "", welcomedAt: new Date().toISOString() };
+      state.telegramUsername = member.username || null;
       await memoryRequest(msg.chat.id, member.id, "POST", state);
-      newcomers.push(member.first_name || member.username || "colega");
+      newcomers.push(member);
     }
     if (newcomers.length) {
       const single = newcomers.length === 1;
-      await sendMessage(msg.chat.id, `¡${newcomers.join(", ")}, ${single ? "qué bien tenerte por aquí" : "bienvenidos"}! Soy Emil, la IA manager de esta comunidad. ¿Qué tipo de contenido ${single ? "creas o te gustaría crear" : "creáis o queréis crear"}?\n\nPodemos hablar aquí o por privado: https://t.me/SocialBananaBot?start=welcome\nIré recordando lo que ${single ? "me cuentes" : "me contéis"} para ayudar mejor; podéis consultar o borrar lo guardado.`);
+      await sendMessage(msg.chat.id, `¡${newcomers.map(member => member.first_name || member.username || "colega").join(", ")}, ${single ? "qué bien tenerte por aquí" : "bienvenidos"}! Soy Emil, la IA manager de esta comunidad. ¿Qué tipo de contenido ${single ? "creas o te gustaría crear" : "creáis o queréis crear"}?\n\nPodemos hablar aquí o por privado: https://t.me/SocialBananaBot?start=welcome\nIré recordando lo que ${single ? "me cuentes" : "me contéis"} para ayudar mejor; podéis consultar o borrar lo guardado.`, { people: mentionPeople(newcomers.map(member => ({ userId: member.id, name: member.first_name || member.username, username: member.username })), OWNER_ID) });
     }
     return;
   }
