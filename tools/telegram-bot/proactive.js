@@ -104,6 +104,14 @@ async function sendLoyaltyJoke(state) {
   if (!spoke) await sendMessage(GROUP_CHAT, joke);
   console.log('[joke] delivered', { voice: spoke });
 }
+const FEATURE_NEWS = "🍌 Novedades en Banana:\n\n🎙️ Mándame una nota de voz y te respondo con otra.\n📸 Súbeme varias fotos a la vez y dime qué hacemos: guardarlas, usarlas en redes o trabajar una portada. Las guardadas las ves con /fotos.\n🚀 Dime el título y la fecha de tu lanzamiento y te preparo un plan con tareas y recordatorios: /plan.\n🎨 Imágenes con un modelo más nuevo.\n🎁 Invita con /referir: por cada persona que pague una suscripción, 1 mes gratis cuando los pagos estén activos.\n🎧 Muy pronto, bases musicales para suscriptores.\n\nTodo lo que puedo hacer está en /help.";
+async function announceFeatures(state) {
+  if (state.featureNewsSent) return;
+  state.featureNewsSent = true;
+  await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+  await sendMessage(GROUP_CHAT, FEATURE_NEWS);
+  console.log('[news] feature update delivered');
+}
 export async function runProactiveTick() {
   if (running) return;
   running = true;
@@ -118,6 +126,7 @@ export async function runProactiveTick() {
     if (await notifyNewAccountLinks(state).catch(() => { console.error('[account] link check failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     await sendAccountTypeGuide(state).catch(() => console.error('[guide] failed'));
     await sendLoyaltyJoke(state).catch(() => console.error('[joke] failed'));
+    await announceFeatures(state).catch(() => console.error('[news] failed'));
     const timing = communityTiming(state, community);
     if (await announcePromo(state)) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (state.productAnnouncement !== ANNOUNCEMENT) {
