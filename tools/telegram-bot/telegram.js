@@ -63,6 +63,16 @@ export async function getFileUrl(fileId) {
   return `https://api.telegram.org/file/bot${TOKEN}/${filePath}`;
 }
 
+export async function sendDocument(chatId, bytes, filename, caption) {
+  const form = new FormData();
+  form.set('chat_id', String(chatId));
+  form.set('document', new Blob([bytes], { type: 'application/zip' }), filename);
+  form.set('caption', caption || '');
+  const response = await timedFetch(`${API}/sendDocument`, { method: 'POST', body: form, signal: AbortSignal.timeout(120_000) });
+  if (!response.ok) throw new Error(`Telegram document failed: ${response.status}`);
+  return response;
+}
+
 export async function sendImageDocument(chatId, bytes, caption) {
   const form = new FormData();
   form.set('chat_id', String(chatId));

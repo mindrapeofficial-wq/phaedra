@@ -12,11 +12,11 @@ const GROUP_GAP_MS = 60 * 60_000;
 // The speech rate is per character, estimated from OpenAI's published per-minute speech cost.
 const PRICES = { 'gpt-4o-mini-tts': [17, 0], 'gpt-6.1-terra': [1, 5], 'gpt-6-luna': [0.1, 0.5], 'gpt-4.1': [2, 8], 'claude-opus-5-5': [4, 20] };
 export const ACTIONS = {
-  chat: 'escribió al bot', image: 'generó una imagen PRO', music: 'generó una base musical', music_pro: 'generó una base PRO', music_lite: 'generó una base Lite', voice: 'envió una nota de voz', release_plan: 'creó un plan de lanzamiento',
+  chat: 'escribió al bot', image: 'generó una imagen PRO', music: 'generó una base musical', music_pro: 'generó una base PRO', music_lite: 'generó una base Lite', stems: 'separó las pistas de un audio', voice: 'envió una nota de voz', release_plan: 'creó un plan de lanzamiento',
   instagram: 'usó las herramientas de Instagram', instagram_analysis: 'pidió un análisis de Instagram', claim: 'usó /reclamar', referral: 'usó /referir',
   account: 'usó /cuenta', plan_view: 'consultó su plan', task_done: 'marcó una tarea', reminders: 'cambió sus recordatorios',
 };
-const GROUP_ACTIONS = { image: 'crear una imagen PRO', music_pro: 'crear una base PRO', music_lite: 'crear una base Lite', release_plan: 'preparar un plan de lanzamiento', instagram_analysis: 'analizar su Instagram' };
+const GROUP_ACTIONS = { image: 'crear una imagen PRO', music_pro: 'crear una base PRO', music_lite: 'crear una base Lite', stems: 'separar las pistas de un audio', release_plan: 'preparar un plan de lanzamiento', instagram_analysis: 'analizar su Instagram' };
 export const PRIVACY_NOTICE = 'El administrador recibe avisos de las acciones que realizas aquí, sin su contenido, para operar el servicio y controlar costes. En el grupo pueden aparecer avisos anónimos del tipo «alguien usó…».';
 
 const storage = new AsyncLocalStorage();

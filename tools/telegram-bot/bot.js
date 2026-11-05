@@ -22,6 +22,7 @@ import { resolveOwnerMessage, activeMembers, repliedMember, supportQuestion, isR
 import { congratulateInstagramConnection } from "./instagram-congrats.js";
 import { sendVoiceReply } from "./speech.js";
 import { mentionPeople } from "./mentions.js";
+import { audioFile, wantsStems, handleStems } from "./stems.js";
 import { isPhotoOnly, addUpload, saveUploads, scheduleUploadQuestion, wantsNewImage, answersFaceQuestion } from "./photo-uploads.js";
 import { withUsageContext, notifyAction, chargeUsageTo, userLimitReached, USER_LIMIT_MESSAGE, activityReport, spendReport, PRIVACY_NOTICE } from "./usage.js";
 import { releasePlanSummary, completeReleaseTask, setReleaseReminders } from "./releases.js";
@@ -87,6 +88,16 @@ async function handleMessage(update) {
     if (!access.allowed) { await sendMessage(msg.chat.id, access.reason); return; }
     try { msg.text = await transcribeVoice(msg.voice); }
     catch (error) { await sendMessage(msg.chat.id, error.message); return; }
+  }
+  const stemsFile = audioFile(msg);
+  const stemsText = msg.text || msg.caption || "";
+  const inScope = msg.chat.type === "private" || String(msg.chat.id) === GROUP_CHAT;
+  if (stemsFile && inScope && (wantsStems(stemsText) || (msg.chat.type === "private" && !stemsText && !msg.reply_to_message))) {
+    const access = await checkAccess(msg.from.id, msg.from.username);
+    if (!access.allowed) { await sendMessage(msg.chat.id, access.reason); return; }
+    if (!stemsText) { await sendMessage(msg.chat.id, "Tengo tu audio. Si quieres separar sus pistas, responde a ese audio con /separar."); return; }
+    await handleStems({ chatId: msg.chat.id, userId: msg.from.id, isGroup: msg.chat.type !== "private", file: stemsFile });
+    return;
   }
   const imageDocument = /^(?:image\/(?:png|jpeg|webp))$/.test(msg.document?.mime_type || '') || /\.(?:png|jpe?g|webp)$/i.test(msg.document?.file_name || '');
   if (!msg.text && !msg.caption && !msg.photo?.length && !imageDocument) return;
