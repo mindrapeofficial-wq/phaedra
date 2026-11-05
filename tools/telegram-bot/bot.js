@@ -16,7 +16,7 @@ import { memoryRequest, groupConversationContext } from "./memory.js";
 import { referralSummary, claimReferral } from "./referrals.js";
 import { claimInstagramTrial } from "./instagram-trial.js";
 import { helpMessage } from "./help.js";
-import { interpretUploadRequest, saveToCollection, collectionsFor, savedReply } from "./collections.js";
+import { interpretUploadRequest, saveToCollection, collectionsFor, savedReply, membershipQuestion, confirmMembers, confirmsMembership, deniesMembership, labelsFor } from "./collections.js";
 import { resolveOwnerMessage, activeMembers, repliedMember, supportQuestion, isRetouch } from "./owner-support.js";
 import { congratulateInstagramConnection } from "./instagram-congrats.js";
 import { sendVoiceReply } from "./speech.js";
@@ -284,7 +284,11 @@ async function handleMessage(update) {
     return;
   }
   // Only the user's private chat may load facts learned in other conversations.
-  if (!isGroup) state.profile = { ...state.profile, ...await privateProfile(userId) };
+  if (!isGroup) {
+    state.profile = { ...state.profile, ...await privateProfile(userId) };
+    const labels = await labelsFor(msg.from).catch(() => []);
+    if (labels.length) state.profile = { ...state.profile, sellos: labels };
+  }
   if (cmd === "/mimemoria") {
     if (isGroup) { await sendMessage(chatId, "Tu ficha es privada. Consúltala por mensaje privado conmigo usando /mimemoria."); return; }
     const profile = JSON.stringify(state.profile || {}, null, 2);
@@ -327,11 +331,26 @@ async function handleMessage(update) {
       scheduleUploadQuestion(`${chatId}:${userId}`, count, question => sendMessage(chatId, question));
       return;
     }
+    if (state.pendingMembership) {
+      const label = state.pendingMembership;
+      state.pendingMembership = null;
+      const yes = confirmsMembership(text);
+      if (yes || deniesMembership(text)) {
+        const entry = yes ? await confirmMembers(label) : null;
+        const reply = entry ? `Anotado: ${entry.members.join(", ")} ya ${entry.members.length === 1 ? "figura" : "figuran"} en ${entry.name}, con su material disponible en /fichas.` : "De acuerdo, solo tienen acceso a la ficha; no los anoto como miembros.";
+        record("user", text);
+        record("assistant", reply);
+        await memoryRequest(chatId, userId, "POST", state);
+        await sendMessage(chatId, reply);
+        return;
+      }
+    }
     const uploadIntent = state.pendingUploads?.length ? await interpretUploadRequest(text) : null;
     if (uploadIntent?.action === "save" && uploadIntent.collection && msg.from.id === OWNER_ID) {
       const files = [...state.pendingUploads];
       const saved = await saveToCollection({ name: uploadIntent.collection, files, artists: uploadIntent.artists, ownerId: msg.from.id });
-      const reply = savedReply(saved.entry, files.length);
+      const reply = saved.entry.artists.length && !saved.entry.members ? `${savedReply(saved.entry, files.length)}\n\n${membershipQuestion(saved.entry)}` : savedReply(saved.entry, files.length);
+      if (saved.entry.artists.length && !saved.entry.members) state.pendingMembership = saved.entry.name;
       state.pendingUploads = [];
       record("user", text);
       record("assistant", reply);

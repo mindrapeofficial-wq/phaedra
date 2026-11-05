@@ -38,6 +38,27 @@ export async function saveToCollection({ name, files, artists, ownerId }) {
   return { entry };
 }
 
+export const confirmsMembership = text => /^\s*(?:s[ií](?![a-záéíóúñ])|claro|correcto|exacto|eso es|as[ií] es|son miembros|afirmativo)/i.test(text);
+export const deniesMembership = text => /^\s*(?:no\b|ninguno|tampoco)/i.test(text);
+export function membershipQuestion(entry) {
+  return `¿Entonces ${entry.artists.join(', ')} ${entry.artists.length === 1 ? 'es miembro' : 'son miembros'} de ${entry.name}? Si me dices que sí, lo anoto en su ficha de artista con el material del sello.`;
+}
+export async function confirmMembers(name) {
+  const store = await memoryRequest(...STORE);
+  const entry = store.collections?.[keyOf(name)];
+  if (!entry) return null;
+  entry.members = [...entry.artists];
+  await memoryRequest(...STORE, 'POST', store);
+  return entry;
+}
+const nameMatches = (list, user) => {
+  const names = [user.first_name, user.username, [user.first_name, user.last_name].filter(Boolean).join(' ')].map(normalize).filter(Boolean);
+  return (list || []).some(artist => names.includes(normalize(artist)));
+};
+export async function labelsFor(user) {
+  const store = await memoryRequest(...STORE);
+  return Object.values(store.collections || {}).filter(entry => nameMatches(entry.members, user)).map(entry => ({ sello: entry.name, archivos: entry.files.length, verCon: `/fichas ${entry.name}` }));
+}
 export function canAccess(entry, user, isAdmin = false) {
   if (isAdmin || Number(entry.ownerId) === Number(user.id)) return true;
   const names = [user.first_name, user.username, [user.first_name, user.last_name].filter(Boolean).join(' ')].map(normalize).filter(Boolean);

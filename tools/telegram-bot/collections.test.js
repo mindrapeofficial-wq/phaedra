@@ -55,3 +55,19 @@ test('authorization matches names ignoring accents, case and symbols', () => {
   assert.equal(canAccess(entry, { id: 3, username: 'loyal_t' }), true);
   assert.equal(canAccess(entry, { id: 4, first_name: 'Ary' }), false);
 });
+
+test('confirming membership records artists and exposes the label to them', async () => {
+  const { confirmMembers, labelsFor, confirmsMembership, deniesMembership, membershipQuestion } = await import('./collections.js');
+  const restore = mock();
+  try {
+    const { entry } = await saveToCollection({ name: '2CB Records', files: ['logo'], artists: ['Loyal T', 'Lunatico'], ownerId: 1 });
+    assert.match(membershipQuestion(entry), /Loyal T, Lunatico son miembros de 2CB Records/);
+    assert.deepEqual(await labelsFor({ id: 5, first_name: 'Loyal-T' }), []);
+    await confirmMembers('2cb records');
+    assert.equal((await labelsFor({ id: 5, first_name: 'Loyal-T' }))[0].sello, '2CB Records');
+    assert.deepEqual(await labelsFor({ id: 6, first_name: 'Emil' }), []);
+    assert.equal(confirmsMembership('sí, son del sello'), true);
+    assert.equal(deniesMembership('no'), true);
+    assert.equal(confirmsMembership('haz una portada'), false);
+  } finally { restore(); }
+});
