@@ -1,7 +1,7 @@
 import { database } from './database.js';
 import { memoryRequest } from './memory.js';
 import { sendMessage } from './telegram.js';
-import { paidTier } from './paid-tier.js';
+import { paidTier, PLANS } from './paid-tier.js';
 import { requestCost } from './consumption-report.js';
 
 const OWNER = Number(process.env.TELEGRAM_OWNER_ID || 1661812916);
@@ -9,9 +9,9 @@ const OWNER = Number(process.env.TELEGRAM_OWNER_ID || 1661812916);
 const COUNTING_FROM = '2026-11-05T10:40:00Z';
 const GROUP_CHAT = process.env.TELEGRAM_GROUP_CHAT_ID || '-1004319265595';
 const LEVELS = [100, 75, 50, 25];
-export const consumptionLimit = tier => tier === 'pro' ? 8 : 1;
+export const consumptionLimit = tier => PLANS[tier]?.limit || 1;
 const period = (tier, now) => {
-  if (tier !== 'pro') return { key: 'total', from: COUNTING_FROM };
+  if (!PLANS[tier]?.scale) return { key: 'total', from: COUNTING_FROM };
   const month = new Date(now).toISOString().slice(0, 7), from = `${month}-01T00:00:00Z`;
   return { key: month, from: from > COUNTING_FROM ? from : COUNTING_FROM };
 };

@@ -1,7 +1,6 @@
 import { database } from './database.js';
-import { activeSubscription } from './entitlements.js';
 import { notifyAction } from './usage.js';
-import { runExclusive } from './paid-tier.js';
+import { runExclusive, paidTier, scaled } from './paid-tier.js';
 
 const OWNER = Number(process.env.TELEGRAM_OWNER_ID || 1661812916);
 export const MUSIC_MODEL = 'music_v2_5';
@@ -16,18 +15,12 @@ const clampSeconds = (seconds, quality) => Math.min(MAX_SECONDS[quality], Math.m
 const monthStart = (now = Date.now()) => new Date(new Date(now).toISOString().slice(0, 7) + '-01T00:00:00Z').toISOString();
 const qualityLabel = quality => quality === 'pro' ? 'PRO' : 'Lite';
 
-async function isPaidUser(userId) {
-  const [user] = await database(`sb_telegram_users?telegram_id=eq.${Number(userId)}&select=user_id`) || [];
-  if (!user?.user_id) return false;
-  const rows = await database(`sb_subscriptions?user_id=eq.${encodeURIComponent(user.user_id)}&livemode=eq.true&select=livemode,status,risk_hold,paid_until`);
-  return Boolean(activeSubscription(rows || []));
-}
-
 export async function musicDenial(userId, quality) {
   if (!process.env.ELEVENLABS_API_KEY) return 'La generación de bases todavía no está activada. Puedo ayudarte con la idea, la estructura y el brief mientras tanto.';
   if (Number(userId) === OWNER) return null;
-  const paid = await isPaidUser(userId);
-  const allowance = musicAllowance(paid);
+  const plan = await paidTier(userId), paid = plan !== 'free';
+  const base = musicAllowance(paid);
+  const allowance = paid ? { ...base, pro: scaled(base.pro, plan), lite: scaled(base.lite, plan) } : base;
   const period = allowance.monthly ? `&created_at=gte.${monthStart()}` : '';
   // Beats made before the tiers existed were full tracks, so they count as PRO.
   const actions = quality === 'pro' ? 'in.(music,music_pro)' : 'eq.music_lite';

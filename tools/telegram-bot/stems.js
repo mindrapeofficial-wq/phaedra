@@ -1,8 +1,7 @@
 import { database } from './database.js';
-import { activeSubscription } from './entitlements.js';
 import { notifyAction } from './usage.js';
 import { getFileUrl, sendDocument, sendMessage } from './telegram.js';
-import { runExclusive } from './paid-tier.js';
+import { runExclusive, paidTier, scaled } from './paid-tier.js';
 
 const OWNER = Number(process.env.TELEGRAM_OWNER_ID || 1661812916);
 const MAX_BYTES = 20 * 1024 * 1024; // Telegram bots cannot download larger files.
@@ -26,14 +25,13 @@ export const wantsStems = text => REQUEST.test(String(text || ''));
 async function denial(userId) {
   if (!process.env.ELEVENLABS_API_KEY) return 'La separación de pistas todavía no está activada.';
   if (Number(userId) === OWNER) return null;
-  const [user] = await database(`sb_telegram_users?telegram_id=eq.${Number(userId)}&select=user_id`) || [];
-  const rows = user?.user_id ? await database(`sb_subscriptions?user_id=eq.${encodeURIComponent(user.user_id)}&livemode=eq.true&select=livemode,status,risk_hold,paid_until`) : [];
-  const paid = Boolean(activeSubscription(rows || []));
+  const plan = await paidTier(userId), paid = plan !== 'free';
   const allowance = stemsAllowance(paid);
+  if (paid) allowance.count = scaled(allowance.count, plan);
   const period = allowance.monthly ? `&created_at=gte.${new Date().toISOString().slice(0, 7)}-01T00:00:00Z` : '';
   const used = await database(`sb_usage_events?telegram_id=eq.${Number(userId)}&action=eq.stems${period}&select=id`);
   if ((used?.length || 0) < allowance.count) return null;
-  return paid ? 'Ya has usado tus 10 separaciones de este mes. El mes que viene tendrás más.' : 'Ya has usado tu separación gratuita. La suscripción incluye 10 al mes.';
+  return paid ? `Ya has usado tus ${allowance.count} separaciones de este mes. El mes que viene tendrás más.` : 'Ya has usado tu separación gratuita. La suscripción incluye 10 al mes.';
 }
 
 export async function separateStems(file) {

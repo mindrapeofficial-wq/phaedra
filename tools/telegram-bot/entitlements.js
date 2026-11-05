@@ -6,7 +6,7 @@ export function activeSubscription(rows, now = Date.now()) {
 export async function requireInstagramAccess(userId) {
   if (Number(userId) === Number(process.env.TELEGRAM_OWNER_ID || 1661812916)) return { owner: true };
   const user = (await database(`sb_telegram_users?telegram_id=eq.${Number(userId)}&select=user_id`))[0];
-  if (!user?.user_id) throw new Error('Para conectar Instagram, primero vincula tu cuenta de Social Banana por privado con /cuenta. La suscripción de 10 €/mes incluirá un Instagram y la extensión; los cobros reales aún no están activados.');
+  if (!user?.user_id) throw new Error('Para conectar Instagram, primero vincula tu cuenta de Social Banana por privado con /cuenta. Conectar Instagram se contrata aparte de los planes y los cobros todavía no están activos.');
   if (await hasActiveInstagramTrial(userId)) return { userId: user.user_id, trial: true };
   const rows = await database(`sb_subscriptions?user_id=eq.${encodeURIComponent(user.user_id)}&livemode=eq.true&select=livemode,status,risk_hold,paid_until`);
   const subscription = activeSubscription(rows);

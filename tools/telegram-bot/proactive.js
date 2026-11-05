@@ -161,7 +161,7 @@ async function correctVoiceLimits(state) {
   await memoryRequest(GROUP_CHAT, 0, 'POST', state);
   console.log('[news] voice correction delivered');
 }
-export const BOT_DESCRIPTION = "🍌 Social Banana: tu IA manager para artistas. Portadas, bases, planes de lanzamiento e Instagram.\n\nGratis: 1 imagen PRO y 5 Lite, 1 base PRO y 5 Lite y 1 separación de pistas en total; 1 respuesta de voz al día.\n\nSuscripción: 25 imágenes Lite, 5 bases PRO, 25 Lite y 10 separaciones al mes; 10 respuestas de voz al día.\n\nTodo dentro de tu límite de consumo. La suscripción estará disponible muy pronto.";
+export const BOT_DESCRIPTION = "🍌 Social Banana: tu IA manager para artistas. Portadas, bases, planes de lanzamiento e Instagram.\n\nGratis: 1 imagen PRO y 5 Lite, 1 base PRO y 5 Lite y 1 separación de pistas en total; 1 respuesta de voz al día.\n\nPRO 12 €/mes: 25 imágenes Lite, 5 bases PRO, 25 Lite y 10 separaciones al mes.\nPRO+ 25 €/mes: 2,5 veces más.\nUltimate 50 €/mes: 5 veces más.\n\nCon límite de consumo. Planes disponibles muy pronto.";
 const BOT_SHORT_DESCRIPTION = "Tu IA manager para artistas: portadas, bases y lanzamientos. Plan gratuito y suscripción.";
 async function updateBotDescription(state) {
   if (state.botDescription === BOT_DESCRIPTION) return;
