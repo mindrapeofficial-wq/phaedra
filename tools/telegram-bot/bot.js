@@ -5,7 +5,7 @@ import { privateProfile, saveProfileChanges, forgetCreativeMemory } from "./prof
 import { reserveImage, finishImage } from "./image-credits.js";
 import { beginConnection, verifyConnection, disableConnection, connection } from "./instagram.js";
 import { runInstagramAgent } from "./instagram-agent.js";
-import { sendMessage, sendTyping, sendPhoto, sendImageDocument, getFileUrl } from "./telegram.js";
+import { sendMessage, sendTyping, sendPhoto, sendImageDocument, getFileUrl, sendAudio } from "./telegram.js";
 import { chat, detectFace } from "./ai.js";
 import { checkAccess, incrementUsage, getUser, getTierInfo } from "./tiers.js";
 import { runEngagementSession } from "./engage.js";
@@ -442,6 +442,8 @@ async function handleMessage(update) {
       } catch {
         await sendMessage(chatId, "La portada está entregada aquí. No he podido guardar la copia en Drive; tendrás que conservar esta descarga por ahora.");
       }
+    } else if (reply.audio) {
+      await sendAudio(chatId, reply.audio, reply.text);
     } else if (msg.voice) {
       const spoke = await sendVoiceReply(chatId, reply.text, { disclose: !state.voiceDisclosed });
       if (spoke && !state.voiceDisclosed) {

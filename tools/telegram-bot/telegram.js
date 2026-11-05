@@ -91,3 +91,14 @@ export async function sendVoice(chatId, audio, caption) {
   const res = await timedFetch(`${API}/sendVoice`, { method: "POST", body: form });
   if (!res.ok) throw new Error(`Telegram sendVoice failed: ${res.status}`);
 }
+
+export async function sendAudio(chatId, audio, caption) {
+  const form = new FormData();
+  form.set("chat_id", String(chatId));
+  form.set("audio", new Blob([audio], { type: "audio/mpeg" }), "banana-base.mp3");
+  form.set("caption", caption || "");
+  form.set("title", "Base de Banana");
+  const res = await timedFetch(`${API}/sendAudio`, { method: "POST", body: form, signal: AbortSignal.timeout(120_000) });
+  if (!res.ok) throw new Error(`Telegram sendAudio failed: ${res.status}`);
+  return res;
+}
