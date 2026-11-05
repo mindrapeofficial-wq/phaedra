@@ -59,3 +59,24 @@ test('long answers and voice failures fall back to text', async () => {
 test('markdown symbols are not spoken', () => {
   assert.equal(spokenText('**Hola**'), 'Hola');
 });
+
+test('ElevenLabs speaks first with the chosen voice, and OpenAI covers its failures', async () => {
+  const native = fetch, urls = [];
+  let elevenStatus = 200;
+  process.env.ELEVENLABS_API_KEY = 'k';
+  globalThis.fetch = async url => {
+    url = String(url); urls.push(url);
+    if (url.includes('elevenlabs')) return new Response('ogg', { status: elevenStatus });
+    if (url.endsWith('/audio/speech')) return new Response('ogg');
+    return Response.json({ ok: true });
+  };
+  const error = console.error; console.error = () => {};
+  try {
+    await sendVoiceReply(1, 'Hola');
+    assert.ok(urls.some(u => u.includes('text-to-speech/SZXOlCpjEUCaedG9kg4Y')));
+    assert.equal(urls.some(u => u.endsWith('/audio/speech')), false);
+    urls.length = 0; elevenStatus = 401;
+    assert.equal(await sendVoiceReply(1, 'Hola'), true);
+    assert.ok(urls.some(u => u.endsWith('/audio/speech')));
+  } finally { console.error = error; globalThis.fetch = native; delete process.env.ELEVENLABS_API_KEY; }
+});
