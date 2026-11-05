@@ -441,7 +441,7 @@ export async function chat(userMessage, context, imageUrl = null, history = [], 
   let rounds = 0;
   while (response.tool_calls && rounds < 5) {
     rounds++;
-    messages.push({ role: "assistant", tool_calls: response.tool_calls });
+    messages.push({ role: "assistant", tool_calls: response.tool_calls, ...(response._items ? { _items: response._items } : {}) });
 
     for (const tc of response.tool_calls) {
       const args = JSON.parse(tc.function.arguments || "{}");
@@ -517,5 +517,6 @@ async function callOpenAI(messages, allowedTools = TOOLS, requiredTool = null) {
   return {
     content: msg?.content,
     tool_calls: msg?.tool_calls,
+    _items: msg?._items,
   };
 }

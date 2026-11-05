@@ -1,3 +1,4 @@
+process.env.BANANA_REASONING_EFFORT = "none";
 import test from "node:test";
 import assert from "node:assert/strict";
 
