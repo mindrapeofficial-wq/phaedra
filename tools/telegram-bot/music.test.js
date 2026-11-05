@@ -17,13 +17,14 @@ function mock(routes = {}) {
   };
   return { bodies, restore: () => { globalThis.fetch = native; } };
 }
+const brief = { genre: 'trap', mood: 'dark', bpm: '140', key: 'A minor', instruments: '808, hi-hats', structure: 'intro, drop, outro', seconds: 120, vocals: false, confirmed: true };
 const paid = [{ livemode: true, status: 'active', risk_hold: false, paid_until: '2099-01-01' }];
 
 test('without a key nothing is sent to the provider', async () => {
   delete process.env.ELEVENLABS_API_KEY;
   const { bodies, restore } = mock();
   try {
-    assert.match((await generateMusic({ userId: 1, prompt: 'trap' })).denied, /no está activada/);
+    assert.match((await generateMusic({ userId: 1, brief })).denied, /no está activada/);
     assert.equal(bodies.length, 0);
   } finally { restore(); }
 });
@@ -32,7 +33,7 @@ test('the owner gets an instrumental track by default', async () => {
   process.env.ELEVENLABS_API_KEY = 'k';
   const { bodies, restore } = mock();
   try {
-    const result = await generateMusic({ userId: 1, prompt: 'trap oscuro', seconds: 120 });
+    const result = await generateMusic({ userId: 1, brief });
     assert.ok(result.audio);
     assert.equal(bodies[0].force_instrumental, true);
     assert.equal(bodies[0].music_length_ms, 120000);
@@ -44,14 +45,14 @@ test('free accounts are refused and paid accounts have a monthly quota', async (
   process.env.ELEVENLABS_API_KEY = 'k';
   const free = mock();
   try {
-    assert.match((await generateMusic({ userId: 7, prompt: 'x' })).denied, /suscripción/);
+    assert.match((await generateMusic({ userId: 7, brief })).denied, /suscripción/);
     assert.equal(free.bodies.length, 0);
   } finally { free.restore(); }
   const within = mock({ subs: paid, used: [{}, {}] });
-  try { assert.ok((await generateMusic({ userId: 7, prompt: 'x' })).audio); } finally { within.restore(); }
+  try { assert.ok((await generateMusic({ userId: 7, brief })).audio); } finally { within.restore(); }
   const over = mock({ subs: paid, used: [{}, {}, {}, {}, {}] });
   try {
-    assert.match((await generateMusic({ userId: 7, prompt: 'x' })).denied, /este mes/);
+    assert.match((await generateMusic({ userId: 7, brief })).denied, /este mes/);
     assert.equal(over.bodies.length, 0);
   } finally { over.restore(); }
 });
@@ -60,9 +61,34 @@ test('provider errors are reported and lengths are bounded', async () => {
   process.env.ELEVENLABS_API_KEY = 'k';
   const { restore } = mock({ status: 402 });
   const error = console.error; console.error = () => {};
-  try { assert.match((await generateMusic({ userId: 1, prompt: 'x' })).error, /402/); }
+  try { assert.match((await generateMusic({ userId: 1, brief })).error, /402/); }
   finally { console.error = error; restore(); }
   assert.equal(clampSeconds(5), 15);
   assert.equal(clampSeconds(9999), 180);
   assert.equal(clampSeconds(undefined), 90);
+});
+
+test('a PRO track needs every parameter and an explicit confirmation before any spend', async () => {
+  process.env.ELEVENLABS_API_KEY = 'k';
+  const { bodies, restore } = mock();
+  try {
+    const partial = await generateMusic({ userId: 1, brief: { genre: 'trap' } });
+    assert.ok(partial.needsBrief.includes('BPM'));
+    assert.ok(partial.needsBrief.includes('si lleva voz o es instrumental'));
+    assert.equal(partial.needsBrief.includes('género'), false);
+    const unconfirmed = await generateMusic({ userId: 1, brief: { ...brief, confirmed: false } });
+    assert.equal(unconfirmed.needsConfirmation, true);
+    assert.match(unconfirmed.summary, /140 BPM/);
+    assert.equal(bodies.length, 0);
+  } finally { restore(); }
+});
+
+test('free accounts are refused before being asked anything', async () => {
+  process.env.ELEVENLABS_API_KEY = 'k';
+  const { restore } = mock();
+  try {
+    const result = await generateMusic({ userId: 7, brief: {} });
+    assert.match(result.denied, /suscripción/);
+    assert.equal(result.needsBrief, undefined);
+  } finally { restore(); }
 });

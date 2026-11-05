@@ -21,14 +21,28 @@ export async function musicDenial(userId) {
   return (used?.length || 0) >= MONTHLY_TRACKS ? `Ya has usado tus ${MONTHLY_TRACKS} bases de este mes. El mes que viene tendrás más.` : null;
 }
 
-export async function generateMusic({ userId, prompt, seconds, vocals = false }) {
+const BRIEF_FIELDS = { genre: 'género', mood: 'ambiente o emoción', bpm: 'BPM', key: 'tonalidad', instruments: 'instrumentos', structure: 'estructura', seconds: 'duración' };
+
+export function missingBrief(brief = {}) {
+  const missing = Object.entries(BRIEF_FIELDS).filter(([field]) => !String(brief[field] ?? '').trim()).map(([, label]) => label);
+  if (typeof brief.vocals !== 'boolean') missing.push('si lleva voz o es instrumental');
+  return missing;
+}
+export function musicPrompt(brief) {
+  return [`${brief.genre} track`, `mood: ${brief.mood}`, `${brief.bpm} BPM`, `key: ${brief.key}`, `instruments: ${brief.instruments}`, `structure: ${brief.structure}`, brief.lyrics && brief.vocals ? `lyrics: ${brief.lyrics}` : null, brief.notes ? `notes: ${brief.notes}` : null].filter(Boolean).join('. ');
+}
+
+export async function generateMusic({ userId, brief = {} }) {
   if (!userId) return { error: 'Music requires an identified user' };
   const denied = await musicDenial(userId);
   if (denied) return { denied };
+  const missing = missingBrief(brief);
+  if (missing.length) return { needsBrief: missing };
+  if (brief.confirmed !== true) return { needsConfirmation: true, summary: musicPrompt(brief) };
   const response = await fetch('https://api.elevenlabs.io/v1/music?output_format=mp3_44100_128', {
     method: 'POST', signal: AbortSignal.timeout(240_000),
     headers: { 'xi-api-key': process.env.ELEVENLABS_API_KEY, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model_id: MUSIC_MODEL, prompt: String(prompt || '').slice(0, 2000), music_length_ms: clampSeconds(seconds) * 1000, force_instrumental: !vocals }),
+    body: JSON.stringify({ model_id: MUSIC_MODEL, prompt: musicPrompt(brief).slice(0, 2000), music_length_ms: clampSeconds(brief.seconds) * 1000, force_instrumental: !brief.vocals }),
   });
   if (!response.ok) {
     console.error('[music] request failed', { status: response.status });
