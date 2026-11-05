@@ -132,10 +132,10 @@ async function announceCosts(state) {
   console.log('[news] costs notice delivered');
 }
 async function announceInstagramCost(state) {
-  if (state.instagramCostSent) return;
-  state.instagramCostSent = true;
-  await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+  if (state.instagramCostDelivered) return;
   await sendMessage(GROUP_CHAT, "💸 Añado a la lista de costes:\n\n• Conectar a las herramientas de agente de Instagram: 10 € por cuenta");
+  state.instagramCostDelivered = true;
+  await memoryRequest(GROUP_CHAT, 0, 'POST', state);
   console.log('[news] instagram cost delivered');
 }
 const FILES_QUESTION = "🍌 Pregunta para el grupo sobre vuestros archivos:\n\nAhora guardo vuestras fotos en /fotos y el material compartido, como los logos de un sello, en /fichas. Quiero organizarlo mejor. ¿Cómo os resulta más útil?\n\n1. Todo junto en una ficha por artista\n2. Separado por lanzamiento o proyecto\n3. Separado por tipo: fotos, logos, portadas y bases\n\nRespondedme con el número o contadme cómo trabajáis. Cada persona seguirá viendo solo lo suyo y lo que le compartan.";
@@ -181,7 +181,7 @@ export async function runProactiveTick() {
     await announceFeatures(state).catch(() => console.error('[news] failed'));
     await announceBeats(state).catch(() => console.error('[news] beats notice failed'));
     await announceCosts(state).catch(() => console.error('[news] costs notice failed'));
-    await announceInstagramCost(state).catch(() => console.error('[news] instagram cost failed'));
+    await announceInstagramCost(state).catch(error => console.error('[news] instagram cost failed', error.message));
     await askAboutFiles(state).catch(() => console.error('[files] failed'));
     await askAboutExistingPhotos(state).catch(() => console.error('[photos] review failed'));
     const timing = communityTiming(state, community);
