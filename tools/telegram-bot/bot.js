@@ -16,10 +16,11 @@ import { memoryRequest, groupConversationContext } from "./memory.js";
 import { referralSummary, claimReferral } from "./referrals.js";
 import { claimInstagramTrial } from "./instagram-trial.js";
 import { helpMessage } from "./help.js";
+import { interpretUploadRequest, saveToCollection, collectionsFor, savedReply } from "./collections.js";
 import { resolveOwnerMessage, activeMembers, repliedMember, supportQuestion, isRetouch } from "./owner-support.js";
 import { congratulateInstagramConnection } from "./instagram-congrats.js";
 import { sendVoiceReply } from "./speech.js";
-import { isPhotoOnly, addUpload, saveUploads, scheduleUploadQuestion, wantsToSave, wantsToDiscard, wantsNewImage, answersFaceQuestion } from "./photo-uploads.js";
+import { isPhotoOnly, addUpload, saveUploads, scheduleUploadQuestion, wantsNewImage, answersFaceQuestion } from "./photo-uploads.js";
 import { withUsageContext, notifyAction, chargeUsageTo, userLimitReached, USER_LIMIT_MESSAGE, activityReport, spendReport, PRIVACY_NOTICE } from "./usage.js";
 import { releasePlanSummary, completeReleaseTask, setReleaseReminders } from "./releases.js";
 
@@ -102,6 +103,18 @@ async function handleMessage(update) {
     if (userId !== OWNER_ID) await sendMessage(chatId, "Este comando está reservado al administrador.");
     else if (isGroup) await sendMessage(chatId, "Te lo paso solo por privado: escríbeme el comando allí.");
     else await sendMessage(chatId, await (ownerReport[1] === "gasto" ? spendReport() : activityReport()));
+    return;
+  }
+  const fichas = msg.text.trim().match(/^\/fichas(?:@socialbananabot)?(?:\s+(.+))?$/i);
+  if (fichas) {
+    if (isGroup) { await sendMessage(chatId, "Las fichas se ven por privado: https://t.me/SocialBananaBot?start=welcome"); return; }
+    const available = await collectionsFor(msg.from, userId === OWNER_ID);
+    if (!available.length) { await sendMessage(chatId, "No tienes fichas disponibles. Si un compañero te ha dado acceso, comprueba que tu nombre de Telegram coincide con el que indicó."); return; }
+    if (!fichas[1]) { await sendMessage(chatId, `Tus fichas:\n${available.map(entry => `• ${entry.name} (${entry.files.length})`).join("\n")}\n\nPara verla: /fichas seguido del nombre.`); return; }
+    const wanted = available.find(entry => entry.name.toLowerCase() === fichas[1].trim().toLowerCase());
+    if (!wanted) { await sendMessage(chatId, `No encuentro esa ficha. Tienes: ${available.map(entry => entry.name).join(", ")}.`); return; }
+    await sendMessage(chatId, `«${wanted.name}»: ${wanted.files.length} archivos.${wanted.files.length > 10 ? " Te enseño los 10 más recientes." : ""}`);
+    for (const fileId of wanted.files.slice(-10)) await sendPhoto(chatId, fileId);
     return;
   }
   if (/^\/fotos(?:@socialbananabot)?$/.test(cmd)) {
@@ -314,7 +327,19 @@ async function handleMessage(update) {
       scheduleUploadQuestion(`${chatId}:${userId}`, count, question => sendMessage(chatId, question));
       return;
     }
-    if (state.pendingUploads?.length && wantsToSave(text)) {
+    const uploadIntent = state.pendingUploads?.length ? await interpretUploadRequest(text) : null;
+    if (uploadIntent?.action === "save" && uploadIntent.collection) {
+      const files = [...state.pendingUploads];
+      const saved = await saveToCollection({ name: uploadIntent.collection, files, artists: uploadIntent.artists, ownerId: msg.from.id });
+      const reply = saved.denied ? `Ya existe una ficha llamada «${uploadIntent.collection}» de otra persona. Dime otro nombre.` : savedReply(saved.entry, files.length);
+      if (!saved.denied) state.pendingUploads = [];
+      record("user", text);
+      record("assistant", reply);
+      await memoryRequest(chatId, userId, "POST", state);
+      await sendMessage(chatId, reply);
+      return;
+    }
+    if (uploadIntent?.action === "save") {
       const saved = saveUploads(state);
       record("user", text);
       const reply = `Hecho, ${saved === 1 ? "foto guardada" : `${saved} fotos guardadas`} para tus publicaciones. Tienes ${state.library.length} en total; míralas cuando quieras con /fotos.`;
@@ -323,7 +348,7 @@ async function handleMessage(update) {
       await sendMessage(chatId, reply);
       return;
     }
-    if (state.pendingUploads?.length && wantsToDiscard(text)) {
+    if (uploadIntent?.action === "discard") {
       state.pendingUploads = [];
       record("user", text);
       record("assistant", "De acuerdo, no las guardo.");
