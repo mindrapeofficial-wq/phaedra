@@ -10,6 +10,7 @@ const ITEMS = {
   image_lite: ['imágenes Lite', 0.05], image: ['imágenes PRO', 0.25], music_lite: ['bases Lite', 0.15],
   music: ['bases PRO', 0.40], music_pro: ['bases PRO', 0.40], stems: ['separaciones', 0.50],
 };
+export const requestCost = action => ITEMS[action]?.[1] || 0;
 const money = value => `${value.toFixed(2).replace('.', ',')} $`;
 const madridDay = time => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid' }).format(new Date(time));
 

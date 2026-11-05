@@ -6,6 +6,7 @@ import { database } from './database.js';
 import { runUsageTick } from './usage.js';
 import { uploadQuestion } from './photo-uploads.js';
 import { mentionPeople } from './mentions.js';
+import { runConsumptionNotices } from './consumption-limit.js';
 import { sendConsumptionReport } from './consumption-report.js';
 import { sendVoiceReply } from './speech.js';
 import { ACCOUNT_TYPE_GUIDE } from './help.js';
@@ -187,6 +188,7 @@ export async function runProactiveTick() {
     await expireInstagramTrial({ api: postzen, connection }).catch(() => console.error('[trial] expiry failed, will retry'));
     await announceInstagramTrial(state).catch(() => console.error('[trial] announcement failed'));
     if (await runUsageTick(state).catch(() => { console.error('[usage] tick failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
+    await runConsumptionNotices().catch(() => console.error('[consumption] notices failed'));
     if (await sendConsumptionReport(state)) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (await announceNewSubscribers(state).catch(() => { console.error('[community] subscriber check failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
     if (await notifyNewAccountLinks(state).catch(() => { console.error('[account] link check failed'); return false; })) await memoryRequest(GROUP_CHAT, 0, 'POST', state);
