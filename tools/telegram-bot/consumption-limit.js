@@ -38,7 +38,8 @@ export function usageWithCredit(rows, tier, credit, now = Date.now()) {
 async function creditOf(userId) {
   const [user] = await database(`sb_telegram_users?telegram_id=eq.${Number(userId)}&select=user_id`) || [];
   if (!user?.user_id) return 0;
-  const rows = await database(`sb_topups?user_id=eq.${encodeURIComponent(user.user_id)}&livemode=eq.true&status=eq.paid&select=credit_cents`);
+  // Unreadable recharges count as none: the customer gets less limit, never more spend.
+  const rows = await database(`sb_topups?user_id=eq.${encodeURIComponent(user.user_id)}&livemode=eq.true&status=eq.paid&select=credit_cents`).catch(() => { console.error('[consumption] recharges unavailable'); return []; });
   return Array.isArray(rows) ? rows.reduce((total, row) => total + (row.credit_cents || 0), 0) / 100 : 0;
 }
 
