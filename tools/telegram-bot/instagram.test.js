@@ -1,3 +1,4 @@
+process.env.BANANA_INSTAGRAM_INCLUDED = "true";
 import test from 'node:test';
 process.env.SUPABASE_SERVICE_KEY = 'test-key';
 import assert from 'node:assert/strict';

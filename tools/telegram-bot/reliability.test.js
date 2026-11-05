@@ -1,3 +1,4 @@
+process.env.BANANA_INSTAGRAM_INCLUDED = "true";
 process.env.BANANA_PROMO_OFF = '1';
 import test from 'node:test';
 import assert from 'node:assert/strict';
