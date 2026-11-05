@@ -5,7 +5,8 @@ import { meterTokens, notifyAction } from "./usage.js";
 import { openAiChat, LIGHT_MODEL } from "./openai-chat.js";
 import { proPromoActive, PROMO_CONTEXT } from "./promo.js";
 const OPENAI_KEY = process.env.OPENAI_API_KEY;
-const IMAGE_MODEL = "gpt-image-2.5-sunburst";
+const IMAGE_MODEL = "gpt-image-2.6-sunburst";
+const IMAGE_FALLBACK_MODEL = "gpt-image-2.5-sunburst";
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 const IMAGE_ART_DIRECTION = `Primary purpose: create music cover artwork for an artist's single, EP or album. Unless the client explicitly requests another deliverable, treat this as finished music cover art, not a generic portrait, advertisement or social media template. Compose for a square cover by default, with a clear focal point and visual impact at thumbnail size. Let the client's supplied musical genre, mood and artistic identity guide the design; never invent those details or add musical instruments, notes or DAW imagery just because this is music artwork. Integrate only the requested artist name, release title and label with deliberate, legible typography and clear hierarchy. If no text is requested, make a complete text-free cover without placeholder lettering. Do not add logos, advisory stickers, badges or mockup frames unless requested. Follow the client's visual prompt and original reference photo, preserving the people and their features unless explicitly asked otherwise. Explicit client directions take precedence over these defaults.`;
 
@@ -281,13 +282,20 @@ async function generateImage(prompt, size, quality = "pro", referenceUrl = null,
   } else {
     headers["Content-Type"] = "application/json";
   }
-  const res = await fetch(`https://api.openai.com/v1/images/${referenceUrl ? "edits" : "generations"}`, {
-    method: "POST", headers, body: payload, signal,
-  });
+  const imageUrl = `https://api.openai.com/v1/images/${referenceUrl ? "edits" : "generations"}`;
+  let usedModel = IMAGE_MODEL;
+  let res = await fetch(imageUrl, { method: "POST", headers, body: payload, signal });
+  if ([400, 403, 404].includes(res.status)) {
+    console.error("[image] primary model rejected, using fallback", { status: res.status });
+    usedModel = IMAGE_FALLBACK_MODEL;
+    if (typeof payload === "string") payload = JSON.stringify({ ...body, model: usedModel });
+    else payload.set("model", usedModel);
+    res = await fetch(imageUrl, { method: "POST", headers, body: payload, signal });
+  }
   if (!res.ok) {
     const failure = await res.json().catch(() => ({}));
     console.error("[image] request failed", {
-      status: res.status, model: IMAGE_MODEL, reference: Boolean(referenceUrl),
+      status: res.status, model: usedModel, reference: Boolean(referenceUrl),
       code: failure.error?.code, param: failure.error?.param, type: failure.error?.type,
     });
     return { error: `Image request failed: ${res.status}` };
@@ -295,8 +303,8 @@ async function generateImage(prompt, size, quality = "pro", referenceUrl = null,
   const image = (await res.json()).data?.[0];
   if (!image?.b64_json) return { error: "Image request returned no image" };
   notifyAction("image");
-  console.log("[image] completed", { model: IMAGE_MODEL, quality: "max", reference: Boolean(referenceUrl) });
-  return { imageBase64: image.b64_json, model: IMAGE_MODEL, quality: "pro", prompt, kind, background: body.background };
+  console.log("[image] completed", { model: usedModel, quality: "max", reference: Boolean(referenceUrl) });
+  return { imageBase64: image.b64_json, model: usedModel, quality: "pro", prompt, kind, background: body.background };
 }
 
 export async function detectFace(imageUrl) {

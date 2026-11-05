@@ -96,7 +96,7 @@ test("photo-only upload survives follow-ups and reaches image edits and Telegram
     for (const edit of edits) {
       assert.deepEqual(edit.bytes, originalPhoto);
       assert.equal(edit.quality, "max");
-      assert.equal(edit.model, "gpt-image-2.5-sunburst");
+      assert.equal(edit.model, "gpt-image-2.6-sunburst");
     }
     assert.deepEqual(sentPhotos, ["edited-photo", "edited-photo"]);
     assert.ok(sentTexts.some(t => t.includes("1–4 minutos")));

@@ -16,7 +16,7 @@ export async function checkAiServices(userId) {
   const result = Promise.all([
     probe('Chat · GPT-6.1 Terra', 'https://api.openai.com/v1/chat/completions', { method:'POST',headers:{Authorization:`Bearer ${openai}`,'Content-Type':'application/json'},body:JSON.stringify({model:'gpt-6.1-terra',messages:[{role:'user',content:'Reply OK.'}],max_completion_tokens:8}) }, !openai, data=>Boolean(data.choices?.[0]?.message?.content?.trim())),
     probe('Estrategia · Claude Opus 5.5', 'https://api.anthropic.com/v1/messages', { method:'POST',headers:{'x-api-key':claude,'anthropic-version':'2023-06-01','Content-Type':'application/json'},body:JSON.stringify({model:'claude-opus-5-5',messages:[{role:'user',content:'Reply OK.'}],max_tokens:16}) }, !claude, data=>data.content?.some(block=>block.type==='text'&&block.text?.trim())),
-    probe('Acceso a imágenes · GPT Image 2.5 Sunburst', 'https://api.openai.com/v1/models/gpt-image-2.5-sunburst', { headers:{Authorization:`Bearer ${openai}`} }, !openai, data=>data.id==='gpt-image-2.5-sunburst'),
+    probe('Acceso a imágenes · GPT Image 2.6 Sunburst', 'https://api.openai.com/v1/models/gpt-image-2.6-sunburst', { headers:{Authorization:`Bearer ${openai}`} }, !openai, data=>data.id==='gpt-image-2.6-sunburst'),
   ]).then(lines=>lines.join('\n')+'\n\nChat y estrategia: respuestas reales de prueba. Imágenes: solo acceso al modelo; no se ha generado ninguna imagen ni gastado tu crédito PRO. Esto no comprueba que una generación completa vaya a terminar correctamente.');
   cached.set(userId,{time:Date.now(),result});
   return result;
