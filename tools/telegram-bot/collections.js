@@ -25,6 +25,12 @@ export async function interpretUploadRequest(text) {
   } catch { return fallback; }
 }
 
+// Prefer photos just uploaded, then the saved ones, so a later "create it" still has its files.
+export function filesForCollection(state) {
+  if (state.pendingUploads?.length) return [...state.pendingUploads];
+  if (state.library?.length) return [...state.library];
+  return state.reference?.fileId ? [state.reference.fileId] : [];
+}
 export async function saveToCollection({ name, files, artists, ownerId }) {
   const store = await memoryRequest(...STORE);
   const collections = store.collections || {};

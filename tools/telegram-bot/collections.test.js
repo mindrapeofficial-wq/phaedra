@@ -71,3 +71,11 @@ test('confirming membership records artists and exposes the label to them', asyn
     assert.equal(confirmsMembership('haz una portada'), false);
   } finally { restore(); }
 });
+
+test('a later request uses just uploaded photos first, then saved ones', async () => {
+  const { filesForCollection } = await import('./collections.js');
+  assert.deepEqual(filesForCollection({ pendingUploads: ['new'], library: ['old'] }), ['new']);
+  assert.deepEqual(filesForCollection({ pendingUploads: [], library: ['a', 'b'] }), ['a', 'b']);
+  assert.deepEqual(filesForCollection({ reference: { fileId: 'r' } }), ['r']);
+  assert.deepEqual(filesForCollection({}), []);
+});

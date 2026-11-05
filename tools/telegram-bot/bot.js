@@ -16,7 +16,7 @@ import { memoryRequest, groupConversationContext } from "./memory.js";
 import { referralSummary, claimReferral } from "./referrals.js";
 import { claimInstagramTrial } from "./instagram-trial.js";
 import { helpMessage } from "./help.js";
-import { interpretUploadRequest, saveToCollection, collectionsFor, savedReply, membershipQuestion, confirmMembers, confirmsMembership, deniesMembership, labelsFor } from "./collections.js";
+import { interpretUploadRequest, saveToCollection, collectionsFor, savedReply, filesForCollection, membershipQuestion, confirmMembers, confirmsMembership, deniesMembership, labelsFor } from "./collections.js";
 import { resolveOwnerMessage, activeMembers, repliedMember, supportQuestion, isRetouch } from "./owner-support.js";
 import { congratulateInstagramConnection } from "./instagram-congrats.js";
 import { sendVoiceReply } from "./speech.js";
@@ -438,6 +438,15 @@ async function handleMessage(update) {
       const result = await runInstagramAgent(msg.text, JSON.stringify(state.history.slice(-8)), { userId, mediaFiles: { generated: state.generatedFileId, reference: state.reference?.fileId }, profile: state.profile, requestId: String(update.update_id || msg.message_id || "") });
       return { text: result.response };
     })() : await chat(text, context, imageUrl, state.history, {
+      createCollection: msg.from.id === OWNER_ID && userId === OWNER_ID ? async (name, artists) => {
+        const files = filesForCollection(state);
+        if (!files.length) return { error: "No hay fotos subidas ni guardadas: pide que las envíe" };
+        const { entry } = await saveToCollection({ name, files, artists, ownerId: OWNER_ID });
+        state.pendingUploads = [];
+        const needsAnswer = entry.artists.length && !entry.members;
+        if (needsAnswer) state.pendingMembership = entry.name;
+        return { created: savedReply(entry, files.length), question: needsAnswer ? membershipQuestion(entry) : null };
+      } : null,
       mediaFiles: { generated: state.generatedFileId, reference: state.reference?.fileId }, userId, requestId: String(update.update_id || msg.message_id || ""), directPrompt, photoStyle, profile: state.profile, isOwner: userId === OWNER_ID, isGroup, community,
       beforeImage: async () => {
         try { if (!ownerPays) imageReservation = await reserveImage(userId, username); return null; }
