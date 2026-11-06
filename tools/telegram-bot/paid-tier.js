@@ -33,3 +33,7 @@ export async function runExclusive(userId, job, whenBusy) {
   running.add(key);
   try { return await job(); } finally { running.delete(key); }
 }
+
+// Names customers see. Unknown tiers, such as the owner's, are shown as they are.
+export const PLAN_NAMES = { free: 'gratuito', pro: 'PRO', pro_plus: 'PRO+', ultimate: 'Ultimate' };
+export const planName = tier => PLAN_NAMES[tier] || String(tier || 'gratuito');
