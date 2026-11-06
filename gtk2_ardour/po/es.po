@@ -5316,7 +5316,7 @@ msgstr "Canales"
 
 #: editor.cc:703 mixer_ui.cc:382 port_group.cc:360 trigger_page.cc:141
 msgid "Tracks"
-msgstr ""
+msgstr "Pistas"
 
 #: editor.cc:703 trigger_page.cc:141
 msgid "Tracks & Busses"
@@ -5332,11 +5332,11 @@ msgstr "Regiones"
 
 #: editor.cc:706 trigger_page.cc:140
 msgid "Clips"
-msgstr ""
+msgstr "Clips"
 
 #: editor.cc:707
 msgid "Arrange"
-msgstr ""
+msgstr "Arreglo"
 
 #: editor.cc:707 editor_actions.cc:597
 msgid "Arrangement"
@@ -5534,7 +5534,7 @@ msgstr "Duplicar rango"
 
 #: editor.cc:1994 editor_actions.cc:152
 msgid "Consolidate"
-msgstr ""
+msgstr "Consolidar"
 
 #: editor.cc:1995
 msgid "Consolidate (with processing)"
@@ -10711,6 +10711,8 @@ msgid ""
 "Right-click or Double-click here\n"
 "to add I/O Plugins"
 msgstr ""
+"Haz clic derecho o doble clic aquí\n"
+"para añadir plugins de E/S"
 
 #: io_plugin_window.cc:283 region_editor.cc:1145
 msgid ""
@@ -12409,6 +12411,8 @@ msgid ""
 "Right-click or Double-click here\n"
 "to add Track, Bus, or VCA channels"
 msgstr ""
+"Haz clic derecho o doble clic aquí\n"
+"para añadir pistas, buses o canales VCA"
 
 #: mixer_ui.cc:217 route_time_axis.cc:270 route_time_axis.cc:867
 msgid "Group"
@@ -12728,7 +12732,7 @@ msgstr ""
 
 #: mixer_ui.cc:4282 mixer_ui.cc:4444
 msgid "Store"
-msgstr ""
+msgstr "Guardar"
 
 #: mixer_ui.cc:4321
 msgid ""
@@ -13543,7 +13547,7 @@ msgstr ""
 
 #: pianoroll.cc:3309
 msgid "Modulation"
-msgstr ""
+msgstr "Modulación"
 
 #: pianoroll.cc:3310
 msgid "Breath Ctrlr"
@@ -17077,7 +17081,7 @@ msgstr ""
 
 #: rc_option_editor.cc:3976
 msgid "Next"
-msgstr ""
+msgstr "Siguiente"
 
 #: rc_option_editor.cc:3978
 msgid "Options for locating to program change/snapshot markers"
@@ -18384,6 +18388,8 @@ msgid ""
 "Right-click or Double-click here\n"
 "to add Tracks"
 msgstr ""
+"Haz clic derecho o doble clic aquí\n"
+"para añadir pistas"
 
 #: recorder_ui.cc:245
 msgid "Record enable all tracks"
@@ -18467,7 +18473,7 @@ msgstr ""
 
 #: recorder_ui.cc:388
 msgid "Undo"
-msgstr ""
+msgstr "Deshacer"
 
 #: recorder_ui.cc:469 recorder_ui.cc:474
 msgid "Window|Recorder"
@@ -19006,7 +19012,7 @@ msgstr "Lista de Reproducción"
 
 #: route_time_axis.cc:831
 msgid "Scale..."
-msgstr ""
+msgstr "Escala…"
 
 #: route_time_axis.cc:837
 msgid "Chase MIDI notes"
@@ -19607,15 +19613,15 @@ msgstr ""
 
 #: session_dialog.cc:1199 session_dialog.cc:1257
 msgid "32-bit float"
-msgstr "32-bit float"
+msgstr "32 bits float"
 
 #: session_dialog.cc:1202 session_dialog.cc:1260
 msgid "24-bit"
-msgstr "24-bit"
+msgstr "24 bits"
 
 #: session_dialog.cc:1205 session_dialog.cc:1263
 msgid "16-bit"
-msgstr "16-bit"
+msgstr "16 bits"
 
 #: session_dialog.cc:1216 session_dialog.cc:1275
 msgid "Last modified with: %1"
@@ -22314,7 +22320,7 @@ msgstr ""
 
 #: trigger_ui.cc:709
 msgid "Repeat"
-msgstr ""
+msgstr "Repetir"
 
 #: trigger_ui.cc:730
 msgid "1/4"
@@ -23061,7 +23067,7 @@ msgstr ""
 
 #: export_video_dialog.cc:153
 msgid "Settings"
-msgstr ""
+msgstr "Ajustes"
 
 #: export_video_dialog.cc:169
 msgid "Audio Quality:"
@@ -26047,3 +26053,36 @@ msgstr "El actualizador de Phaedra no está instalado."
 
 msgid "Content"
 msgstr "Contenido"
+
+msgid "Piano Roll"
+msgstr "Editor de notas"
+
+msgid "Show Pulse Visualizer"
+msgstr "Mostrar visualizador Pulse"
+
+msgid "Master output: sample peak and momentary loudness (400 ms), mono/stereo"
+msgstr "Salida maestra: pico de muestra y sonoridad momentánea (400 ms), mono/estéreo"
+
+msgid "System language"
+msgstr "Idioma del sistema"
+
+msgid "Restart Phaedra to apply the interface language."
+msgstr "Reinicia Phaedra para aplicar el idioma de la interfaz."
+
+msgid "No project"
+msgstr "Sin proyecto"
+
+msgid "Pulse | Select Phaedra's output device in Pulse settings"
+msgstr "Pulse | Elige la salida de Phaedra en los ajustes de Pulse"
+
+msgid "Pulse is not installed: this package needs bin/PulseHost.exe and bin/Pulse."
+msgstr "Pulse no está instalado: este paquete necesita bin/PulseHost.exe y bin/Pulse."
+
+msgid "Pulse could not start. Check the bundled Pulse installation."
+msgstr "Pulse no pudo iniciarse. Revisa la instalación de Pulse incluida."
+
+msgid "Pulse stopped. Reopen Phaedra to restart the visualizer."
+msgstr "Pulse se ha detenido. Vuelve a abrir Phaedra para reiniciar el visualizador."
+
+msgid "Pulse integration is available in the Windows build."
+msgstr "La integración de Pulse está disponible en la versión de Windows."

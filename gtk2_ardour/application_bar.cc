@@ -24,6 +24,8 @@
 #endif
 
 #include <glib.h>
+#include <cmath>
+#include <pango/pangocairo.h>
 #include "pbd/gstdio_compat.h"
 
 #include <ytkmm/accelmap.h>
@@ -55,6 +57,10 @@
 
 #include "ardour/ardour.h"
 #include "ardour/audioengine.h"
+#include "ardour/delivery.h"
+#include "ardour/filesystem_paths.h"
+#include "ardour/search_paths.h"
+#include "temporal/tempo.h"
 #include "ardour/profile.h"
 #include "ardour/revision.h"
 #include "ardour/transport_master.h"
@@ -726,6 +732,12 @@ ApplicationBar::set_session (Session *s)
 	map_transport_state ();
 	session_latency_updated (true);
 
+	/* Phaedra header: show the new project (or none) right away */
+	_out_peak_db = -200.f;
+	_out_lufs    = -200.f;
+	_output_meter_area.queue_draw ();
+	update_session_info ();
+
 	if (!_session) {
 		_point_zero_something_second_connection.disconnect();
 		_blink_connection.disconnect ();
@@ -832,22 +844,122 @@ ApplicationBar::focus_on_clock ()
 	_primary_clock.focus ();
 }
 
+static PBD::Searchpath
+phaedra_resources_path ()
+{
+	PBD::Searchpath rc (ardour_data_search_path ());
+	rc.add_subdirectory_to_paths ("resources");
+	return rc;
+}
+
+/** Tempo and meter take the clock's background, so position, tempo and
+ * meter read as a single LCD-style display */
+static void
+phaedra_set_lcd_colors (MainClock* clock)
+{
+	const Gtkmm2ext::Color lcd = UIConfiguration::instance ().color ("transport clock: background");
+	clock->left_btn ()->set_fixed_colors (lcd, lcd);
+	clock->right_btn ()->set_fixed_colors (lcd, lcd);
+}
+
+/** Theme colour as a Pango markup "#RRGGBB" string */
+static std::string
+markup_color (Gtkmm2ext::Color c)
+{
+	char buf[8];
+	snprintf (buf, sizeof (buf), "#%02X%02X%02X", (c >> 24) & 0xff, (c >> 16) & 0xff, (c >> 8) & 0xff);
+	return buf;
+}
+
 void
 ApplicationBar::move_to_editor_toolbar (Gtk::Box& left, Gtk::Box& center, Gtk::Box& right)
 {
-	/* Keep the existing controls and their action bindings while moving them
-	 * out of the two-row transport table. The clock gets its own center cell. */
+	/* Phaedra: re-home the transport controls into the single-row editor
+	 * toolbar, Lite style. The widgets keep their action bindings; only
+	 * their parents change.
+	 *
+	 *   left:   logo | project name + format | transport | tools
+	 *   center: primary clock
+	 *   right:  tempo | meter | ... | page buttons | fairy | output meter
+	 */
+
+	/* identity block */
+	std::string logo_file;
+	if (find_file (phaedra_resources_path (), "phaedra-header-logo.png", logo_file)) {
+		try {
+			_header_logo.set (Gdk::Pixbuf::create_from_file (logo_file));
+			left.pack_start (_header_logo, false, false, 10);
+			_header_logo.show ();
+		} catch (Glib::Error const&) {
+			/* optional artwork must not prevent startup */
+		}
+	}
+
+	_session_name_label.set_alignment (0.0, 0.5);
+	_session_name_label.set_ellipsize (Pango::ELLIPSIZE_END);
+	_session_name_label.set_width_chars (14);
+	_session_format_label.set_alignment (0.0, 0.5);
+	_session_info_box.set_spacing (1);
+	_session_info_box.pack_start (_session_name_label, false, false);
+	_session_info_box.pack_start (_session_format_label, false, false);
+
+	VBox* info_center = manage (new VBox);
+	info_center->pack_start (_session_info_box, true, false);
+	left.pack_start (*info_center, false, false, 6);
+	info_center->show_all ();
+
+	update_session_info ();
+	/* name, dirty state and format change rarely; once a second is plenty */
+	_session_info_connection = Timers::second_connect (sigc::mem_fun (*this, &ApplicationBar::update_session_info));
+
+	/* transport */
 	_table.remove (_transport_ctrl);
 	left.pack_start (_transport_ctrl, false, false);
 	_table.remove (_transport_hbox);
 	left.pack_start (_transport_hbox, false, false);
 
+	/* one LCD-style display: position | tempo | meter, sharing the
+	 * clock's background with no gaps between them */
 	_table.remove (_primary_clock);
 	center.pack_start (_primary_clock, false, false);
 	_table.remove (*_primary_clock.left_btn ());
-	right.pack_start (*_primary_clock.left_btn (), false, false);
+	center.pack_start (*_primary_clock.left_btn (), false, false);
 	_table.remove (*_primary_clock.right_btn ());
-	right.pack_start (*_primary_clock.right_btn (), false, false);
+	center.pack_start (*_primary_clock.right_btn (), false, false);
+	phaedra_set_lcd_colors (&_primary_clock);
+	/* bound to the clock (a trackable widget), so it disconnects with it */
+	UIConfiguration::instance ().ColorsChanged.connect (sigc::bind (sigc::ptr_fun (&phaedra_set_lcd_colors), &_primary_clock));
+
+	/* drawn master output meter: sample peak and momentary loudness */
+	const float scale = UIConfiguration::instance ().get_ui_scale ();
+	_output_meter_area.set_size_request (std::max (230.f, rintf (230.f * scale)), -1);
+	_output_meter_area.set_tooltip_text (_("Master output: sample peak and momentary loudness (400 ms), mono/stereo"));
+	_output_meter_area.signal_expose_event ().connect (sigc::mem_fun (*this, &ApplicationBar::output_meter_expose));
+	right.pack_end (_output_meter_area, false, false, 8);
+	_output_meter_area.show ();
+
+	/* the dancing fairy: 4x2 sprite sheet, one frame per eighth note */
+	std::string fairy_file;
+	if (find_file (phaedra_resources_path (), "phaedra-fairy-dance.png", fairy_file)) {
+		try {
+			Glib::RefPtr<Gdk::Pixbuf> sheet = Gdk::Pixbuf::create_from_file (fairy_file);
+			const int width  = sheet->get_width () / 4;
+			const int height = sheet->get_height () / 2;
+			if (width > 0 && height > 0) {
+				const int fh = std::max (48, (int) rintf (48.f * scale));
+				const int fw = fh * width / height;
+				for (int frame = 0; frame < 8; ++frame) {
+					_fairy_frames[frame] = Gdk::Pixbuf::create_subpixbuf (sheet, (frame % 4) * width, (frame / 4) * height, width, height)
+					                           ->scale_simple (fw, fh, Gdk::INTERP_HYPER);
+				}
+				_fairy.set (_fairy_frames[0]);
+				right.pack_end (_fairy, false, false, 4);
+				_fairy.show ();
+			}
+		} catch (Glib::Error const&) {
+			/* optional artwork must not prevent startup */
+		}
+	}
 }
 
 void
@@ -1047,7 +1159,19 @@ ApplicationBar::sync_blink (bool onoff)
 void
 ApplicationBar::every_point_zero_something_seconds ()
 {
+	if (_fairy.get_mapped () && _fairy_frames[0]) {
+		int frame = 0;
+		if (_session && _session->transport_rolling ()) {
+			const auto ticks = Temporal::TempoMap::use ()->quarters_at_sample (_session->transport_sample ()).to_ticks ();
+			const auto eighth = ticks / (Temporal::Beats::PPQN / 2);
+			frame = static_cast<int> ((eighth % 8 + 8) % 8);
+		}
+		if (frame != _fairy_frame) { _fairy.set (_fairy_frames[frame]); _fairy_frame = frame; }
+	}
 	// august 2007: actual update frequency: 25Hz (40ms), not 100Hz
+	if (_output_meter_area.get_mapped ()) {
+		update_output_meter ();
+	}
 
 	if (_editor_meter && UIConfiguration::instance().get_show_editor_meter() && _editor_meter_peak_display.get_mapped ()) {
 
@@ -1125,4 +1249,181 @@ ApplicationBar::reset_route_peak_display (Route* route)
 	if (_session->master_out().get() == route) {
 		reset_peak_display ();
 	}
+}
+
+/* ---- Phaedra: Lite-style header pieces ---- */
+
+
+void
+ApplicationBar::update_session_info ()
+{
+	std::string name;
+	std::string format;
+
+	if (_session) {
+		name = _session->snap_name ();
+		if (_session->dirty ()) {
+			name += " *";
+		}
+
+		const float khz = _session->nominal_sample_rate () / 1000.f;
+		char        rate[32];
+		snprintf (rate, sizeof (rate), fmodf (khz, 1.f) == 0.f ? "%.0f kHz" : "%.1f kHz", khz);
+
+		std::string bits;
+		switch (_session->config.get_native_file_data_format ()) {
+			case FormatInt24:
+				bits = _("24-bit");
+				break;
+			case FormatInt16:
+				bits = _("16-bit");
+				break;
+			default:
+				bits = _("32-bit float");
+				break;
+		}
+		format = string_compose ("%1 \xc2\xb7 %2", rate, bits);
+	} else {
+		name = _("No project");
+	}
+
+	const std::string key = name + '\n' + format;
+	if (key == _shown_session_info) {
+		return;
+	}
+	_shown_session_info = key;
+
+	UIConfiguration& uic = UIConfiguration::instance ();
+	_session_name_label.set_markup (string_compose ("<span size=\"large\" foreground=\"%1\">%2</span>",
+	                                                markup_color (uic.color ("neutral:foregroundest")),
+	                                                Gtkmm2ext::markup_escape_text (name)));
+	_session_format_label.set_markup (string_compose ("<span size=\"small\" foreground=\"%1\">%2</span>",
+	                                                  markup_color (uic.color ("neutral:foreground2")),
+	                                                  Gtkmm2ext::markup_escape_text (format)));
+	_session_info_box.set_tooltip_text (name);
+}
+
+void
+ApplicationBar::update_output_meter ()
+{
+	float peak = -200.f;
+	float lufs = -200.f;
+
+	if (_session && _session->master_out ()) {
+		std::shared_ptr<Delivery> output = _session->master_out ()->main_outs ();
+		peak = output->take_master_peak_dbfs ();
+		lufs = output->master_lufs_m ();
+	}
+
+	/* meter ballistics: instant attack, ~20 dB/s release on the peak
+	 * readout (this runs at 25 Hz). LUFS M is already a 400 ms average. */
+	const float release_per_tick = 0.8f;
+	const float floor_db         = -70.f;
+	float       shown            = std::max (peak, _out_peak_db - release_per_tick);
+	if (shown < floor_db) {
+		shown = -200.f;
+	}
+
+	/* redraw only when the drawn tenth-of-a-dB values change */
+	if (rintf (shown * 10.f) != rintf (_out_peak_db * 10.f) || rintf (lufs * 10.f) != rintf (_out_lufs * 10.f)) {
+		_out_peak_db = shown;
+		_out_lufs    = lufs;
+		_output_meter_area.queue_draw ();
+	}
+}
+
+static void
+phaedra_rounded_rect (cairo_t* cr, double x, double y, double w, double h, double r)
+{
+	cairo_new_sub_path (cr);
+	cairo_arc (cr, x + w - r, y + r, r, -M_PI / 2, 0);
+	cairo_arc (cr, x + w - r, y + h - r, r, 0, M_PI / 2);
+	cairo_arc (cr, x + r, y + h - r, r, M_PI / 2, M_PI);
+	cairo_arc (cr, x + r, y + r, r, M_PI, 3 * M_PI / 2);
+	cairo_close_path (cr);
+}
+
+bool
+ApplicationBar::output_meter_expose (GdkEventExpose*)
+{
+	Glib::RefPtr<Gdk::Window> win = _output_meter_area.get_window ();
+	if (!win) {
+		return true;
+	}
+
+	UIConfiguration& uic   = UIConfiguration::instance ();
+	cairo_t*         cr    = gdk_cairo_create (win->gobj ());
+	const double     scale = std::max (1.f, uic.get_ui_scale ());
+	const double     W     = _output_meter_area.get_allocation ().get_width ();
+	const double     H     = _output_meter_area.get_allocation ().get_height ();
+	const double     row_h = 8 * scale;
+	const double     gap   = 9 * scale;
+	const double     top   = floor ((H - 2 * row_h - gap) / 2);
+	const double     bar_x = 14 * scale;
+	const double     val_w = 104 * scale;
+	const double     bar_w = std::max (20.0, W - bar_x - val_w - 6 * scale);
+
+	const Gtkmm2ext::Color c_green  = uic.color ("meter color3");
+	const Gtkmm2ext::Color c_yellow = uic.color ("meter color5");
+	const Gtkmm2ext::Color c_red    = uic.color ("meter color9");
+	const Gtkmm2ext::Color c_slot   = uic.color ("widget:bg");
+	const std::string      dim      = markup_color (uic.color ("neutral:foreground2"));
+	const std::string      value    = markup_color (uic.color ("clock: text"));
+
+	Glib::RefPtr<Pango::Layout> layout = Pango::Layout::create (_output_meter_area.get_pango_context ());
+
+	struct Row {
+		std::string tag;
+		const char* unit;
+		float       db;
+	};
+	const Row rows[2] = {
+		{ S_("Peak|P"), "dBFS", _out_peak_db },
+		{ S_("Loudness|L"), "LUFS M", _out_lufs },
+	};
+
+	/* both rows span -60 .. 0 dB; the top two segments are red and the
+	 * next four yellow, like the Lite meter */
+	const float  lo   = -60.f;
+	const int    segs = 22;
+	const double sw   = bar_w / segs;
+
+	for (int i = 0; i < 2; ++i) {
+		const Row&   r = rows[i];
+		const double y = top + i * (row_h + gap);
+		int          tw, th;
+
+		layout->set_markup (string_compose ("<span size=\"x-small\" foreground=\"%1\">%2</span>", dim, r.tag));
+		layout->get_pixel_size (tw, th);
+		cairo_move_to (cr, 0, y + (row_h - th) / 2);
+		pango_cairo_show_layout (cr, layout->gobj ());
+
+		const float frac = r.db <= lo ? 0.f : std::min (1.f, (r.db - lo) / -lo);
+		const int   lit  = (int) floorf (frac * segs + 0.5f);
+
+		for (int seg = 0; seg < segs; ++seg) {
+			phaedra_rounded_rect (cr, bar_x + seg * sw + 0.5, y, sw - 1.5, row_h, 1.5);
+			if (seg < lit) {
+				Gtkmm2ext::set_source_rgba (cr, seg >= segs - 2 ? c_red : (seg >= segs - 6 ? c_yellow : c_green));
+			} else {
+				Gtkmm2ext::set_source_rgb_a (cr, c_slot, 0.55);
+			}
+			cairo_fill (cr);
+		}
+
+		char num[16];
+		if (r.db > -199.f) {
+			snprintf (num, sizeof (num), "%.1f", r.db);
+		} else {
+			snprintf (num, sizeof (num), "--");
+		}
+		layout->set_markup (string_compose ("<span foreground=\"%1\">%2</span> <span size=\"x-small\" foreground=\"%3\">%4</span>",
+		                                    value, num, dim, r.unit));
+		layout->get_pixel_size (tw, th);
+		cairo_move_to (cr, W - tw, y + (row_h - th) / 2);
+		pango_cairo_show_layout (cr, layout->gobj ());
+	}
+
+	cairo_destroy (cr);
+	return true;
 }

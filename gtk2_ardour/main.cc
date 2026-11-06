@@ -31,6 +31,7 @@
 
 #include <signal.h>
 #include <locale.h>
+#include "phaedra_language.h"
 
 #include <sigc++/bind.h>
 #include <ytkmm/settings.h>
@@ -258,6 +259,7 @@ int main (int argc, char *argv[])
 	}
 
 	fixup_bundle_environment (argc, argv, localedir);
+	PhaedraLanguage::apply ();
 
 	load_custom_fonts(); /* needs to happen before any gtk and pango init calls */
 

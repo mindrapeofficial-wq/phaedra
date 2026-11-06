@@ -31,6 +31,7 @@
 #include "ardour/buffer_set.h"
 #include "ardour/debug.h"
 #include "ardour/delivery.h"
+#include "ardour/lufs_meter.h"
 #include "ardour/io.h"
 #include "ardour/mute_master.h"
 #include "ardour/pannable.h"
@@ -276,6 +277,17 @@ Delivery::configure_io (ChanCount in, ChanCount out)
 	}
 
 	reset_panner ();
+	if (_master_meter_enabled) {
+		/* Phaedra master readout: mono or stereo only (LUFSMeter handles 1-2 ch) */
+		_master_lufs.reset ();
+		_master_meter_channels = 0;
+		_master_lufs_m.store (-200.f);
+		_master_peak_dbfs.store (-200.f);
+		if (out.n_audio () >= 1 && out.n_audio () <= 2 && _session.nominal_sample_rate () > 0) {
+			_master_lufs.reset (new LUFSMeter (_session.nominal_sample_rate (), out.n_audio ()));
+			_master_meter_channels = out.n_audio ();
+		}
+	}
 
 	if (_amp) {
 		return _amp->configure_io (out, out);
@@ -328,6 +340,7 @@ Delivery::run (BufferSet& bufs, samplepos_t start_sample, samplepos_t end_sample
 
 	if (!_active && !_pending_active) {
 		_output->silence (nframes);
+		clear_master_meter ();
 		return;
 	}
 
@@ -373,6 +386,7 @@ Delivery::run (BufferSet& bufs, samplepos_t start_sample, samplepos_t end_sample
 			bufs.set_count (output_buffers().count ());
 			Amp::apply_simple_gain (bufs, nframes, GAIN_COEFF_ZERO);
 		}
+		measure_master_output (nframes);
 
 		RTABufferListPtr rtabuffers = _rtabuffers.load ();
 		if (_rta_active.load () && rtabuffers && !rtabuffers->empty ()) {
@@ -454,6 +468,7 @@ Delivery::run (BufferSet& bufs, samplepos_t start_sample, samplepos_t end_sample
 		}
 	}
 
+	measure_master_output (nframes);
 	if (result_required) {
 		/* "bufs" are internal, meaning they should never reflect
 		   split-cycle offsets. So shift events back in time from where
@@ -474,6 +489,58 @@ Delivery::run (BufferSet& bufs, samplepos_t start_sample, samplepos_t end_sample
 			}
 		}
 	}
+}
+
+/* Phaedra: master output readout (sample peak + momentary loudness).
+ * Runs in the process thread, after gain/panning, on the master bus only.
+ */
+void
+Delivery::measure_master_output (pframes_t nframes)
+{
+	if (!_master_lufs || !nframes) {
+		return;
+	}
+
+	/* The meter was sized for the channel count seen by configure_io ();
+	 * skip cycles where the port set does not match (e.g. mid-reconfigure),
+	 * rather than hand the meter fewer channel pointers than it reads. */
+	const uint32_t channels = output_buffers ().count ().n_audio ();
+	if (channels != _master_meter_channels) {
+		return;
+	}
+
+	float const* data[2] = { nullptr, nullptr };
+	float        peak    = 0.f;
+
+	for (uint32_t channel = 0; channel < channels; ++channel) {
+		data[channel] = output_buffers ().get_audio (channel).data ();
+		for (pframes_t frame = 0; frame < nframes; ++frame) {
+			const float value = std::fabs (data[channel][frame]);
+			if (std::isfinite (value)) {
+				peak = std::max (peak, value);
+			}
+		}
+	}
+
+	_master_lufs->run (data, nframes, true);
+	_master_lufs_m.store (_master_lufs->momentary ());
+
+	/* peak-hold until the GUI takes it (take_master_peak_dbfs) */
+	const float db       = peak > 0.f ? 20.f * std::log10 (peak) : -200.f;
+	float       previous = _master_peak_dbfs.load ();
+	while (db > previous && !_master_peak_dbfs.compare_exchange_weak (previous, db)) {}
+}
+
+void
+Delivery::clear_master_meter ()
+{
+	if (!_master_lufs) {
+		return;
+	}
+	/* an inactive master outputs silence: show it, and start the
+	 * 400 ms window afresh when the bus becomes active again */
+	_master_lufs->reset ();
+	_master_lufs_m.store (-200.f);
 }
 
 XMLNode&

@@ -72,7 +72,7 @@ fixup_bundle_environment (int, char* [], string & localedir)
 			const char* data_path = getenv ("PHAEDRA_DATA_PATH");
 			if (data_path) {
 				std::string dp (data_path);
-				std::string::size_type colon = dp.find (':');
+				std::string::size_type colon = dp.find (G_SEARCHPATH_SEPARATOR);
 				std::string first = (colon != std::string::npos) ? dp.substr (0, colon) : dp;
 				std::string alt = Glib::build_filename (first, "locale");
 				if (Glib::file_test (alt, Glib::FILE_TEST_IS_DIR)) {
@@ -160,6 +160,13 @@ load_custom_fonts()
 
 	if (pango_font_map_get_type() == PANGO_TYPE_FT2_FONT_MAP) {
 		FcConfig *config = FcInitLoadConfigAndFonts();
+		std::string plex_file;
+		if (find_file (ardour_data_search_path(), "IBMPlexSans-Regular.ttf", plex_file)) {
+			FcConfigAppFontAddFile (config, reinterpret_cast<const FcChar8*> (plex_file.c_str ()));
+		}
+		if (find_file (ardour_data_search_path(), "IBMPlexSans-Light.ttf", plex_file)) {
+			FcConfigAppFontAddFile (config, reinterpret_cast<const FcChar8*> (plex_file.c_str ()));
+		}
 
 		if (!ardour_mono_file.empty () && FcFalse == FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(ardour_mono_file.c_str()))) {
 			ardour_mono_file.clear ();
@@ -176,6 +183,13 @@ load_custom_fonts()
 		}
 	} else {
 		// pango with win32 backend
+		std::string plex_file;
+		if (find_file (ardour_data_search_path(), "IBMPlexSans-Regular.ttf", plex_file)) {
+			AddFontResourceExA (plex_file.c_str (), FR_PRIVATE, NULL);
+		}
+		if (find_file (ardour_data_search_path(), "IBMPlexSans-Light.ttf", plex_file)) {
+			AddFontResourceExA (plex_file.c_str (), FR_PRIVATE, NULL);
+		}
 		if (0 == AddFontResource(ardour_mono_file.c_str())) {
 			ardour_mono_file.clear ();
 			cerr << _("Cannot register PhaedraMono TrueType font with windows gdi.") << endl;

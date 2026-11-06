@@ -30,6 +30,7 @@
 #endif
 
 #include <unordered_set>
+#include "phaedra_language.h"
 
 #include <cairo/cairo.h>
 
@@ -3317,6 +3318,14 @@ These settings will only take effect after %1 is restarted.\n\
 #if ENABLE_NLS
 
 	add_option (_("Appearance/Translation"), new OptionEditorHeading (_("Internationalization")));
+	ComboOption<std::string>* interface_language = new ComboOption<std::string> (
+		"interface-language", "Language / Idioma",
+		sigc::ptr_fun (PhaedraLanguage::get), sigc::ptr_fun (PhaedraLanguage::set));
+	interface_language->add ("", _("System language"));
+	interface_language->add ("en", "English");
+	interface_language->add ("es", "Español");
+	interface_language->set_note (_("Restart Phaedra to apply the interface language."));
+	add_option (_("Appearance/Translation"), interface_language);
 
 	bo = new BoolOption (
 			"enable-translation",

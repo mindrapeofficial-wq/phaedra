@@ -145,6 +145,7 @@
 #include "note_base.h"
 #include "opts.h"
 #include "pianoroll.h"
+#include "pianoroll_window.h"
 #include "plugin_setup_dialog.h"
 #include "public_editor.h"
 #include "quantize_dialog.h"
@@ -667,9 +668,48 @@ Editor::Editor ()
 	_arrange_mixer_pane.set_drag_cursor (*_cursors->expand_up_down);
 	_arrange_mixer_pane.show ();
 	_mixer_dock_box.show ();
-	content_main.add (_arrange_mixer_pane);
-	_mixer_dock_button.set_text (_("Channels"));
-	_mixer_dock_button.set_no_show_all (true);
+	_arrange_pulse_pane.add (_arrange_mixer_pane);
+	_tools_dock.set_show_tabs (false);
+	_tools_dock.set_show_border (false);
+	_tools_dock.append_page (_pulse_dock);
+	_tools_dock.append_page (_piano_dock_box);
+	_pulse_dock.show ();
+	_piano_dock_box.show ();
+	_tools_dock.set_no_show_all (true);
+	_arrange_pulse_pane.add (_tools_dock);
+	_arrange_pulse_pane.set_child_minsize (_arrange_mixer_pane, 240);
+	_arrange_pulse_pane.set_child_minsize (_tools_dock, 220);
+	_arrange_pulse_pane.set_divider (0, 0.72);
+	_arrange_pulse_pane.set_drag_cursor (*_cursors->expand_up_down);
+	_arrange_docks.pack_start (_arrange_pulse_pane, true, true);
+	_arrange_docks.pack_end (_dock_tabs, false, false, 4);
+	_dock_tabs.set_spacing (6);
+	_dock_tabs.set_border_width (2);
+	{
+		/* Phaedra: Lite-style bottom bar - icon + uppercase label */
+		const ArdourButton::Element icon_and_text = ArdourButton::Element (ArdourButton::Edge | ArdourButton::Body | ArdourButton::Text | ArdourButton::VectorIcon);
+		_mixer_dock_button.set_icon (ArdourIcon::Mixer);
+		_mixer_dock_button.set_elements (icon_and_text);
+		_pulse_dock_button.set_icon (ArdourIcon::TrackWaveform);
+		_pulse_dock_button.set_elements (icon_and_text);
+		_piano_roll_button.set_icon (ArdourIcon::DinMidi);
+		_piano_roll_button.set_elements (icon_and_text);
+	}
+	_dock_tabs.pack_start (_mixer_dock_button, false, false);
+	_mixer_dock_button.set_text (Glib::ustring (_("Mixer")).uppercase ());
+#ifdef PLATFORM_WINDOWS
+	_dock_tabs.pack_start (_pulse_dock_button, false, false);
+	_pulse_dock_button.set_text ("PULSE");
+	_pulse_dock_button.show ();
+#endif
+	_mixer_dock_button.show ();
+	_dock_tabs.pack_start (_piano_roll_button, false, false);
+	_piano_roll_button.set_text (Glib::ustring (_("Piano Roll")).uppercase ());
+	_piano_roll_button.show ();
+	_dock_tabs.show ();
+	_arrange_pulse_pane.show ();
+	_arrange_docks.show ();
+	content_main.add (_arrange_docks);
 
 
 	/* need to show the "contents" widget so that notebook will show if tab is switched to
@@ -808,6 +848,9 @@ Editor::Editor ()
 
 Editor::~Editor()
 {
+	// Destroy the docked editor while its GTK parent and session context exist.
+	delete pianoroll_window;
+	pianoroll_window = nullptr;
 	delete own_bindings;
 	delete tempo_marker_menu;
 	delete meter_marker_menu;
@@ -1280,6 +1323,7 @@ Editor::update_title ()
 void
 Editor::set_session (Session *t)
 {
+	if (_show_piano_action) _show_piano_action->set_active (false);
 	EditingContext::set_session (t);
 
 	section_marker_bar->clear (true);
@@ -2265,6 +2309,41 @@ Editor::toggle_mixer_dock ()
 	}
 }
 
+void
+Editor::toggle_pulse_dock ()
+{
+	if (_show_pulse_action && _show_pulse_action->get_active ()) {
+		_show_piano_action->set_active (false);
+		_tools_dock.set_current_page (0);
+		_tools_dock.show ();
+	} else {
+		if (!_show_piano_action || !_show_piano_action->get_active ()) _tools_dock.hide ();
+	}
+}
+
+void
+Editor::show_piano_roll ()
+{
+	if (!_session || !_show_piano_action->get_active ()) {
+		if (!_show_pulse_action->get_active ()) _tools_dock.hide ();
+		return;
+	}
+	if (!pianoroll_window) {
+		pianoroll_window = new PianorollWindow (_("Piano Roll"), *_session);
+		pianoroll_window->set_show_source (false);
+	}
+	if (!pianoroll_window->docked ()) {
+		pianoroll_window->dock_into (_piano_dock_box);
+		// Existing edit commands also reveal the dock after it has been created.
+		pianoroll_window->DockedPresent.connect ([this] () { _show_piano_action->set_active (true); });
+	}
+	_show_pulse_action->set_active (false);
+	_tools_dock.set_current_page (1);
+	_tools_dock.show ();
+	_piano_dock_box.show_all ();
+	region_selection_changed ();
+}
+
 int
 Editor::set_state (const XMLNode& node, int version)
 {
@@ -2281,6 +2360,17 @@ Editor::set_state (const XMLNode& node, int version)
 	bool mixer_visible = true;
 	node.get_property ("phaedra-mixer-visible", mixer_visible);
 	_show_mixer_dock_action->set_active (mixer_visible);
+	bool pulse_visible = false;
+	node.get_property ("phaedra-pulse-visible", pulse_visible);
+	_show_pulse_action->set_active (pulse_visible);
+	bool piano_visible = false;
+	if (node.get_property ("phaedra-piano-visible", piano_visible) && piano_visible && _session) {
+		_show_piano_action->set_active (true);
+	}
+	float pulse_split = 0.72f;
+	if (node.get_property ("phaedra-pulse-split", pulse_split)) {
+		_arrange_pulse_pane.set_divider (0, std::max (0.20f, std::min (0.85f, pulse_split)));
+	}
 
 
 	samplepos_t ph_pos;
@@ -2353,8 +2443,9 @@ Editor::set_state (const XMLNode& node, int version)
 	show_editor_mixer_action->set_active (!yn);
 	show_editor_mixer_action->set_active (yn);
 
+	/* Phaedra: like Lite, the editor list (sources/regions sidebar) always
+	 * starts hidden; it can still be opened from the View menu. */
 	yn = false;
-	node.get_property ("show-editor-list", yn);
 	show_editor_list_action->set_active (!yn); // ditto
 	show_editor_list_action->set_active (yn);
 
@@ -2437,6 +2528,9 @@ Editor::get_state () const
 	node->set_property("edit-vertical-pane-size", editor_summary_pane.get_absolute_divider());
 	node->set_property ("phaedra-mixer-split", _arrange_mixer_pane.get_divider ());
 	node->set_property ("phaedra-mixer-visible", _show_mixer_dock_action->get_active ());
+	node->set_property ("phaedra-pulse-visible", _show_pulse_action->get_active ());
+	node->set_property ("phaedra-piano-visible", _show_piano_action->get_active ());
+	node->set_property ("phaedra-pulse-split", _arrange_pulse_pane.get_divider ());
 
 	maybe_add_mixer_strip_width (*node);
 
@@ -2942,8 +3036,12 @@ Editor::setup_toolbar ()
 	advanced_box->pack_end (*follow_mode_hbox, false, false);
 	advanced_box->set_no_show_all ();
 	ebox_vpacker.pack_start (*advanced_box, false, false);
-	Gtk::ToggleButton* advanced_button = manage (new Gtk::ToggleButton (_("Advanced")));
-	advanced_button->signal_toggled ().connect ([advanced_button, advanced_box] () {
+	/* Phaedra: a quiet "…" toggle like Lite's overflow button */
+	ArdourButton* advanced_button = manage (new ArdourButton (u8"⋯", ArdourButton::default_elements, true));
+	advanced_button->set_name ("transport option button");
+	set_tooltip (*advanced_button, _("Advanced"));
+	advanced_button->signal_clicked.connect ([advanced_button, advanced_box] () {
+	    /* auto-toggle has already flipped the state */
 	    if (advanced_button->get_active ()) advanced_box->show_all ();
 	    else advanced_box->hide ();
 	});
@@ -5549,6 +5647,9 @@ Editor::super_rapid_screen_update ()
 void
 Editor::session_going_away ()
 {
+	_show_piano_action->set_active (false);
+	delete pianoroll_window;
+	pianoroll_window = nullptr;
 	_have_idled = false;
 
 	_session_connections.drop_connections ();

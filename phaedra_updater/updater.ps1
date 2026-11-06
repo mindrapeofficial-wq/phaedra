@@ -1,5 +1,17 @@
-param([string]$PhaedraDir, [int]$LauncherPid)
+param([string]$PhaedraDir, [int]$LauncherPid, [switch]$Manual)
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'update-policy.ps1')
+. (Join-Path $PSScriptRoot 'download-package.ps1')
+if (Test-PhaedraDevelopmentBuild $PhaedraDir) {
+    if ($Manual) {
+        Add-Type -AssemblyName System.Windows.Forms
+        [Windows.Forms.MessageBox]::Show('Esta es una compilacion local de desarrollo. Las actualizaciones automaticas no sustituyen esta version.', 'Phaedra Pro') | Out-Null
+    }
+    exit 0
+}
+$configFile = Join-Path $PhaedraDir 'update_config.ini'
+if (-not $Manual -and (Test-Path -LiteralPath $configFile) -and
+    (Get-Content -LiteralPath $configFile | Where-Object { $_ -match '^\s*check_updates\s*=\s*false\s*$' })) { exit 0 }
 $versionFile = Join-Path $PhaedraDir 'version.txt'
 if (-not (Test-Path -LiteralPath $versionFile)) { exit 0 }
 try {
@@ -10,6 +22,7 @@ try {
     if ($remote -le $local) { exit 0 }
     $asset = @($release.assets | Where-Object { $_.name -match '^Phaedra-v.*\.zip$' }) | Select-Object -First 1
     if (-not $asset) { exit 0 }
+    Assert-PhaedraReleaseAsset -Asset $asset -Tag ([string]$release.tag_name)
 } catch { exit 0 }
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
@@ -42,7 +55,7 @@ $notesBox.Size = New-Object System.Drawing.Size(508, 246)
 $notesBox.Anchor = 'Top, Bottom, Left, Right'
 $dialog.Controls.Add($notesBox)
 $installButton = New-Object System.Windows.Forms.Button
-$installButton.Text = 'Descargar e instalar'
+$installButton.Text = 'Descargar'
 $installButton.Size = New-Object System.Drawing.Size(145, 30)
 $installButton.Location = New-Object System.Drawing.Point(381, 330)
 $installButton.Anchor = 'Bottom, Right'
@@ -60,7 +73,7 @@ $dialog.CancelButton = $laterButton
 $answer = $dialog.ShowDialog()
 $dialog.Dispose()
 if ($answer -ne [System.Windows.Forms.DialogResult]::Yes) { exit 0 }
-$stage = Join-Path $env:LOCALAPPDATA 'PhaedraUpdater'
+$stage = Join-Path (Join-Path $env:LOCALAPPDATA 'PhaedraUpdater') ([guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Force -Path $stage | Out-Null
 $zipFile = Join-Path $stage $asset.name
 $form = New-Object System.Windows.Forms.Form
@@ -81,24 +94,33 @@ $bar.Size = New-Object System.Drawing.Size(390, 22)
 $bar.Style = 'Marquee'
 $form.Controls.Add($bar)
 $form.Show()
-$client = New-Object System.Net.WebClient
-$client.Headers.Add('User-Agent', 'Phaedra-Updater')
+$handedOff = $false
 try {
-    $client.DownloadFileAsync([uri]$asset.browser_download_url, $zipFile)
-    while ($client.IsBusy) {
+    Receive-PhaedraPackage $asset.browser_download_url $zipFile $asset.size {
+        param($received, $expected)
         [System.Windows.Forms.Application]::DoEvents()
-        Start-Sleep -Milliseconds 80
+        if ($form.IsDisposed -or -not $form.Visible) { throw 'Descarga cancelada.' }
+        $bar.Style = 'Continuous'
+        $bar.Value = [Math]::Min(100, [int](100.0 * $received / $expected))
     }
     if (-not (Test-Path -LiteralPath $zipFile)) { throw 'La descarga no se completo.' }
+    $digest = ([string]$asset.digest).Substring(7)
+    Assert-PhaedraDownload -Path $zipFile -ExpectedSize $asset.size -ExpectedSha256 $digest
     $form.Close()
+    $confirm = [System.Windows.Forms.MessageBox]::Show(
+        'Descarga verificada. La instalacion esperara a que cierres Phaedra normalmente (hasta una hora). Guarda tus sesiones antes de cerrar. Preparar la instalacion?',
+        'Phaedra', 'YesNo', 'Question', 'Button2')
+    if ($confirm -ne [System.Windows.Forms.DialogResult]::Yes) { exit 0 }
     $helper = Join-Path $PhaedraDir 'updater\install-update.ps1'
-    $arguments = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "{0}" -ZipFile "{1}" -PhaedraDir "{2}" -LauncherPid {3}' -f $helper,$zipFile,$PhaedraDir,$LauncherPid
+    $arguments = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "{0}" -ZipFile "{1}" -PhaedraDir "{2}" -LauncherPid {3} -ExpectedSize {4} -ExpectedSha256 {5}' -f $helper,$zipFile,$PhaedraDir,$LauncherPid,$asset.size,$digest
     Start-Process -FilePath 'powershell.exe' -ArgumentList $arguments -WindowStyle Hidden | Out-Null
+    $handedOff = $true
     exit 2
 } catch {
     $form.Close()
     [System.Windows.Forms.MessageBox]::Show("No se pudo actualizar Phaedra: $($_.Exception.Message)", 'Phaedra', 'OK', 'Error') | Out-Null
     exit 0
 } finally {
-    $client.Dispose()
+    $form.Dispose()
+    if (-not $handedOff) { Remove-PhaedraStagedDownload $zipFile }
 }

@@ -281,6 +281,7 @@ Route::init ()
 	_main_outs.reset (new Delivery (_session, _output, _pannable, _mute_master, _name, Delivery::Main));
 	/* master output volume */
 	if (is_master()) {
+		_main_outs->enable_master_meter ();
 		_volume_control.reset (new GainControl (_session, MainOutVolume));
 		_volume_control->set_flag (Controllable::NotAutomatable);
 		_main_outs->set_gain_control (_volume_control);

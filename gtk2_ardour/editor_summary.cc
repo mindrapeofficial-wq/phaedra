@@ -44,6 +44,8 @@
 #include "route_time_axis.h"
 #include "ui_config.h"
 
+#include "gtkmm2ext/utils.h"
+
 #include "pbd/i18n.h"
 
 using namespace std;
@@ -290,15 +292,15 @@ EditorSummary::render (Cairo::RefPtr<Cairo::Context> const& ctx, cairo_rectangle
 		get_editor (&_view_rectangle_x, &_view_rectangle_y);
 	}
 
+	/* Phaedra: a soft, rounded view window, like a modern scrollbar thumb */
 	int32_t width = _view_rectangle_x.second - _view_rectangle_x.first;
-	cairo_rectangle (cr, _view_rectangle_x.first, 0, width, get_height ());
+	Gtkmm2ext::rounded_rectangle (cr, _view_rectangle_x.first + 0.5, 0.5, width - 1, get_height () - 1, 4);
 	Gtkmm2ext::set_source_rgba (cr, _viewrect_color);
-	cairo_fill (cr);
+	cairo_fill_preserve (cr);
 
 	/* horiz zoom */
-	cairo_rectangle (cr, _view_rectangle_x.first + 0.5, 0.5, width - 1, get_height () - 1);
 	cairo_set_line_width (cr, 1);
-	cairo_set_source_rgba (cr, UINT_RGBA_R_FLT(_viewrect_color), UINT_RGBA_G_FLT(_viewrect_color), UINT_RGBA_B_FLT(_viewrect_color), 0.5);
+	cairo_set_source_rgba (cr, UINT_RGBA_R_FLT(_viewrect_color), UINT_RGBA_G_FLT(_viewrect_color), UINT_RGBA_B_FLT(_viewrect_color), 0.3);
 	cairo_stroke (cr);
 
 	/* Playhead */

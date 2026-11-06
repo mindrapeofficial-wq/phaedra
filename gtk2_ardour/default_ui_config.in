@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Ardour>
-  <UI/>
+  <UI>
+    <Option name="use-route-color-widely" value="1"/>
+  </UI>
   <Canvas>
     <Option name="very small font" value="@FONT_VERYSMALL@"/>
     <Option name="very small bold font" value="bold @FONT_VERYSMALL@"/>

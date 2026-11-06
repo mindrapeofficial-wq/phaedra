@@ -33,7 +33,7 @@ UI_CONFIG_VARIABLE (bool, all_floating_windows_are_dialogs, "all-floating-window
 UI_CONFIG_VARIABLE (bool, floating_monitor_section, "floating-monitor-section", false)
 UI_CONFIG_VARIABLE (bool, transients_follow_front, "transients-follow-front", false)
 UI_CONFIG_VARIABLE (bool, allow_to_resize_init_dialog, "allow-to-resize-init-dialog", false)
-UI_CONFIG_VARIABLE (bool, color_regions_using_track_color, "color-regions-using-track-color", false)
+UI_CONFIG_VARIABLE (bool, color_regions_using_track_color, "color-regions-using-track-color", true) /* Phaedra: clips take their track colour, as in Lite */
 UI_CONFIG_VARIABLE (bool, use_route_color_widely, "use-route-color-widely", false)
 UI_CONFIG_VARIABLE (uint32_t, vertical_region_gap, "vertical-region-gap", 0)
 UI_CONFIG_VARIABLE (bool, editor_stereo_only_meters, "editor-stereo-only-meters", true)
@@ -130,7 +130,7 @@ UI_CONFIG_VARIABLE (uint32_t, action_table_columns, "action-table-columns", 3)
 UI_CONFIG_VARIABLE (bool, hide_splash_screen, "hide-splash-screen", true)
 UI_CONFIG_VARIABLE (bool, check_announcements, "check-announcements", true)
 UI_CONFIG_VARIABLE (bool, use_wm_visibility, "use-wm-visibility", true)
-UI_CONFIG_VARIABLE (std::string, stripable_color_palette, "stripable-color-palette", "#AA3939:#FFAAAA:#D46A6A:#801515:#550000:#AA8E39:#FFEAAA:#D4BA6A:#806515:#554000:#343477:#8080B3:#565695:#1A1A59:#09093B:#2D882D:#88CC88:#55AA55:#116611:#004400")  /* Gtk::ColorSelection::palette_to_string */
+UI_CONFIG_VARIABLE (std::string, stripable_color_palette, "stripable-color-palette", "#5684D6:#5EAAD6:#50BEA8:#68BA62:#A8C44C:#DEC448:#E6983E:#DE6848:#D6526E:#C456A8:#9662CE:#6E68D6:#8296AA:#B28C6E:#78AA8C:#BE7896") /* Phaedra Lite track palette */  /* Gtk::ColorSelection::palette_to_string */
 UI_CONFIG_VARIABLE (bool, use_palette_for_new_track, "use-palette-for-new-track", true)
 UI_CONFIG_VARIABLE (bool, use_palette_for_new_bus, "use-palette-for-new-bus", true)
 UI_CONFIG_VARIABLE (bool, use_palette_for_new_vca, "use-palette-for-new-vca", true)

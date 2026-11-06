@@ -83,6 +83,7 @@ gtk2_ardour_sources = [
         'editing.cc',
         'editing_context.cc',
         'editor.cc',
+        'phaedra_pulse.cc',
         'editor_actions.cc',
         'editor_automation_line.cc',
         'editor_audio_import.cc',
@@ -697,9 +698,11 @@ def build(bld):
         obj.source += [ 'cocoacarbon.mm', 'bundle_env_cocoa.cc' ]
     elif bld.env['build_target'] == 'mingw':
         obj.source += [ 'bundle_env_mingw.cc' ]
+        obj.source += [ 'phaedra_window_frames.cc' ]
         obj.source += [ 'windows_icon.rc' ]
     elif bld.env['build_target'] == 'msvc':
         obj.source += [ 'bundle_env_msvc2.cc' ]
+        obj.source += [ 'phaedra_window_frames.cc' ]
         obj.source += [ 'windows_icon.rc' ]
     else:
         obj.source += [ 'bundle_env_linux.cc' ]

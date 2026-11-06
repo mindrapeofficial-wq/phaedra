@@ -23,6 +23,7 @@
 #pragma once
 
 #include <string>
+#include <atomic>
 
 #if __cplusplus >= 202002L
 #include <memory>
@@ -40,6 +41,8 @@
 #include "ardour/gain_control.h"
 
 namespace ARDOUR {
+
+class LUFSMeter;
 
 class Amp;
 class BufferSet;
@@ -135,6 +138,9 @@ public:
 	}
 	bool analysis_active () const;
 	void set_analysis_active (bool);
+	void enable_master_meter () { _master_meter_enabled = true; }
+	float master_lufs_m () const { return _master_lufs_m.load (); }
+	float take_master_peak_dbfs () { return _master_peak_dbfs.exchange (-200.f); }
 
 	void set_polarity_control (std::shared_ptr<AutomationControl> ac) {
 		_polarity_control = ac;
@@ -161,6 +167,14 @@ public:
 	}
 
 protected:
+	/* Phaedra: master output peak + momentary loudness readout */
+	void measure_master_output (pframes_t);
+	void clear_master_meter ();
+	bool _master_meter_enabled = false;
+	uint32_t _master_meter_channels = 0;
+	std::unique_ptr<LUFSMeter> _master_lufs;
+	std::atomic<float> _master_lufs_m { -200.f };
+	std::atomic<float> _master_peak_dbfs { -200.f };
 	XMLNode& state () const;
 
 	Role        _role;

@@ -55,6 +55,28 @@ PianorollWindow::~PianorollWindow ()
 }
 
 void
+PianorollWindow::dock_into (Gtk::Box& box)
+{
+	if (_docked) return;
+	hide ();
+	remove ();
+	box.pack_start (hpacker, true, true);
+	_docked = true;
+}
+
+void
+PianorollWindow::show_editor ()
+{
+	if (_docked) {
+		hpacker.show_all ();
+		DockedPresent.emit ();
+	} else {
+		show_all ();
+		present ();
+	}
+}
+
+void
 PianorollWindow::set_show_source (bool yn)
 {
 	pianoroll->set_show_source (yn);

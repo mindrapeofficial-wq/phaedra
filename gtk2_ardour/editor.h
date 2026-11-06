@@ -44,6 +44,7 @@
 
 #include <ytkmm/comboboxtext.h>
 #include <ytkmm/layout.h>
+#include <ytkmm/notebook.h>
 
 #include "gtkmm2ext/bindings.h"
 #include "gtkmm2ext/dndtreeview.h"
@@ -66,6 +67,7 @@
 #include "widgets/pane.h"
 
 #include "application_bar.h"
+#include "phaedra_pulse.h"
 #include "ardour_dialog.h"
 #include "cross_cursor.h"
 #include "public_editor.h"
@@ -598,6 +600,18 @@ private:
 	ArdourWidgets::ArdourButton _mixer_dock_button;
 	Glib::RefPtr<Gtk::ToggleAction> _show_mixer_dock_action;
 	bool _mixer_dock_available = false;
+	ArdourWidgets::VPane _arrange_pulse_pane;
+	Gtk::VBox _arrange_docks;
+	Gtk::HBox _dock_tabs;
+	PhaedraPulse _pulse_dock;
+	Gtk::Notebook _tools_dock;
+	Gtk::VBox _piano_dock_box;
+	ArdourWidgets::ArdourButton _pulse_dock_button;
+	ArdourWidgets::ArdourButton _piano_roll_button;
+	Glib::RefPtr<Gtk::ToggleAction> _show_pulse_action;
+	Glib::RefPtr<Gtk::ToggleAction> _show_piano_action;
+	void toggle_pulse_dock ();
+	void show_piano_roll ();
 
 
 	Gtk::EventBox meter_base;

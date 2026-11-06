@@ -1,0 +1,38 @@
+{
+  "StartedUtc": "2026-11-03T10:33:44.0050561Z",
+  "FreeBefore": 20286627840,
+  "Entries": [
+    {
+      "Path": "C:\\Users\\mindr\\Desktop\\FLUX\\FLUX-Stoat\\deploy\\source-stage\\0.1.6-web-0-1-9\\activities\\phaedra\\.build\\target",
+      "Bytes": 1008582845.0,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\Desktop\\PHAEDRA LITE\\phaedra-instruments\\target",
+      "Bytes": 661794629.0,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\Desktop\\rivals-auto-battle\\.android-build\\gradle\\caches",
+      "Bytes": 520878974.0,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\.gradle\\wrapper\\dists",
+      "Bytes": 296374446.0,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\Desktop\\FLUX\\FLUX-Launcher-0.2.0\\source\\element-web\\node_modules",
+      "Bytes": 1505827520.0,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\Desktop\\FLUX\\element-web-develop\\element-web-develop\\node_modules",
+      "Bytes": 1449811525.0,
+      "Status": "deleted"
+    }
+  ],
+  "FreeAfter": 24343072768,
+  "RecoveredBytes": 4056444928
+}

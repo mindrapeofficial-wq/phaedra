@@ -175,9 +175,21 @@ compiler_flags_dictionaries['clang15-darwin'] = clang15_darwin_dict
 # Version stuff
 
 def fetch_git_revision_date ():
-    cmd = ["git", "describe", "HEAD"]
-    output = subprocess.Popen(cmd, stderr=subprocess.STDOUT, stdout=subprocess.PIPE).communicate()[0].splitlines()
-    rev = re.sub(r"^[A-Za-z0-9]*\+", "", output[0].decode('utf-8'))
+    # The fork retains a lightweight numeric engine tag and separate v-prefixed
+    # product releases. Resource/ABI paths must follow the engine major version.
+    cmd = ["git", "describe", "--tags", "--match", "[0-9]*", "HEAD"]
+    try:
+        output = subprocess.check_output(cmd, stderr=subprocess.STDOUT).splitlines()
+        rev = re.sub(r"^[A-Za-z0-9]*\+", "", output[0].decode('utf-8'))
+    except subprocess.CalledProcessError:
+        # Source imports may have no upstream tag in their ancestry. Keep the
+        # engine ABI version explicit, while retaining the actual fork commit.
+        with open('engine-version', encoding='utf-8') as version_file:
+            engine_version = version_file.read().strip()
+        if not re.fullmatch(r'[0-9]+\.[0-9]+', engine_version):
+            raise ValueError('engine-version must contain MAJOR.MINOR')
+        commit = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode().strip()
+        rev = engine_version + '-0-g' + commit
 
     cmd = ["git", "log", "-1", "--pretty=format:%ci", "HEAD"]
     output = subprocess.Popen(cmd, stderr=subprocess.STDOUT, stdout=subprocess.PIPE).communicate()[0].splitlines()

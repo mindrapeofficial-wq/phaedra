@@ -114,7 +114,8 @@ Editor::register_actions ()
 	ActionManager::register_action (editor_menu_actions, X_("MarkerClickBehavior"), _("Marker Interaction"));
 	ActionManager::register_action (editor_menu_actions, X_("FadeMenu"), _("Fade"));
 	ActionManager::register_action (editor_menu_actions, X_("LatchMenu"), _("Latch"));
-	ActionManager::register_action (editor_menu_actions, X_("RegionMenu"), _("Region"));
+	ActionManager::register_action (editor_menu_actions, X_("RegionMenu"), _("Clips"));
+	ActionManager::register_action (editor_menu_actions, X_("PhaedraMidiMenu"), _("MIDI"));
 	ActionManager::register_action (editor_menu_actions, X_("RegionMenuLayering"), _("Layering"));
 	ActionManager::register_action (editor_menu_actions, X_("RegionMenuPosition"), _("Position"));
 	ActionManager::register_action (editor_menu_actions, X_("RegionMenuMarkers"), _("Markers"));
@@ -168,7 +169,7 @@ Editor::register_actions ()
 	act = ActionManager::register_action (editor_menu_actions, X_("TrackHeightMenu"), _("Height"));
 	ActionManager::stripable_selection_sensitive_actions.push_back (act);
 
-	ActionManager::register_action (editor_menu_actions, X_("TrackMenu"), _("Track"));
+	ActionManager::register_action (editor_menu_actions, X_("TrackMenu"), _("Tracks"));
 	ActionManager::register_action (editor_menu_actions, X_("TrackPlaylistMenu"), _("Playlists"));
 	ActionManager::register_action (editor_menu_actions, X_("Tools"), _("Tools"));
 	ActionManager::register_action (editor_menu_actions, X_("View"), _("View"));
@@ -190,6 +191,12 @@ Editor::register_actions ()
 	_show_mixer_dock_action->set_tooltip (_("Show or hide the channel mixer below the arrangement"));
 	_mixer_dock_button.set_related_action (_show_mixer_dock_action);
 	_show_mixer_dock_action->set_active (true);
+	_show_pulse_action = ActionManager::register_toggle_action (editor_actions, "show-pulse-dock", _("Show Pulse Visualizer"), sigc::mem_fun (*this, &Editor::toggle_pulse_dock));
+	_pulse_dock_button.set_related_action (_show_pulse_action);
+	_show_pulse_action->set_active (false);
+	_show_piano_action = ActionManager::register_toggle_action (editor_actions, "phaedra-piano-roll", _("Piano Roll"), sigc::mem_fun (*this, &Editor::show_piano_roll));
+	ActionManager::session_sensitive_actions.push_back (_show_piano_action);
+	_piano_roll_button.set_related_action (_show_piano_action);
 
 	reg_sens (editor_actions, "navigation-zoom-in", _("Zoom In"), sigc::bind (sigc::mem_fun (*this, &Editor::temporal_zoom_step), false));
 	reg_sens (editor_actions, "navigation-zoom-out", _("Zoom Out"), sigc::bind (sigc::mem_fun (*this, &Editor::temporal_zoom_step), true));

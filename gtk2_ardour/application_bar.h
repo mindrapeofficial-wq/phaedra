@@ -22,6 +22,9 @@
 
 #include <ytkmm/box.h>
 #include <ytkmm/label.h>
+#include <ytkmm/image.h>
+#include <ytkmm/drawingarea.h>
+#include <array>
 #include <ytkmm/table.h>
 
 #include "ardour/ardour.h"
@@ -65,6 +68,23 @@ public:
 	void move_to_editor_toolbar (Gtk::Box& left, Gtk::Box& center, Gtk::Box& right);
 
 private:
+	Gtk::Image _fairy;
+	std::array<Glib::RefPtr<Gdk::Pixbuf>, 8> _fairy_frames;
+	int _fairy_frame = -1;
+
+	/* Phaedra Lite-style header: logo, project name + format, output meter */
+	Gtk::Image       _header_logo;
+	Gtk::VBox        _session_info_box;
+	Gtk::Label       _session_name_label;
+	Gtk::Label       _session_format_label;
+	Gtk::DrawingArea _output_meter_area;
+	float            _out_peak_db = -200.f;
+	float            _out_lufs    = -200.f;
+	std::string      _shown_session_info;
+	sigc::connection _session_info_connection;
+	void update_session_info ();
+	void update_output_meter ();
+	bool output_meter_expose (GdkEventExpose*);
 	void on_parent_changed (Gtk::Widget*);
 
 	bool sync_button_clicked (GdkEventButton*);

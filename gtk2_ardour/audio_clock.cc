@@ -998,8 +998,10 @@ AudioClock::finish_set (Temporal::timepos_t const & when, bool btn_en)
 		_left_btn.set_visual_state (Gtkmm2ext::NoVisualState);
 		_right_btn.set_visual_state (Gtkmm2ext::NoVisualState);
 		if (btn_en) {
-			_left_btn.set_elements (ArdourButton::Element(ArdourButton::Edge|ArdourButton::Body|ArdourButton::Text));
-			_right_btn.set_elements (ArdourButton::Element(ArdourButton::Edge|ArdourButton::Body|ArdourButton::Text));
+			/* Phaedra: no outline, so tempo and meter read as part of one
+			 * LCD-style display together with the clock */
+			_left_btn.set_elements (ArdourButton::Element(ArdourButton::Body|ArdourButton::Text));
+			_right_btn.set_elements (ArdourButton::Element(ArdourButton::Body|ArdourButton::Text));
 			_left_btn.set_alignment (.5, .5);
 			_right_btn.set_alignment (.5, .5);
 			set_tooltip (_left_btn, _("Change current tempo"));
@@ -1374,19 +1376,16 @@ AudioClock::set_bbt (timecnt_t const & w)
 
 		TempoMetric m (tmap->metric_at (pos));
 
+		/* Phaedra: plain "120.00 BPM" and "4/4", as in Phaedra Lite */
 		if (m.tempo().note_type() == 4) {
-			snprintf (buf, sizeof(buf), u8"\u2669 = %.3f", m.tempo().note_types_per_minute_at_DOUBLE (pos));
-			_left_btn.set_text (string_compose ("%1", buf), false);
-		} else if (m.tempo().note_type() == 8) {
-			snprintf (buf, sizeof(buf), u8"\u266a = %.3f", m.tempo().note_types_per_minute_at_DOUBLE (pos));
-			_left_btn.set_text (string_compose ("%1", buf), false);
+			snprintf (buf, sizeof(buf), "%.2f BPM", m.tempo().note_types_per_minute_at_DOUBLE (pos));
 		} else {
-			snprintf (buf, sizeof(buf), "1/%d = %.3f",m.tempo().note_type(), m.tempo().note_types_per_minute_at_DOUBLE (pos));
-			_left_btn.set_text (buf, false);
+			snprintf (buf, sizeof(buf), "%.2f BPM (1/%d)", m.tempo().note_types_per_minute_at_DOUBLE (pos), m.tempo().note_type());
 		}
+		_left_btn.set_text (buf, false);
 
 		snprintf (buf, sizeof(buf), "%d/%d", m.meter().divisions_per_bar(), m.meter().note_value());
-		_right_btn.set_text (string_compose ("%1: %2", S_("TimeSignature|TS"), buf), false);
+		_right_btn.set_text (buf, false);
 	}
 }
 

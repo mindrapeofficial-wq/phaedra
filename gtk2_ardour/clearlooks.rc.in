@@ -315,7 +315,7 @@ style "small_text"
 
 style "small_clock"
 {
-	font_name = "@CLOCKFONT@ @FONT_NORMAL@"
+	font_name = "IBM Plex Sans @FONT_NORMAL@"
 }
 
 style "small_italic_text"
@@ -362,7 +362,7 @@ style "big_text"
 
 style "bigger_clock"
 {
-	font_name = "@CLOCKFONT@ @FONT_BIGGER@"
+	font_name = "IBM Plex Sans Light @FONT_BIGGER@"
 }
 
 style "large_text"

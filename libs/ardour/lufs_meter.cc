@@ -184,7 +184,7 @@ LUFSMeter::clear ()
 }
 
 void
-LUFSMeter::run (float const** data, uint32_t n_samples)
+LUFSMeter::run (float const** data, uint32_t n_samples, bool momentary_only)
 {
 	if (_rst_lufs.exchange (false)) {
 		clear ();
@@ -192,12 +192,14 @@ LUFSMeter::run (float const** data, uint32_t n_samples)
 
 	uint32_t offset = 0;
 
-	calc_true_peak (data, n_samples);
+	if (!momentary_only) calc_true_peak (data, n_samples);
 
 	while (n_samples > 0) {
 		uint32_t n = (_frag_pos < n_samples) ? _frag_pos : n_samples;
 
-		_frag_pwr += process (data, n, offset);
+		// Legacy analysis treats mono as dual mono. The master readout measures
+		// the actual output channel count, so undo that compensation for mono.
+		_frag_pwr += process (data, n, offset) * ((momentary_only && _n_channels == 1) ? 0.5f : 1.f);
 		_frag_pos -= n;
 		offset += n;
 		n_samples -= n;
@@ -214,6 +216,9 @@ LUFSMeter::run (float const** data, uint32_t n_samples)
 			const float loudness_m = -0.691f + 10.f * log10f (sum_m + 1e-21);
 
 			_momentary_l = loudness_m;
+			// The continuous master readout needs only the fixed 400 ms window.
+			// Avoid histogram updates and true-peak work in this realtime path.
+			if (momentary_only) continue;
 
 			_maxloudn_M = std::max<float> (_maxloudn_M, loudness_m);
 

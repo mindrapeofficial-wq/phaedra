@@ -2081,6 +2081,10 @@ PluginManager::vst3_discover_from_path (string const& path, bool cache_only)
 	}
 
 	Searchpath paths (path);
+#ifdef PLATFORM_WINDOWS
+	const std::string bundled = Glib::build_filename (ardour_dll_directory (), "VST3");
+	if (Glib::file_test (bundled, Glib::FILE_TEST_IS_DIR)) paths += bundled;
+#endif
 	if (!Config->get_plugin_path_vst3().empty ()) {
 		Searchpath custom (Config->get_plugin_path_vst3 ());
 		paths += custom;

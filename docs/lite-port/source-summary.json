@@ -1,0 +1,55 @@
+{
+  "CapturedUtc": "2026-11-03T10:09:22.1464787Z",
+  "SelectedSource": "C:\\Users\\mindr\\Desktop\\PHAEDRA LITE\\08-DESARROLLO-PREVIEW6",
+  "Files": 512,
+  "soundcraft-src": [
+    {
+      "Name": "absent",
+      "Count": 32
+    },
+    {
+      "Name": "different",
+      "Count": 129
+    },
+    {
+      "Name": "identical",
+      "Count": 352
+    },
+    {
+      "Name": "only-other-copy",
+      "Count": 14
+    }
+  ],
+  "02-CODIGO-INDEPENDIENTE": [
+    {
+      "Name": "absent",
+      "Count": 35
+    },
+    {
+      "Name": "different",
+      "Count": 474
+    },
+    {
+      "Name": "identical",
+      "Count": 18
+    }
+  ],
+  "phaedra-rea-compare": [
+    {
+      "Name": "absent",
+      "Count": 30
+    },
+    {
+      "Name": "different",
+      "Count": 130
+    },
+    {
+      "Name": "identical",
+      "Count": 359
+    },
+    {
+      "Name": "only-other-copy",
+      "Count": 8
+    }
+  ]
+}

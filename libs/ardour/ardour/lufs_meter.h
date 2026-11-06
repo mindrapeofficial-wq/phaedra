@@ -37,7 +37,7 @@ public:
 	LUFSMeter (LUFSMeter const& other) = delete;
 	~LUFSMeter ();
 
-	void run (float const** data, uint32_t n_samples);
+	void run (float const** data, uint32_t n_samples, bool momentary_only = false);
 	void reset ();
 
 	float integrated_loudness () const;

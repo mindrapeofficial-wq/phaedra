@@ -28,6 +28,7 @@
 #include "opts.h"
 #include "timers.h"
 #include "transport_control_ui.h"
+#include "ui_config.h"
 
 #include "pbd/i18n.h"
 
@@ -124,9 +125,10 @@ TransportControlUI::setup (TransportControlProvider* ui)
 #undef PX_SCALE
 
 	if (!ARDOUR::Profile->get_mixbus()) {
+		/* Phaedra: Lite order - start, play, stop, rec */
 		pack_start (_goto_start_button, false, false, 0);
-		pack_start (_stop_button, false, false, 0);
 		pack_start (_roll_button, false, false, 0);
+		pack_start (_stop_button, false, false, 0);
 		pack_start (_rec_button, false, false, 2);
 		pack_start (_transport_spacer, false, false, 8);
 		pack_start (_click_button, false, false, 0);
@@ -142,6 +144,11 @@ TransportControlUI::setup (TransportControlProvider* ui)
 	_rec_button.set_name ("transport recenable button");
 	_midi_panic_button.set_name ("transport button");
 	_click_button.set_name ("transport button");
+
+	/* Phaedra: as in Lite, only Play lights green; a stopped transport
+	 * keeps Stop neutral, and Loop lights violet. */
+	set_phaedra_colors ();
+	UIConfiguration::instance().ColorsChanged.connect (sigc::mem_fun (*this, &TransportControlUI::set_phaedra_colors));
 
 	_roll_button.set_tweaks (ArdourButton::Square);
 	_stop_button.set_tweaks (ArdourButton::Square);
@@ -346,4 +353,11 @@ TransportControlUI::click_button_scroll (GdkEventScroll* ev)
 	gain = std::min (gain, Config->get_max_gain());
 	Config->set_click_gain (gain);
 	return true;
+}
+
+void
+TransportControlUI::set_phaedra_colors ()
+{
+	_stop_button.set_active_color (UIConfiguration::instance().color ("widget:bg"));
+	_auto_loop_button.set_active_color (UIConfiguration::instance().color ("widget:blue"));
 }

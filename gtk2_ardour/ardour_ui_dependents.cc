@@ -263,10 +263,19 @@ tab_window_root_drop (GtkNotebook* src,
 	return ARDOUR_UI::instance()->tab_window_root_drop (src, w, x, y, user_data);
 }
 
+#ifdef PLATFORM_WINDOWS
+extern void phaedra_install_dark_window_frames ();
+#endif
+
 int
 ARDOUR_UI::setup_windows ()
 {
 	BootMessage (_("Setting up GUI"));
+
+#ifdef PLATFORM_WINDOWS
+	/* Phaedra: dark native title bars on every top-level window */
+	phaedra_install_dark_window_frames ();
+#endif
 
 	_tabs.set_show_border(false);
 	_tabs.signal_switch_page().connect (sigc::mem_fun (*this, &ARDOUR_UI::tabs_switch));
