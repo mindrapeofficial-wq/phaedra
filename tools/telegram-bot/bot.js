@@ -7,7 +7,7 @@ import { beginConnection, verifyConnection, disableConnection, connection } from
 import { runInstagramAgent } from "./instagram-agent.js";
 import { sendMessage, sendTyping, sendPhoto, sendImageDocument, getFileUrl, sendAudio, sendAudioById } from "./telegram.js";
 import { chat, detectFace } from "./ai.js";
-import { checkAccess, incrementUsage, getUser, getTierInfo } from "./tiers.js";
+import { checkAccess, incrementUsage, getUser } from "./tiers.js";
 import { runEngagementSession } from "./engage.js";
 
 import { resolveCoverBrief } from "./cover-brief.js";
@@ -23,7 +23,7 @@ import { congratulateInstagramConnection } from "./instagram-congrats.js";
 import { sendVoiceReply } from "./speech.js";
 import { mentionPeople } from "./mentions.js";
 import { voiceDenial } from "./voice-limit.js";
-import { accountStatus } from "./consumption-limit.js";
+import { accountStatus, accountSummary, ACCOUNT_UNKNOWN } from "./consumption-limit.js";
 import { consumptionGate } from "./consumption-limit.js";
 import { wantsLite, imageLiteDenial } from "./image-lite.js";
 import { audioFile, audioNote, wantsStems, handleStems } from "./stems.js";
@@ -54,7 +54,7 @@ export async function handleUpdate(update) {
     }
     catch (e) {
       console.error("[bot] request failed", e.name);
-      await sendMessage(chatId, "Esta vez se ha cortado la conexión con uno de los servicios. No he completado el encargo; puedes volver a intentarlo.").catch(() => {});
+      await sendMessage(chatId, "Se ha cortado la conexión con uno de los servicios y no he completado el encargo. Pídemelo de nuevo en unos minutos; si vuelve a pasar, escribe a @PhaseREM.").catch(() => {});
     }
   }).finally(() => {
     const current = activeChats.get(requestKey);
@@ -64,6 +64,13 @@ export async function handleUpdate(update) {
   activeChats.set(requestKey, slot);
   if (pending && !isPhotoOnly(update.message)) await sendMessage(chatId, "Te he leído. Tengo este mensaje en cola y lo atenderé cuando termine el encargo en curso.").catch(() => {});
   await slot.task;
+}
+
+// Plan name and consumption percentage for /miplan and /plan; the owner has no limit.
+async function accountText(userId) {
+  if (Number(userId) === OWNER_ID) return "Tu plan: <b>administrador</b>\nSin límite de consumo.";
+  try { return accountSummary(await accountStatus(userId)); }
+  catch { console.error("[plan] account status unavailable"); return ACCOUNT_UNKNOWN; }
 }
 
 async function handleMessage(update) {
@@ -82,7 +89,7 @@ async function handleMessage(update) {
     }
     if (newcomers.length) {
       const single = newcomers.length === 1;
-      await sendMessage(msg.chat.id, `¡${newcomers.map(member => member.first_name || member.username || "colega").join(", ")}, ${single ? "qué bien tenerte por aquí" : "bienvenidos"}! Soy Emil, la IA manager de esta comunidad. ¿Qué tipo de contenido ${single ? "creas o te gustaría crear" : "creáis o queréis crear"}?\n\nPodemos hablar aquí o por privado: https://t.me/SocialBananaBot?start=welcome\nIré recordando lo que ${single ? "me cuentes" : "me contéis"} para ayudar mejor; podéis consultar o borrar lo guardado.`, { people: mentionPeople(newcomers.map(member => ({ userId: member.id, name: member.first_name || member.username, username: member.username })), OWNER_ID) });
+      await sendMessage(msg.chat.id, `¡${newcomers.map(member => member.first_name || member.username || "colega").join(", ")}, ${single ? "qué bien tenerte por aquí" : "bienvenidos"}! Soy Emil, la IA manager de artistas de Banana. ¿Qué tipo de contenido ${single ? "creas o te gustaría crear" : "creáis o queréis crear"}?\n\nPodemos hablar aquí o por privado: https://t.me/SocialBananaBot?start=welcome\nIré recordando lo que ${single ? "me cuentes" : "me contéis"} para ayudar mejor; podéis consultar o borrar lo guardado.`, { people: mentionPeople(newcomers.map(member => ({ userId: member.id, name: member.first_name || member.username, username: member.username })), OWNER_ID) });
     }
     return;
   }
@@ -193,7 +200,7 @@ async function handleMessage(update) {
   if (releaseCommand) {
     if (isGroup) { await sendMessage(chatId, "Tu plan es privado. Seguimos aquí: https://t.me/SocialBananaBot?start=welcome"); return; }
     const [, action, value] = releaseCommand;
-    if (action === "plan") await sendMessage(chatId, await releasePlanSummary(userId));
+    if (action === "plan") await sendMessage(chatId, `${await releasePlanSummary(userId)}\n\n${await accountText(userId)}`);
     else if (action === "hecho") await sendMessage(chatId, /^\d+$/.test(value || "") ? await completeReleaseTask(userId, Number(value)) : "Dime el número de la tarea, por ejemplo: /hecho 2");
     else if (value === "on" || value === "off") {
       const reminderState = await memoryRequest(userId, userId);
@@ -245,14 +252,12 @@ async function handleMessage(update) {
     return;
   }
   if (/^\/start(?:@socialbananabot)?(?:\s|$)/i.test(cmd)) {
-    await sendMessage(chatId, `¡Hola${msg.from?.first_name ? ", " + msg.from.first_name : ""}! Aquí podemos hablar de tu proyecto con calma. ${PRIVACY_NOTICE} ¿Qué tipo de contenido creas, o te gustaría empezar a crear?\n\nIré recordando tus preferencias para ayudarte mejor. Puedes consultar lo guardado con /mimemoria o borrarlo con /olvidame.`);
+    await sendMessage(chatId, `¡Hola${msg.from?.first_name ? ", " + msg.from.first_name : ""}! Soy Emil, la IA manager de artistas de Banana. Aquí podemos hablar de tu proyecto con calma: portadas, bases, lanzamientos y contenido. ¿Qué tipo de contenido creas, o te gustaría empezar a crear?\n\nIré recordando lo que me cuentes para ayudarte mejor; lo ves con /mimemoria y lo borras con /olvidame. Con /help ves todo lo que puedo hacer.\n\n${PRIVACY_NOTICE}`);
     return;
   }
-  if (cmd === "/plan" || cmd === "/miplan") {
-    const user = await getUser(userId, username);
-    const info = getTierInfo(user.tier);
-    const used = user.last_request_date === new Date().toISOString().split("T")[0] ? user.daily_requests : 0;
-    await sendMessage(chatId, `Tu plan: <b>${info.name}</b>\nConsultas: ${used}/${info.limit}\nHerramientas: ${info.tools}`);
+  if (/^\/miplan(?:@socialbananabot)?$/.test(cmd)) {
+    if (isGroup) { await sendMessage(chatId, "Tu plan es privado. Seguimos aquí: https://t.me/SocialBananaBot?start=welcome"); return; }
+    await sendMessage(chatId, await accountText(userId));
     return;
   }
   if (cmd === "/engage") {

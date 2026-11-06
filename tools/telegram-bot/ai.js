@@ -341,9 +341,9 @@ export async function detectFace(imageUrl) {
 }
 
 function imageReply(image) {
-  if (image.error) return { text: "No pude completar la imagen Pro. El servicio falló o superó el tiempo de espera. Puedes volver a intentarlo con tu foto original." };
+  if (image.error) return { text: "No pude completar la imagen: el servicio falló o tardó demasiado, y no se ha descontado. Puedes pedírmela de nuevo en unos minutos; si vuelve a fallar, escribe a @PhaseREM." };
   const label = image.kind === 'photo_edit' ? 'Edición lista' : image.kind === 'brand_design' || image.kind === 'image' ? 'Diseño listo' : 'Portada lista';
-  return { text: `${label} · Calidad PRO (máxima) · GPT Image 2.6 Sunburst${image.background === 'transparent' ? ' · PNG con transparencia' : ''}`, image };
+  return { text: `${label} · Calidad ${image.quality === 'lite' ? 'Lite' : 'PRO (máxima)'}${image.background === 'transparent' ? ' · PNG con transparencia' : ''}`, image };
 }
 
 async function askClaude(task, context, options = {}) {
@@ -380,7 +380,7 @@ async function askClaude(task, context, options = {}) {
 export { askClaude };
 
 export async function chat(userMessage, context, imageUrl = null, history = [], options = {}) {
-  if (!OPENAI_KEY) return { text: "No tengo la API key de ChatGPT configurada." };
+  if (!OPENAI_KEY) return { text: "Ahora mismo no puedo responder porque el servicio de IA no está configurado. Escribe a @PhaseREM para avisar." };
 
   if (options.directPrompt) {
     const prepared = await options.prepareImage?.(options.directPrompt);
@@ -473,8 +473,8 @@ export async function chat(userMessage, context, imageUrl = null, history = [], 
       }
       if (tc.function.name === "generate_image" && result.error) {
         return { text: imageUrl
-          ? "No pude crear la portada con tu foto. La edición ha fallado; vuelve a intentarlo en un momento."
-          : "La generación de la imagen ha fallado. Vuelve a intentarlo en un momento." };
+          ? "No pude editar tu foto: el servicio de imágenes ha fallado y no se ha descontado. Pídemelo de nuevo en unos minutos; si vuelve a fallar, escribe a @PhaseREM."
+          : "No pude crear la imagen: el servicio de imágenes ha fallado y no se ha descontado. Pídemela de nuevo en unos minutos; si vuelve a fallar, escribe a @PhaseREM." };
       }
       if (tc.function.name === "generate_image" && (result.imageBase64 || result.imageUrl)) {
         generatedImage = result;
@@ -507,7 +507,7 @@ async function callOpenAI(messages, allowedTools = TOOLS, requiredTool = null) {
   if (!res.ok) {
     const err = await res.text();
     console.error("OpenAI error:", res.status);
-    return { content: "Uf, no me pude conectar con el cerebro." };
+    return { content: "No he podido conectar con el servicio de IA. Escríbeme de nuevo en unos minutos; si sigue igual, avisa a @PhaseREM." };
   }
   const data = await res.json();
   meterTokens(model, data.usage);

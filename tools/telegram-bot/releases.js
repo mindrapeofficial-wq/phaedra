@@ -60,7 +60,7 @@ async function activePlan(userId) {
 
 export async function releasePlanSummary(userId) {
   const active = await activePlan(userId);
-  if (!active) return 'Aún no tienes un plan. Dime el título y la fecha de tu lanzamiento y te lo preparo.';
+  if (!active) return 'Aún no tienes un plan de lanzamiento. Dime el título y la fecha de tu lanzamiento y te lo preparo.';
   const lines = active.tasks.map((task, index) => `${index + 1}. ${task.done_at ? '✅' : '⬜'} ${formatDate(task.due_date)}: ${task.title}`);
   return `Plan de «${active.plan.title}», lanzamiento el ${formatDate(active.plan.release_date)}:\n\n${lines.join('\n')}\n\nMarca una tarea con /hecho y su número.\nRecordatorios por privado: ${active.plan.reminders_enabled ? 'activados' : 'desactivados'}. Cámbialos con /recordatorios on o /recordatorios off.`;
 }

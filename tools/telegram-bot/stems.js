@@ -65,6 +65,6 @@ async function processStems(chatId, userId, file) {
     notifyAction('stems');
   } catch (error) {
     console.error('[stems] failed', error.message);
-    await sendMessage(chatId, 'No he podido separar las pistas y no te lo he descontado. Puedes volver a intentarlo.');
+    await sendMessage(chatId, 'No he podido separar las pistas y no te lo he descontado. Puedes mandarme el audio de nuevo en unos minutos; si vuelve a fallar, escribe a @PhaseREM.');
   }
 }

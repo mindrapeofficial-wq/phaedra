@@ -1,7 +1,7 @@
 import { database } from './database.js';
 import { memoryRequest } from './memory.js';
 import { sendMessage } from './telegram.js';
-import { paidTier, PLANS } from './paid-tier.js';
+import { paidTier, PLANS, planName } from './paid-tier.js';
 import { requestCost } from './consumption-report.js';
 
 const OWNER = Number(process.env.TELEGRAM_OWNER_ID || 1661812916);
@@ -104,3 +104,14 @@ export async function runConsumptionNotices(now = Date.now()) {
     catch { console.error('[consumption] notice not delivered'); }
   }
 }
+
+// What /miplan and /plan show. Only the plan name and a percentage, never money.
+export function accountSummary({ tier, percent }) {
+  const paid = Boolean(PLANS[tier]?.scale);
+  const lines = [`Tu plan: <b>${planName(tier)}</b>`, `Consumo: ${percent}% de tu límite ${paid ? 'de este mes' : 'gratuito (no se renueva)'}`];
+  if (percent >= 100) lines.push(paid ? 'Has llegado al límite. Se renueva el día 1; antes, puedes añadir una recarga desde la web de tu cuenta cuando estén disponibles.' : 'Has usado todo el límite gratuito. Con un plan PRO, PRO+ o Ultimate tendrás un límite nuevo cada mes.');
+  else if (percent >= 75) lines.push('Te queda poco: prioriza lo importante y pide las opciones Lite, que gastan menos.');
+  else if (!paid) lines.push('Planes: PRO, PRO+ y Ultimate, con más bases, imágenes y separaciones cada mes. Más info: /help cuenta');
+  return lines.join('\n');
+}
+export const ACCOUNT_UNKNOWN = 'Ahora mismo no puedo consultar tu plan y tu consumo. El resto sigue funcionando; si persiste, escribe a @PhaseREM.';

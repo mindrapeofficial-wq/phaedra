@@ -10,12 +10,15 @@ const id = value => {
   if (typeof value !== 'string' || !/^[a-zA-Z0-9_-]{8,100}$/.test(value)) throw new Error('Identificador no válido');
   return value;
 };
+// Neither message sends the person back to /instagram, because that is often the step that has just failed.
+export const INSTAGRAM_FULL = 'Ahora mismo no quedan plazas para conectar Instagram. No es un problema de tu cuenta ni tienes que repetir nada: escribe a @PhaseREM y te avisamos cuando haya hueco. Mientras, sigo ayudándote con portadas, bases y tu lanzamiento.';
+export const INSTAGRAM_DOWN = 'El servicio de Instagram no responde ahora mismo. No es un problema de tu cuenta: espera un rato antes de volver a intentarlo y, si sigue igual, escribe a @PhaseREM. Mientras, sigo ayudándote con portadas, bases y tu lanzamiento.';
 export async function postzen(path, { method = 'GET', body, requestId } = {}) {
   const res = await fetch(BASE + path, { method, signal: AbortSignal.timeout(20_000),
     headers: { Authorization: `Bearer ${process.env.POSTZEN_API_KEY}`, 'Content-Type': 'application/json', ...(requestId ? { 'x-request-id': requestId } : {}) },
     ...(body ? { body: JSON.stringify(body) } : {}) });
   if (!res.ok) {
-    const error = new Error(res.status === 402 ? 'PostZen ha alcanzado el límite del plan. El administrador debe revisar la capacidad de cuentas.' : `Instagram no está disponible ahora (PostZen ${res.status}). Si faltan permisos, vuelve a conectar con /instagram.`);
+    const error = new Error(res.status === 402 ? INSTAGRAM_FULL : INSTAGRAM_DOWN);
     error.status = res.status; throw error;
   }
   return res.json();
@@ -62,7 +65,8 @@ export async function verifyConnection(userId) {
   if (!row || row.status === 'disabled') throw new Error('Primero abre /instagram para autorizar tu cuenta.');
   const accounts = await accountsFor(row);
   const healthy = accounts.filter(a => a.status === 'connected' && a.isActive !== false);
-  if (healthy.length !== 1) throw new Error('Aún no hay una única cuenta de Instagram autorizada en tu perfil. Completa el enlace y vuelve a usar /instagram verificar.');
+  if (healthy.length > 1) throw new Error('Veo más de una cuenta de Instagram autorizada y no sé cuál usar. Escribe a @PhaseREM para dejar solo la tuya.');
+  if (!healthy.length) throw new Error('Todavía no veo tu cuenta autorizada. Si no llegaste a terminar los pasos en Instagram, pide un enlace nuevo con /instagram reconectar. Si los terminaste y sigue sin aparecer, escribe a @PhaseREM.');
   const account = healthy[0];
   return connection(userId, { ...row, account_id: id(account._id), username: account.username || '', status: 'active' });
 }
