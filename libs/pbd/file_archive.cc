@@ -44,6 +44,53 @@
 
 using namespace PBD;
 
+/* Archives may come from untrusted sources (e.g. a session or template
+ * archive downloaded from the web). Ask libarchive to refuse entries that
+ * would be written outside of the destination directory.
+ */
+static int
+secure_extract_flags ()
+{
+	int flags = ARCHIVE_EXTRACT_TIME;
+	flags |= ARCHIVE_EXTRACT_SECURE_NODOTDOT;
+	flags |= ARCHIVE_EXTRACT_SECURE_SYMLINKS;
+#ifdef ARCHIVE_EXTRACT_SECURE_NOABSOLUTEPATHS
+	flags |= ARCHIVE_EXTRACT_SECURE_NOABSOLUTEPATHS;
+#endif
+	return flags;
+}
+
+/* true if an archive entry name is relative and stays below the
+ * directory it is extracted to: not absolute, no drive letter,
+ * no ".." path component.
+ */
+static bool
+is_safe_entry_path (const char* path)
+{
+	if (!path || !path[0]) {
+		return false;
+	}
+	if (path[0] == '/' || path[0] == '\\') {
+		return false;
+	}
+	if (g_ascii_isalpha (path[0]) && path[1] == ':') {
+		return false;
+	}
+
+	const char* c = path;
+	while (*c) {
+		const char* end = c;
+		while (*end && *end != '/' && *end != '\\') {
+			++end;
+		}
+		if (end - c == 2 && c[0] == '.' && c[1] == '.') {
+			return false;
+		}
+		c = *end ? end + 1 : end;
+	}
+	return true;
+}
+
 static size_t
 write_callback (void* buffer, size_t size, size_t nmemb, void* d)
 {
@@ -283,6 +330,24 @@ FileArchive::extract_current_file (const std::string& destpath)
 		return 0;
 	}
 
+	/* The caller derives `destpath` from the entry's name, so check that
+	 * name before it is replaced. Only plain files and folders are
+	 * extracted: a link inside the archive could point elsewhere on disk.
+	 */
+	const char* entry_name = archive_entry_pathname (_current_entry);
+	if (!is_safe_entry_path (entry_name)) {
+		fprintf (stderr, "Archive: refusing to extract unsafe path '%s'\n", entry_name ? entry_name : "");
+		_current_entry = 0;
+		return -1;
+	}
+
+	const unsigned int ftype = archive_entry_filetype (_current_entry);
+	if ((ftype != AE_IFREG && ftype != AE_IFDIR) || archive_entry_hardlink (_current_entry)) {
+		fprintf (stderr, "Archive: refusing to extract link or special file '%s'\n", entry_name);
+		_current_entry = 0;
+		return -1;
+	}
+
 	int flags = ARCHIVE_EXTRACT_TIME;
 
 	struct archive *ext;
@@ -403,7 +468,7 @@ FileArchive::get_contents (struct archive* a)
 int
 FileArchive::do_extract (struct archive* a)
 {
-	int flags = ARCHIVE_EXTRACT_TIME;
+	const int flags = secure_extract_flags ();
 
 	int rv = 0;
 	struct archive_entry* entry;
