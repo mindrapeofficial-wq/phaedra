@@ -1,0 +1,48 @@
+{
+  "StartedUtc": "2026-11-03T10:28:26.5110348Z",
+  "FreeBefore": 15084941312,
+  "Entries": [
+    {
+      "Path": "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\pnpm\\store\\v10\\files",
+      "Bytes": 1231089023.0,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\pnpm\\store\\v10\\index",
+      "Bytes": 35679574.0,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\pnpm\\store\\v11\\files",
+      "Bytes": 3119774571.0,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\pnpm\\store\\v3\\files",
+      "Bytes": 558747761.0,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\pnpm-cache",
+      "Bytes": 815538427.0,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Yarn\\Cache",
+      "Bytes": null,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Yarn\\Berry\\cache",
+      "Bytes": 682162194.0,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\electron\\Cache",
+      "Bytes": 633352088.0,
+      "Status": "deleted"
+    }
+  ],
+  "FreeAfter": 20225204224,
+  "RecoveredBytes": 5140262912
+}

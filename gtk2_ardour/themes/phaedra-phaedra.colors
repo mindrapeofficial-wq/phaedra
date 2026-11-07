@@ -10,30 +10,30 @@
     <Color name="alert:ruddy" value="922B21ff"/>
     <Color name="transport:play active" value="22C55Eff"/>
     <Color name="transport:rec active" value="EF4444ff"/>
-    <Color name="transport:button bg" value="2a2a3aff"/>
+    <Color name="transport:button bg" value="1B1920ff"/>
     <Color name="transport:rec idle" value="7f2222ff"/>
     <Color name="alert:yellow" value="D4A4FFff"/>
-    <Color name="meter color0" value="4A0E78ff"/>
-    <Color name="meter color1" value="5B1A8Fff"/>
-    <Color name="meter color2" value="7B2FBFff"/>
-    <Color name="meter color3" value="9B59B6ff"/>
-    <Color name="meter color4" value="BB8FCEff"/>
-    <Color name="meter color5" value="D4A4FFff"/>
-    <Color name="meter color6" value="E8C8FFff"/>
-    <Color name="meter color7" value="F0AAFFff"/>
-    <Color name="meter color8" value="FF6B6Bff"/>
-    <Color name="meter color9" value="E74C3Cff"/>
+    <Color name="meter color0" value="128038ff"/>
+    <Color name="meter color1" value="189545ff"/>
+    <Color name="meter color2" value="24AF55ff"/>
+    <Color name="meter color3" value="41D26Fff"/>
+    <Color name="meter color4" value="A7D943ff"/>
+    <Color name="meter color5" value="E9D84Aff"/>
+    <Color name="meter color6" value="F4AB35ff"/>
+    <Color name="meter color7" value="EE7934ff"/>
+    <Color name="meter color8" value="E83A44ff"/>
+    <Color name="meter color9" value="FF2735ff"/>
     <Color name="midi meter 52" value="D7BDE2ff"/>
     <Color name="midi meter 53" value="BB8FCEff"/>
     <Color name="midi meter 54" value="A569BDff"/>
     <Color name="midi meter 55" value="8E44ADff"/>
     <Color name="midi meter 56" value="7D3C98ff"/>
-    <Color name="neutral:background" value="1C1C30ff"/>
-    <Color name="neutral:background2" value="2A2A45ff"/>
-    <Color name="neutral:backgroundest" value="0E0E1Cff"/>
-    <Color name="neutral:foreground" value="E8E0F8ff"/>
-    <Color name="neutral:foreground2" value="C0B8D8ff"/>
-    <Color name="neutral:foregroundest" value="FFF8FFff"/>
+    <Color name="neutral:background" value="242425ff"/>
+    <Color name="neutral:background2" value="282829ff"/>
+    <Color name="neutral:backgroundest" value="0E0E0Eff"/>
+    <Color name="neutral:foreground" value="D6D6D6ff"/>
+    <Color name="neutral:foreground2" value="969698ff"/>
+    <Color name="neutral:foregroundest" value="F4F0F6ff"/>
     <Color name="neutral:midground" value="7570A0ff"/>
     <Color name="pianoroll: insensitive bender line" value="9B8EC484"/>
     <Color name="pianoroll: insensitive expression line" value="C4A0E884"/>
@@ -43,18 +43,18 @@
     <Color name="pianoroll: user2 line" value="B896E884"/>
     <Color name="pianoroll: user3 line" value="9696D884"/>
     <Color name="pianoroll: velocity" value="C77DFFff"/>
-    <Color name="grid:major" value="4A4870ff"/>
-    <Color name="grid:minor" value="33315aff"/>
-    <Color name="grid:micro" value="282648ff"/>
-    <Color name="theme:bg" value="1E1E35ff"/>
-    <Color name="theme:bg1" value="191930ff"/>
-    <Color name="theme:bg2" value="0C0C1Aff"/>
-    <Color name="theme:contrasting" value="A855F7ff"/>
-    <Color name="theme:contrasting alt" value="C084FCff"/>
-    <Color name="theme:contrasting clock" value="E0B0FFff"/>
-    <Color name="theme:contrasting less" value="8B5CF6ff"/>
-    <Color name="theme:contrasting selection" value="7C3AEDff"/>
-    <Color name="widget:bg" value="302E50ff"/>
+    <Color name="grid:major" value="404042ff"/>
+    <Color name="grid:minor" value="333335ff"/>
+    <Color name="grid:micro" value="2A2A2Cff"/>
+    <Color name="theme:bg" value="1B1920ff"/>
+    <Color name="theme:bg1" value="221F28ff"/>
+    <Color name="theme:bg2" value="131217ff"/>
+    <Color name="theme:contrasting" value="EC3F97ff"/>
+    <Color name="theme:contrasting alt" value="D9BAF2ff"/>
+    <Color name="theme:contrasting clock" value="D9BAF2ff"/>
+    <Color name="theme:contrasting less" value="79254Fff"/>
+    <Color name="theme:contrasting selection" value="79254Fff"/>
+    <Color name="widget:bg" value="3A3A3Cff"/>
     <Color name="widget:blue" value="6D5BD0ff"/>
     <Color name="widget:blue darker" value="1E1838ff"/>
     <Color name="widget:blue lighter" value="8B7CF8ff"/>
@@ -384,7 +384,7 @@
     <ColorAlias name="rude solo: fill active" alias="alert:ruddy"/>
     <ColorAlias name="rude solo: led active" alias="alert:red"/>
     <ColorAlias name="ruler base" alias="theme:bg2"/>
-    <ColorAlias name="ruler text" alias="neutral:midground"/>
+    <ColorAlias name="ruler text" alias="neutral:foreground2"/>
     <ColorAlias name="scroomer" alias="theme:contrasting"/>
     <ColorAlias name="secondary clock: background" alias="theme:bg2"/>
     <ColorAlias name="secondary clock: cursor" alias="theme:contrasting alt"/>
@@ -532,8 +532,8 @@
     <Modifier name="silence" modifier="= alpha:0.4784"/>
     <Modifier name="stereo panner inverted" modifier="= alpha:0.7882"/>
     <Modifier name="stereo panner inverted bg" modifier="= alpha:0.7529"/>
-    <Modifier name="summary track alpha" modifier="= alpha:0.65"/>
-    <Modifier name="summary view rect alpha" modifier="= alpha:0.15"/>
+    <Modifier name="summary track alpha" modifier="= alpha:0.35"/>
+    <Modifier name="summary view rect alpha" modifier="= alpha:0.10"/>
     <Modifier name="time axis view item base" modifier="= alpha:0.7"/>
     <Modifier name="time stretch fill" modifier="= alpha:0.5"/>
     <Modifier name="transparent region base" modifier="= alpha:0.6"/>

@@ -1,0 +1,31 @@
+{
+  "StartedUtc": "2026-11-03T10:26:23.9490805Z",
+  "FreeBefore": 5510012928,
+  "Entries": [
+    {
+      "Path": "C:\\Users\\mindr\\Desktop\\PHAEDRA LITE\\soundcraft-src\\target",
+      "Bytes": 3691950739.0,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\Desktop\\FLUX\\pro-wave-reference\\target",
+      "Bytes": 1498394591.0,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\Desktop\\FLUX\\FLUX-Stoat\\activities\\phaedra\\.build\\target",
+      "Bytes": 1008582845.0,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\.gradle\\caches",
+      "Bytes": 3698076018.0,
+      "Status": "deleted"
+    },
+    {
+      "Path": "C:\\Users\\mindr\\AppData\\Local\\npm-cache\\_cacache",
+      "Bytes": 879565.0,
+      "Status": "deleted"
+    }
+  ]
+}

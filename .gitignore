@@ -153,4 +153,6 @@ waf3-*
 # misc custom files git should ignore
 /local
 Phaedra-Portable/
+tools/pulse-host/bin/
+tools/pulse-host/obj/
 *.zip

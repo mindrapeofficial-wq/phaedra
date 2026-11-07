@@ -293,7 +293,10 @@ ARDOUR_UI_UTILS::ardour_font (std::string const& name)
 		/* matches "ArdourMono", "Monaco" */
 		fd.set_family ("ArdourMono");
 	} else {
-		fd.set_family ("ArdourSans");
+		/* Phaedra: the interface family is configurable ("ui-font-family",
+		 * IBM Plex Sans by default); the generic "Sans" keeps ArdourSans */
+		const std::string family = UIConfiguration::instance ().get_ui_font_family ();
+		fd.set_family (family.empty () || family == "Sans" ? "ArdourSans" : family);
 	}
 
 	return fd;

@@ -44,9 +44,14 @@ public:
 	bool on_key_press_event (GdkEventKey*);
 	bool on_delete_event (GdkEventAny*);
 	void set_show_source (bool);
+	void dock_into (Gtk::Box&);
+	bool docked () const { return _docked; }
+	void show_editor ();
+	sigc::signal<void> DockedPresent;
 
 private:
 	Gtk::HBox     hpacker;
 	Pianoroll*    pianoroll;
 	RegionEditor* region_editor;
+	bool _docked = false;
 };

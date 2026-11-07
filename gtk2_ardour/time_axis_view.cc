@@ -843,6 +843,7 @@ TimeAxisView::set_selected (bool yn)
 	}
 
 	time_axis_frame.show();
+	selection_appearance_changed ();
 }
 
 void

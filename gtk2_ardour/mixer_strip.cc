@@ -333,6 +333,8 @@ MixerStrip::init ()
 	set_tooltip (&number_label, _("Double-click to edit the route color.\nRight-click to show the route operations context menu."));
 
 	global_vpacker.pack_start (width_hide_box, Gtk::PACK_SHRINK);
+	/* Phaedra: the name stays on top so it is visible in the short docked
+	 * mixer; it is filled with the track colour (route_color_changed) */
 	global_vpacker.pack_start (name_button, Gtk::PACK_SHRINK);
 	global_vpacker.pack_start (input_button_box, Gtk::PACK_SHRINK);
 	global_vpacker.pack_start (invert_button_box, Gtk::PACK_SHRINK);
@@ -1067,6 +1069,10 @@ MixerStrip::route_color_changed ()
 	name_button.modify_bg (STATE_NORMAL, color());
 	Gtkmm2ext::Color c (gdk_color_to_rgba (color()));
 	number_label.set_fixed_colors (c, c);
+	/* Phaedra: name label in the track colour (text picks a contrasting shade) */
+	if (!is_master ()) {
+		name_button.set_fixed_colors (c, c);
+	}
 	reset_strip_style ();
 }
 
@@ -1736,7 +1742,9 @@ MixerStrip::set_button_names ()
 {
 	switch (_width) {
 	case Wide:
-		mute_button->set_text (_("Mute"));
+		/* Phaedra: compact M / S as in Lite and Logic; the master bus
+		 * has no solo button, so it keeps the word */
+		mute_button->set_text (is_master () ? _("Mute") : S_("Mute|M"));
 		monitor_input_button->set_text (S_("Monitor|In"));
 		monitor_disk_button->set_text (S_("Monitor|Disk"));
 		if (monitor_section_button) {
@@ -1749,7 +1757,7 @@ MixerStrip::set_button_names ()
 			solo_button->set_visual_state (Gtkmm2ext::VisualState (solo_button->visual_state() & ~Gtkmm2ext::Insensitive));
 		}
 		if (!Config->get_solo_control_is_listen_control()) {
-			solo_button->set_text (_("Solo"));
+			solo_button->set_text (S_("Solo|S"));
 		} else {
 			switch (Config->get_listen_position()) {
 			case AfterFaderListen:

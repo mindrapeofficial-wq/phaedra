@@ -242,6 +242,8 @@ protected:
 	void create_mute_automation_child (const Evoral::Parameter &, bool);
 	void setup_processor_menu_and_curves ();
 	void route_color_changed ();
+	void apply_phaedra_tint ();
+	void selection_appearance_changed ();
 	bool can_edit_name() const;
 
 	StreamView*           _view;

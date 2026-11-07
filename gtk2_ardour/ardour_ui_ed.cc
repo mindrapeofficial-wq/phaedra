@@ -174,13 +174,13 @@ ARDOUR_UI::install_actions ()
 
 	/* menus + submenus that need action items */
 
-	ActionManager::register_action (main_menu_actions, X_("Session"), _("Session"));
+	ActionManager::register_action (main_menu_actions, X_("Session"), _("File"));
 	ActionManager::register_action (main_menu_actions, X_("AdvancedSession"), _("Advanced"));
 	act = ActionManager::register_action (main_menu_actions, X_("Cleanup"), _("Clean-up"));
 	ActionManager::write_sensitive_actions.push_back (act);
 	ActionManager::register_action (main_menu_actions, X_("Sync"), _("Sync"));
 	ActionManager::register_action (main_menu_actions, X_("TransportOptions"), _("Options"));
-	ActionManager::register_action (main_menu_actions, X_("WindowMenu"), _("Window"));
+	ActionManager::register_action (main_menu_actions, X_("WindowMenu"), _("Settings"));
 	ActionManager::register_action (main_menu_actions, X_("MixerMenu"), _("Mixer"));
 	ActionManager::register_action (main_menu_actions, X_("EditorMenu"), _("Editor"));
 	ActionManager::register_action (main_menu_actions, X_("PrefsMenu"), _("Preferences"));

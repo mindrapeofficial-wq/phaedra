@@ -386,6 +386,13 @@ ARDOUR_UI::load_session (const std::string& path, const std::string& snap_name, 
 
 		audio_midi_setup->set_desired_sample_rate (sr);
 
+		/* Restart on the same device at the session's rate; only ask
+		 * when that is not possible. */
+		if (!AudioEngine::instance()->running() && sr > 0) {
+			AudioEngine::instance()->set_sample_rate (sr);
+			AudioEngine::instance()->start ();
+		}
+
 		if (!AudioEngine::instance()->running()) {
 			audio_midi_setup->set_position (WIN_POS_CENTER);
 			audio_midi_setup->present ();
@@ -671,8 +678,15 @@ ARDOUR_UI::build_session (const std::string& path, const std::string& snap_name,
 	if (from_startup_fsm && AudioEngine::instance()->running ()) {
 		return build_session_stage_two (path, snap_name, session_template, bus_profile, unnamed, domain);
 	}
-	/* Sample-rate cannot be changed when JACK is running */
-	if (!ARDOUR::AudioEngine::instance()->setup_required () && AudioEngine::instance()->running ()) {
+	/* A new project uses the audio engine as it is. Stopping it here to ask
+	 * for a sample rate made the Audio/MIDI setup window come up for every
+	 * new project; the rate stays changeable in that window at any time. */
+	if (AudioEngine::instance()->running ()) {
+		return build_session_stage_two (path, snap_name, session_template, bus_profile, unnamed, domain);
+	}
+
+	/* Not running: try the saved settings before asking. */
+	if (AudioEngine::instance()->current_backend () && !AudioEngine::instance()->start () && AudioEngine::instance()->running ()) {
 		return build_session_stage_two (path, snap_name, session_template, bus_profile, unnamed, domain);
 	}
 

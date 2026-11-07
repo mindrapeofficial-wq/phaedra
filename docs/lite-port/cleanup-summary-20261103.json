@@ -1,0 +1,36 @@
+{
+  "Date": "2026-11-03",
+  "DeletedLogicalBytes": 22417497335.0,
+  "FreeBeforeFirstDeletion": 5510012928,
+  "FreeAfter": 24469282816,
+  "NetFreeIncrease": 18959269888,
+  "DeletedPaths": [
+    "C:\\Users\\mindr\\Desktop\\PHAEDRA LITE\\soundcraft-src\\target",
+    "C:\\Users\\mindr\\Desktop\\FLUX\\pro-wave-reference\\target",
+    "C:\\Users\\mindr\\Desktop\\FLUX\\FLUX-Stoat\\activities\\phaedra\\.build\\target",
+    "C:\\Users\\mindr\\.gradle\\caches",
+    "C:\\Users\\mindr\\AppData\\Local\\npm-cache\\_cacache",
+    "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\pnpm\\store\\v10\\files",
+    "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\pnpm\\store\\v10\\index",
+    "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\pnpm\\store\\v11\\files",
+    "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\pnpm\\store\\v3\\files",
+    "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\pnpm-cache",
+    "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Yarn\\Cache",
+    "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\Yarn\\Berry\\cache",
+    "C:\\Users\\mindr\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Local\\electron\\Cache",
+    "C:\\Users\\mindr\\Desktop\\FLUX\\FLUX-Stoat\\deploy\\source-stage\\0.1.6-web-0-1-9\\activities\\phaedra\\.build\\target",
+    "C:\\Users\\mindr\\Desktop\\PHAEDRA LITE\\phaedra-instruments\\target",
+    "C:\\Users\\mindr\\Desktop\\rivals-auto-battle\\.android-build\\gradle\\caches",
+    "C:\\Users\\mindr\\.gradle\\wrapper\\dists",
+    "C:\\Users\\mindr\\Desktop\\FLUX\\FLUX-Launcher-0.2.0\\source\\element-web\\node_modules",
+    "C:\\Users\\mindr\\Desktop\\FLUX\\element-web-develop\\element-web-develop\\node_modules"
+  ],
+  "Preserved": [
+    "Phaedra Pro source and local modifications",
+    "Lite Preview 6 active build and source",
+    "Audio and sessions",
+    "Published releases",
+    "Docker containers images and volumes"
+  ],
+  "Notes": "Logical file size differs from free-space increase because of shared files and concurrent activity. Docker Desktop was inspected and returned to stopped state; no Docker data was removed."
+}

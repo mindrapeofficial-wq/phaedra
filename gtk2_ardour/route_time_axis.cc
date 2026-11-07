@@ -484,6 +484,7 @@ RouteTimeAxisView::route_active_changed ()
 {
 	RouteUI::route_active_changed ();
 	update_track_number_visibility ();
+	apply_phaedra_tint ();
 }
 
 void
@@ -1132,6 +1133,57 @@ RouteTimeAxisView::route_color_changed ()
 	} else {
 		gm.unset_fader_fg ();
 	}
+
+	apply_phaedra_tint ();
+}
+
+void
+RouteTimeAxisView::selection_appearance_changed ()
+{
+	apply_phaedra_tint ();
+}
+
+/** Linear blend of two RGBA colours; t = 0 gives a, t = 1 gives b (alpha from a) */
+static Gtkmm2ext::Color
+phaedra_mix (Gtkmm2ext::Color a, Gtkmm2ext::Color b, double t)
+{
+	uint32_t out = a & 0xff;
+	for (int shift = 8; shift <= 24; shift += 8) {
+		const double ca = (a >> shift) & 0xff;
+		const double cb = (b >> shift) & 0xff;
+		out |= ((uint32_t) lrint (ca + (cb - ca) * t) & 0xff) << shift;
+	}
+	return out;
+}
+
+/** Phaedra: Lite-style track colouring. The header and the lane take a
+ * muted wash of the track colour, and selection deepens the header.
+ * Inactive tracks keep their theme style.
+ */
+void
+RouteTimeAxisView::apply_phaedra_tint ()
+{
+	if (!_route) {
+		return;
+	}
+
+	if (!_route->active ()) {
+		controls_ebox.unset_bg (Gtk::STATE_NORMAL);
+		return;
+	}
+
+	UIConfiguration&       uic   = UIConfiguration::instance ();
+	const Gtkmm2ext::Color track = gdk_color_to_rgba (color ());
+
+	const char*            header_base = is_midi_track () ? "gtk_midi_track" : (is_track () ? "gtk_audio_track" : "gtk_audio_bus");
+	const Gtkmm2ext::Color header      = phaedra_mix (uic.color (header_base), track, selected () ? 0.40 : 0.20);
+	controls_ebox.modify_bg (Gtk::STATE_NORMAL, Gtkmm2ext::gdk_color_from_rgba (header));
+
+	if (_view) {
+		const char* base_name = is_midi_track () ? "midi track base" : (is_track () ? "audio track base" : "audio bus base");
+		const Gtkmm2ext::Color base = uic.color_mod (base_name, base_name);
+		_view->apply_color (phaedra_mix (base, track, 0.30), StreamView::StreamBaseColor);
+	}
 }
 
 void
@@ -1541,6 +1593,9 @@ RouteTimeAxisView::color_handler ()
 	}
 
 	reset_meter();
+
+	/* the stream view has just reset the lane to the theme colour */
+	apply_phaedra_tint ();
 }
 
 /** Toggle an automation track for a fully-specified Parameter (type,channel,id)

@@ -1,0 +1,54 @@
+{
+  "source": "C:/Users/mindr/Desktop/PHAEDRA LITE/08-DESARROLLO-PREVIEW6",
+  "destination": "C:/Users/mindr/Desktop/PHAEDRA",
+  "checks": {
+    "update_policy_ps51": {
+      "passed": 29,
+      "kind": "synthetic"
+    },
+    "install_transaction_ps51": {
+      "passed": 27,
+      "kind": "synthetic, injected copy failure"
+    },
+    "master_loudness": {
+      "passed": 19,
+      "rates": [
+        44100,
+        48000,
+        96000
+      ],
+      "allocations_during_processing": 0,
+      "optimized_build": true
+    },
+    "menu_references": {
+      "original_preserved": 641,
+      "added": [
+        "phaedra-piano-roll",
+        "show-pulse-dock"
+      ]
+    },
+    "spanish_catalog": "msgfmt --check passed",
+    "theme_xml": "both modified files parse",
+    "pulse_bridge": "dotnet publish passed",
+    "native_instruments": {
+      "passed": 3,
+      "processing": "48 stereo blocks of 512 samples at 48 kHz per instrument; finite output",
+      "fm6_peak": 0.745318,
+      "samplers": "Drums and Slice silent with empty sample banks",
+      "gui_integration": "pending"
+    },
+    "full_build": "passed: 1831 tasks; incremental build passed after bundled instrument path and Windows locale path fix",
+    "gui": "executable launched with isolated configuration and cache; Audio/MIDI Setup displayed; remaining integration tests pending",
+    "portable_package": "passed: 421 MB development package, 229 PE modules dependency-checked",
+    "modified_gui_syntax": {
+      "passed": 8,
+      "compiler_arguments": "captured from the real GTK build"
+    },
+    "development_update_guard": "actual updater exits without requesting a release in the source checkout"
+  },
+  "limitations": [
+    "No claim of full Lite parity",
+    "No physical listening test",
+    "No published release or installed application replaced"
+  ]
+}

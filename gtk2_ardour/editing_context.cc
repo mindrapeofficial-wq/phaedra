@@ -4307,11 +4307,12 @@ EditingContext::region_selection_changed ()
 {
 	EC_LOCAL_TEMPO_SCOPE;
 
-	if (!pianoroll_window || selection->regions.empty()) {
+	if (!pianoroll_window) {
 		return;
 	}
 
 	pianoroll_window->remove_regions ();
+	if (selection->regions.empty ()) return;
 
 	std::vector<MidiRegionView*> midi_region_views;
 	std::set<Temporal::Beats> positions;
@@ -4375,7 +4376,7 @@ EditingContext::region_selection_changed ()
 		}
 	}
 
-	pianoroll_window->set_region (kt, kr);
+	if (kt && kr) pianoroll_window->set_region (kt, kr);
 }
 
 void
@@ -4391,6 +4392,5 @@ EditingContext::pianoroll_edit ()
 
 	region_selection_changed ();
 
-	pianoroll_window->show_all ();
-	pianoroll_window->present ();
+	pianoroll_window->show_editor ();
 }

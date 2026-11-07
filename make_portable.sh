@@ -6,10 +6,29 @@ cd "$(dirname "$0")"
 SRCDIR="$(pwd)"
 DESTDIR="$SRCDIR/Phaedra-Portable"
 MINGW_PREFIX="/ucrt64"
+DOTNET="${PHAEDRA_DOTNET:-dotnet}"
+if ! command -v "$DOTNET" >/dev/null 2>&1; then
+    DOTNET="/c/Program Files/dotnet/dotnet.exe"
+fi
+test -x "$(command -v "$DOTNET")" || { echo '.NET SDK is required to package PulseHost' >&2; exit 1; }
 
 echo "=== Creating Phaedra Portable ==="
 
-rm -rf "$DESTDIR"
+if [ -e "$DESTDIR" ]; then
+    echo "Output already exists: $DESTDIR. Preserve it and choose a fresh checkout for packaging." >&2
+    exit 1
+fi
+PULSE_BUNDLE="${PHAEDRA_PULSE_BUNDLE:-$SRCDIR/build/pulse-bundle}"
+INSTRUMENT_BUNDLE="${PHAEDRA_INSTRUMENT_BUNDLE:-$SRCDIR/build/instruments-bundle}"
+for required in Pulse/pulse-visualizer.exe PULSE-LICENSE-GPL-3.0.txt Pulse-modified-source.zip; do
+    test -f "$PULSE_BUNDLE/$required" || { echo "Incomplete Pulse bundle: $PULSE_BUNDLE/$required" >&2; exit 1; }
+done
+for instrument in 'Phaedra Drums' 'Phaedra Slice' 'Phaedra FM6'; do
+    test -f "$INSTRUMENT_BUNDLE/VST3/$instrument.vst3/Contents/x86_64-win/$instrument.vst3" || { echo "Missing instrument: $instrument" >&2; exit 1; }
+done
+for required in LICENSE THIRD-PARTY-NOTICES.txt PHAEDRA-INSTRUMENTS.md Phaedra-Instruments-source.tar.gz manifest.json; do
+    test -f "$INSTRUMENT_BUNDLE/$required" || { echo "Missing instrument attribution/source: $required" >&2; exit 1; }
+done
 mkdir -p "$DESTDIR/bin"
 mkdir -p "$DESTDIR/lib/ardour8/surfaces"
 mkdir -p "$DESTDIR/lib/ardour8/backends"
@@ -79,20 +98,25 @@ echo "--- Copying LV2 bundles..."
 cp -r build/libs/LV2 "$DESTDIR/lib/ardour8/" 2>/dev/null || true
 
 echo "--- Copying MINGW runtime DLLs..."
+cp -r "$INSTRUMENT_BUNDLE/VST3" "$DESTDIR/lib/ardour8/"
+mkdir -p "$DESTDIR/licenses/phaedra-instruments"
+cp "$INSTRUMENT_BUNDLE/"*.txt "$INSTRUMENT_BUNDLE/LICENSE" "$INSTRUMENT_BUNDLE/"*.md "$INSTRUMENT_BUNDLE/"*.json "$INSTRUMENT_BUNDLE/"*.tar.gz "$DESTDIR/licenses/phaedra-instruments/"
+export PATH="$DESTDIR/bin:$PATH"
 # Use ldd to find all needed DLLs
 ldd "$DESTDIR/bin/Phaedra.exe" 2>/dev/null | grep "ucrt64" | awk '{print $3}' | while read dll; do
     cp "$dll" "$DESTDIR/bin/" 2>/dev/null || true
 done
 
-# Also get DLLs needed by our own DLLs
-for libdll in "$DESTDIR/bin/"*.dll; do
+# Backends and control surfaces are loaded dynamically and may depend on
+# libraries that the main executable never links (notably PortAudio/libusb).
+while IFS= read -r -d '' libdll; do
     ldd "$libdll" 2>/dev/null | grep "ucrt64" | awk '{print $3}' | while read dll; do
         bn=$(basename "$dll")
         if [ ! -f "$DESTDIR/bin/$bn" ]; then
             cp "$dll" "$DESTDIR/bin/" 2>/dev/null || true
         fi
     done
-done
+done < <(find "$DESTDIR/bin" "$DESTDIR/lib" -type f \( -iname '*.dll' -o -iname '*.exe' -o -iname '*.la' -o -iname '*.vst3' \) -print0)
 
 echo "--- Copying share data..."
 # RC and config files
@@ -103,7 +127,13 @@ cp build/gtk2_ardour/ardour.menus "$DESTDIR/share/ardour8/"
 cp build/gtk2_ardour/*.keys "$DESTDIR/share/ardour8/" 2>/dev/null || true
 cp gtk2_ardour/PhaedraMono.ttf "$DESTDIR/share/ardour8/"
 cp gtk2_ardour/PhaedraSans.ttf "$DESTDIR/share/ardour8/"
+cp gtk2_ardour/fonts/ibm-plex/*.ttf "$DESTDIR/share/ardour8/"
+mkdir -p "$DESTDIR/licenses/ibm-plex" "$DESTDIR/licenses/pulse-host"
+cp gtk2_ardour/fonts/ibm-plex/OFL.txt "$DESTDIR/licenses/ibm-plex/"
+cp tools/pulse-host/LICENSE-* tools/pulse-host/NOTICE "$DESTDIR/licenses/pulse-host/"
+cp docs/lite-port/ATTRIBUTION.md "$DESTDIR/licenses/"
 cp system_config "$DESTDIR/share/ardour8/" 2>/dev/null || true
+cp session.rc "$DESTDIR/share/ardour8/"
 
 # Themes
 cp -r gtk2_ardour/themes "$DESTDIR/share/ardour8/"
@@ -150,10 +180,21 @@ gcc -municode -mwindows tools/phaedra_launcher.c build/phaedra_launcher.res -o "
 
 echo "--- Setting up auto-updater..."
 mkdir -p "$DESTDIR/updater"
-cp phaedra_updater/updater.ps1 phaedra_updater/install-update.ps1 "$DESTDIR/updater/"
+cp phaedra_updater/updater.ps1 phaedra_updater/install-update.ps1 phaedra_updater/update-policy.ps1 phaedra_updater/install-package.ps1 phaedra_updater/download-package.ps1 "$DESTDIR/updater/"
 cp phaedra_updater/version.txt "$DESTDIR/"
 cp phaedra_updater/update_config.ini "$DESTDIR/"
 cp COPYING "$DESTDIR/"
+if [ "${PHAEDRA_DEVELOPMENT_BUILD:-0}" = "1" ]; then
+    printf '%s\n' 'Local development build: automatic replacement is disabled.' > "$DESTDIR/development-build.txt"
+fi
+
+echo "--- Bundling Pulse visualizer..."
+"$DOTNET" publish tools/pulse-host/PulseHost.csproj -c Release -r win-x64 --self-contained true \
+    -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o build/pulse-host
+cp build/pulse-host/PulseHost.exe "$DESTDIR/bin/"
+cp -r "$PULSE_BUNDLE/Pulse" "$DESTDIR/bin/"
+cp "$PULSE_BUNDLE/PULSE-LICENSE-GPL-3.0.txt" "$PULSE_BUNDLE/Pulse-modified-source.zip" "$DESTDIR/"
+cp tools/pulse-host/README.md "$DESTDIR/PULSE-README.md"
 
 cat > "$DESTDIR/Phaedra.bat" << 'ENDOFBAT'
 @echo off

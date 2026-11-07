@@ -62,6 +62,7 @@ protected:
 	void set_transport_sensitivity (bool);
 	void map_transport_state ();
 	void step_edit_status_change (bool yn);
+	void set_phaedra_colors ();
 
 	bool click_button_scroll (GdkEventScroll* ev);
 
