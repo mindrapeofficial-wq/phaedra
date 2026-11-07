@@ -104,11 +104,11 @@ Rectangle::render (Rect const & area, Cairo::RefPtr<Cairo::Context> context) con
 			setup_gradient_context (context, self, Duple (draw.x0, draw.y0));
 		}
 
-		if (_corner_radius) {
-			Gtkmm2ext::rounded_rectangle (context, draw.x0, draw.y0, draw.width(), draw.height(), _corner_radius);
-		} else {
-			context->rectangle (draw.x0, draw.y0, draw.width(), draw.height());
-		}
+		/* With a corner radius the context is already clipped to the
+		 * rounded outline of the whole item (above). Fill the exposed
+		 * part as a plain rectangle: rounding `draw` itself would leave
+		 * notches at the edges of every partial redraw. */
+		context->rectangle (draw.x0, draw.y0, draw.width(), draw.height());
 		context->fill ();
 	}
 

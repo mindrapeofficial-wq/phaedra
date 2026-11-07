@@ -193,6 +193,8 @@ TimeAxisViewItem::init (ArdourCanvas::Item* parent, double fpp, uint32_t base_co
 		                                                         trackview.current_height()));
 
 		frame->set_outline_what (ArdourCanvas::Rectangle::What (ArdourCanvas::Rectangle::LEFT|ArdourCanvas::Rectangle::RIGHT));
+		/* Phaedra: softly rounded clips */
+		frame->set_corner_radius (std::max (2.0, 4.0 * UIConfiguration::instance().get_ui_scale ()));
 		frame->show ();
 
 		CANVAS_DEBUG_NAME (frame, string_compose ("frame for %1", get_item_name()));
@@ -212,6 +214,8 @@ TimeAxisViewItem::init (ArdourCanvas::Item* parent, double fpp, uint32_t base_co
 		name_highlight->set_data ("timeaxisviewitem", this);
 		name_highlight->set_outline_what (ArdourCanvas::Rectangle::TOP);
 		name_highlight->set_outline_color (RGBA_TO_UINT (0,0,0,255)); // this should use a theme color
+		/* Phaedra: match the clip's rounded corners */
+		name_highlight->set_corner_radius (std::max (2.0, 4.0 * UIConfiguration::instance().get_ui_scale ()));
 
 	} else {
 		name_highlight = 0;

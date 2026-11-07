@@ -2,6 +2,10 @@
 <Ardour>
   <UI>
     <Option name="use-route-color-widely" value="1"/>
+    <Option name="ui-font-family" value="IBM Plex Sans"/>
+    <Option name="flat-buttons" value="1"/>
+    <Option name="show-name-highlight" value="1"/>
+    <Option name="vertical-region-gap" value="2"/>
   </UI>
   <Canvas>
     <Option name="very small font" value="@FONT_VERYSMALL@"/>

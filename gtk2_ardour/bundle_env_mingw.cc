@@ -34,8 +34,11 @@
 #include "ardour/search_paths.h"
 #include "ardour/filesystem_paths.h"
 
+#include "pbd/compose.h"
 #include "pbd/file_utils.h"
 #include "pbd/epa.h"
+
+#include <vector>
 
 using namespace std;
 using namespace PBD;
@@ -198,6 +201,41 @@ load_custom_fonts()
 			ardour_sans_file.clear ();
 			cerr << _("Cannot register PhaedraSans TrueType font with windows gdi.") << endl;
 		}
+
+#if PANGO_VERSION_CHECK(1, 56, 0)
+		/* Phaedra: Pango enumerates fonts through DirectWrite on Windows,
+		 * which does not see fonts registered with GDI's AddFontResource.
+		 * Hand the bundled files to the default Pango font map directly
+		 * (pango_font_map_add_font_file, Pango 1.56), otherwise every
+		 * lookup of these families silently falls back. */
+		{
+			PangoFontMap* fontmap = pango_cairo_font_map_get_default ();
+			std::vector<std::string> files;
+			if (!ardour_mono_file.empty ()) {
+				files.push_back (ardour_mono_file);
+			}
+			if (!ardour_sans_file.empty ()) {
+				files.push_back (ardour_sans_file);
+			}
+			const char* plex[] = { "IBMPlexSans-Regular.ttf", "IBMPlexSans-Light.ttf" };
+			for (const char* name : plex) {
+				std::string f;
+				if (find_file (ardour_data_search_path(), name, f)) {
+					files.push_back (f);
+				}
+			}
+			for (std::string const& f : files) {
+				GError* err = NULL;
+				if (!pango_font_map_add_font_file (fontmap, f.c_str (), &err)) {
+					cerr << string_compose (_("Cannot add font file '%1': %2"), f, err ? err->message : "?") << endl;
+					if (err) {
+						g_error_free (err);
+					}
+				}
+			}
+		}
+#endif
+
 		atexit (&unload_custom_fonts);
 		SetUnhandledExceptionFilter (unload_font_at_exception);
 	}

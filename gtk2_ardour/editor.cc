@@ -3037,7 +3037,8 @@ Editor::setup_toolbar ()
 	advanced_box->set_no_show_all ();
 	ebox_vpacker.pack_start (*advanced_box, false, false);
 	/* Phaedra: a quiet "…" toggle like Lite's overflow button */
-	ArdourButton* advanced_button = manage (new ArdourButton (u8"⋯", ArdourButton::default_elements, true));
+	/* U+2026: present in IBM Plex Sans, unlike U+22EF */
+	ArdourButton* advanced_button = manage (new ArdourButton (u8"…", ArdourButton::default_elements, true));
 	advanced_button->set_name ("transport option button");
 	set_tooltip (*advanced_button, _("Advanced"));
 	advanced_button->signal_clicked.connect ([advanced_button, advanced_box] () {

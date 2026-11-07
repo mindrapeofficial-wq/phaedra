@@ -865,7 +865,7 @@ def build(bld):
         key = font_sym
         font_subst_dict[key] = text
 
-    font_subst_dict['FONTFAMILY'] = 'Segoe UI'
+    font_subst_dict['FONTFAMILY'] = 'IBM Plex Sans'
     # RC file
 
     obj              = bld(features = 'subst')
@@ -874,7 +874,7 @@ def build(bld):
     obj.install_path = bld.env['CONFDIR']
     set_subst_dict(obj, font_subst_dict)
 
-    font_subst_dict['FONTFAMILY'] = 'Segoe UI'
+    font_subst_dict['FONTFAMILY'] = 'IBM Plex Sans'
 
     obj              = bld(features = 'subst')
     obj.source       = [ 'clearlooks.rc.in' ]
