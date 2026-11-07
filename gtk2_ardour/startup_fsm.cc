@@ -529,12 +529,11 @@ StartupFSM::start_audio_midi_setup ()
 			}
 		}
 		if (!ok) {
-			try_autostart = false;
-			ArdourMessageDialog msg (
-					_("Engine I/O device has changed since you last opened this session.\n"
-					  "Please verify that the new device has enough ports, or you may lose some i/o connections."),
-					false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK, true);
-			msg.run ();
+			/* Open the session with the interface in use now instead of
+			 * stopping at a modal question; the note stays in the log. */
+			warning << _("Engine I/O device has changed since you last opened this session.\n"
+			             "Please verify that the new device has enough ports, or you may lose some i/o connections.")
+			        << endmsg;
 		}
 	}
 

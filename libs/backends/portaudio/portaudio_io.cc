@@ -29,6 +29,10 @@
 #include "pa_asio.h"
 #endif
 
+#ifdef PLATFORM_WINDOWS
+#include <pa_win_wasapi.h>
+#endif
+
 #include "pbd/compose.h"
 
 #include "ardour/audio_backend.h"
@@ -40,6 +44,38 @@
 
 using namespace PBD;
 using namespace ARDOUR;
+
+#ifdef PLATFORM_WINDOWS
+static PaWasapiStreamInfo
+make_wasapi_stream_info ()
+{
+	PaWasapiStreamInfo info;
+	memset (&info, 0, sizeof (info));
+	info.size        = sizeof (info);
+	info.hostApiType = paWASAPI;
+	info.version     = 1;
+	info.flags       = paWinWasapiAutoConvert;
+	return info;
+}
+#endif
+
+/* WASAPI shared mode only opens a device at the rate Windows' mixer uses for
+ * it, unless Windows is asked to convert. Without that a session whose rate
+ * differs from the device's Windows setting cannot start, and the Audio/MIDI
+ * setup window comes up on every launch. A matching rate is not converted.
+ * PortAudio only reads this, so one shared instance is enough. */
+static void*
+host_api_stream_info (const PaDeviceInfo* nfo)
+{
+#ifdef PLATFORM_WINDOWS
+	const PaHostApiInfo* api = nfo ? Pa_GetHostApiInfo (nfo->hostApi) : NULL;
+	if (api && api->type == paWASAPI) {
+		static PaWasapiStreamInfo info = make_wasapi_stream_info ();
+		return &info;
+	}
+#endif
+	return NULL;
+}
 
 PortAudioIO::PortAudioIO ()
 	: _capture_channels (0)
@@ -137,13 +173,13 @@ PortAudioIO::available_sample_rates(int device_id, std::vector<float>& sampleRat
 		inputParam.channelCount = nfo->maxInputChannels;
 		inputParam.sampleFormat = paFloat32;
 		inputParam.suggestedLatency = 0;
-		inputParam.hostApiSpecificStreamInfo = 0;
+		inputParam.hostApiSpecificStreamInfo = host_api_stream_info (nfo);
 
 		outputParam.device = device_id;
 		outputParam.channelCount = nfo->maxOutputChannels;
 		outputParam.sampleFormat = paFloat32;
 		outputParam.suggestedLatency = 0;
-		outputParam.hostApiSpecificStreamInfo = 0;
+		outputParam.hostApiSpecificStreamInfo = host_api_stream_info (nfo);
 
 		std::vector<float> rates;
 		get_default_sample_rates(rates);
@@ -701,7 +737,7 @@ PortAudioIO::get_input_stream_params(int device_input,
 	if (!inputParam.suggestedLatency) {
 		inputParam.suggestedLatency = nfo_in->defaultLowInputLatency;
 	}
-	inputParam.hostApiSpecificStreamInfo = NULL;
+	inputParam.hostApiSpecificStreamInfo = host_api_stream_info (nfo_in);
 
 	return true;
 }
@@ -737,7 +773,7 @@ PortAudioIO::get_output_stream_params(int device_output,
 	if (!outputParam.suggestedLatency) {
 		outputParam.suggestedLatency = nfo_out->defaultLowOutputLatency;
 	}
-	outputParam.hostApiSpecificStreamInfo = NULL;
+	outputParam.hostApiSpecificStreamInfo = host_api_stream_info (nfo_out);
 
 	return true;
 }
