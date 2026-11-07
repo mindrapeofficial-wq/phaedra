@@ -3441,11 +3441,11 @@ msgid ""
 "This session was created with a sample rate of %1 Hz, but %2 is currently "
 "running at %3 Hz. If you load this session, audio will be resampled, which "
 "reduces quality.\n"
-msgstr ""
+msgstr "Esta sesión se creó a %1 Hz, pero %2 está funcionando a %3 Hz. Si la cargas, el audio se remuestreará y perderá calidad.\n"
 
 #: ardour_ui_startup.cc:199
 msgid "Reconfigure Engine"
-msgstr ""
+msgstr "Reconfigurar audio"
 
 #: ardour_ui_startup.cc:201
 msgid "Do not load session"
@@ -3462,7 +3462,7 @@ msgid ""
 "Audio is resampled for both playback and recording to match the sampling "
 "rate, which reduces quality. Reconfigure the Audio Engine in Menu > Window > "
 "Audio/Midi Setup"
-msgstr ""
+msgstr "Esta sesión se creó a %1 Hz, pero %2 está funcionando a %3 Hz.\nEl audio se remuestrea al reproducir y al grabar, lo que reduce la calidad. Puedes cambiar la frecuencia en Ajustes > Configuración Audio/MIDI."
 
 #: ardour_ui_startup.cc:446
 msgid "NSM: initialization failed"
@@ -3488,27 +3488,27 @@ msgid ""
 "Here are a few hints at what might be wrong:\n"
 "\n"
 "%2"
-msgstr ""
+msgstr "<span font_size=\"large\" font_weight=\"bold\">Algo ha fallado gravemente. %1 no puede continuar.</span>\n\nAlgunas pistas sobre lo que puede estar mal:\n\n%2"
 
 #: ardour_ui_startup.cc:537
 msgid "%1: Unrecoverable Error"
-msgstr ""
+msgstr "%1: error irrecuperable"
 
 #: ardour_ui_startup.cc:589
 msgid "Detecting Audio/MIDI Devices"
-msgstr ""
+msgstr "Detectando dispositivos de audio/MIDI"
 
 #: ardour_ui_startup.cc:590
 msgid "Detecting Audio/MIDI Devices..."
-msgstr ""
+msgstr "Detectando dispositivos de audio/MIDI..."
 
 #: ardour_ui_startup.cc:600
 msgid "Audio/MIDI Devices detection complete. Elapsed time: %1 ms"
-msgstr ""
+msgstr "Dispositivos de audio/MIDI detectados en %1 ms"
 
 #: ardour_ui_startup.cc:601
 msgid "Continuing Startup..."
-msgstr ""
+msgstr "Continuando el arranque..."
 
 #: ardour_ui_startup.cc:696 new_user_wizard.cc:344
 msgid "%1 is ready for use"
@@ -3534,11 +3534,11 @@ msgstr "No volver a mostrar esta ventana"
 
 #: ardour_ui_startup.cc:830
 msgid "NSM: The JACK backend is mandatory and can not be loaded."
-msgstr ""
+msgstr "NSM: el motor JACK es obligatorio y no se puede cargar."
 
 #: ardour_ui_startup.cc:848
 msgid "NSM: %1 cannot connect to the JACK server. Please start jackd first."
-msgstr ""
+msgstr "NSM: %1 no puede conectarse al servidor JACK. Inicia jackd primero."
 
 #: ardour_ui_video.cc:69
 msgid "Video-Server was not launched by %1. The request to stop it is ignored."
@@ -9060,11 +9060,11 @@ msgstr "TimeFX no se puede iniciar: error al crear el hilo"
 
 #: engine_dialog.cc:85
 msgid "Advanced Settings"
-msgstr ""
+msgstr "Ajustes avanzados"
 
 #: engine_dialog.cc:86
 msgid "Hardware Monitoring"
-msgstr ""
+msgstr "Monitorización por hardware"
 
 #: engine_dialog.cc:91
 msgid "Audio System:"
@@ -9093,11 +9093,11 @@ msgstr "Dispositivo de Salida:"
 #: engine_dialog.cc:97 export_report.cc:166 export_report.cc:360 sfdb_ui.cc:186
 #: sfdb_ui.cc:353 sfdb_ui.cc:447 sfdb_ui.cc:452 export_video_dialog.cc:164
 msgid "Sample Rate:"
-msgstr ""
+msgstr "Frecuencia de muestreo:"
 
 #: engine_dialog.cc:98
 msgid "Buffer Size:"
-msgstr ""
+msgstr "Tamaño de búfer:"
 
 #: engine_dialog.cc:99
 msgid "Periods:"
@@ -9105,15 +9105,15 @@ msgstr "Periodos:"
 
 #: engine_dialog.cc:100
 msgid "Hardware Input Latency:"
-msgstr ""
+msgstr "Latencia de entrada del hardware:"
 
 #: engine_dialog.cc:101
 msgid "Hardware Output Latency:"
-msgstr ""
+msgstr "Latencia de salida del hardware:"
 
 #: engine_dialog.cc:102
 msgid "Record Monitoring Handled by:"
-msgstr ""
+msgstr "Monitorización de grabación por:"
 
 #: engine_dialog.cc:104 engine_dialog.cc:105
 msgid "samples"
@@ -9125,7 +9125,7 @@ msgstr "Panel de control del dispositivo"
 
 #: engine_dialog.cc:107
 msgid "Setup & Calibration"
-msgstr ""
+msgstr "Configuración y calibración"
 
 #: engine_dialog.cc:109
 msgid "Refresh Devices"
@@ -9145,11 +9145,11 @@ msgstr "Medir"
 
 #: engine_dialog.cc:113
 msgid "Use Results"
-msgstr ""
+msgstr "Usar resultados"
 
 #: engine_dialog.cc:114
 msgid "Back to Settings (Ignore Results)"
-msgstr ""
+msgstr "Volver a ajustes (ignorar resultados)"
 
 #: engine_dialog.cc:115
 msgid "Calibrate Audio"
@@ -9157,7 +9157,7 @@ msgstr "Calibrar audio"
 
 #: engine_dialog.cc:119
 msgid "Back to Settings"
-msgstr ""
+msgstr "Volver a ajustes"
 
 #: engine_dialog.cc:144
 msgid ""
@@ -9171,11 +9171,11 @@ msgstr ""
 
 #: engine_dialog.cc:160 rc_option_editor.cc:4614
 msgid "Audio Hardware"
-msgstr ""
+msgstr "Hardware de audio"
 
 #: engine_dialog.cc:165 rc_option_editor.cc:4609
 msgid "Audio Driver"
-msgstr ""
+msgstr "Driver de audio"
 
 #: engine_dialog.cc:207
 msgid "Latency Measurement Tool"
@@ -9195,17 +9195,17 @@ msgstr "Selecciona dos canales y conéctalos por medio de un cable."
 
 #: engine_dialog.cc:225
 msgid "Playback channel:"
-msgstr ""
+msgstr "Canal de reproducción:"
 
 #: engine_dialog.cc:235
 msgid "Capture channel:"
-msgstr ""
+msgstr "Canal de captura:"
 
 #: engine_dialog.cc:254
 msgid ""
 "Once the channels are connected, click the \"Measure\" button.\n"
 "When satisfied with the results, click the \"Use results\" button."
-msgstr ""
+msgstr "Cuando los canales estén conectados, pulsa \"Medir\".\nSi el resultado te convence, pulsa \"Usar resultados\"."
 
 #: engine_dialog.cc:259 engine_dialog.cc:3346 engine_dialog.cc:3356
 msgid "No measurement results yet"
@@ -9224,7 +9224,7 @@ msgstr ""
 
 #: engine_dialog.cc:509
 msgid "Could not configure Audio/MIDI engine with given settings."
-msgstr ""
+msgstr "No se pudo configurar el audio/MIDI con estos ajustes."
 
 #: engine_dialog.cc:677
 msgid ""
@@ -9367,11 +9367,11 @@ msgstr "Latencia sistémica: "
 
 #: engine_dialog.cc:3033
 msgid "Large measurement deviation. Invalid result."
-msgstr ""
+msgstr "Desviación de la medida demasiado grande. Resultado no válido."
 
 #: engine_dialog.cc:3042
 msgid "Signal polarity inverted (bad wiring)."
-msgstr ""
+msgstr "Polaridad de la señal invertida (cableado incorrecto)."
 
 #: engine_dialog.cc:3088
 msgid "(averaging)"
@@ -13284,7 +13284,7 @@ msgstr "Seleccionar nota"
 
 #: option_editor.cc:829 option_editor.cc:861
 msgid "Search here..."
-msgstr ""
+msgstr "Buscar..."
 
 #: opts.cc:70
 msgid "Usage: "
@@ -14155,15 +14155,15 @@ msgstr "¿Volver a escanear los plugins ahora?"
 
 #: plugin_manager_ui.cc:763 rc_option_editor.cc:4460
 msgid "Set Windows VST2 Search Path"
-msgstr ""
+msgstr "Ruta de búsqueda VST2 de Windows"
 
 #: plugin_manager_ui.cc:772 rc_option_editor.cc:4441
 msgid "Set Linux VST2 Search Path"
-msgstr ""
+msgstr "Ruta de búsqueda VST2 de Linux"
 
 #: plugin_manager_ui.cc:781 rc_option_editor.cc:4490
 msgid "Set Additional VST3 Search Path"
-msgstr ""
+msgstr "Ruta de búsqueda VST3 adicional"
 
 #: plugin_manager_ui.cc:795
 msgid "Are you sure you want to rescan all plugins?"
@@ -14800,7 +14800,7 @@ msgstr "Salida LTC"
 
 #: port_group.cc:526 rc_option_editor.cc:1516
 msgid "Control Surface"
-msgstr ""
+msgstr "Superficie de control"
 
 #: port_group.cc:573
 msgid "MMC in"
@@ -15450,11 +15450,11 @@ msgstr "Copiar elementos usando:"
 
 #: rc_option_editor.cc:577
 msgid "<b>Recommended Setting: %1-%2</b>%3"
-msgstr ""
+msgstr "<b>Ajuste recomendado: %1-%2</b>%3"
 
 #: rc_option_editor.cc:579
 msgid "Slip Contents using:"
-msgstr ""
+msgstr "Desplazar el contenido con:"
 
 #: rc_option_editor.cc:600
 msgid "Constrain drag using:"
@@ -15526,15 +15526,15 @@ msgstr "Tiempo de espera de escaneo"
 
 #: rc_option_editor.cc:1162
 msgid "1 sec"
-msgstr ""
+msgstr "1 s"
 
 #: rc_option_editor.cc:1163
 msgid "15 sec"
-msgstr ""
+msgstr "15 s"
 
 #: rc_option_editor.cc:1165
 msgid "45 sec"
-msgstr ""
+msgstr "45 s"
 
 #: rc_option_editor.cc:1167
 msgid "1'30\""
@@ -15544,11 +15544,11 @@ msgstr ""
 msgid ""
 "Specify the default timeout for plugin instantiation. Plugins that require "
 "more time to load will be ignored. A value of 0 disables the timeout."
-msgstr ""
+msgstr "Tiempo máximo para cargar un plugin. Los plugins que tarden más se ignorarán. Con 0 no hay límite."
 
 #: rc_option_editor.cc:1179
 msgid "Waveform Clip Level (dBFS)"
-msgstr ""
+msgstr "Nivel de saturación de la forma de onda (dBFS)"
 
 #: rc_option_editor.cc:1211
 msgid "Playback (seconds of buffering)"
@@ -15582,15 +15582,15 @@ msgstr ""
 
 #: rc_option_editor.cc:1439
 msgid "TriggerBoxes will be connected to this port when it is set."
-msgstr ""
+msgstr "Las celdas de disparo se conectarán a este puerto cuando esté definido."
 
 #: rc_option_editor.cc:1441
 msgid "Default trigger input:"
-msgstr ""
+msgstr "Entrada de disparo predeterminada:"
 
 #: rc_option_editor.cc:1497
 msgid "Active Surfaces"
-msgstr ""
+msgstr "Superficies activas"
 
 #: rc_option_editor.cc:1515
 msgid "Enable"
@@ -15694,11 +15694,11 @@ msgstr "Salidas MIDI"
 
 #: rc_option_editor.cc:2182
 msgid "No MIDI Input (capture) devices found."
-msgstr ""
+msgstr "No se encontraron dispositivos de entrada MIDI."
 
 #: rc_option_editor.cc:2183
 msgid "No MIDI Output (playback) devices found."
-msgstr ""
+msgstr "No se encontraron dispositivos de salida MIDI."
 
 #: rc_option_editor.cc:2313
 msgid "Name (click twice to edit)"
@@ -15752,7 +15752,7 @@ msgstr "General"
 
 #: rc_option_editor.cc:2496
 msgid "Show Audio/MIDI Setup Window"
-msgstr ""
+msgstr "Abrir configuración Audio/MIDI"
 
 #: rc_option_editor.cc:2501
 msgid "Try to auto-launch audio/midi engine"
@@ -15763,11 +15763,11 @@ msgid ""
 "When opening an existing session, if the most recent audio engine is "
 "available and can open the session's sample rate, the audio engine dialog "
 "may be skipped."
-msgstr ""
+msgstr "Al abrir una sesión, si la última configuración de audio está disponible y admite la frecuencia de la sesión, no se muestra la ventana de configuración de audio."
 
 #: rc_option_editor.cc:2515
 msgid "Options|Editor Undo"
-msgstr ""
+msgstr "Deshacer en el editor"
 
 #: rc_option_editor.cc:2522
 msgid "Verify removal of last capture"
@@ -15791,14 +15791,14 @@ msgstr "Número máximo de sesiones recientes"
 
 #: rc_option_editor.cc:2557
 msgid "Group operations on selected tracks"
-msgstr ""
+msgstr "Agrupar operaciones en las pistas seleccionadas"
 
 #: rc_option_editor.cc:2562
 msgid ""
 "<b>When enabled</b> all selected tracks are assumed to be in a group. "
 "Operations like toggling solo, mute or changing gain are synchronized in the "
 "Mixer GUI (control surfaces are not affected)."
-msgstr ""
+msgstr "<b>Activado:</b> las pistas seleccionadas se tratan como un grupo. Solo, silencio y volumen cambian a la vez en el mezclador (no afecta a las superficies de control)."
 
 #: rc_option_editor.cc:2571
 msgid "Drag and drop import always copies files to session"
@@ -15807,7 +15807,7 @@ msgstr ""
 
 #: rc_option_editor.cc:2580
 msgid "Cache Folder for downloaded Freesound clips:"
-msgstr ""
+msgstr "Carpeta de caché para clips de Freesound:"
 
 #: rc_option_editor.cc:2590
 msgid "Save loudness analysis as image file after export"
@@ -15821,17 +15821,17 @@ msgstr "Guardar captura del mezclador después de la exportación"
 
 #: rc_option_editor.cc:2604
 msgid "New Version Check"
-msgstr ""
+msgstr "Comprobar nuevas versiones"
 
 #: rc_option_editor.cc:2607
 msgid "Check for announcements at application start"
-msgstr ""
+msgstr "Buscar avisos al iniciar"
 
 #: rc_option_editor.cc:2611
 msgid ""
 "An anonymous request is performed to query announcements by contacting\n"
 "%1"
-msgstr ""
+msgstr "Se hace una consulta anónima de avisos a\n%1"
 
 #: rc_option_editor.cc:2619
 msgid "GUI Lock"
@@ -15869,7 +15869,7 @@ msgstr "Tema"
 
 #: rc_option_editor.cc:2654
 msgid "Color faders with track/bus colors"
-msgstr ""
+msgstr "Colorear los faders con el color de la pista o bus"
 
 #: rc_option_editor.cc:2661
 msgid "Draw \"flat\" buttons"
@@ -15905,7 +15905,7 @@ msgstr "Mostrar descripciones emergentes al colocar el ratón sobre un control"
 
 #: rc_option_editor.cc:2719
 msgid "Render + hints on page background (requires restart)"
-msgstr ""
+msgstr "Mostrar la ayuda «+» en las áreas vacías (requiere reiniciar)"
 
 #: rc_option_editor.cc:2726
 msgid "Update clocks at TC Frame rate"
@@ -15933,21 +15933,21 @@ msgstr "Hacer parpadear los indicadores de alerta"
 
 #: rc_option_editor.cc:2754
 msgid "Avoid strobing/blinking/flashing elements"
-msgstr ""
+msgstr "Evitar elementos que parpadean"
 
 #: rc_option_editor.cc:2759
 msgid ""
 "If enabled, disables meters in editor &amp; mixer, running clock updates and "
 "most blinking."
-msgstr ""
+msgstr "Desactiva los medidores del editor y del mezclador, la actualización continua del reloj y casi todos los parpadeos."
 
 #: rc_option_editor.cc:2762 rc_option_editor.cc:2775
 msgid "Appearance/Recorder"
-msgstr ""
+msgstr "Apariencia/Grabadora"
 
 #: rc_option_editor.cc:2762 rc_option_editor.cc:2766
 msgid "Input Meter Layout"
-msgstr ""
+msgstr "Disposición de los medidores de entrada"
 
 #: rc_option_editor.cc:2772
 msgid "Horizontal"
@@ -15977,7 +15977,7 @@ msgstr "El color de la región sigue el color de la pista"
 
 #: rc_option_editor.cc:2798
 msgid "Use track colors in the vertical summary"
-msgstr ""
+msgstr "Usar los colores de pista en el resumen vertical"
 
 #: rc_option_editor.cc:2806
 msgid "Show Region Names"
@@ -15985,7 +15985,7 @@ msgstr "Mostrar nombres de las regiones"
 
 #: rc_option_editor.cc:2814
 msgid "Show Selection Marker"
-msgstr ""
+msgstr "Mostrar marcador de selección"
 
 #: rc_option_editor.cc:2825
 msgid "Waveforms color gradient depth"
@@ -15997,25 +15997,25 @@ msgstr "Gradiente de color de la línea de tiempo"
 
 #: rc_option_editor.cc:2846
 msgid "Track name ellipsize mode"
-msgstr ""
+msgstr "Recorte de nombres de pista largos"
 
 #: rc_option_editor.cc:2850
 msgid "Ellipsize start of name"
-msgstr ""
+msgstr "Recortar el principio"
 
 #: rc_option_editor.cc:2851
 msgid "Ellipsize middle of name"
-msgstr ""
+msgstr "Recortar el centro"
 
 #: rc_option_editor.cc:2852
 msgid "Ellipsize end of name"
-msgstr ""
+msgstr "Recortar el final"
 
 #: rc_option_editor.cc:2854
 msgid ""
 "Choose which part of long track names are hidden in the editor's track "
 "headers"
-msgstr ""
+msgstr "Qué parte de los nombres largos se oculta en las cabeceras de pista"
 
 #: rc_option_editor.cc:2859
 msgid "Add a visual gap below Audio Regions"
@@ -16035,7 +16035,7 @@ msgstr "Limitar los medidores en los encabezados de pista a estéreo"
 
 #: rc_option_editor.cc:2886
 msgid "MIDI Editing"
-msgstr ""
+msgstr "Edición MIDI"
 
 #: rc_option_editor.cc:2891
 msgid "Display first MIDI bank/program as 0"
@@ -16047,29 +16047,29 @@ msgstr "No mostrar mensajes SysEx periódicos (MTC, MMC) en las regiones MIDI"
 
 #: rc_option_editor.cc:2906
 msgid "Display note names in MIDI track headers"
-msgstr ""
+msgstr "Mostrar nombres de notas en las cabeceras de pistas MIDI"
 
 #: rc_option_editor.cc:2910
 msgid "Always"
-msgstr ""
+msgstr "Siempre"
 
 #: rc_option_editor.cc:2911
 msgid "When Available"
-msgstr ""
+msgstr "Cuando estén disponibles"
 
 #: rc_option_editor.cc:2912
 msgid "Never"
-msgstr ""
+msgstr "Nunca"
 
 #: rc_option_editor.cc:2918 rc_option_editor.cc:2921 rc_option_editor.cc:2930
 #: rc_option_editor.cc:2938 rc_option_editor.cc:2946 rc_option_editor.cc:2958
 #: rc_option_editor.cc:2970 rc_option_editor.cc:2971
 msgid "Appearance/Waveform"
-msgstr ""
+msgstr "Apariencia/Forma de onda"
 
 #: rc_option_editor.cc:2918
 msgid "Editor Waveforms"
-msgstr ""
+msgstr "Formas de onda del editor"
 
 #: rc_option_editor.cc:2924
 msgid "Show waveforms in regions"
@@ -16110,11 +16110,11 @@ msgstr "rectificada"
 
 #: rc_option_editor.cc:2983
 msgid "Trigger Grid"
-msgstr ""
+msgstr "Cuadrícula de disparo"
 
 #: rc_option_editor.cc:2984
 msgid "Trigger Masters"
-msgstr ""
+msgstr "Controles maestros de disparo"
 
 #: rc_option_editor.cc:2987 rc_option_editor.cc:2996 rc_option_editor.cc:3000
 #: rc_option_editor.cc:3020 rc_option_editor.cc:3022
@@ -16158,11 +16158,11 @@ msgstr "128 parámetros"
 #: rc_option_editor.cc:3068 rc_option_editor.cc:3076 rc_option_editor.cc:3084
 #: rc_option_editor.cc:3092 rc_option_editor.cc:3099
 msgid "Appearance/Application Bar"
-msgstr ""
+msgstr "Apariencia/Barra de aplicación"
 
 #: rc_option_editor.cc:3024
 msgid "Main Application Toolbar Items"
-msgstr ""
+msgstr "Elementos de la barra principal"
 
 #: rc_option_editor.cc:3029
 msgid "Display Record/Punch Options"
@@ -16170,7 +16170,7 @@ msgstr "Mostrar opciones de grabación/punch"
 
 #: rc_option_editor.cc:3037
 msgid "Display Plugin Delay Compensation Control and Info"
-msgstr ""
+msgstr "Mostrar la compensación de latencia de plugins"
 
 #: rc_option_editor.cc:3046
 msgid "Display Secondary Clock"
@@ -16178,7 +16178,7 @@ msgstr "Mostrar reloj secundario"
 
 #: rc_option_editor.cc:3055
 msgid "Display Cue Rec/Play Controls"
-msgstr ""
+msgstr "Mostrar controles de grabación y reproducción de cues"
 
 #: rc_option_editor.cc:3063
 msgid "Display Selection Clock"
@@ -16194,7 +16194,7 @@ msgstr "Mostrar medidor de nivel maestro"
 
 #: rc_option_editor.cc:3087
 msgid "Display Monitor Section Info"
-msgstr ""
+msgstr "Mostrar información de la sección de monitorización"
 
 #: rc_option_editor.cc:3094
 msgid "Display Action-Buttons"
@@ -16202,19 +16202,19 @@ msgstr "Mostrar botones de acción"
 
 #: rc_option_editor.cc:3104 rc_option_editor.cc:3109 rc_option_editor.cc:3121
 msgid "Appearance/Size and Scale"
-msgstr ""
+msgstr "Apariencia/Tamaño y escala"
 
 #: rc_option_editor.cc:3104
 msgid "User Interface Size and Scale"
-msgstr ""
+msgstr "Tamaño y escala de la interfaz"
 
 #: rc_option_editor.cc:3112
 msgid "Drag Deadzone"
-msgstr ""
+msgstr "Zona muerta al arrastrar"
 
 #: rc_option_editor.cc:3120
 msgid "Huge"
-msgstr ""
+msgstr "Enorme"
 
 #: rc_option_editor.cc:3123
 msgid ""
@@ -16235,7 +16235,7 @@ msgstr "Colores"
 
 #: rc_option_editor.cc:3133
 msgid "Use color-palette to assign color for new Tracks"
-msgstr ""
+msgstr "Asignar colores de la paleta a las pistas nuevas"
 
 #: rc_option_editor.cc:3138
 msgid ""
@@ -16247,7 +16247,7 @@ msgstr ""
 
 #: rc_option_editor.cc:3145
 msgid "Use color-palette to assign color for new Busses"
-msgstr ""
+msgstr "Asignar colores de la paleta a los buses nuevos"
 
 #: rc_option_editor.cc:3150
 msgid ""
@@ -16259,14 +16259,14 @@ msgstr ""
 
 #: rc_option_editor.cc:3158
 msgid "Use color-palette to assign color for new VCA"
-msgstr ""
+msgstr "Asignar colores de la paleta a los VCA nuevos"
 
 #: rc_option_editor.cc:3163
 msgid ""
 "<b>When enabled</b> newly created VCAs are assigned a color from the "
 "stripable-color-palette in round-robin fashion.\n"
 "<b>When disabled</b> all new VCAs will have a neutral color from the theme."
-msgstr ""
+msgstr "<b>Activado:</b> los VCA nuevos reciben, por turnos, un color de la paleta.\n<b>Desactivado:</b> todos los VCA nuevos tendrán un color neutro del tema."
 
 #: rc_option_editor.cc:3170
 msgid "Various Workarounds for Windowing Systems"
@@ -16316,7 +16316,7 @@ msgstr ""
 
 #: rc_option_editor.cc:3195
 msgid "Show/Hide splash screen instead of setting z-axis stack order"
-msgstr ""
+msgstr "Mostrar u ocultar la pantalla de inicio en vez de cambiar el orden de apilado"
 
 #: rc_option_editor.cc:3204
 msgid "All floating windows are dialogs"
@@ -16358,23 +16358,23 @@ msgstr ""
 
 #: rc_option_editor.cc:3238
 msgid "Allow resizing of the engine dialogs"
-msgstr ""
+msgstr "Permitir cambiar el tamaño de las ventanas del motor de audio"
 
 #: rc_option_editor.cc:3243
 msgid ""
 "On some XWayland systems the engine-dialog is blank when shown a second time "
 "(from the main menu). Allowing to resize the window works around this oddity."
-msgstr ""
+msgstr "En algunos sistemas XWayland la ventana del motor de audio aparece en blanco la segunda vez. Permitir cambiar su tamaño lo evita."
 
 #: rc_option_editor.cc:3250
 msgid "Use macOS to determine GUI redraw areas"
-msgstr ""
+msgstr "Dejar que macOS decida qué zonas redibujar"
 
 #: rc_option_editor.cc:3255
 msgid ""
 "When enabled, macOS is in charge of what areas of the GUI are redrawn.\n"
 "When disabled, %1 manages this by itself"
-msgstr ""
+msgstr "Activado: macOS decide qué zonas de la interfaz se redibujan.\nDesactivado: %1 lo gestiona por sí mismo"
 
 #: rc_option_editor.cc:3261
 msgid "Graphics Acceleration"
@@ -16382,26 +16382,26 @@ msgstr "Aceleración Gráfica"
 
 #: rc_option_editor.cc:3267
 msgid "Render Canvas on openGL texture (requires restart)"
-msgstr ""
+msgstr "Dibujar el lienzo con OpenGL (requiere reiniciar)"
 
 #: rc_option_editor.cc:3271
 msgid "Yes, with Retina scaling"
-msgstr ""
+msgstr "Sí, con escalado Retina"
 
 #: rc_option_editor.cc:3272
 msgid "Yes, low resolution"
-msgstr ""
+msgstr "Sí, baja resolución"
 
 #: rc_option_editor.cc:3276
 msgid ""
 "Render editor canvas, on a openGL texture which may improve graphics "
 "performance.\n"
 "This requires restarting %1 before having an effect"
-msgstr ""
+msgstr "Dibuja el lienzo del editor con OpenGL, lo que puede mejorar el rendimiento gráfico.\nHay que reiniciar %1 para aplicarlo"
 
 #: rc_option_editor.cc:3283
 msgid "Use intermediate image-surface to render canvas (requires restart)"
-msgstr ""
+msgstr "Usar una superficie intermedia para dibujar el lienzo (requiere reiniciar)"
 
 #: rc_option_editor.cc:3289
 msgid ""
@@ -16429,27 +16429,27 @@ msgstr ""
 
 #: rc_option_editor.cc:3307
 msgid "Default location of new windows"
-msgstr ""
+msgstr "Posición de las ventanas nuevas"
 
 #: rc_option_editor.cc:3311
 msgid "Center of screen"
-msgstr ""
+msgstr "Centro de la pantalla"
 
 #: rc_option_editor.cc:3312
 msgid "Mouse position"
-msgstr ""
+msgstr "Posición del ratón"
 
 #: rc_option_editor.cc:3313
 msgid "Center of screen, really"
-msgstr ""
+msgstr "Centro de la pantalla, siempre"
 
 #: rc_option_editor.cc:3314
 msgid "Center of parent window"
-msgstr ""
+msgstr "Centro de la ventana principal"
 
 #: rc_option_editor.cc:3319 rc_option_editor.cc:3330
 msgid "Appearance/Translation"
-msgstr ""
+msgstr "Apariencia/Idioma"
 
 #: rc_option_editor.cc:3319
 msgid "Internationalization"
@@ -16470,19 +16470,19 @@ msgstr ""
 #: rc_option_editor.cc:3335 rc_option_editor.cc:3337 rc_option_editor.cc:3345
 #: rc_option_editor.cc:3353
 msgid "Appearance/Regions"
-msgstr ""
+msgstr "Apariencia/Regiones"
 
 #: rc_option_editor.cc:3335
 msgid "Region Information"
-msgstr ""
+msgstr "Información de regiones"
 
 #: rc_option_editor.cc:3340
 msgid "Show xrun markers in regions"
-msgstr ""
+msgstr "Mostrar marcas de xrun en las regiones"
 
 #: rc_option_editor.cc:3348
 msgid "Show cue markers in regions"
-msgstr ""
+msgstr "Mostrar marcas de cue en las regiones"
 
 #: rc_option_editor.cc:3356
 msgid "Show gain envelopes in audio regions"
@@ -16498,7 +16498,7 @@ msgstr "sólo en modos de dibujo y ediciones internas"
 
 #: rc_option_editor.cc:3368
 msgid "Scroll and Zoom Behaviors"
-msgstr ""
+msgstr "Desplazamiento y zoom"
 
 #: rc_option_editor.cc:3375
 msgid "Zoom to mouse position when zooming with scroll wheel"
@@ -16524,7 +16524,7 @@ msgstr ""
 
 #: rc_option_editor.cc:3415
 msgid "Auto-scroll speed when dragging playhead"
-msgstr ""
+msgstr "Velocidad de desplazamiento al arrastrar el cursor de reproducción"
 
 #: rc_option_editor.cc:3419
 msgid "5%"
@@ -16544,7 +16544,7 @@ msgstr "50%"
 
 #: rc_option_editor.cc:3429
 msgid "Limit zoom & summary view beyond session extents to"
-msgstr ""
+msgstr "Limitar el zoom y el resumen fuera de la sesión a"
 
 #: rc_option_editor.cc:3433
 msgid "1 minute"
@@ -16580,17 +16580,17 @@ msgstr "Mover automatización relevante al desplazar regiones de audio"
 
 #: rc_option_editor.cc:3453
 msgid "Ignore Y-axis when adding new automation-points"
-msgstr ""
+msgstr "Ignorar el eje Y al añadir puntos de automatización"
 
 #: rc_option_editor.cc:3459
 msgid ""
 "<b>When enabled</b> new points drawn in any automation lane will be placed "
 "on the existing line, regardless of mouse y-axis position."
-msgstr ""
+msgstr "<b>Activado:</b> los puntos nuevos de automatización se colocan sobre la línea existente, sea cual sea la posición vertical del ratón."
 
 #: rc_option_editor.cc:3463
 msgid "Automation edit cancels auto hide"
-msgstr ""
+msgstr "Editar la automatización cancela el ocultado automático"
 
 #: rc_option_editor.cc:3469
 msgid ""
@@ -16607,7 +16607,7 @@ msgstr "Forma de fundido predeterminada"
 
 #: rc_option_editor.cc:3495
 msgid "Regions in edit groups are edited together"
-msgstr ""
+msgstr "Las regiones de grupos de edición se editan juntas"
 
 #: rc_option_editor.cc:3500
 msgid "whenever they overlap in time"
@@ -16619,11 +16619,11 @@ msgstr "Si uno encierra al otro"
 
 #: rc_option_editor.cc:3502
 msgid "if they have identical length, position and origin"
-msgstr ""
+msgstr "si tienen la misma duración, posición y origen"
 
 #: rc_option_editor.cc:3503
 msgid "if they have identical length, position and layer"
-msgstr ""
+msgstr "si tienen la misma duración, posición y capa"
 
 #: rc_option_editor.cc:3510
 msgid "Layering model"
@@ -16651,7 +16651,7 @@ msgstr "Preservar la selección de rango"
 
 #: rc_option_editor.cc:3529
 msgid "Select the regions under the range."
-msgstr ""
+msgstr "Seleccionar las regiones bajo el rango."
 
 #: rc_option_editor.cc:3535
 msgid "After a Split operation, in Object mode"
@@ -16663,7 +16663,7 @@ msgstr "Limpiar la selección de región"
 
 #: rc_option_editor.cc:3541
 msgid "Select the newly-created regions BEFORE the split point"
-msgstr ""
+msgstr "Seleccionar las regiones nuevas ANTES del punto de corte"
 
 #: rc_option_editor.cc:3542
 msgid "Select only the newly-created regions AFTER the split point"
@@ -16676,19 +16676,19 @@ msgstr "Seleccionar las regiones recién creadas"
 
 #: rc_option_editor.cc:3545
 msgid "unmodified regions in the existing selection"
-msgstr ""
+msgstr "las regiones sin cambios de la selección actual"
 
 #: rc_option_editor.cc:3546
 msgid "existing selection and newly-created regions before the split"
-msgstr ""
+msgstr "la selección actual y las regiones nuevas antes del corte"
 
 #: rc_option_editor.cc:3547
 msgid "existing selection and newly-created regions after the split"
-msgstr ""
+msgstr "la selección actual y las regiones nuevas después del corte"
 
 #: rc_option_editor.cc:3549
 msgid "Preserve existing selection, and select newly-created regions"
-msgstr ""
+msgstr "Mantener la selección actual y seleccionar las regiones nuevas"
 
 #: rc_option_editor.cc:3554
 msgid "General Snap options:"
@@ -16700,31 +16700,31 @@ msgstr "Umbral de ajuste (píxeles)"
 
 #: rc_option_editor.cc:3569
 msgid "Approximate Grid/Ruler granularity (pixels)"
-msgstr ""
+msgstr "Separación aproximada de rejilla y regla (píxeles)"
 
 #: rc_option_editor.cc:3576
 msgid "Region Editing"
-msgstr ""
+msgstr "Edición de regiones"
 
 #: rc_option_editor.cc:3579
 msgid "Region Editing Preference"
-msgstr ""
+msgstr "Dónde editar las regiones"
 
 #: rc_option_editor.cc:3586
 msgid "Only ever use the bottom pane"
-msgstr ""
+msgstr "Siempre en el panel inferior"
 
 #: rc_option_editor.cc:3587
 msgid "Open bottom pane, if necessary"
-msgstr ""
+msgstr "Abrir el panel inferior si hace falta"
 
 #: rc_option_editor.cc:3588
 msgid "Use bottom pane if visible, or own window"
-msgstr ""
+msgstr "En el panel inferior si está visible; si no, en su propia ventana"
 
 #: rc_option_editor.cc:3589
 msgid "Always use a separate window"
-msgstr ""
+msgstr "Siempre en una ventana aparte"
 
 #: rc_option_editor.cc:3596
 msgid "Show \"snapped cursor\""
@@ -16742,7 +16742,7 @@ msgstr ""
 
 #: rc_option_editor.cc:3620
 msgid "Grid mode selection may change ruler visibility"
-msgstr ""
+msgstr "Cambiar el modo de rejilla puede mostrar u ocultar reglas"
 
 #: rc_option_editor.cc:3629
 msgid "Rulers automatically change to follow the Grid mode selection"
@@ -16752,23 +16752,23 @@ msgstr ""
 
 #: rc_option_editor.cc:3634
 msgid "Snap Target Mode:"
-msgstr ""
+msgstr "Modo de ajuste:"
 
 #: rc_option_editor.cc:3638
 msgid "When the Grid is enabled, snap to"
-msgstr ""
+msgstr "Con la rejilla activada, ajustar a"
 
 #: rc_option_editor.cc:3643
 msgid "Snap Targets"
-msgstr ""
+msgstr "Destinos de ajuste"
 
 #: rc_option_editor.cc:3644
 msgid "Both the Grid and Snap Targets"
-msgstr ""
+msgstr "La rejilla y los destinos de ajuste"
 
 #: rc_option_editor.cc:3647
 msgid "Snap Targets:"
-msgstr ""
+msgstr "Destinos de ajuste:"
 
 #: rc_option_editor.cc:3668
 msgid "Region Sync Points"
@@ -16796,7 +16796,7 @@ msgstr "Cambio de programa inicial"
 
 #: rc_option_editor.cc:3707
 msgid "Editing"
-msgstr ""
+msgstr "Edición"
 
 #: rc_option_editor.cc:3712
 msgid "Show velocity horizontally inside notes"
@@ -16804,37 +16804,37 @@ msgstr "Mostrar la velocidad horizontalmente dentro de las notas"
 
 #: rc_option_editor.cc:3720
 msgid "Use cross-cursor when editing MIDI"
-msgstr ""
+msgstr "Usar cursor en cruz al editar MIDI"
 
 #: rc_option_editor.cc:3727
 msgid "Default MIDI note colors"
-msgstr ""
+msgstr "Colores predeterminados de notas MIDI"
 
 #: rc_option_editor.cc:3741
 msgid "When drawing new notes, select only the last drawn note"
-msgstr ""
+msgstr "Al dibujar notas, seleccionar solo la última"
 
 #: rc_option_editor.cc:3749
 msgid "Scroll wheel use when editing MIDI adjusts selected note velocity"
-msgstr ""
+msgstr "Al editar MIDI, la rueda del ratón ajusta la velocidad de las notas seleccionadas"
 
 #: rc_option_editor.cc:3754
 msgid "MIDI Chase"
-msgstr ""
+msgstr "Seguimiento MIDI"
 
 #: rc_option_editor.cc:3758
 msgid "When locating, track sustained MIDI notes and play them when rolling"
-msgstr ""
+msgstr "Al saltar a una posición, recordar las notas MIDI sostenidas y tocarlas al reproducir"
 
 #: rc_option_editor.cc:3763
 msgid "Output Port Panic"
-msgstr ""
+msgstr "Pánico en puertos de salida"
 
 #: rc_option_editor.cc:3767
 msgid ""
 "MIDI output ports should send panic message at end of a timeline (transport) "
 "loop"
-msgstr ""
+msgstr "Los puertos de salida MIDI envían un mensaje de pánico al final de cada bucle"
 
 #: rc_option_editor.cc:3777
 msgid "Sound MIDI notes as they are selected in the editor"
@@ -16846,7 +16846,7 @@ msgstr "Diseño de teclado virtual"
 
 #: rc_option_editor.cc:3791
 msgid "Mouse-only (no keyboard)"
-msgstr ""
+msgstr "Solo ratón (sin teclado)"
 
 #: rc_option_editor.cc:3792
 msgid "QWERTY"
@@ -16874,7 +16874,7 @@ msgstr "QWERTZ simple"
 
 #: rc_option_editor.cc:3801
 msgid "Default Visible Note Range"
-msgstr ""
+msgstr "Rango de notas visible predeterminado"
 
 #: rc_option_editor.cc:3803
 msgid "legal characters for MIDI note names|ABCDEFG#1234567890"
@@ -16882,15 +16882,15 @@ msgstr ""
 
 #: rc_option_editor.cc:3805
 msgid "Default lower visible MIDI note"
-msgstr ""
+msgstr "Nota MIDI visible más grave"
 
 #: rc_option_editor.cc:3810
 msgid "Default upper visible MIDI note"
-msgstr ""
+msgstr "Nota MIDI visible más aguda"
 
 #: rc_option_editor.cc:3815
 msgid "Maximum note height"
-msgstr ""
+msgstr "Altura máxima de nota"
 
 #: rc_option_editor.cc:3824
 msgid "MIDI Port Options"
@@ -16902,7 +16902,7 @@ msgstr "La entrada MIDI sigue la selección de la pista MIDI"
 
 #: rc_option_editor.cc:3834 rc_option_editor.cc:3835
 msgid "MIDI/MIDI Port Config"
-msgstr ""
+msgstr "MIDI/Puertos MIDI"
 
 #: rc_option_editor.cc:3845
 msgid "Prompt for new marker names"
@@ -16914,7 +16914,7 @@ msgid ""
 "its name to be set as it is created.\n"
 "\n"
 "You can always rename markers by right-clicking on them."
-msgstr ""
+msgstr "<b>Activado:</b> al crear un marcador se abre una ventana para ponerle nombre.\n\nSiempre puedes renombrar los marcadores con clic derecho."
 
 #: rc_option_editor.cc:3855
 msgid "Stop at the end of the session"
@@ -16948,7 +16948,7 @@ msgstr ""
 
 #: rc_option_editor.cc:3879
 msgid "Reset default speed on stop"
-msgstr ""
+msgstr "Restablecer la velocidad al parar"
 
 #: rc_option_editor.cc:3885
 msgid ""
@@ -16956,7 +16956,7 @@ msgid ""
 "normal.\n"
 "<b>When disabled</b> any current default speed will remain in effect across "
 "transport stops."
-msgstr ""
+msgstr "<b>Activado:</b> al parar, la velocidad vuelve a la normal.\n<b>Desactivado:</b> la velocidad actual se mantiene entre paradas."
 
 #: rc_option_editor.cc:3889
 msgid "Disable per-track record disarm while rolling"
@@ -16986,7 +16986,7 @@ msgstr ""
 
 #: rc_option_editor.cc:3910
 msgid "Rewind/Fast-forward buttons change direction immediately"
-msgstr ""
+msgstr "Rebobinar y avanzar cambian de dirección al instante"
 
 #: rc_option_editor.cc:3915
 msgid ""
@@ -16995,11 +16995,11 @@ msgid ""
 "\n"
 "<b>When disabled</b> rewind/ffwd controls will gradually speed up/slow down "
 "playback"
-msgstr ""
+msgstr "<b>Activado:</b> rebobinar y avanzar cambian la dirección de reproducción al instante.\n\n<b>Desactivado:</b> rebobinar y avanzar aceleran o frenan la reproducción poco a poco"
 
 #: rc_option_editor.cc:3922
 msgid "Allow auto-return after rewind/ffwd operations"
-msgstr ""
+msgstr "Permitir el retorno automático después de rebobinar o avanzar"
 
 #: rc_option_editor.cc:3927
 msgid ""
@@ -17008,7 +17008,7 @@ msgid ""
 "\n"
 "<b>When disabled</b> the playhead will never auto-return after rewind/ffwd "
 "operations"
-msgstr ""
+msgstr "<b>Activado:</b> si el retorno automático está activo, el cursor vuelve tras rebobinar o avanzar\n\n<b>Desactivado:</b> el cursor nunca vuelve tras rebobinar o avanzar"
 
 # podría ser "desplazar", chequear contexto
 #: rc_option_editor.cc:3935
@@ -17067,17 +17067,17 @@ msgstr "2,0 segundos"
 
 #: rc_option_editor.cc:3955
 msgid "Create a marker when a MIDI program change is received (and RECORDING)"
-msgstr ""
+msgstr "Crear un marcador al recibir un cambio de programa MIDI (al GRABAR)"
 
 #: rc_option_editor.cc:3962
 msgid ""
 "Locate to the next matching scene marker when a MIDI program change is "
 "received (and NOT recording)"
-msgstr ""
+msgstr "Saltar al siguiente marcador de escena al recibir un cambio de programa MIDI (sin grabar)"
 
 #: rc_option_editor.cc:3970
 msgid "Marker Locate Priority"
-msgstr ""
+msgstr "Prioridad al saltar a marcadores"
 
 #: rc_option_editor.cc:3976
 msgid "Next"
@@ -17085,11 +17085,11 @@ msgstr "Siguiente"
 
 #: rc_option_editor.cc:3978
 msgid "Options for locating to program change/snapshot markers"
-msgstr ""
+msgstr "Opciones para saltar a marcadores de cambio de programa o de instantánea"
 
 #: rc_option_editor.cc:3981
 msgid "Stop transport using the current grid (if any)"
-msgstr ""
+msgstr "Parar el transporte en la rejilla actual (si la hay)"
 
 #: rc_option_editor.cc:3987
 msgid "Looping"
@@ -17160,13 +17160,13 @@ msgstr "Crear marca en posición de xrun"
 
 #: rc_option_editor.cc:4037
 msgid "Reset xrun counter when starting to record"
-msgstr ""
+msgstr "Reiniciar el contador de xruns al empezar a grabar"
 
 #: rc_option_editor.cc:4043 rc_option_editor.cc:4045 rc_option_editor.cc:4053
 #: rc_option_editor.cc:4071 rc_option_editor.cc:4073 rc_option_editor.cc:4075
 #: rc_option_editor.cc:4092 rc_option_editor.cc:4108 rc_option_editor.cc:4109
 msgid "Transport/Chase"
-msgstr ""
+msgstr "Transporte/Sincronización"
 
 #: rc_option_editor.cc:4043 rc_option_editor.cc:4165
 msgid "MIDI Machine Control (MMC)"
@@ -17182,23 +17182,23 @@ msgstr "ID del dispositivo MMC de entrada"
 
 #: rc_option_editor.cc:4064
 msgid "MMC Fast-wind behavior"
-msgstr ""
+msgstr "Comportamiento del avance rápido MMC"
 
 #: rc_option_editor.cc:4068
 msgid "Off (MMC fast-forward+rewind are ignored)"
-msgstr ""
+msgstr "Desactivado (se ignoran el avance y el rebobinado MMC)"
 
 #: rc_option_editor.cc:4069 varispeed_dialog.cc:33
 msgid "Varispeed"
-msgstr ""
+msgstr "Velocidad variable"
 
 #: rc_option_editor.cc:4070
 msgid "Marker Locate (MMC ffwd/rewd jumps to next/prior marker)"
-msgstr ""
+msgstr "Saltar a marcadores (MMC salta al marcador siguiente o anterior)"
 
 #: rc_option_editor.cc:4076
 msgid "Show Transport Masters Window"
-msgstr ""
+msgstr "Abrir la ventana de maestros de transporte"
 
 #: rc_option_editor.cc:4081
 msgid "Match session video frame rate to external timecode"
@@ -17234,11 +17234,11 @@ msgstr ""
 
 #: rc_option_editor.cc:4096
 msgid "BPM Resolution for incoming MIDI Clock"
-msgstr ""
+msgstr "Resolución de BPM del reloj MIDI entrante"
 
 #: rc_option_editor.cc:4099
 msgid "quarters"
-msgstr ""
+msgstr "negras"
 
 #: rc_option_editor.cc:4103
 msgid ""
@@ -17264,7 +17264,7 @@ msgstr "MIDI Clock"
 #: rc_option_editor.cc:4163 rc_option_editor.cc:4165 rc_option_editor.cc:4167
 #: rc_option_editor.cc:4175 rc_option_editor.cc:4184 rc_option_editor.cc:4186
 msgid "Transport/Generate"
-msgstr ""
+msgstr "Transporte/Generar"
 
 #: rc_option_editor.cc:4111
 msgid "Linear Timecode (LTC) Generator"
@@ -17309,11 +17309,11 @@ msgstr "Habilitar generador de MTC"
 
 #: rc_option_editor.cc:4157
 msgid "Max MTC varispeed (%)"
-msgstr ""
+msgstr "Velocidad variable máxima de MTC (%)"
 
 #: rc_option_editor.cc:4162
 msgid "Percentage either side of normal transport speed to transmit MTC."
-msgstr ""
+msgstr "Margen, en porcentaje, alrededor de la velocidad normal para transmitir MTC."
 
 #: rc_option_editor.cc:4170
 msgid "Send MMC commands"
@@ -17359,14 +17359,14 @@ msgstr "Escanear plugins"
 
 #: rc_option_editor.cc:4223
 msgid "Scan for [New] Plugins on Application Start"
-msgstr ""
+msgstr "Buscar plugins [nuevos] al iniciar"
 
 #: rc_option_editor.cc:4229
 msgid ""
 "<b>When enabled</b> new plugins are searched, tested and added to the cache "
 "index on application start. When disabled new plugins will only be available "
 "after triggering a 'Scan' manually"
-msgstr ""
+msgstr "<b>Activado:</b> al iniciar se buscan, prueban y añaden los plugins nuevos. Desactivado: los plugins nuevos solo aparecen tras un escaneo manual"
 
 #: rc_option_editor.cc:4233
 msgid "Always Display Plugin Scan Progress"
@@ -17389,18 +17389,18 @@ msgstr "Escaneo de Plugins Detallado"
 msgid ""
 "<b>When enabled</b> additional information for every plugin is shown to the "
 "Plugin Manager Log."
-msgstr ""
+msgstr "<b>Activado:</b> el registro del gestor de plugins muestra información adicional de cada plugin."
 
 #: rc_option_editor.cc:4254
 msgid "Open Plugin Manager window when missing plugins are found"
-msgstr ""
+msgstr "Abrir el gestor de plugins si faltan plugins"
 
 #: rc_option_editor.cc:4260
 msgid ""
 "<b>When enabled</b> the Plugin Manager is display at session load if the "
 "session contains any plugins that are missing, or plugins have been updated "
 "and require a rescan."
-msgstr ""
+msgstr "<b>Activado:</b> al cargar una sesión se abre el gestor de plugins si falta alguno o si alguno se ha actualizado y hay que volver a escanearlo."
 
 #: rc_option_editor.cc:4264
 msgid "Make new plugins active"
@@ -17412,11 +17412,11 @@ msgid ""
 "busses.\n"
 "<b>When disabled</b> plugins will be left inactive when they are added to "
 "tracks/busses"
-msgstr ""
+msgstr "<b>Activado:</b> los plugins se activan al añadirlos a pistas o buses.\n<b>Desactivado:</b> los plugins quedan inactivos al añadirlos"
 
 #: rc_option_editor.cc:4274
 msgid "Setup Sidechain ports when loading plugin with aux inputs"
-msgstr ""
+msgstr "Crear puertos de sidechain al cargar plugins con entradas auxiliares"
 
 #: rc_option_editor.cc:4280
 msgid ""
@@ -17432,7 +17432,7 @@ msgstr ""
 #: rc_option_editor.cc:4324 rc_option_editor.cc:4338 rc_option_editor.cc:4342
 #: rc_option_editor.cc:4344 rc_option_editor.cc:4366
 msgid "Plugins/GUI"
-msgstr ""
+msgstr "Plugins/Interfaz"
 
 #: rc_option_editor.cc:4282
 msgid "Plugin GUI"
@@ -17446,34 +17446,34 @@ msgstr ""
 #: rc_option_editor.cc:4294
 msgid ""
 "Automatically open instrument plugin GUI when adding a new MIDI Track/Bus"
-msgstr ""
+msgstr "Abrir la interfaz del instrumento al añadir una pista o bus MIDI"
 
 #: rc_option_editor.cc:4301
 msgid "Show only one plugin window at a time"
-msgstr ""
+msgstr "Mostrar solo una ventana de plugin a la vez"
 
 #: rc_option_editor.cc:4307
 msgid ""
 "<b>When enabled</b> at most one plugin GUI window can be on-screen at a "
 "time. <b>When disabled</b>, the number of visible plugin GUI windows is "
 "unlimited"
-msgstr ""
+msgstr "<b>Activado:</b> solo puede haber una ventana de plugin en pantalla. <b>Desactivado:</b> no hay límite de ventanas de plugin"
 
 #: rc_option_editor.cc:4311
 msgid "Closing a Plugin GUI Window"
-msgstr ""
+msgstr "Al cerrar la ventana de un plugin"
 
 #: rc_option_editor.cc:4315
 msgid "only hides the window"
-msgstr ""
+msgstr "solo se oculta la ventana"
 
 #: rc_option_editor.cc:4316
 msgid "destroys the GUI instance, releasing resources"
-msgstr ""
+msgstr "se destruye la interfaz y se liberan recursos"
 
 #: rc_option_editor.cc:4317
 msgid "only destroys VST2/3 UIs, hides others"
-msgstr ""
+msgstr "se destruyen las interfaces VST2/3 y se ocultan las demás"
 
 #: rc_option_editor.cc:4320
 msgid ""
@@ -17490,11 +17490,11 @@ msgstr ""
 
 #: rc_option_editor.cc:4323
 msgid "Mixer Strip Inline Display"
-msgstr ""
+msgstr "Vista integrada en el canal del mezclador"
 
 #: rc_option_editor.cc:4327
 msgid "Show Plugin Inline Display on Mixer Strip by default"
-msgstr ""
+msgstr "Mostrar por defecto la vista integrada del plugin en el canal"
 
 #: rc_option_editor.cc:4334
 msgid ""
@@ -17506,37 +17506,37 @@ msgstr ""
 
 #: rc_option_editor.cc:4342
 msgid "VST3 UI"
-msgstr ""
+msgstr "Interfaz VST3"
 
 #: rc_option_editor.cc:4347
 msgid "Automatically show 'Micro Edit' tagged controls on the mixer-strip"
-msgstr ""
+msgstr "Mostrar en el canal los controles marcados como 'Micro Edit'"
 
 #: rc_option_editor.cc:4354
 msgid "VST3 Knob Mode"
-msgstr ""
+msgstr "Modo de los potenciómetros VST3"
 
 #: rc_option_editor.cc:4359
 msgid "Plugin Default"
-msgstr ""
+msgstr "El del plugin"
 
 #: rc_option_editor.cc:4360
 msgid "Circular with jump to clicked position (discouraged)"
-msgstr ""
+msgstr "Circular, saltando al punto pulsado (no recomendado)"
 
 #: rc_option_editor.cc:4361
 msgid "Circular without jump to clicked position"
-msgstr ""
+msgstr "Circular, sin saltar al punto pulsado"
 
 #: rc_option_editor.cc:4362
 msgid "Linear: depending on vertical movement"
-msgstr ""
+msgstr "Lineal: según el movimiento vertical"
 
 #: rc_option_editor.cc:4364
 msgid ""
 "These settings apply to new VST3 plugin instances only.\n"
 "Already loaded plugins retain the previous setting."
-msgstr ""
+msgstr "Solo afecta a los plugins VST3 nuevos.\nLos ya cargados mantienen el ajuste anterior."
 
 #: rc_option_editor.cc:4372 rc_option_editor.cc:4374 rc_option_editor.cc:4386
 #: rc_option_editor.cc:4398 rc_option_editor.cc:4408 rc_option_editor.cc:4418
@@ -17550,19 +17550,19 @@ msgstr "Plugins/VST"
 
 #: rc_option_editor.cc:4382
 msgid "Enable Mac VST2 support (requires restart or re-scan)"
-msgstr ""
+msgstr "Activar VST2 de Mac (requiere reiniciar o volver a escanear)"
 
 #: rc_option_editor.cc:4394
 msgid "Enable Windows VST2 support (requires restart or re-scan)"
-msgstr ""
+msgstr "Activar VST2 de Windows (requiere reiniciar o volver a escanear)"
 
 #: rc_option_editor.cc:4404
 msgid "Enable Linux VST2 support (requires restart or re-scan)"
-msgstr ""
+msgstr "Activar VST2 de Linux (requiere reiniciar o volver a escanear)"
 
 #: rc_option_editor.cc:4414
 msgid "Enable VST3 support (requires restart or re-scan)"
-msgstr ""
+msgstr "Activar VST3 (requiere reiniciar o volver a escanear)"
 
 #: rc_option_editor.cc:4424
 msgid "VST 2.x"
@@ -17570,15 +17570,15 @@ msgstr ""
 
 #: rc_option_editor.cc:4429
 msgid "VST 2 Cache:"
-msgstr ""
+msgstr "Caché VST 2:"
 
 #: rc_option_editor.cc:4434
 msgid "VST 2 Ignorelist:"
-msgstr ""
+msgstr "VST 2 ignorados:"
 
 #: rc_option_editor.cc:4446
 msgid "Linux VST2 Path:"
-msgstr ""
+msgstr "Ruta VST2 de Linux:"
 
 #: rc_option_editor.cc:4451 rc_option_editor.cc:4470
 msgid "Path:"
@@ -17586,7 +17586,7 @@ msgstr "Ruta:"
 
 #: rc_option_editor.cc:4465
 msgid "Windows VST2 Path:"
-msgstr ""
+msgstr "Ruta VST2 de Windows:"
 
 #: rc_option_editor.cc:4476
 msgid "VST 3"
@@ -17594,15 +17594,15 @@ msgstr ""
 
 #: rc_option_editor.cc:4480
 msgid "VST 3 Cache:"
-msgstr ""
+msgstr "Caché VST 3:"
 
 #: rc_option_editor.cc:4485
 msgid "VST 3 Ignorelist:"
-msgstr ""
+msgstr "VST 3 ignorados:"
 
 #: rc_option_editor.cc:4495
 msgid "Additional VST3 Path:"
-msgstr ""
+msgstr "Ruta VST3 adicional:"
 
 #: rc_option_editor.cc:4497
 msgid ""
@@ -17618,7 +17618,7 @@ msgstr ""
 
 #: rc_option_editor.cc:4507
 msgid "Conceal VST2 Plugin if matching VST3 exists"
-msgstr ""
+msgstr "Ocultar el VST2 si existe el mismo plugin en VST3"
 
 #: rc_option_editor.cc:4517 rc_option_editor.cc:4519 rc_option_editor.cc:4530
 #: rc_option_editor.cc:4532 rc_option_editor.cc:4537
@@ -17631,7 +17631,7 @@ msgstr "Audio Unit"
 
 #: rc_option_editor.cc:4526
 msgid "Enable Audio Unit support (requires restart or re-scan)"
-msgstr ""
+msgstr "Activar Audio Units (requiere reiniciar o volver a escanear)"
 
 #: rc_option_editor.cc:4535
 msgid "AU Cache:"
@@ -17639,7 +17639,7 @@ msgstr "AU Cache:"
 
 #: rc_option_editor.cc:4540
 msgid "AU Ignorelist:"
-msgstr ""
+msgstr "AU ignorados:"
 
 #: rc_option_editor.cc:4543
 msgid "LV1/LV2"
@@ -17672,19 +17672,19 @@ msgstr ""
 
 #: rc_option_editor.cc:4571
 msgid "Statistics"
-msgstr ""
+msgstr "Estadísticas"
 
 #: rc_option_editor.cc:4574
 msgid "Reset Statistics"
-msgstr ""
+msgstr "Reiniciar estadísticas"
 
 #: rc_option_editor.cc:4580
 msgid "Plugin chart (use-count) length"
-msgstr ""
+msgstr "Longitud de la lista de plugins más usados"
 
 #: rc_option_editor.cc:4589
 msgid "Plugin recent list length"
-msgstr ""
+msgstr "Longitud de la lista de plugins recientes"
 
 #: rc_option_editor.cc:4603
 msgid "Record monitoring handled by"
@@ -17698,7 +17698,7 @@ msgstr "Entrada automática hace 'talkback'"
 msgid ""
 "<b>When enabled</b>, and Transport -> Auto-Input is enabled, %1 will always "
 "monitor audio inputs when transport is stopped, even if tracks aren't armed."
-msgstr ""
+msgstr "<b>Activado:</b> si Transporte -> Entrada automática está activo, %1 monitoriza siempre las entradas de audio con el transporte parado, aunque las pistas no estén armadas."
 
 #: rc_option_editor.cc:4633
 msgid "Solo controls are Listen controls"
@@ -17762,47 +17762,47 @@ msgstr ""
 
 #: rc_option_editor.cc:4714
 msgid "Enable master-bus output gain control"
-msgstr ""
+msgstr "Activar el control de ganancia de salida del bus máster"
 
 #: rc_option_editor.cc:4721
 msgid "I/O Resampler (vari-speed) quality"
-msgstr ""
+msgstr "Calidad del remuestreador de E/S (velocidad variable)"
 
 #: rc_option_editor.cc:4726
 msgid "Off (no vari-speed)"
-msgstr ""
+msgstr "Desactivado (sin velocidad variable)"
 
 #: rc_option_editor.cc:4727
 msgid "Low (16 samples latency)"
-msgstr ""
+msgstr "Baja (16 muestras de latencia)"
 
 #: rc_option_editor.cc:4728
 msgid "Moderate (32 samples latency), default"
-msgstr ""
+msgstr "Moderada (32 muestras de latencia), predeterminada"
 
 #: rc_option_editor.cc:4729
 msgid "Medium (64 samples latency)"
-msgstr ""
+msgstr "Media (64 muestras de latencia)"
 
 #: rc_option_editor.cc:4730
 msgid "High (96 samples latency)"
-msgstr ""
+msgstr "Alta (96 muestras de latencia)"
 
 #: rc_option_editor.cc:4731
 msgid "Very High (128 samples latency)"
-msgstr ""
+msgstr "Muy alta (128 muestras de latencia)"
 
 #: rc_option_editor.cc:4732
 msgid "Extreme (184 samples latency)"
-msgstr ""
+msgstr "Extrema (184 muestras de latencia)"
 
 #: rc_option_editor.cc:4744
 msgid "Custom (%1 samples latency)"
-msgstr ""
+msgstr "Personalizada (%1 muestras de latencia)"
 
 #: rc_option_editor.cc:4747
 msgid "This setting will only take effect when the Audio Engine is restarted."
-msgstr ""
+msgstr "Este ajuste se aplica al reiniciar el motor de audio."
 
 #: rc_option_editor.cc:4748
 msgid ""
@@ -17849,7 +17849,7 @@ msgstr ""
 
 #: rc_option_editor.cc:4796
 msgid "Audio Regions"
-msgstr ""
+msgstr "Regiones de audio"
 
 #: rc_option_editor.cc:4801
 msgid "Replicate missing region channels"
@@ -17908,18 +17908,18 @@ msgstr "Usar 'E/S Estrictas' para nuevas pistas o buses"
 
 #: rc_option_editor.cc:4861
 msgid "Hardware Patchbay"
-msgstr ""
+msgstr "Conexiones de hardware"
 
 #: rc_option_editor.cc:4865
 msgid "Restore hardware to hardware connections"
-msgstr ""
+msgstr "Restaurar las conexiones entre hardware"
 
 #: rc_option_editor.cc:4872
 msgid ""
 "When enabled, external per session hardware to hardware connections are "
 "restored on session load. This applies to internal backends (ALSA, Portaudio/"
 "ASIO, CoreAudio) only."
-msgstr ""
+msgstr "Activado: al cargar una sesión se restauran sus conexiones entre hardware. Solo con los motores internos (ALSA, PortAudio/ASIO, CoreAudio)."
 
 #: rc_option_editor.cc:4884
 msgid "Allow non quarter-note pulse"
@@ -17960,7 +17960,7 @@ msgstr "Medición"
 
 #: rc_option_editor.cc:4914
 msgid "Meterbridge meters"
-msgstr ""
+msgstr "Medidores del puente de medición"
 
 #: rc_option_editor.cc:4921
 msgid "Peak hold time"
@@ -18101,7 +18101,7 @@ msgstr "Tipo de medidor predeterminado para pistas"
 
 #: rc_option_editor.cc:5068
 msgid "Region Analysis"
-msgstr ""
+msgstr "Análisis de regiones"
 
 #: rc_option_editor.cc:5073
 msgid "Enable automatic analysis of audio"
@@ -18109,11 +18109,11 @@ msgstr "Activar análisis automático de audio"
 
 #: rc_option_editor.cc:5078
 msgid "Realtime Analyzer"
-msgstr ""
+msgstr "Analizador en tiempo real"
 
 #: rc_option_editor.cc:5082
 msgid "Limit concurrent RTA spectra"
-msgstr ""
+msgstr "Límite de espectros simultáneos del analizador"
 
 #: rc_option_editor.cc:5086
 msgid "4"
@@ -18129,15 +18129,15 @@ msgstr ""
 
 #: rc_option_editor.cc:5089
 msgid "16 (fast CPUs)"
-msgstr ""
+msgstr "16 (CPU rápidas)"
 
 #: rc_option_editor.cc:5090
 msgid "20 (very fast CPUs)"
-msgstr ""
+msgstr "20 (CPU muy rápidas)"
 
 #: rc_option_editor.cc:5091
 msgid "No Limit"
-msgstr ""
+msgstr "Sin límite"
 
 #: rc_option_editor.cc:5101 rc_option_editor.cc:5119 rc_option_editor.cc:5170
 #: rc_option_editor.cc:5176 rc_option_editor.cc:5178 rc_option_editor.cc:5225
@@ -18146,7 +18146,7 @@ msgstr ""
 #: rc_option_editor.cc:5281 rc_option_editor.cc:5283 rc_option_editor.cc:5292
 #: rc_option_editor.cc:5301 rc_option_editor.cc:5315
 msgid "Performance"
-msgstr ""
+msgstr "Rendimiento"
 
 #: rc_option_editor.cc:5101
 msgid "DSP CPU Utilization"
@@ -18176,30 +18176,30 @@ msgstr "Esta configuración sólo tendrá efecto después de reiniciar %1."
 
 #: rc_option_editor.cc:5127
 msgid "Power Management, CPU DMA latency"
-msgstr ""
+msgstr "Gestión de energía, latencia DMA de la CPU"
 
 #: rc_option_editor.cc:5158
 msgid "Lowest (prevent CPU sleep states)"
-msgstr ""
+msgstr "Mínima (impide que la CPU entre en reposo)"
 
 #: rc_option_editor.cc:5161
 msgid "%1 usec"
-msgstr ""
+msgstr "%1 µs"
 
 #: rc_option_editor.cc:5164
 msgid ""
 "This setting sets the maximum tolerable CPU DMA latency. This prevents the "
 "CPU from entering power-save states which can be beneficial for reliable low "
 "latency."
-msgstr ""
+msgstr "Define la latencia DMA máxima tolerable de la CPU. Impide que la CPU entre en ahorro de energía, lo que ayuda a mantener una latencia baja y estable."
 
 #: rc_option_editor.cc:5167
 msgid "This setting requires write access to `/dev/cpu_dma_latency'."
-msgstr ""
+msgstr "Este ajuste necesita permiso de escritura en `/dev/cpu_dma_latency'."
 
 #: rc_option_editor.cc:5176
 msgid "CPU/FPU Denormals"
-msgstr ""
+msgstr "Números desnormalizados (CPU/FPU)"
 
 #: rc_option_editor.cc:5181
 msgid "Use DC bias to protect against denormals"
@@ -18232,31 +18232,31 @@ msgstr ""
 
 #: rc_option_editor.cc:5228
 msgid "Disk I/O Buffering"
-msgstr ""
+msgstr "Búfer de E/S de disco"
 
 #: rc_option_editor.cc:5235
 msgid "Disk I/O threads"
-msgstr ""
+msgstr "Hilos de E/S de disco"
 
 #: rc_option_editor.cc:5240
 msgid "all but two processor"
-msgstr ""
+msgstr "todos los procesadores menos dos"
 
 #: rc_option_editor.cc:5255
 msgid "Disk I/O thread scheduling policy"
-msgstr ""
+msgstr "Prioridad de los hilos de E/S de disco"
 
 #: rc_option_editor.cc:5259
 msgid "No priority"
-msgstr ""
+msgstr "Sin prioridad"
 
 #: rc_option_editor.cc:5260
 msgid "Realtime (FIFO)"
-msgstr ""
+msgstr "Tiempo real (FIFO)"
 
 #: rc_option_editor.cc:5261
 msgid "Realtime (Round Robin)"
-msgstr ""
+msgstr "Tiempo real (Round Robin)"
 
 #: rc_option_editor.cc:5267
 msgid "Memory Usage"
@@ -18284,7 +18284,7 @@ msgstr "Intervalo de sampleado de automatización (milisegundos)"
 
 #: rc_option_editor.cc:5301
 msgid "Automatables"
-msgstr ""
+msgstr "Parámetros automatizables"
 
 #: rc_option_editor.cc:5305
 msgid "Limit automatable parameters per plugin"
@@ -18326,7 +18326,7 @@ msgstr "Servidor de video"
 #: rc_option_editor.cc:5325 rc_option_editor.cc:5332 rc_option_editor.cc:5333
 #: rc_option_editor.cc:5336 rc_option_editor.cc:5338 rc_option_editor.cc:5345
 msgid "Triggering"
-msgstr ""
+msgstr "Disparo de clips"
 
 #: rc_option_editor.cc:5329
 msgid ""
@@ -18341,19 +18341,19 @@ msgstr ""
 
 #: rc_option_editor.cc:5334
 msgid "Clear all custom trigger MIDI bindings"
-msgstr ""
+msgstr "Borrar todas las asignaciones MIDI de disparo"
 
 #: rc_option_editor.cc:5336
 msgid "Clip Library"
-msgstr ""
+msgstr "Biblioteca de clips"
 
 #: rc_option_editor.cc:5340
 msgid "User writable Clip Library:"
-msgstr ""
+msgstr "Biblioteca de clips del usuario:"
 
 #: rc_option_editor.cc:5346
 msgid "Reset Clip Library Dir"
-msgstr ""
+msgstr "Restablecer la carpeta de la biblioteca"
 
 #: rec_info_box.cc:289
 msgid "Disk Space:"
@@ -19020,7 +19020,7 @@ msgstr ""
 
 #: route_time_axis.cc:903 session_option_editor.cc:424
 msgid "Audio (wallclock) time"
-msgstr ""
+msgstr "Tiempo de audio (reloj)"
 
 #: route_time_axis.cc:911
 msgid "Musical (beat) time"
@@ -19518,12 +19518,12 @@ msgstr ""
 #: session_dialog.cc:646 startup_fsm.cc:649 startup_fsm.cc:789
 #: startup_fsm.cc:918
 msgid "Session file %1 does not exist"
-msgstr ""
+msgstr "El archivo de sesión %1 no existe"
 
 #: session_dialog.cc:650 startup_fsm.cc:653 startup_fsm.cc:793
 #: startup_fsm.cc:922
 msgid "Session %1 is from a newer version of %2"
-msgstr ""
+msgstr "La sesión %1 es de una versión más reciente de %2"
 
 #: session_dialog.cc:654 startup_fsm.cc:657 startup_fsm.cc:797
 #: startup_fsm.cc:926
@@ -20108,7 +20108,7 @@ msgstr ""
 #: session_option_editor.cc:278
 msgid ""
 "Cues containing clips disables implicit (auto) disk monitoring for the track"
-msgstr ""
+msgstr "Los cues con clips desactivan la monitorización automática de disco de la pista"
 
 #: session_option_editor.cc:285
 msgid "Use monitor section in this session"
@@ -20126,7 +20126,7 @@ msgstr "Puente de medición"
 
 #: session_option_editor.cc:292
 msgid "Display Options"
-msgstr ""
+msgstr "Opciones de visualización"
 
 #: session_option_editor.cc:296
 msgid "Show Midi Tracks"
@@ -20162,7 +20162,7 @@ msgstr "Botones de monitoreo"
 
 #: session_option_editor.cc:347
 msgid "Fader as Gain Knob"
-msgstr ""
+msgstr "Fader como potenciómetro de ganancia"
 
 #: session_option_editor.cc:352
 msgid "Name Labels"
@@ -20174,7 +20174,7 @@ msgstr "Nombre de la pista"
 
 #: session_option_editor.cc:369
 msgid "Draw tool creates opaque MIDI regions"
-msgstr ""
+msgstr "La herramienta de dibujo crea regiones MIDI opacas"
 
 #: session_option_editor.cc:376
 msgid "MIDI region copies are independent"
@@ -20214,15 +20214,15 @@ msgstr "reemplazar ambas notas superpuestas con una única nota"
 
 #: session_option_editor.cc:397 session_option_editor.cc:410
 msgid "Scale & Tuning"
-msgstr ""
+msgstr "Escala y afinación"
 
 #: session_option_editor.cc:397
 msgid "Scale and Tuning"
-msgstr ""
+msgstr "Escala y afinación"
 
 #: session_option_editor.cc:402
 msgid "Use this scale"
-msgstr ""
+msgstr "Usar esta escala"
 
 #: session_option_editor.cc:414 session_option_editor.cc:426
 #: session_option_editor.cc:444 session_option_editor.cc:447
@@ -20234,19 +20234,19 @@ msgstr "Misc"
 
 #: session_option_editor.cc:414
 msgid "Miscellaneous Options"
-msgstr ""
+msgstr "Otras opciones"
 
 #: session_option_editor.cc:419
 msgid "Default time domain"
-msgstr ""
+msgstr "Dominio de tiempo predeterminado"
 
 #: session_option_editor.cc:425
 msgid "Musical (beats) time"
-msgstr ""
+msgstr "Tiempo musical (pulsos)"
 
 #: session_option_editor.cc:434
 msgid "New tracks and busses use session time"
-msgstr ""
+msgstr "Las pistas y buses nuevos usan el tiempo de la sesión"
 
 #: session_option_editor.cc:440
 msgid ""
@@ -20266,11 +20266,11 @@ msgstr "Siempre cuenta antes de grabar"
 
 #: session_option_editor.cc:456
 msgid "Project Banner"
-msgstr ""
+msgstr "Banner del proyecto"
 
 #: session_option_editor.cc:460
 msgid "Show master bus comment window on session load"
-msgstr ""
+msgstr "Mostrar los comentarios del bus máster al cargar la sesión"
 
 #: session_option_editor.cc:465
 msgid "Defaults"
@@ -21017,18 +21017,18 @@ msgstr ""
 
 #: startup_fsm.cc:481
 msgid "Starting Audio/MIDI Engine"
-msgstr ""
+msgstr "Iniciando el motor de audio/MIDI"
 
 #: startup_fsm.cc:536
 msgid ""
 "Engine I/O device has changed since you last opened this session.\n"
 "Please verify that the new device has enough ports, or you may lose some i/o "
 "connections."
-msgstr ""
+msgstr "El dispositivo de audio ha cambiado desde la última vez que abriste esta sesión.\nComprueba que el nuevo dispositivo tiene suficientes puertos o podrías perder algunas conexiones de E/S."
 
 #: startup_fsm.cc:809
 msgid "Extracting aaf failed"
-msgstr ""
+msgstr "No se pudo extraer el AAF"
 
 #: startup_fsm.cc:968
 msgid "Pre-Release Warning"
