@@ -708,6 +708,7 @@ fi
 mkdir ${Shared}/icons
 mkdir ${Shared}/resources
 cp ../../system_config $Etc/system_config
+cp ../../session.rc $Etc/session.rc
 cp ../../gtk2_ardour/icons/*.png ${Shared}/icons
 cp -r ../../gtk2_ardour/icons/cursor_* ${Shared}/icons/
 cp ../../gtk2_ardour/ArdourMono.ttf $Shared

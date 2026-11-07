@@ -1692,6 +1692,9 @@ def build(bld):
         bld.recurse('tools/bb')
 
     bld.install_files (bld.env['CONFDIR'], 'system_config')
+    # Phaedra: defaults for new sessions (numbered tracks); a session.rc in
+    # the user's config folder ("use as default") still takes precedence.
+    bld.install_files (bld.env['CONFDIR'], 'session.rc')
 
     bld.install_files (os.path.join (bld.env['DATADIR'], 'templates'), bld.path.ant_glob ('share/templates/**'), cwd=bld.path.find_dir ('share/templates'), relative_trick=True)
     bld.install_files (os.path.join (bld.env['DATADIR'], 'rdf'), bld.path.ant_glob ('share/rdf/*.n3'))

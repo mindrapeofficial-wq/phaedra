@@ -133,6 +133,7 @@ cp gtk2_ardour/fonts/ibm-plex/OFL.txt "$DESTDIR/licenses/ibm-plex/"
 cp tools/pulse-host/LICENSE-* tools/pulse-host/NOTICE "$DESTDIR/licenses/pulse-host/"
 cp docs/lite-port/ATTRIBUTION.md "$DESTDIR/licenses/"
 cp system_config "$DESTDIR/share/ardour8/" 2>/dev/null || true
+cp session.rc "$DESTDIR/share/ardour8/"
 
 # Themes
 cp -r gtk2_ardour/themes "$DESTDIR/share/ardour8/"
